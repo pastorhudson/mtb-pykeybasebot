@@ -12,6 +12,7 @@ import os
 import sys
 from dotenv import load_dotenv
 from poll_results import get_polls
+from pyjokes import pyjokes
 
 load_dotenv('secret.env')
 
@@ -38,6 +39,12 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
+    if event.msg.content.text.body == "!joke":
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        joke = pyjokes.get_joke()
+        await bot.chat.send(conversation_id, joke)
     if event.msg.content.text.body == "!test":
         channel = event.msg.channel
         msg_id = event.msg.id
