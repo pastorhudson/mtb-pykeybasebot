@@ -5,7 +5,6 @@ cffi==1.14.3
 chardet==3.0.4
 cleo==0.8.1
 clikit==0.6.2
-crashtest==0.3.1
 cryptography==3.1.1
 distlib==0.3.1
 filelock==3.0.12
