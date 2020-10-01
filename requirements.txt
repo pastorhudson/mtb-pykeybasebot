@@ -1,79 +1,39 @@
-appdirs @ file:///home/rhudson/.cache/pypoetry/artifacts/01/e9/7d/0a331ad9b768a3ece6acb8b872f7d9329d53f00874b47bce76ad4acfe9/appdirs-1.4.3-py2.py3-none-any.whl
-atomicwrites @ file:///home/rhudson/.cache/pypoetry/artifacts/0e/e8/cd/017e3d8d2af5baf2a585878014e068c67c8aee75d9575b5166a1207cd3/atomicwrites-1.3.0-py2.py3-none-any.whl
-attrs @ file:///home/rhudson/.cache/pypoetry/artifacts/19/15/87/b7a64cd5788a0c95a04b2e96e1a2789eaf49ba9bf9c0f89984adc01c0c/attrs-19.3.0-py2.py3-none-any.whl
 beautifulsoup4==4.9.2
-black @ file:///home/rhudson/.cache/pypoetry/artifacts/a2/a4/18/7b2d853402eff887f05256b54a128924065d6ea62b47c21d61c17963e4/black-18.9b0-py36-none-any.whl
-bleach @ file:///home/rhudson/.cache/pypoetry/artifacts/87/3e/72/1a726d3b88baad8d48e2967162fb61b1f9acedbeef844f0dcdaac49f23/bleach-3.1.0-py2.py3-none-any.whl
 CacheControl==0.12.6
 cachy==0.3.0
-certifi @ file:///home/rhudson/.cache/pypoetry/artifacts/8e/9d/38/549e3ee77837bd041eb50cdbb0ad66e1625123aeee50ff713568d79ea0/certifi-2019.9.11-py2.py3-none-any.whl
 cffi==1.14.3
 chardet==3.0.4
 cleo==0.8.1
-Click @ file:///home/rhudson/.cache/pypoetry/artifacts/1a/6f/ad/e84a2025627e44599bf6ba0cc0438d90608075a88829ad574798b7e6a2/Click-7.0-py2.py3-none-any.whl
 clikit==0.6.2
 crashtest==0.3.1
 cryptography==3.1.1
-dataclasses-json @ file:///home/rhudson/.cache/pypoetry/artifacts/4a/f3/fe/eb4739245ec0e1e87118f2bde876471c9d0e8a2bdf19784955ba1e5fc5/dataclasses_json-0.3.6-py3-none-any.whl
 distlib==0.3.1
-docutils @ file:///home/rhudson/.cache/pypoetry/artifacts/3d/52/66/87e71edcc3d12165b7ed9a7e33149219759e52054c101f35cfed57f5a4/docutils-0.15.2-py3-none-any.whl
-entrypoints @ file:///home/rhudson/.cache/pypoetry/artifacts/27/67/42/5ca7438658f76c8700ff6c44ea1cf9dc128cf0862adb7de53d3a35266c/entrypoints-0.3-py2.py3-none-any.whl
 filelock==3.0.12
-flake8 @ file:///home/rhudson/.cache/pypoetry/artifacts/13/2b/b4/6af68153bb5982c18c55f3569ae3a8ed0cbf33d40321e4d159da2d1832/flake8-3.7.9-py2.py3-none-any.whl
 html5lib==1.1
-idna @ file:///home/rhudson/.cache/pypoetry/artifacts/e3/d9/82/cbc14d50a5cbba43af6620c17ee33e4696f9ef6fd003d1042980e68538/idna-2.8-py2.py3-none-any.whl
 install==1.3.4
-isort @ file:///home/rhudson/.cache/pypoetry/artifacts/6e/4e/fa/c1a31b7a066920f2d2cebcdf14f804e3f48fc87e5d4c85ae4805b246b2/isort-4.3.21-py2.py3-none-any.whl
 jeepney==0.4.3
 keyring==21.4.0
 lockfile==0.12.2
-marshmallow @ file:///home/rhudson/.cache/pypoetry/artifacts/07/56/6e/8e3e9831e24510ef052155da2aa054274acb9f5b0e5c1914da4afc060d/marshmallow-3.2.2-py2.py3-none-any.whl
-marshmallow-enum @ file:///home/rhudson/.cache/pypoetry/artifacts/a3/c0/0a/bf5a4596a8a09d59aa8f6ed71bc5348c1cec64162c89b8f7de0227afc0/marshmallow_enum-1.5.1-py2.py3-none-any.whl
-mccabe @ file:///home/rhudson/.cache/pypoetry/artifacts/37/6e/69/4a33a4d6c80c775b1ee205face2c6e07b762c8602bb0f0d236ebe790c5/mccabe-0.6.1-py2.py3-none-any.whl
-more-itertools @ file:///home/rhudson/.cache/pypoetry/artifacts/1e/40/b5/3004e210820ef8517710ed156fa6d8585a1358fd5caf4720f2425443f8/more_itertools-7.2.0-py3-none-any.whl
 msgpack==1.0.0
-mypy @ file:///home/rhudson/.cache/pypoetry/artifacts/33/4f/c9/9975502fce65ba7899aff5086e87fed389f5c2a431806a3df787791e20/mypy-0.720-py3-none-any.whl
-mypy-extensions @ file:///home/rhudson/.cache/pypoetry/artifacts/b6/a0/b0/a5dc9acd6fd12aba308634f21bb7cf0571448f20848797d7ecb327aa12/mypy_extensions-0.4.3-py2.py3-none-any.whl
-packaging @ file:///home/rhudson/.cache/pypoetry/artifacts/ef/51/8e/2354427611602f5cb05a55287f7149f7aaa5cf4b8443dc1a276cb04062/packaging-19.2-py2.py3-none-any.whl
 pastel==0.2.1
 pexpect==4.8.0
 pkg-resources==0.0.0
 pkginfo==1.5.0.1
-pluggy @ file:///home/rhudson/.cache/pypoetry/artifacts/8b/2a/32/8e2ac3d7621969e24c04a975a67d3ba4c71b906290eb6ba4863e2d6380/pluggy-0.13.0-py2.py3-none-any.whl
 poetry==1.1.0
 poetry-core==1.0.0
 PTable==0.9.2
 ptyprocess==0.6.0
-py @ file:///home/rhudson/.cache/pypoetry/artifacts/64/a9/87/1e4d34506cddfdb4d7df52de70a39ce233e787b6218160888599db3181/py-1.8.0-py2.py3-none-any.whl
-pycodestyle @ file:///home/rhudson/.cache/pypoetry/artifacts/0a/34/39/504e7dbbb91ebd726f16d233da7f08f0edf599a28790bd0e756a1ac3e8/pycodestyle-2.5.0-py2.py3-none-any.whl
 pycparser==2.20
-pyflakes @ file:///home/rhudson/.cache/pypoetry/artifacts/79/23/0d/54daaab41b1a80173320edc90495cf953e9070aaa71792f0b839c470df/pyflakes-2.1.1-py2.py3-none-any.whl
-Pygments @ file:///home/rhudson/.cache/pypoetry/artifacts/80/1a/e2/f39ee4d9c67ad6e0f776eb49eb4f75c619d2e8457b753ecfc0e79598de/Pygments-2.4.2-py2.py3-none-any.whl
 pykeybasebot==0.2.2
 pylev==1.3.0
-pyotp @ file:///home/rhudson/.cache/pypoetry/artifacts/64/52/b4/90c353e0560204f6034805cb82e8f4512dc037585fc1486828dc87f12c/pyotp-2.3.0-py2.py3-none-any.whl
-pyparsing @ file:///home/rhudson/.cache/pypoetry/artifacts/d2/9b/64/64029ee4390ef20f9f5c3047408617d0d9a8a485ad430a57830cb3d71b/pyparsing-2.4.5-py2.py3-none-any.whl
-pytest @ file:///home/rhudson/.cache/pypoetry/artifacts/75/2a/9a/72f71cb127625fabb9aa13d66ff9e5ed6444cbd24a79c8aa7cad156b73/pytest-5.2.4-py3-none-any.whl
-pytest-asyncio @ file:///home/rhudson/.cache/pypoetry/artifacts/da/16/d7/fa8115a9070e9db55f29b03802c6b0aa250e1a2637de4bd4016ea06e61/pytest_asyncio-0.10.0-py3-none-any.whl
 python-dotenv==0.14.0
 PyYAML==5.1.2
-readme-renderer @ file:///home/rhudson/.cache/pypoetry/artifacts/9e/a6/4a/125430bd58f5d9e9793e2f060deef92d6523a2394e0045c70733005edd/readme_renderer-24.0-py2.py3-none-any.whl
 realclearpolitics==1.4.0
-requests @ file:///home/rhudson/.cache/pypoetry/artifacts/d1/db/c9/b989842b615c568dec38f0c082b2f5f495a5647d5f32c20faac221ebb6/requests-2.22.0-py2.py3-none-any.whl
 requests-toolbelt==0.9.1
 SecretStorage==3.1.2
 shellingham==1.3.2
-six @ file:///home/rhudson/.cache/pypoetry/artifacts/4f/3c/05/863e3fa9d912b8ea89eafa65d341831057d5305010832e52581ac01f16/six-1.13.0-py2.py3-none-any.whl
 soupsieve==2.0.1
 stringcase==1.2.0
-toml @ file:///home/rhudson/.cache/pypoetry/artifacts/fb/01/94/0219377a74b149d8ffe3b6f96c113b460850ec2846a86a302d6156dfef/toml-0.10.0-py2.py3-none-any.whl
 tomlkit==0.7.0
-tqdm @ file:///home/rhudson/.cache/pypoetry/artifacts/ac/dd/47/b333479b0c124050f97eb1a0964f52dd9e203305149d29e2306159a538/tqdm-4.38.0-py2.py3-none-any.whl
-twine @ file:///home/rhudson/.cache/pypoetry/artifacts/52/0d/6a/1624d2108cbff1ff97fab396e81698fcf9363db1e36bcd255fb4c6ae6d/twine-1.15.0-py2.py3-none-any.whl
-typed-ast @ file:///home/rhudson/.cache/pypoetry/artifacts/3d/7e/a3/4cd9551209f70e720ff6d8a9cc83b59d86d1fb5cac52adf321aaed8063/typed_ast-1.4.0-cp38-cp38-manylinux1_x86_64.whl
-typing-extensions @ file:///home/rhudson/.cache/pypoetry/artifacts/f0/4d/0a/653ba1e06faf612c7b7fa541f74c8b70953f1d3d98231880538fb61e2d/typing_extensions-3.7.4.1-py3-none-any.whl
-typing-inspect @ file:///home/rhudson/.cache/pypoetry/artifacts/1c/82/c2/c062dd8fbb489ce55bddad437262d93acbca856f72cd98143052c24923/typing_inspect-0.5.0-py3-none-any.whl
-urllib3 @ file:///home/rhudson/.cache/pypoetry/artifacts/87/8b/dd/94ca702d7fd2b5caa793babad99bfc31f67dcafcbff9fa9b72d7fafd97/urllib3-1.25.7-py2.py3-none-any.whl
 virtualenv==20.0.31
-wcwidth @ file:///home/rhudson/.cache/pypoetry/artifacts/e3/cb/1c/0c1c930ce91a71c398b6330f394204051d26338e80b0f6c42144527f81/wcwidth-0.1.7-py2.py3-none-any.whl
 webencodings==0.5.1
