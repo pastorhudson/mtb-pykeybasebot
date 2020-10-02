@@ -1,0 +1,3 @@
+keybase -home=./bothome chat edit-bot-member -u <your bot user> --allow-trigger "!test" <team name>
+
+keybase -home=./bothome chat edit-bot-member -u morethanmarvin --allow-trigger "!test" morethanbits

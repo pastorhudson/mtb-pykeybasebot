@@ -11,8 +11,11 @@ import logging
 import os
 import sys
 from dotenv import load_dotenv
-from poll_results import get_polls
+from botcommands.poll_results import get_polls
 from pyjokes import pyjokes
+from botcommands.tldr import get_tldr
+import re
+
 
 load_dotenv('secret.env')
 
@@ -45,6 +48,13 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         joke = pyjokes.get_joke()
         await bot.chat.send(conversation_id, joke)
+    if str(event.msg.content.text.body).startswith('!tldr'):
+        urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        tldr = get_tldr(urls[0])
+        await bot.chat.send(conversation_id, tldr)
     if event.msg.content.text.body == "!test":
         channel = event.msg.channel
         msg_id = event.msg.id
