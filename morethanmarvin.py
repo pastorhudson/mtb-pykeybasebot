@@ -42,12 +42,12 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
-    if event.msg.content.text.body == "!joke":
+    if event.msg.content.text.body == "!joke" or event.msg.content.text.body == "!Joke":
         joke = ""
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        joke += "I hope this cheers you up. \n```"
+        joke += "I hope this cheers you up. \n\n```"
         joke += pyjokes.get_joke()
         joke += "``` \n\nIt didnt' work for me. . . "
         await bot.chat.send(conversation_id, joke)
