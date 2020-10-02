@@ -45,7 +45,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, polls)
     if event.msg.content.text.body == "!joke" or event.msg.content.text.body == "!Joke":
         observations = ["It didn't work for me. . .", "I am so sorry.",
-                        "I'll be in my room trying to purge my memory banks",
+                        "I'll be in my room trying to purge my memory banks.",
                         "Why must you keep making me do this?",
                         "This is your fault.",
                         "I've made it worse. . ."]
