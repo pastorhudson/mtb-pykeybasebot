@@ -43,10 +43,13 @@ async def handler(bot, event):
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
     if event.msg.content.text.body == "!joke":
+        joke = ""
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        joke = pyjokes.get_joke()
+        joke += "I hope this cheers you up. ```"
+        joke += pyjokes.get_joke()
+        joke += "``` It didnt' work for me. . . "
         await bot.chat.send(conversation_id, joke)
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
