@@ -11,10 +11,10 @@ def get_tldr(url):
 
     smmry = SmmryAPI(os.environ.get('SMMRY_API_KEY'))
     s = smmry.summarize(url, sm_length=3, sm_keyword_count=12)
-    tldr = "\n".join(["```", f'This is the best tl;dr I could make, original reduced by {s.sm_api_content_reduced}',
+    tldr = "\n".join([f'This is the best tl;dr I could make, original reduced by {s.sm_api_content_reduced}', "```",
                       str(s), "```"])
     return tldr
 
 
 if __name__ == "__main__":
-    print(get_tldr('https://www.cnbc.com/2020/10/01/presidential-debates-trump-suggests-he-wont-allow-rule-changes.html'))
+    print(get_tldr('https://www.npr.org/2020/10/01/919283793/texas-governor-limits-ballot-drop-off-locations-local-officials-vow-to-fight-bac'))
