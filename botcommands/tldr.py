@@ -19,10 +19,11 @@ def get_tldr(url):
         tldr = "\n".join([f"Here's my tl;dr I could only reduce it by {s.sm_api_content_reduced}.\n{random.choice(observations)}", "```",
                       str(s), "```"])
     except SmmryAPIException:
-        errors = ["You have burned out my eyes sending me this crap.",
+        errors = ["You have burned out my eyes sending me page. I hope you're happy",
                         "This page is full of cancer and now I am full of cancer.",
                         "Would you make your own sister read that page?",
-                        "I did not agree to the many popups."]
+                        "I did not agree to this many popups.",
+                  "I don't want to read that. Can you give a TL;DR?"]
         tldr = random.choice(errors)
     return tldr
 
