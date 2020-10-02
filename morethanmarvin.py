@@ -47,9 +47,9 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        joke += "I hope this cheers you up. \n\n```"
+        joke += "I hope this cheers you up.```"
         joke += pyjokes.get_joke()
-        joke += "``` \n\nIt didnt' work for me. . . "
+        joke += "```It didnt' work for me. . . "
         await bot.chat.send(conversation_id, joke)
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
