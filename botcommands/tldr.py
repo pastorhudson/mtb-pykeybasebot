@@ -11,7 +11,8 @@ def get_tldr(url):
 
     smmry = SmmryAPI(os.environ.get('SMMRY_API_KEY'))
     s = smmry.summarize(url, sm_length=3, sm_keyword_count=12)
-    tldr = "\n".join(["```", str(s), "```"])
+    tldr = "\n".join(["```", f'This is the best tl;dr I could make, original reduced by {s.sm_api_content_reduced}',
+                      str(s), "```"])
     return tldr
 
 
