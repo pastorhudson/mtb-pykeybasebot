@@ -11,7 +11,7 @@ def get_tldr(url):
     tldr = ""
     observations = ["I'm sorry I'm such a failure.",
                     "I'm so sorry you have to read all these words.",
-                    "I didn't even read the tl;dr.",
+                    "I hope this makes you happy because I'm not.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
     smmry = SmmryAPI(os.environ.get('SMMRY_API_KEY'))
     try:
