@@ -20,8 +20,7 @@ def get_polls():
 
     for row in td[0]["data"]:
         if row['Poll'] == 'RCP Average':
-            message += f'National:\n' \
-                       f'Real Clear Politics Average:\n' \
+            message += f'National Real Clear Politics Average:\n' \
                        f'Date: {row["Date"]}\n' \
                        f'Biden: {row["Biden (D)"]}  ' \
                        f'Trump: {row["Trump (R)"]}  ' \
@@ -30,8 +29,7 @@ def get_polls():
     x.add_row(['PENNSYLVANIA', '', '', '', '', '', ''])
     for row in pa[0]["data"]:
         if row['Poll'] == 'RCP Average':
-            message += f'Pennsylvania:\n' \
-                       f'Real Clear Politics Average:\n' \
+            message += f'Pennsylvania Real Clear Politics Average:\n' \
                        f'Date: {row["Date"]}\n' \
                        f'Biden: {row["Biden (D)"]}  ' \
                        f'Trump: {row["Trump (R)"]}  ' \
