@@ -1,4 +1,4 @@
-from smmryAPI.smmryapi import SmmryAPI
+from smmryAPI.smmryapi import SmmryAPI, SmmryAPIException
 import os
 from dotenv import load_dotenv
 import random
@@ -14,11 +14,18 @@ def get_tldr(url):
                     "I didn't even read the tl;dr.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
     smmry = SmmryAPI(os.environ.get('SMMRY_API_KEY'))
-    s = smmry.summarize(url, sm_length=3, sm_keyword_count=12)
-    tldr = "\n".join([f"Here's my tl;dr I could only reduce it by {s.sm_api_content_reduced}.\n{random.choice(observations)}", "```",
+    try:
+        s = smmry.summarize(url, sm_length=3, sm_keyword_count=12)
+        tldr = "\n".join([f"Here's my tl;dr I could only reduce it by {s.sm_api_content_reduced}.\n{random.choice(observations)}", "```",
                       str(s), "```"])
+    except SmmryAPIException:
+        errors = ["You have burned out my eyes sending me this crap.",
+                        "This page is full of cancer and now I am full of cancer.",
+                        "Would you make your own sister read that page?",
+                        "I did not agree to the many popups."]
+        tldr = random.choice(errors)
     return tldr
 
 
 if __name__ == "__main__":
-    print(get_tldr('https://www.npr.org/2020/10/01/919283793/texas-governor-limits-ballot-drop-off-locations-local-officials-vow-to-fight-bac'))
+    print(get_tldr('https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
