@@ -15,6 +15,7 @@ from botcommands.poll_results import get_polls
 from pyjokes import pyjokes
 from botcommands.tldr import get_tldr
 import re
+import random
 
 
 load_dotenv('secret.env')
@@ -43,13 +44,18 @@ async def handler(bot, event):
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
     if event.msg.content.text.body == "!joke" or event.msg.content.text.body == "!Joke":
+        observations = ["It didn't work for me. . .", "I am so sorry.",
+                        "I'll be in my room trying to purge my memory banks",
+                        "Why must you keep making me do this?",
+                        "This is your fault.",
+                        "I've made it worse. . ."]
         joke = ""
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         joke += "I hope this cheers you up.```"
         joke += pyjokes.get_joke()
-        joke += "```It didnt' work for me. . . "
+        joke += f"```{random.choice(observations)}"
         await bot.chat.send(conversation_id, joke)
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
