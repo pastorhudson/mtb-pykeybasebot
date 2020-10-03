@@ -75,13 +75,13 @@ async def handler(bot, event):
         msg = 'PASS!'
         # await bot.chat.send(conversation_id, msg)
         await bot.chat.attach(channel=conversation_id, filename=f'{os.path.abspath("./botcommands")}/testmp4.mp4', title='Test')
-    if str(event.msg.content.text.body).startswith('!yt'):
+    if str(event.msg.content.text.body).startswith('!yt '):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
         msg = payload['msg']
         await bot.chat.send(conversation_id, msg)
-    if str(event.msg.content.text.body).startswith('!ytv'):
+    if str(event.msg.content.text.body).startswith('!ytv '):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(urls)
         conversation_id = event.msg.conv_id
