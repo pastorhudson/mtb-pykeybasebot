@@ -79,20 +79,20 @@ async def handler(bot, event):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
-        msg = payload['msg']
+        msg = payload['msg'] + "At least I didn't have to download it. . . "
         await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith('!ytv '):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(urls)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
-        msg = payload['msg'] + "At least I didn't have to download it. . ."
+        msg = payload['msg'] + "Sigh, I guess I'll try to download this useless video."
         await bot.chat.send(conversation_id, msg)
         payload = get_youtube(urls[0], False)
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=payload['file'],
-                                  title="Wouldn't want anybody to have to actually click a link. . . ")
+                                  title=f"{payload['file']}\n\nWouldn't want anybody to have to actually click a link. . . ")
         else:
             pass
 
