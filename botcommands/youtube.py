@@ -43,15 +43,16 @@ def get_youtube(url, simulate):
     ydl_opts = {"forcejson": True,
                 'logger': MyLogger(),
                 'progress_hooks': [my_hook],
-                'simulate': simulate
+                'simulate': simulate,
+                'format': 'mp4',
                 }
     try:
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
 
         yt_info = json.loads(info[1])
-        # for i in yt_info:
-        #     print(i)
+        for i in yt_info:
+            print(yt_info[i])
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
@@ -78,4 +79,4 @@ def get_youtube(url, simulate):
 
 
 if __name__ == "__main__":
-    print(get_youtube('https://www.youtube.com/watch?v=Fah-LJJaPWg', True))
+    print(get_youtube('https://www.youtube.com/watch?v=QlTf5X0MKbg', True))
