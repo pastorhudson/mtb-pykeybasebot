@@ -56,7 +56,7 @@ def get_youtube(url, simulate):
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
-                   "file": f'{os.path.abspath("./botcommands")}/{yt_info["_filename"]}',
+                   "file": f'{os.path.abspath("./")}/{yt_info["_filename"]}',
                    "duration": convert_seconds(yt_info["duration"]),
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
