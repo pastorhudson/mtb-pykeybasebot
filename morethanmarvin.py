@@ -90,7 +90,7 @@ async def handler(bot, event):
         msg = "Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
     if "marvin" in str(event.msg.content.text.body).lower():
-        print(str(event.msg.content.body).lower())
+        print(str(event.msg.content.text.body).lower())
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
