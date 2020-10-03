@@ -93,7 +93,7 @@ async def handler(bot, event):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         print(yt_urls)
-        yt_payload = await get_youtube(yt_urls[0], True)
+        yt_payload = get_youtube(yt_urls[0], True)
         print(yt_payload)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
@@ -101,10 +101,10 @@ async def handler(bot, event):
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(ytv_urls)
         conversation_id = event.msg.conv_id
-        ytv_payload = await get_youtube(ytv_urls[0], True)
+        ytv_payload = get_youtube(ytv_urls[0], True)
         ytv_msg = ytv_payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
         await bot.chat.send(conversation_id, ytv_msg)
-        payload = await get_youtube(ytv_urls[0], False)
+        payload = get_youtube(ytv_urls[0], False)
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=payload['file'],
