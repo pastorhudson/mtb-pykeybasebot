@@ -55,11 +55,10 @@ def get_youtube(url, simulate):
                 }
     try:
         with YoutubeDL(ydl_opts) as ydl:
-            print(url)
             dl = ydl.download([url])
 
         yt_info = info[0]
-        # print(info)
+        print(info)
         # for i in yt_info:
         #     print(yt_info[i])
 
@@ -92,8 +91,8 @@ def get_youtube(url, simulate):
 if __name__ == "__main__":
     # print(get_youtube('https://www.youtube.com/watch?v=WcWA1LoeWU4', True))
     # print(get_youtube('https://www.youtube.com/watch?v=u95wgmBZ99A', True))
-    # print(get_youtube('https://www.youtube.com/watch?v=UZPPVfMrfug', True))
-    # print(get_youtube('https://www.dailymotion.com/video/x7wl5ns', True))
-    print(get_youtube('https://www.cnn.com/2020/10/02/politics/kellyanne-conway-positive-for-covid-19/index.html', True))
+    print(get_youtube('https://www.youtube.com/watch?v=UZPPVfMrfug', True))
+    # print(get_youtube('https://www.dailymotion.com/video/x7wl5ns', False))
+    # print(get_youtube('https://www.cnn.com/2020/10/02/politics/kellyanne-conway-positive-for-covid-19/index.html', True))
 
 
