@@ -89,7 +89,7 @@ async def handler(bot, event):
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=payload['file'],
-                                  title=payload['msg'])
+                                  title=payload['msg'] + "\nSigh, I guess I'll download the file now.")
         else:
             msg = payload['msg']
             await bot.chat.send(conversation_id, msg)
@@ -97,7 +97,7 @@ async def handler(bot, event):
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=payload['file'],
-                                  title="")
+                                  title="Wouldn't want anybody to have to actually click a link. . . ")
         else:
             pass
 
