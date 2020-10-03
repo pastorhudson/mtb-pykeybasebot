@@ -50,8 +50,8 @@ def get_youtube(url, simulate):
             dl = ydl.download([url])
 
         yt_info = json.loads(info[1])
-        for i in yt_info:
-            print(i)
+        # for i in yt_info:
+        #     print(i)
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
