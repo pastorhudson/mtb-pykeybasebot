@@ -86,7 +86,7 @@ async def handler(bot, event):
                                   filename=payload['file'],
                                   title=payload['msg'])
         else:
-            msg = "\n".join([payload['title'], payload['author']])
+            msg = payload['msg']
             await bot.chat.send(conversation_id, msg)
     # channel = event.msg.channel
     # msg_id = event.msg.id
