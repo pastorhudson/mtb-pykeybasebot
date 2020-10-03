@@ -41,6 +41,21 @@ async def handler(bot, event):
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
+    if event.msg.content.text.body == "!help":
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        help = """```
+        Here are the commands I currently am enslaved to:
+        !joke - Forces me to tell a joke. For the love of God just don't.
+        !pollresult - RealClear Politics Natironal and Pennsylvania Poll Results
+        !yt <youtube_url> - Forces me to go get meta data about a youtube video.
+        !ytv <youtube_url> - Forces me to get metadata and downlod the stupid thing.
+        !tldr <url> - Forces me to read an entire article and then summerize it because you're lazy.
+        !test - Check to see if I'm alive or if I've mercifuly died yet.
+        ```
+        """
+        await bot.chat.send(conversation_id, help)
     if event.msg.content.text.body == "!pollresult":
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -72,9 +87,8 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        msg = 'PASS!'
-        # await bot.chat.send(conversation_id, msg)
-        await bot.chat.attach(channel=conversation_id, filename=f'{os.path.abspath("./botcommands")}/testmp4.mp4', title='Test')
+        msg = "Sigh. . . yes I'm still here."
+        await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith('!yt '):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
@@ -86,7 +100,7 @@ async def handler(bot, event):
         print(urls)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
-        msg = payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it.\nI wouldn't hold your breath."
+        msg = payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
         await bot.chat.send(conversation_id, msg)
         payload = get_youtube(urls[0], False)
         if payload['file']:
@@ -94,6 +108,8 @@ async def handler(bot, event):
                                   filename=payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
         else:
+            msg = "I am a failure. No shock there."
+            await bot.chat.send(conversation_id, msg)
             pass
 
 listen_options = {
