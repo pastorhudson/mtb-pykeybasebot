@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from youtube_dl import YoutubeDL
 import json
+import os
 
 info = []
 
@@ -54,7 +55,7 @@ def get_youtube(url):
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
-                   "file": yt_info["_filename"],
+                   "file": f'{os.path.abspath("./")}/{yt_info["_filename"]}',
                    "duration": convert_seconds(yt_info["duration"]),
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
