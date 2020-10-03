@@ -86,7 +86,7 @@ async def handler(bot, event):
         print(urls)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
-        msg = payload['msg'] + " \nSigh, I guess I'll try to download this useless video."
+        msg = payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it.\nI wouldn't hold your breath."
         await bot.chat.send(conversation_id, msg)
         payload = get_youtube(urls[0], False)
         if payload['file']:
