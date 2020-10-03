@@ -36,6 +36,7 @@ class MyLogger(object):
 
     def error(self, msg):
         print(msg)
+        raise Exception
 
 
 def my_hook(d):
