@@ -39,23 +39,23 @@ def my_hook(d):
         print('Done downloading, now converting ...')
 
 
-def get_youtube(url):
+def get_youtube(url, simulate):
     ydl_opts = {"forcejson": True,
                 'logger': MyLogger(),
                 'progress_hooks': [my_hook],
+                'simulate': simulate
                 }
     try:
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
 
         yt_info = json.loads(info[1])
-        # print(yt_info)
-        for i in yt_info:
-            print(i)
+        # for i in yt_info:
+            # print(i)
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
-                   "file": f'{os.path.abspath("./")}/{yt_info["_filename"]}',
+                   "file": f'{os.path.abspath("./botcommands")}/{yt_info["_filename"]}',
                    "duration": convert_seconds(yt_info["duration"]),
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
@@ -63,8 +63,8 @@ def get_youtube(url):
         msg = "\n".join(["```", yt_info["fulltitle"],
                          f"Channel: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
-                         yt_info['webpage_url'],
-                         "```"])
+                         "```",
+                         yt_info['webpage_url']])
         payload['msg'] = msg
 
         return payload
@@ -78,4 +78,4 @@ def get_youtube(url):
 
 
 if __name__ == "__main__":
-    print(get_youtube('https://www.youtube.com/watch?v=Fah-LJJaPWg'))
+    print(get_youtube('https://www.youtube.com/watch?v=Fah-LJJaPWg', True))

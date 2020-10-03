@@ -83,6 +83,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith('!ytv'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        print(urls)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
         if payload['file']:
