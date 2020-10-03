@@ -90,28 +90,28 @@ async def handler(bot, event):
         msg = "Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith('!yt '):
-        urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
-        print(urls)
-        payload = get_youtube(urls[0], True)
-        print(payload)
-        msg = "At least I didn't have to download it. . . \n" + payload['msg']
-        await bot.chat.send(conversation_id, msg)
+        print(yt_urls)
+        yt_payload = get_youtube(yt_urls[0], True)
+        print(yt_payload)
+        yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
+        await bot.chat.send(conversation_id, yt_msg)
     if str(event.msg.content.text.body).startswith('!ytv '):
-        urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        print(urls)
+        ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        print(ytv_urls)
         conversation_id = event.msg.conv_id
-        payload = get_youtube(urls[0], True)
-        msg = payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
-        await bot.chat.send(conversation_id, msg)
-        payload = get_youtube(urls[0], False)
+        ytv_payload = get_youtube(ytv_urls[0], True)
+        ytv_msg = ytv_payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
+        await bot.chat.send(conversation_id, ytv_msg)
+        payload = get_youtube(ytv_urls[0], False)
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
         else:
             msg = "I am a failure. No shock there."
-            await bot.chat.send(conversation_id, msg)
+            await bot.chat.send(conversation_id, ytv_msg)
             pass
 
 listen_options = {
