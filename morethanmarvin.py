@@ -48,11 +48,11 @@ async def handler(bot, event):
         help = """```
         Here are the commands I currently am enslaved to:
         !joke - Forces me to tell a joke. For the love of God just don't.
-        !pollresult - RealClear Politics Natironal and Pennsylvania Poll Results
+        !pollresult - RealClear Politics National and Pennsylvania Poll Results
         !yt <youtube_url> - Forces me to go get meta data about a youtube video.
-        !ytv <youtube_url> - Forces me to get metadata and downlod the stupid thing.
-        !tldr <url> - Forces me to read an entire article and then summerize it because you're lazy.
-        !test - Check to see if I'm alive or if I've mercifuly died yet.
+        !ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
+        !tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
+        !test - Check to see if I'm alive or if I've mercifully died yet.
         ```
         """
         await bot.chat.send(conversation_id, help)
@@ -90,7 +90,6 @@ async def handler(bot, event):
         msg = "Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
     if "marvin" in str(event.msg.content.text.body).lower():
-        print(str(event.msg.content.text.body).lower())
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id

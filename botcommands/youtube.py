@@ -23,9 +23,12 @@ class MyLogger(object):
         pass
 
     def debug(self, msg):
-        info.append(msg)
-        # print(msg)
-        pass
+        try:
+            jmsg= json.loads(msg)
+            info.append(jmsg)
+        except Exception as e:
+            # print(e)
+            pass
 
     def warning(self, msg):
         # print(msg)
@@ -55,8 +58,8 @@ def get_youtube(url, simulate):
             print(url)
             dl = ydl.download([url])
 
-        yt_info = json.loads(info[1])
-        print(yt_info['webpage_url'])
+        yt_info = info[0]
+        # print(info)
         # for i in yt_info:
         #     print(yt_info[i])
 
@@ -87,8 +90,10 @@ def get_youtube(url, simulate):
 
 
 if __name__ == "__main__":
-    print(get_youtube('https://www.youtube.com/watch?v=WcWA1LoeWU4', True))
-    print(get_youtube('https://www.youtube.com/watch?v=u95wgmBZ99A', True))
-    print(get_youtube('https://www.youtube.com/watch?v=UZPPVfMrfug', True))
+    # print(get_youtube('https://www.youtube.com/watch?v=WcWA1LoeWU4', True))
+    # print(get_youtube('https://www.youtube.com/watch?v=u95wgmBZ99A', True))
+    # print(get_youtube('https://www.youtube.com/watch?v=UZPPVfMrfug', True))
+    # print(get_youtube('https://www.dailymotion.com/video/x7wl5ns', True))
+    print(get_youtube('https://www.cnn.com/2020/10/02/politics/kellyanne-conway-positive-for-covid-19/index.html', True))
 
 
