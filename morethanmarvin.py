@@ -92,7 +92,9 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!yt '):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
+        print(urls)
         payload = get_youtube(urls[0], True)
+        print(payload)
         msg = "At least I didn't have to download it. . . \n" + payload['msg']
         await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith('!ytv '):
@@ -115,7 +117,7 @@ async def handler(bot, event):
 listen_options = {
     "local": False,
     "wallet": False,
-    "dev": False,
+    "dev": True,
     "hide-exploding": False,
     "convs": True,
     "filter_channel": {"name": "morethanbits", "topic_name": "test", "members_type": "team"},
