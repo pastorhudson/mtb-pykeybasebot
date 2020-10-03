@@ -50,8 +50,8 @@ def get_youtube(url, simulate):
             dl = ydl.download([url])
 
         yt_info = json.loads(info[1])
-        # for i in yt_info:
-            # print(i)
+        for i in yt_info:
+            print(i)
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
@@ -60,7 +60,7 @@ def get_youtube(url, simulate):
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
                    }
-        msg = "\n".join(["```", yt_info["fulltitle"],
+        msg = "\n".join([yt_info["thumbnail"], "At least I didn't have to download it. . .", "```", yt_info["fulltitle"],
                          f"Channel: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
                          "```",
