@@ -89,6 +89,11 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = "Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
+    if "marvin" in str(event.msg.content.text.body):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, msg_id, ":slowclap:")
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
