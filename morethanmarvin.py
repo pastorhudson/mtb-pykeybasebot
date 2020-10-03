@@ -86,13 +86,8 @@ async def handler(bot, event):
         print(urls)
         conversation_id = event.msg.conv_id
         payload = get_youtube(urls[0], True)
-        if payload['file']:
-            await bot.chat.attach(channel=conversation_id,
-                                  filename=payload['file'],
-                                  title=payload['msg'] + "\nSigh, I guess I'll download the file now.")
-        else:
-            msg = payload['msg']
-            await bot.chat.send(conversation_id, msg)
+        msg = payload['msg'] + "At least I didn't have to download it. . ."
+        await bot.chat.send(conversation_id, msg)
         payload = get_youtube(urls[0], False)
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
