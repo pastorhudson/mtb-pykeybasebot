@@ -16,12 +16,15 @@ from pyjokes import pyjokes
 from botcommands.tldr import get_tldr
 import re
 import random
+import pykeybasebot.types.chat1 as chat1
+from pykeybasebot import Bot
+from botcommands.youtube import get_youtube
+
+
+
 
 
 load_dotenv('secret.env')
-
-import pykeybasebot.types.chat1 as chat1
-from pykeybasebot import Bot
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -33,6 +36,7 @@ if "win32" in sys.platform:
 
 
 async def handler(bot, event):
+
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
@@ -69,7 +73,21 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = 'PASS!'
-        await bot.chat.send(conversation_id, msg)
+        # await bot.chat.send(conversation_id, msg)
+        await bot.chat.attach(channel=conversation_id, filename=f'{os.path.abspath("./botcommands")}/testmp4.mp4', title='Test')
+    if str(event.msg.content.text.body).startswith('!yt'):
+        urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        payload = get_youtube(urls[0])
+        if payload['file']:
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=payload['file'],
+                                  title="\n".join([payload['title'], payload['author']]))
+        else:
+            msg = "\n".join([payload['title'], payload['author']])
+            await bot.chat.send(conversation_id, msg)
     # channel = event.msg.channel
     # msg_id = event.msg.id
     # await bot.chat.react(channel, msg_id, ":clap:")
