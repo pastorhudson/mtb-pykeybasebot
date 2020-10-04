@@ -55,12 +55,12 @@ def get_covid(state=None, county=None):
         for st in response.json():
             print(st['Country'])
             if st['Country'].lower() == country.lower():
-                message += f"Confirmed: {st['Confirmed']}\n" \
-                           f"Deaths: {st['Deaths']}\n" \
-                           f"Recovered: {st['Recovered']}\n" \
-                           f"Critical: {st['Critical']}\n" \
-                           f"Confirmed Today: {st['Confirmed Today']}\n" \
-                           f"Deaths Today: {st['Deaths Today']}\n"
+                message += f"Confirmed: {format(st['Confirmed'], ',d')}\n" \
+                           f"Deaths: {format(st['Deaths'], ',d')}\n" \
+                           f"Recovered: {format(st['Recovered'], ',d')}\n" \
+                           f"Critical: {format(st['Critical'], ',d')}\n" \
+                           f"Confirmed Today: {format(st['Confirmed Today'], ',d')}\n" \
+                           f"Deaths Today: {format(st['Deaths Today'], ',d')}\n"
         message += "```"
 
         return message
@@ -73,18 +73,18 @@ def get_covid(state=None, county=None):
         need_data = True
         for st in response.json():
             if st['State'] == str(state) and need_data:
-                message += f"Confirmed: {st['Confirmed']}\n" \
-                           f"Deaths: {st['Deaths']}\n" \
-                           f"Active: {st['Active']}\n" \
-                           f"Confirmed Today: {st['Confirmed Today']}\n" \
-                           f"Deaths Today: {st['Deaths Today']}\n" \
-                           f"Tests: {st['Tests']}\n" \
-                           f"Tests Per Million: {st['Tests Per Million']}\n" \
-                           f"Death Rate: {st['Death Rate']}\n" \
-                           f"Last updated: {st['Last updated']}\n" \
-                           f"Population: {st['Population']}\n" \
-                           f"Cases Per Million: {st['Cases Per Million']}\n" \
-                           f"Deaths Per Million: {st['Deaths Per Million']}" \
+                message += f"Confirmed: {format(st['Confirmed'], ',d')}\n" \
+                           f"Deaths: {format(st['Deaths'], ',d')}\n" \
+                           f"Active: {format(st['Active'], ',d')}\n" \
+                           f"Confirmed Today: {format(st['Confirmed Today'], ',d')}\n" \
+                           f"Deaths Today: {format(st['Deaths Today'], ',d')}\n" \
+                           f"Tests: {format(st['Tests'], ',d')}\n" \
+                           f"Tests Per Million: {format(st['Tests Per Million'], ',d')}\n" \
+                           f"Death Rate: {format(st['Death Rate'], ',d')}\n" \
+                           f"Last updated: {format(st['Last updated'], ',d')}\n" \
+                           f"Population: {format(st['Population'], ',d')}\n" \
+                           f"Cases Per Million: {format(st['Cases Per Million'], ',d')}\n" \
+                           f"Deaths Per Million: {format(st['Deaths Per Million'], ',d')}" \
                            f"```"
 
         return message
@@ -108,12 +108,12 @@ def get_covid(state=None, county=None):
     need_data = True
     for d in data[:2]:
         if d['Type'] == 'Confirmed' and need_data:
-            message += f"Confirmed Cases: {d['values']}\n"
+            message += f"Confirmed Cases: {format(d['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
             need_data = False
         need_data = True
         if d['Type'] == 'Deaths' and need_data:
-            message += f"Deaths: {d['values']}\n"
+            message += f"Deaths: {format(d['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
             need_data = False
     message += "```"
@@ -124,5 +124,5 @@ def get_covid(state=None, county=None):
 if __name__ == '__main__':
     pass
     # get_covid('Tennessee', 'Dyer')
-    print(get_covid('TX'))
+    print(get_covid('US'))
 
