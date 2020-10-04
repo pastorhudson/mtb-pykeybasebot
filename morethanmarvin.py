@@ -19,6 +19,7 @@ import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
 from botcommands.youtube import get_youtube
+from botcommands.covid import get_covid
 
 
 
@@ -36,6 +37,18 @@ if "win32" in sys.platform:
 
 
 async def handler(bot, event):
+
+    # res = await bot.execute(
+    #     {
+    #         "method": "delete",
+    #         "params": {
+    #             "options": {"channel": channel.to_dict(), "message_id": message_id}
+    #         },
+    #     }
+    # )
+    # conversation_id = event.msg.conv_id
+    #
+    # await bot.chat.send(conversation_id, )
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
@@ -118,6 +131,15 @@ async def handler(bot, event):
             msg = "I am a failure. No shock there."
             await bot.chat.send(conversation_id, ytv_msg)
             pass
+    if str(event.msg.content.text.body).startswith('!covid'):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        state = str(event.msg.content.text.body).split(' ')[1]
+        county = str(event.msg.content.text.body).split(' ')[2]
+        msg = get_covid(state, county)
+        await bot.chat.send(conversation_id, msg)
+
 
 listen_options = {
     "local": False,
