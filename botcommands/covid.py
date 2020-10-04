@@ -71,13 +71,13 @@ def get_covid(state=None, county=None):
         # print("I'm not a country")
         url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=States%20Realtime%20API&exportFormat=json"
         response = requests.request("GET", url, headers={}, data={})
-        print("I'm a state")
-        print(state)
+        # print("I'm a state")
+        # print(state)
         message += f"COVID-19 Data for {state}\n"
         need_data = True
         for st in response.json():
-            print(st)
-            print(type(st['Confirmed']))
+            # print(st)
+            # print(type(st['Confirmed']))
             if st['State'] == str(state) and need_data:
                 message += f"Confirmed: {format(st['Confirmed'], ',d')}\n" \
                            f"Deaths: {format(st['Deaths'], ',d')}\n" \
