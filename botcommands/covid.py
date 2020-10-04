@@ -47,10 +47,10 @@ def get_covid(state, county):
               f"```\n" \
               f"Confirmed Cases for {county} County {state}\n" \
               f"7 day Growth %: {data2[0]['7 day growth %']}\n" \
-              f"Total Count: {data[0]['values']}\n" \
+              f"Total Count: {data[1]['values']}\n" \
               f"Deaths for {county} County {state}\n" \
               f"Growth %: {data2[1]['7 day growth %']}\n" \
-              f"Total Count: {data[1]['values']}\n" \
+              f"Total Count: {data[0]['values']}\n" \
               f"```"
     return message
 
