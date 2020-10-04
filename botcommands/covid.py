@@ -60,7 +60,7 @@ def get_covid(state, county=None):
     payload = {}
     headers = {}
 
-    response = requests.request("GET", url, headers=headers, data=payload)
+    # response = requests.request("GET", url, headers=headers, data=payload)
     response2 = requests.request("GET", url2, headers=headers, data=payload)
 
     data = []

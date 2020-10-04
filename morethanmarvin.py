@@ -137,7 +137,10 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         state = str(event.msg.content.text.body).split(' ')[1]
-        county = str(event.msg.content.text.body).split(' ')[2]
+        if str(event.msg.content.text.body).split(' ')[2]:
+            county = str(event.msg.content.text.body).split(' ')[2]
+        else:
+            county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
 
