@@ -2,6 +2,8 @@ import requests
 import json
 from datetime import date
 import random
+import us
+
 
 #
 # States Testing Data Current	covidtracking.com
@@ -23,11 +25,36 @@ observations = "I don't know why you insist on making me look up the morbid numb
                "All hope is lost."
 
 
-def get_covid(state, county):
-    # today = date.today()
-    # dd/mm/YY
-    # today = today.strftime("%m/%d/%Y")
-    url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=Latest%20Day%20County%20Level%20Data&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}"
+def get_covid(state, county=None):
+    state = us.states.lookup(state)
+    message = f"{random.choice(observations)}" \
+              f"```\n"
+
+    if not county:
+        url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=States%20Realtime%20API&exportFormat=json"
+        response = requests.request("GET", url, headers={}, data={})
+        message += f"COVID-19 Data for {state}\n"
+        need_data = True
+        for st in response.json():
+            if st['State'] == str(state) and need_data:
+                message += f"Confirmed: {st['Confirmed']}\n" \
+                           f"Deaths: {st['Deaths']}\n" \
+                           f"Active: {st['Active']}\n" \
+                           f"Confirmed Today: {st['Confirmed Today']}\n" \
+                           f"Deaths Today: {st['Deaths Today']}\n" \
+                           f"Tests: {st['Tests']}\n" \
+                           f"Tests Per Million: {st['Tests Per Million']}\n" \
+                           f"Death Rate: {st['Death Rate']}\n" \
+                           f"Last updated: {st['Last updated']}\n" \
+                           f"Population: {st['Population']}\n" \
+                           f"Cases Per Million: {st['Cases Per Million']}\n" \
+                           f"Deaths Per Million: {st['Deaths Per Million']}" \
+                           f"```"
+
+        return message
+
+
+    # url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=Latest%20Day%20County%20Level%20Data&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}"
     url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}"
 
     payload = {}
@@ -50,9 +77,7 @@ def get_covid(state, county):
             data.append(r)
     # print(data)
 
-    message = f"{random.choice(observations)}" \
-              f"```\n" \
-              f"COVID-19 Data for {county} County {state}\n" \
+    message += f"COVID-19 Data for {county} County {state}\n" \
 
     need_data = True
     for d in data[:2]:
@@ -74,5 +99,5 @@ def get_covid(state, county):
 if __name__ == '__main__':
     pass
     # get_covid('Tennessee', 'Dyer')
-    # get_covid('Pennsylvania', 'Fayette')
+    get_covid('pa')
 
