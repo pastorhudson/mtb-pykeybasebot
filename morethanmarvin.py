@@ -124,7 +124,10 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        state = str(event.msg.content.text.body).split(' ')[1]
+        try:
+            state = str(event.msg.content.text.body).split(' ')[1]
+        except IndexError:
+            state = None
         try:
             county = str(event.msg.content.text.body).split(' ')[2]
         except IndexError:
