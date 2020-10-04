@@ -68,24 +68,26 @@ def get_covid(state=None, county=None):
         # print("I'm not a country")
         url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=States%20Realtime%20API&exportFormat=json"
         response = requests.request("GET", url, headers={}, data={})
+        print("I'm a state")
+        print(state)
         message += f"COVID-19 Data for {state}\n"
         need_data = True
         for st in response.json():
+            print(st)
+            print(type(st['Confirmed']))
             if st['State'] == str(state) and need_data:
-                message += f"Confirmed: {['Confirmed']}\n" \
+                message += f"Confirmed: {format(st['Confirmed'], ',d')}\n" \
                            f"Deaths: {format(st['Deaths'], ',d')}\n" \
                            f"Active: {format(st['Active'], ',d')}\n" \
                            f"Confirmed Today: {format(st['Confirmed Today'], ',d')}\n" \
                            f"Deaths Today: {format(st['Deaths Today'], ',d')}\n" \
                            f"Tests: {format(st['Tests'], ',d')}\n" \
                            f"Tests Per Million: {format(st['Tests Per Million'], ',d')}\n" \
-                           f"Death Rate: {format(st['Death Rate'], ',d')}\n" \
-                           f"Last updated: {format(st['Last updated'], ',d')}\n" \
+                           f"Death Rate: {st['Death Rate']}\n" \
                            f"Population: {format(st['Population'], ',d')}\n" \
-                           f"Cases Per Million: {format(st['Cases Per Million'], ',d')}\n" \
-                           f"Deaths Per Million: {format(st['Deaths Per Million'], ',d')}" \
+                           f"Cases Per Million: {st['Cases Per Million']}\n" \
+                           f"Deaths Per Million: {st['Deaths Per Million']}\n" \
                            f"```"
-
         return message
 
 
@@ -123,5 +125,5 @@ def get_covid(state=None, county=None):
 if __name__ == '__main__':
     pass
     # get_covid('Tennessee', 'Dyer')
-    print(get_covid('US'))
+    print(get_covid('pa'))
 
