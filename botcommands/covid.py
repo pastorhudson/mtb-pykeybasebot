@@ -30,8 +30,11 @@ observations = ["I don't know why you insist on making me look up these morbid n
 def get_covid(state=None, county=None):
     message = f"{random.choice(observations)}\n" \
               f"```\n"
-    county = 'US'
-
+    lookup_county = None
+    if county:
+        lookup_county = True
+    else:
+        lookup_county = False
     try:
         if us.states.lookup(state):
             state = us.states.lookup(state)
@@ -64,7 +67,7 @@ def get_covid(state=None, county=None):
 
         return message
 
-    if not lookup_country:
+    if not lookup_country and not lookup_county:
         # print("I'm not a country")
         url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=States%20Realtime%20API&exportFormat=json"
         response = requests.request("GET", url, headers={}, data={})
