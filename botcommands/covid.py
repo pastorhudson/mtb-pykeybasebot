@@ -72,7 +72,7 @@ def get_covid(state=None, county=None):
         need_data = True
         for st in response.json():
             if st['State'] == str(state) and need_data:
-                message += f"Confirmed: {format(st['Confirmed'], ',d')}\n" \
+                message += f"Confirmed: {['Confirmed']}\n" \
                            f"Deaths: {format(st['Deaths'], ',d')}\n" \
                            f"Active: {format(st['Active'], ',d')}\n" \
                            f"Confirmed Today: {format(st['Confirmed Today'], ',d')}\n" \
