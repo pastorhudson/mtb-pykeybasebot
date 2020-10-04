@@ -66,6 +66,7 @@ async def handler(bot, event):
         !ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
         !tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
         !test - Check to see if I'm alive or if I've mercifully died yet.
+        !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County 
         ```
         """
         await bot.chat.send(conversation_id, help)
