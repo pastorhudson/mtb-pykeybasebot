@@ -35,15 +35,14 @@ def get_covid(state=None, county=None):
     try:
         if us.states.lookup(state):
             state = us.states.lookup(state)
-            # print("I'm a state!")
             lookup_country = False
         else:
             country = state
-            message += f"COVID-19 Data for {country}\n"
+            message += f"COVID-19 Data for {country.capitalize()}\n"
             lookup_country = True
     except TypeError:
         country = 'US'
-        message += f"COVID-19 Data for {country}\n"
+        message += f"COVID-19 Data for {country.capitalize()}\n"
         lookup_country = True
 
     if lookup_country:
