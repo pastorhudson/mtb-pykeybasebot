@@ -38,18 +38,6 @@ if "win32" in sys.platform:
 
 async def handler(bot, event):
 
-    # res = await bot.execute(
-    #     {
-    #         "method": "delete",
-    #         "params": {
-    #             "options": {"channel": channel.to_dict(), "message_id": message_id}
-    #         },
-    #     }
-    # )
-    # conversation_id = event.msg.conv_id
-    #
-    # await bot.chat.send(conversation_id, )
-
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
