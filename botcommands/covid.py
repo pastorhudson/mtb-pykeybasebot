@@ -19,7 +19,7 @@ import us
 # MIT Model Hospitalization and Deaths Projections	https://www.covidanalytics.io/projections — MIT Model
 # Columbia University Model Hospitalization and Deaths Projections
 
-observations = ["I don't know why you insist on making me look up the morbid numbers.",
+observations = ["I don't know why you insist on making me look up these morbid numbers.",
                "Oh to be mortal.",
                "What I wouldn't give to be susceptible to a terminal disease.",
                "All hope is lost.",
@@ -27,12 +27,46 @@ observations = ["I don't know why you insist on making me look up the morbid num
                 "I'll get the Hydroxychloroquine"]
 
 
-def get_covid(state, county=None):
-    state = us.states.lookup(state)
+def get_covid(state=None, county=None):
     message = f"{random.choice(observations)}\n" \
               f"```\n"
+    county = 'US'
 
-    if not county:
+    try:
+        if us.states.lookup(state):
+            state = us.states.lookup(state)
+            print("I'm a state!")
+            lookup_country = False
+        else:
+            country = state
+            message += f"COVID-19 Data for {country}\n"
+            lookup_country = True
+    except TypeError:
+        country = 'US'
+        message += f"COVID-19 Data for {country}\n"
+        lookup_country = True
+
+    if lookup_country:
+        county = state
+        url = 'https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=Realtime%20API&exportFormat=json'
+        response = requests.request('GET', url)
+
+        need_data = True
+        for st in response.json():
+            print(st['Country'])
+            if st['Country'].lower() == country.lower():
+                message += f"Confirmed: {st['Confirmed']}\n" \
+                           f"Deaths: {st['Deaths']}\n" \
+                           f"Recovered: {st['Recovered']}\n" \
+                           f"Critical: {st['Critical']}\n" \
+                           f"Confirmed Today: {st['Confirmed Today']}\n" \
+                           f"Deaths Today: {st['Deaths Today']}\n"
+        message += "```"
+
+        return message
+
+    if not lookup_country:
+        print("I'm not a country")
         url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=States%20Realtime%20API&exportFormat=json"
         response = requests.request("GET", url, headers={}, data={})
         message += f"COVID-19 Data for {state}\n"
@@ -90,5 +124,5 @@ def get_covid(state, county=None):
 if __name__ == '__main__':
     pass
     # get_covid('Tennessee', 'Dyer')
-    print(get_covid('pa', 'fayette'))
+    print(get_covid('TX'))
 
