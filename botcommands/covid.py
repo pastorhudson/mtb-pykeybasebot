@@ -35,7 +35,7 @@ def get_covid(state=None, county=None):
     try:
         if us.states.lookup(state):
             state = us.states.lookup(state)
-            print("I'm a state!")
+            # print("I'm a state!")
             lookup_country = False
         else:
             country = state
@@ -53,7 +53,7 @@ def get_covid(state=None, county=None):
 
         need_data = True
         for st in response.json():
-            print(st['Country'])
+            # print(st['Country'])
             if st['Country'].lower() == country.lower():
                 message += f"Confirmed: {format(st['Confirmed'], ',d')}\n" \
                            f"Deaths: {format(st['Deaths'], ',d')}\n" \
@@ -66,7 +66,7 @@ def get_covid(state=None, county=None):
         return message
 
     if not lookup_country:
-        print("I'm not a country")
+        # print("I'm not a country")
         url = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=States%20Realtime%20API&exportFormat=json"
         response = requests.request("GET", url, headers={}, data={})
         message += f"COVID-19 Data for {state}\n"
