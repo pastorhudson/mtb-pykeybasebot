@@ -69,7 +69,7 @@ def get_covid(state, county=None):
         if r['County'].lower() == county.lower() + " county":
             data.append(r)
 
-    message += f"COVID-19 Data for {county} County {state}\n" \
+    message += f"COVID-19 Data for {county.capitalize()} County {state}\n" \
 
     need_data = True
     for d in data[:2]:
