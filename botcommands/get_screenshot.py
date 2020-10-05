@@ -36,7 +36,7 @@ def get_screenshot(url):
     driver.get(url)
     # domain = get_domain(url)
     try:
-        element = WebDriverWait(driver, 8).until(
+        element = WebDriverWait(driver, 12).until(
             EC.presence_of_element_located((By.XPATH, '/html/body/'))
         )
 
