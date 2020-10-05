@@ -31,7 +31,7 @@ def get_screenshot(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
 
-    driver = webdriver.Chrome('../chromedriver/chromedriver', options=chrome_options)
+    driver = webdriver.Chrome('./chromedriver/chromedriver', options=chrome_options)
 
     driver.get(url)
     # domain = get_domain(url)
