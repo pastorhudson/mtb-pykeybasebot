@@ -20,7 +20,7 @@ import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
 from botcommands.youtube import get_youtube
 from botcommands.covid import get_covid
-
+from botcommands.get_screenshot import get_screenshot
 
 
 
@@ -65,22 +65,23 @@ async def handler(bot, event):
                                          {"name": "yt",
                                           "description": "<url> Forces me to go get meta data about a youtube video."},
                                          {"name": "ytv",
-                                          "description": "<url> Forces me to get metadata and download the stupid thing."}
+                                          "description": "<url> Forces me to get metadata and download the stupid thing."},
+                                         {"name": "screenshot",
+                                          "description": "<url> Forces me go to a url and send a screenshot."}
                                      ]}]}}}
 
 
         )
+
+    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
+        return
+    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
+        return
     if event.msg.content.text.body == '!update':
         conversation_id = event.msg.conv_id
         msg_id = event.msg.id
         await advertize_commands(bot, event.msg.conv_id, event.msg.id)
         await bot.chat.react(conversation_id, msg_id, ":disappointed:")
-
-
-    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        return
-    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        return
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -96,13 +97,7 @@ Here are the commands I currently am enslaved to:
 !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```
         """
         await bot.chat.send(conversation_id, help)
-    # if event.msg.content.text.body == '!update':
-    #     conversation_id = event.msg.conv_id
-    #     msg_id = event.msg.id
-    #     await advertize_commands(bot, event.msg.conv_id, event.msg.id)
-    #     await bot.chat.react(conversation_id, msg_id, ":disappointed:")
 
-    # print(event.msg)
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -180,6 +175,16 @@ Here are the commands I currently am enslaved to:
             county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
+        if str(event.msg.content.text.body).startswith('!screenshot'):
+            screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            conversation_id = event.msg.conv_id
+            screenshot_payload = get_screenshot(screenshot_urls[0])
+            print(payload)
+            if screenshot_payload['file']:
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=screenshot_payload['file'],
+                                      title=screenshot_payload['msg'])
+            # await bot.chat.send(conversation_id, yt_msg)
 
 
 listen_options = {
