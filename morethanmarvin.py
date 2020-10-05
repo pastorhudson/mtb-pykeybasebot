@@ -81,7 +81,7 @@ async def handler(bot, event):
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
-    if event.msg.content.text.body == "!help".split(' ')[0]:
+    if str(event.msg.content.text.body).split(' ')[0] == "!help":
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
