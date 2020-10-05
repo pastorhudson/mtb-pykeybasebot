@@ -50,8 +50,8 @@ async def handler(bot, event):
                                 "advertisements": [
                                     {"type": "public",
                                      "commands": [
-                                         {"name": "covid <State> <County>",
-                                          "description": "Force me to morbidly retrieve covid numbers for a State County or State."},
+                                         {"name": "covid",
+                                          "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
                                          {"name": "help",
                                           "description": "Get help using this bot"},
                                          {"name": "joke",
@@ -81,7 +81,7 @@ async def handler(bot, event):
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
-    if event.msg.content.text.body == "!help ":
+    if event.msg.content.text.body == "!help".split(' ')[0]:
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
