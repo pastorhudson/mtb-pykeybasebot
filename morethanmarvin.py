@@ -38,6 +38,25 @@ if "win32" in sys.platform:
 
 async def handler(bot, event):
 
+    async def advertize_commands(
+        bot, channel: chat1.ChatChannel, message_id: int
+    ) -> chat1.SendRes:
+        await bot.ensure_initialized()
+        res = await bot.execute(
+            {
+                "method": "advertisecommands",
+                "params": {
+                    "options": {"alias": "marvin",
+                                "advertisements": [
+                                    {"type": "public",
+                                     "commands": [
+                                         {"name": "help",
+                                          "description": "Get help using this bot"}]}]}}}
+
+
+        )
+        return chat1.SendRes.from_dict(res)
+
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
