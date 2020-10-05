@@ -175,16 +175,17 @@ Here are the commands I currently am enslaved to:
             county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
-        if str(event.msg.content.text.body).startswith('!screenshot'):
-            screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-            conversation_id = event.msg.conv_id
-            screenshot_payload = get_screenshot(screenshot_urls[0])
-            print(payload)
-            if screenshot_payload['file']:
-                await bot.chat.attach(channel=conversation_id,
-                                      filename=screenshot_payload['file'],
-                                      title=screenshot_payload['msg'])
-            # await bot.chat.send(conversation_id, yt_msg)
+    if str(event.msg.content.text.body).startswith('!screenshot'):
+        screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        print(screenshot_urls)
+        conversation_id = event.msg.conv_id
+        screenshot_payload = get_screenshot(screenshot_urls[0])
+        print(screenshot_payload)
+        if screenshot_payload['file']:
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=screenshot_payload['file'],
+                                  title=screenshot_payload['msg'])
+        # await bot.chat.send(conversation_id, yt_msg)
 
 
 listen_options = {
