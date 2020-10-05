@@ -48,6 +48,7 @@ def get_screenshot(url):
 
     driver.quit()
     payload = {"msg": random.choice(observations), "file": "./screenshots/screenshot.png"}
+    print(payload)
     return payload
 
 
