@@ -4,10 +4,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urlparse
+import random
 
 
 # //meta[@property='og:title']
 # //meta[@property='og:description']
+
+observations = [":disappointed: :camera:",
+                "Oh sure I'll load a random url to take a picture. What could possibly go wrong?",
+                "I hope it comes back blank.",
+                "It would literally be quicker to just click the link."]
 
 def get_domain(url):
     print(urlparse(url).netloc)
@@ -38,9 +44,11 @@ def get_screenshot(url):
         print(e)
     finally:
 
-        driver.save_screenshot("./screenshots/screenshot.png")
+        file = driver.save_screenshot("./screenshots/screenshot.png")
 
     driver.quit()
+    payload = {"msg": random.choice(observations), "file": "./screenshots/screenshot.png"}
+    return payload
 
 
 if __name__ == "__main__":
