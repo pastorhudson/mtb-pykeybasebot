@@ -40,6 +40,8 @@ def get_covid(state=None, county=None):
             state = us.states.lookup(state)
             lookup_country = False
         else:
+            if state == '':
+                state = 'US'
             country = state
             message += f"COVID-19 Data for {country.capitalize()}\n"
             lookup_country = True
@@ -128,5 +130,5 @@ def get_covid(state=None, county=None):
 if __name__ == '__main__':
     pass
     # get_covid('Tennessee', 'Dyer')
-    print(get_covid('pa'))
+    print(get_covid(''))
 

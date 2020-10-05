@@ -130,11 +130,11 @@ Here are the commands I currently am enslaved to:
         conversation_id = event.msg.conv_id
         msg = "Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
-    # if "marvin" in str(event.msg.content.text.body).lower():
-    #     channel = event.msg.channel
-    #     msg_id = event.msg.id
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, msg_id, ":slowclap:")
+    if "marvin" in str(event.msg.content.text.body).lower():
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, msg_id, ":slowclap:")
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
@@ -163,6 +163,7 @@ Here are the commands I currently am enslaved to:
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
+        print(str(event.msg.content.text.body).split(' '))
         try:
             state = str(event.msg.content.text.body).split(' ')[1]
         except IndexError:
