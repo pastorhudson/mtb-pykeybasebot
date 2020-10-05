@@ -97,31 +97,41 @@ def get_covid(state=None, county=None):
 
 
     url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}"
-
+    url3 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=Latest%20Day%20County%20Level%20Data&exportFormat=json"
     payload = {}
     headers = {}
 
     response2 = requests.request("GET", url2, headers=headers, data=payload)
-
+    response3 = requests.request("GET", url3, headers=headers, data=payload)
     data = []
+    data2 = []
 
     for r in response2.json():
         if r['County'].lower() == county.lower() + " county":
             data.append(r)
+    for r in response3.json():
+        if r['County'].lower() == county.lower() + " county" and r['State'].lower() == str(state).lower():
+            data2.append(r)
+    print(data2)
 
     message += f"COVID-19 Data for {county.capitalize()} County {state}\n" \
 
     need_confirmed_data = True
     need_death_data = True
 
+    # print(data)
     for d in data[:2]:
         if d['Type'] == 'Confirmed' and need_confirmed_data:
-            message += f"Confirmed Cases: {format(d['values'], ',d')}\n"
+            for d2 in data2:
+                if d2['Type'] == 'Confirmed' and need_confirmed_data:
+                    message += f"Confirmed Cases: {format(d2['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
             need_confirmed_data = False
         need_data = True
         if d['Type'] == 'Deaths' and need_death_data:
-            message += f"Deaths: {format(d['values'], ',d')}\n"
+            for d2 in data2:
+                if d2['Type'] == 'Deaths' and need_death_data:
+                    message += f"Deaths: {format(d['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
             need_death_data = False
     message += "```"
@@ -131,6 +141,6 @@ def get_covid(state=None, county=None):
 
 if __name__ == '__main__':
     # pass
-    print(get_covid('Tn', 'Dyer'))
+    print(get_covid('pa', 'fayette'))
     # print(get_covid(''))
 
