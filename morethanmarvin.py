@@ -72,8 +72,6 @@ async def handler(bot, event):
         )
         # return bot.chat.SendRes.from_dict(res)
 
-    print(event.msg)
-
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
@@ -98,6 +96,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg_id = event.msg.id
         await advertize_commands(bot, event.msg.conv_id, event.msg.id)
+        await bot.chat.react(conversation_id, msg_id, ":disappointed:")
 
     if event.msg.content.text.body == "!pollresult":
         channel = event.msg.channel
