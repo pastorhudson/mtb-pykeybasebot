@@ -42,26 +42,43 @@ async def handler(bot, event):
         bot, channel: chat1.ChatChannel, message_id: int
     ) -> chat1.SendRes:
         await bot.ensure_initialized()
-        res = await bot.execute(
+        res = await bot.chat.execute(
             {
                 "method": "advertisecommands",
                 "params": {
-                    "options": {"alias": "marvin",
+                    "options": {"alias": "morethanmarvin",
                                 "advertisements": [
                                     {"type": "public",
                                      "commands": [
+                                         {"name": "covid",
+                                          "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
                                          {"name": "help",
-                                          "description": "Get help using this bot"}]}]}}}
+                                          "description": "Get help using this bot"},
+                                         {"name": "joke",
+                                          "description": "Forces me to tell a joke. For the love of God just don't."},
+                                         {"name": "pollresult",
+                                          "description": "RealClear Politics National and Pennsylvania Poll Results."},
+                                         {"name": "test",
+                                          "description": "Forces me to tell a joke. For the love of God just don't."},
+                                         {"name": "tldr",
+                                          "description": "<url> Forces me to read an entire article and then summarize it because you're lazy."},
+                                         {"name": "yt",
+                                          "description": "<url> Forces me to go get meta data about a youtube video."},
+                                         {"name": "ytv",
+                                          "description": "<url> Forces me to get metadata and download the stupid thing."}
+                                     ]}]}}}
 
 
         )
-        return chat1.SendRes.from_dict(res)
+        # return bot.chat.SendRes.from_dict(res)
+
+    print(event.msg)
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
-    if event.msg.content.text.body == "!help":
+    if event.msg.content.text.body == "!help ":
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
@@ -77,6 +94,11 @@ async def handler(bot, event):
         ```
         """
         await bot.chat.send(conversation_id, help)
+    if event.msg.content.text.body == '!update':
+        conversation_id = event.msg.conv_id
+        msg_id = event.msg.id
+        await advertize_commands(bot, event.msg.conv_id, event.msg.id)
+
     if event.msg.content.text.body == "!pollresult":
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -110,11 +132,11 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = "Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
-    if "marvin" in str(event.msg.content.text.body).lower():
-        channel = event.msg.channel
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, msg_id, ":slowclap:")
+    # if "marvin" in str(event.msg.content.text.body).lower():
+    #     channel = event.msg.channel
+    #     msg_id = event.msg.id
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, msg_id, ":slowclap:")
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
@@ -166,6 +188,5 @@ listen_options = {
 }
 
 bot = Bot(username="morethanmarvin", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler, home_path='./morethanmarvin')
-
 
 asyncio.run(bot.start(listen_options=listen_options))
