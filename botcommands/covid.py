@@ -111,24 +111,26 @@ def get_covid(state=None, county=None):
 
     message += f"COVID-19 Data for {county.capitalize()} County {state}\n" \
 
-    need_data = True
+    need_confirmed_data = True
+    need_death_data = True
+
     for d in data[:2]:
-        if d['Type'] == 'Confirmed' and need_data:
+        if d['Type'] == 'Confirmed' and need_confirmed_data:
             message += f"Confirmed Cases: {format(d['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
-            need_data = False
+            need_confirmed_data = False
         need_data = True
-        if d['Type'] == 'Deaths' and need_data:
+        if d['Type'] == 'Deaths' and need_death_data:
             message += f"Deaths: {format(d['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
-            need_data = False
+            need_death_data = False
     message += "```"
 
     return message
 
 
 if __name__ == '__main__':
-    pass
-    # get_covid('Tennessee', 'Dyer')
-    print(get_covid(''))
+    # pass
+    print(get_covid('Tn', 'Dyer'))
+    # print(get_covid(''))
 

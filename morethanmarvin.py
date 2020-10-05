@@ -50,8 +50,8 @@ async def handler(bot, event):
                                 "advertisements": [
                                     {"type": "public",
                                      "commands": [
-                                         {"name": "covid",
-                                          "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
+                                         {"name": "covid <State> <County>",
+                                          "description": "Force me to morbidly retrieve covid numbers for a State County or State."},
                                          {"name": "help",
                                           "description": "Get help using this bot"},
                                          {"name": "joke",
@@ -70,6 +70,12 @@ async def handler(bot, event):
 
 
         )
+    if event.msg.content.text.body == '!update':
+        conversation_id = event.msg.conv_id
+        msg_id = event.msg.id
+        await advertize_commands(bot, event.msg.conv_id, event.msg.id)
+        await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
@@ -96,7 +102,7 @@ Here are the commands I currently am enslaved to:
         await advertize_commands(bot, event.msg.conv_id, event.msg.id)
         await bot.chat.react(conversation_id, msg_id, ":disappointed:")
 
-    print(event.msg)
+    # print(event.msg)
     if event.msg.content.text.body == "!pollresult ":
         channel = event.msg.channel
         msg_id = event.msg.id
