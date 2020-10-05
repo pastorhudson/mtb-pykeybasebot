@@ -28,29 +28,21 @@ def get_screenshot(url):
     driver = webdriver.Chrome('../chromedriver/chromedriver', options=chrome_options)
 
     driver.get(url)
-    domain = get_domain(url)
-    if domain == 'www.youtube.com' or domain == 'youtube.com' or domain == 'youtu.be':
-        try:
-            element = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="container"]/h1'))
-            )
+    # domain = get_domain(url)
+    try:
+        element = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '/html/body/'))
+        )
 
-            image = f"http://i3.ytimg.com/vi/{get_youtube_id(url)}/maxresdefault.jpg"
-            print(image)
-            description = driver.find_element_by_xpath("//meta[@property='og:description']")
-            print(description.text)
-        except Exception as e:
-            print(e)
-        finally:
-            payload = {"title": driver.title}
-            print(element.text)
-            driver.save_screenshot("./screenshots/screenshot.png")
-    else:
-        print('Nope')
+    except Exception as e:
+        print(e)
+    finally:
+
+        driver.save_screenshot("./screenshots/screenshot.png")
 
     driver.quit()
 
 
 if __name__ == "__main__":
 
-    # get_screenshot('https://www.youtube.com/watch?v=mO3mMYwKkKs')
+    get_screenshot('https://stackoverflow.com/questions/38077571/xpath-for-first-child-element-inside-body-tag')
