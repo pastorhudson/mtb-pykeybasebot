@@ -81,7 +81,7 @@ async def handler(bot, event):
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
-    if str(event.msg.content.text.body).split(' ')[0] == "!help":
+    if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
@@ -96,20 +96,20 @@ Here are the commands I currently am enslaved to:
 !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```
         """
         await bot.chat.send(conversation_id, help)
-    if event.msg.content.text.body == '!update':
-        conversation_id = event.msg.conv_id
-        msg_id = event.msg.id
-        await advertize_commands(bot, event.msg.conv_id, event.msg.id)
-        await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+    # if event.msg.content.text.body == '!update':
+    #     conversation_id = event.msg.conv_id
+    #     msg_id = event.msg.id
+    #     await advertize_commands(bot, event.msg.conv_id, event.msg.id)
+    #     await bot.chat.react(conversation_id, msg_id, ":disappointed:")
 
     # print(event.msg)
-    if event.msg.content.text.body == "!pollresult ":
+    if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
-    if event.msg.content.text.body == "!joke ":
+    if str(event.msg.content.text.body).startswith("!joke"):
         observations = ["It didn't work for me. . .", "I am so sorry.",
                         "I'll be in my room trying to purge my memory banks.",
                         "Why must you keep making me do this?",
@@ -123,7 +123,7 @@ Here are the commands I currently am enslaved to:
         joke += pyjokes.get_joke()
         joke += f"```{random.choice(observations)}"
         await bot.chat.send(conversation_id, joke)
-    if str(event.msg.content.text.body).startswith('!tldr '):
+    if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -141,7 +141,7 @@ Here are the commands I currently am enslaved to:
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, msg_id, ":slowclap:")
-    if str(event.msg.content.text.body).startswith('!yt '):
+    if str(event.msg.content.text.body).startswith('!yt'):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         print(yt_urls)
@@ -149,7 +149,7 @@ Here are the commands I currently am enslaved to:
         print(yt_payload)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
-    if str(event.msg.content.text.body).startswith('!ytv '):
+    if str(event.msg.content.text.body).startswith('!ytv'):
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(ytv_urls)
         conversation_id = event.msg.conv_id
@@ -165,7 +165,7 @@ Here are the commands I currently am enslaved to:
             msg = "I am a failure. No shock there."
             await bot.chat.send(conversation_id, ytv_msg)
             pass
-    if str(event.msg.content.text.body).startswith('!covid '):
+    if str(event.msg.content.text.body).startswith('!covid'):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
