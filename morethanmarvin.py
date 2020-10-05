@@ -85,14 +85,14 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         help = """```
-        Here are the commands I currently am enslaved to:
-        !joke - Forces me to tell a joke. For the love of God just don't.
-        !pollresult - RealClear Politics National and Pennsylvania Poll Results
-        !yt <youtube_url> - Forces me to go get meta data about a youtube video.
-        !ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
-        !tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
-        !test - Check to see if I'm alive or if I've mercifully died yet.
-        !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.
+Here are the commands I currently am enslaved to:
+!joke - Forces me to tell a joke. For the love of God just don't.
+!pollresult - RealClear Politics National and Pennsylvania Poll Results
+!yt <youtube_url> - Forces me to go get meta data about a youtube video.
+!ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
+!tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
+!test - Check to see if I'm alive or if I've mercifully died yet.
+!covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.
         ```
         """
         await bot.chat.send(conversation_id, help)
