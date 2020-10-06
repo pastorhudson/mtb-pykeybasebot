@@ -136,7 +136,7 @@ Here are the commands I currently am enslaved to:
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, msg_id, ":slowclap:")
-    if str(event.msg.content.text.body).startswith('!yt'):
+    if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         print(yt_urls)
