@@ -71,24 +71,29 @@ def get_other_video(url, simulate):
                 'format': 'mp4',
                 'no-cache-dir': True,
                 }
-    with YoutubeDL(ydl_opts) as ydl:
-        dl = ydl.download([url])
-    yt_info = info[0]
-    payload = {"title": yt_info["fulltitle"],
-               "author": yt_info["uploader"],
-               "file": f'{os.path.abspath("./")}/{yt_info["_filename"]}',
-               "duration": convert_seconds(yt_info["duration"]),
-               'url': yt_info['webpage_url']
-               }
-    msg = "\n".join(["```", yt_info["fulltitle"],
-                     f"Author: {yt_info['uploader']}",
-                     f"Duration: {convert_seconds(yt_info['duration'])}",
-                     "```",
-                     yt_info['webpage_url']])
-    payload['msg'] = msg
-    info = []
-
-    return payload
+    try:
+        with YoutubeDL(ydl_opts) as ydl:
+            dl = ydl.download([url])
+        yt_info = info[0]
+        payload = {"title": yt_info["fulltitle"],
+                   "author": yt_info["uploader"],
+                   "file": f'{os.path.abspath("./")}/{yt_info["_filename"]}',
+                   "duration": convert_seconds(yt_info["duration"]),
+                   'url': yt_info['webpage_url']
+                   }
+        msg = "\n".join(["```", yt_info["fulltitle"],
+                         f"Author: {yt_info['uploader']}",
+                         f"Duration: {convert_seconds(yt_info['duration'])}",
+                         "```",
+                         yt_info['webpage_url']])
+    except Exception as e:
+        payload = {
+            "file": None
+        }
+    finally:
+        payload['msg'] = msg
+        info = []
+        return payload
 
 
 def get_youtube(url, simulate):
@@ -142,7 +147,7 @@ if __name__ == "__main__":
     # print(get_youtube('https://www.youtube.com/watch?v=u95wgmBZ99A', True))
     # print(get_youtube('https://www.youtube.com/watch?v=UZPPVfMrfug', True))
     # print(get_youtube('https://www.dailymotion.com/video/x7wl5ns', False))
-    print(get_video("https://twitter.com/realDonaldTrump/status/1313267615083761665", True))
+    print(get_video("https://twitter.com/realDonaldTrump/status/1313267615083761665", False))
     # print(get_video("https://youtu.be/R3kkpVbOcsA", True))
     # print(get_youtube('https://www.cnn.com/2020/10/02/politics/kellyanne-conway-positive-for-covid-19/index.html', True))
 
