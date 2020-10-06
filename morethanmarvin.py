@@ -149,7 +149,12 @@ Here are the commands I currently am enslaved to:
         print(ytv_urls)
         conversation_id = event.msg.conv_id
         ytv_payload = get_video(ytv_urls[0], True)
-        ytv_msg = ytv_payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
+        if ytv_payload['msg'] == "I can't download videos from this site.":
+            ytv_msg = ytv_payload['msg']
+        else:
+            ytv_msg = ytv_payload['msg'] +\
+                      " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
+                      " . .I wouldn't hold your breath."
         await bot.chat.send(conversation_id, ytv_msg)
         ytv_payload = get_video(ytv_urls[0], False)
         if ytv_payload['file']:
