@@ -18,7 +18,7 @@ import re
 import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
-from botcommands.youtube import get_youtube
+from botcommands.youtube import get_video
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 
@@ -140,7 +140,7 @@ Here are the commands I currently am enslaved to:
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         print(yt_urls)
-        yt_payload = get_youtube(yt_urls[0], True)
+        yt_payload = get_video(yt_urls[0], True)
         print(yt_payload)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
@@ -148,10 +148,10 @@ Here are the commands I currently am enslaved to:
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(ytv_urls)
         conversation_id = event.msg.conv_id
-        ytv_payload = get_youtube(ytv_urls[0], True)
+        ytv_payload = get_video(ytv_urls[0], True)
         ytv_msg = ytv_payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
         await bot.chat.send(conversation_id, ytv_msg)
-        payload = get_youtube(ytv_urls[0], False)
+        payload = get_video(ytv_urls[0], False)
         if payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=payload['file'],
