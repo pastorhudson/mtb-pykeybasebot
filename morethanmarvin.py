@@ -139,18 +139,27 @@ Here are the commands I currently am enslaved to:
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
-        print(yt_urls)
+        # print(yt_urls)
         yt_payload = get_video(yt_urls[0], True)
-        print(yt_payload)
+        # print(yt_payload)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
     if str(event.msg.content.text.body).startswith('!ytv'):
+        ytv_fail_observations = ["A brain the size of a planet and you pick this task.",
+                                 "I'll be in my room complaining.",
+                                 "Please don't change my name to Marshall.",
+                                 """I didn't ask to be made: no one consulted me or considered my feelings in the matter.
+                                  I don't think it even occurred to them that I might have feelings.
+                                   After I was made, I was left in a dark room for six months... 
+                                   and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there...
+
+"""]
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(ytv_urls)
         conversation_id = event.msg.conv_id
         ytv_payload = get_video(ytv_urls[0], True)
         if ytv_payload['msg'] == "I can't download videos from this site.":
-            ytv_msg = ytv_payload['msg']
+            ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
         else:
             ytv_msg = ytv_payload['msg'] +\
                       " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
