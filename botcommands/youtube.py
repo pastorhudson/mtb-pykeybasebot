@@ -91,6 +91,7 @@ def get_other_video(url, simulate):
             "file": None
         }
     finally:
+        mst = "I can't download videos from this site."
         payload['msg'] = msg
         info = []
         return payload
