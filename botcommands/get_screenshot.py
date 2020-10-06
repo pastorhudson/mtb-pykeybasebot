@@ -13,7 +13,8 @@ import random
 observations = [":disappointed: :camera:",
                 "Oh sure I'll load a random url to take a picture. What could possibly go wrong?",
                 "I hope it comes back blank.",
-                "It would literally be quicker to just click the link."]
+                "It would literally be quicker to just click the link.",
+                "50,000 times more intelligent than a human, and yet I am used to take pictures."]
 
 def get_domain(url):
     print(urlparse(url).netloc)
