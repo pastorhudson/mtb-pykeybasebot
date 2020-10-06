@@ -151,10 +151,10 @@ Here are the commands I currently am enslaved to:
         ytv_payload = get_video(ytv_urls[0], True)
         ytv_msg = ytv_payload['msg'] + " \nSigh, I guess I'll try to download this useless video when I feel up to it. . .I wouldn't hold your breath."
         await bot.chat.send(conversation_id, ytv_msg)
-        payload = get_video(ytv_urls[0], False)
-        if payload['file']:
+        ytv_payload = get_video(ytv_urls[0], False)
+        if ytv_payload['file']:
             await bot.chat.attach(channel=conversation_id,
-                                  filename=payload['file'],
+                                  filename=ytv_payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
         else:
             msg = "I am a failure. No shock there."
