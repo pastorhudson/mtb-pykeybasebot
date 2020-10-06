@@ -156,10 +156,10 @@ Here are the commands I currently am enslaved to:
             await bot.chat.attach(channel=conversation_id,
                                   filename=ytv_payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
-        else:
-            msg = "I am a failure. No shock there."
-            await bot.chat.send(conversation_id, ytv_msg)
-            pass
+        # else:
+        #     msg = "I am a failure. No shock there."
+        #     await bot.chat.send(conversation_id, ytv_msg)
+        #     pass
     if str(event.msg.content.text.body).startswith('!covid'):
         channel = event.msg.channel
         msg_id = event.msg.id
