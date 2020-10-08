@@ -204,7 +204,7 @@ Here are the commands I currently am enslaved to:
     if str(event.msg.content.text.body).startswith('!vt'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
-        msg = get_screenshot(vt_url[0])
+        msg = get_scan(vt_url[0])
         await bot.chat.send(conversation_id, msg)
 
 
