@@ -125,7 +125,7 @@ Here are the commands I currently am enslaved to:
         conversation_id = event.msg.conv_id
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
-    if event.msg.content.text.body == "!test ":
+    if str(event.msg.content.text.body).strip(' ') == "!test ":
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
