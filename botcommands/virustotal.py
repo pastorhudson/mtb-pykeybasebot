@@ -1,5 +1,4 @@
 from virustotal_python import Virustotal
-from pprint import pprint
 import os
 from dotenv import load_dotenv
 
