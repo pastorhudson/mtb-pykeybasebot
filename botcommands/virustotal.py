@@ -12,6 +12,7 @@ observations = [
     "This URL may contain harmful code. . . Let's let Marvin look at it first :unamused:",
     "I hope this kills me.",
     "This could be my last web request. . .",
+    "This is @ihuman 's fault, and I will never forget."
 ]
 def get_scan(url):
     # mock_report =
