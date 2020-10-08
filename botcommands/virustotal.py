@@ -45,6 +45,7 @@ def get_scan(url):
             bad_result = True
             bad = f"({scanner}: {report['json_resp']['scans'][scanner]['result']}), "
             msg += bad
+    msg = msg[:-2]
 
     if not bad_result:
         msg += "Clean"
@@ -56,4 +57,4 @@ def get_scan(url):
 
 
 if __name__ == "__main__":
-    print(get_scan('google.com'))
+    print(get_scan('182.114.210.195'))
