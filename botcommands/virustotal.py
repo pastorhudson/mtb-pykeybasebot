@@ -32,10 +32,15 @@ def get_scan(url):
           f"Positives: {report['json_resp']['positives']}\n" \
           f"Results: "
 
+    bad_result = False
+
     for scanner in report['json_resp']['scans']:
         if report['json_resp']['scans'][scanner]['detected']:
             bad = f"({scanner}: {report['json_resp']['scans'][scanner]['result']}), "
             msg += bad
+
+    if not bad_result:
+        msg += "Clean"
 
     msg += f"\nLink: {report['json_resp']['permalink']}" \
            f"```"
@@ -44,4 +49,4 @@ def get_scan(url):
 
 
 if __name__ == "__main__":
-    print(get_scan('internetbadguys.com'))
+    print(get_scan('google.com'))
