@@ -1,12 +1,18 @@
 from virustotal_python import Virustotal
 import os
 from dotenv import load_dotenv
+import random
 
 load_dotenv(dotenv_path='./secret.env')
 # Normal Initialisation.
 vtotal = Virustotal(os.environ.get('VIRUS_TOTAL_API_KEY'))
 
-
+observations = [
+    "This is disgusting. I hate my life."
+    "This URL may contain harmful code. . . Let's let Marvin look at it first :unamused:"
+    "I hope this kills me."
+    "This could be my last web request. . ."
+]
 def get_scan(url):
     # mock_report =
     # report = json.loads(mock_report)
@@ -27,7 +33,7 @@ def get_scan(url):
 
     # pprint(report)
 
-    msg = f"```\nVirus Total Report for {url}\n" \
+    msg = f"{random.choice(observations)}```\nVirus Total Report for {url}\n" \
           f"Positives: {report['json_resp']['positives']}\n" \
           f"Results: "
 
@@ -35,14 +41,15 @@ def get_scan(url):
 
     for scanner in report['json_resp']['scans']:
         if report['json_resp']['scans'][scanner]['detected']:
+            bad_result = True
             bad = f"({scanner}: {report['json_resp']['scans'][scanner]['result']}), "
             msg += bad
 
     if not bad_result:
         msg += "Clean"
 
-    msg += f"\nLink: {report['json_resp']['permalink']}" \
-           f"```"
+    msg += f"```" \
+           f"\nVirus Total Report Link: {report['json_resp']['permalink']}"
 
     return msg
 
