@@ -69,7 +69,7 @@ async def handler(bot, event):
                                           "description": "<url> Forces me to get metadata and download the stupid thing."},
                                          {"name": "screenshot",
                                           "description": "<url> Forces me go to a url and send a screenshot."},
-                                         {"name": "vt",
+                                         {"name": "canary",
                                           "description": "<url> Force me to give Virus Total your nasty URL and return scan results."}
                                      ]}]}}}
 
@@ -201,7 +201,7 @@ Here are the commands I currently am enslaved to:
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
-    if str(event.msg.content.text.body).startswith('!vt'):
+    if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         msg = get_scan(vt_url[0])
