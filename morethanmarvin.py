@@ -21,6 +21,7 @@ from pykeybasebot import Bot
 from botcommands.youtube import get_video
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
+from botcommands.virustotal import get_scan
 
 
 
@@ -67,7 +68,9 @@ async def handler(bot, event):
                                          {"name": "ytv",
                                           "description": "<url> Forces me to get metadata and download the stupid thing."},
                                          {"name": "screenshot",
-                                          "description": "<url> Forces me go to a url and send a screenshot."}
+                                          "description": "<url> Forces me go to a url and send a screenshot."},
+                                         {"name": "vt",
+                                          "description": "<url> Force me to give Virus Total your nasty URL and return scan results."}
                                      ]}]}}}
 
 
@@ -198,7 +201,11 @@ Here are the commands I currently am enslaved to:
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
-        # await bot.chat.send(conversation_id, yt_msg)
+    if str(event.msg.content.text.body).startswith('!vt'):
+        vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        conversation_id = event.msg.conv_id
+        msg = get_screenshot(vt_url[0])
+        await bot.chat.send(conversation_id, msg)
 
 
 listen_options = {
