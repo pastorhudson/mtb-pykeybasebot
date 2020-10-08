@@ -61,7 +61,7 @@ async def handler(bot, event):
                                          {"name": "test",
                                           "description": "Forces me to tell a joke. For the love of God just don't."},
                                          {"name": "tldr",
-                                          "description": "<url> Forces me to read an entire article and then summarize it because you're lazy."},
+                                          "description": "<url> Forces me to read an entire article\n and then summarize it because you're lazy."},
                                          {"name": "yt",
                                           "description": "<url> Forces me to go get meta data about a youtube video."},
                                          {"name": "ytv",
@@ -94,7 +94,7 @@ Here are the commands I currently am enslaved to:
 !ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
 !tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
 !test - Check to see if I'm alive or if I've mercifully died yet.
-!covid <state> <county> - Force me to morbidly retrieve\ncovid numbers for a State County or State.```"""
+!covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```"""
         await bot.chat.send(conversation_id, help)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
