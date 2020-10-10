@@ -11,6 +11,7 @@ crashtest==0.3.1
 cryptography==3.1.1
 dataclasses-json==0.3.8
 distlib==0.3.1
+dotenv
 filelock==3.0.12
 html5lib==1.1
 idna==2.10
