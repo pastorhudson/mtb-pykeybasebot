@@ -1,1 +1,2 @@
-web: python test.py
+test: python test.py
+bot: python morethanmarvin.py
