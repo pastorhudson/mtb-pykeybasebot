@@ -3,7 +3,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from urllib.parse import urlparse
 import random
 
 
@@ -15,10 +14,6 @@ observations = [":disappointed: :camera:",
                 "I hope it comes back blank.",
                 "It would literally be quicker to just click the link.",
                 "50,000 times more intelligent than a human, and yet I am used to take pictures."]
-
-def get_domain(url):
-    print(urlparse(url).netloc)
-    return urlparse(url).netloc
 
 
 def get_youtube_id(url):

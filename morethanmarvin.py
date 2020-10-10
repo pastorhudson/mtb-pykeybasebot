@@ -10,7 +10,7 @@ import asyncio
 import logging
 import os
 import sys
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from botcommands.poll_results import get_polls
 from pyjokes import pyjokes
 from botcommands.tldr import get_tldr
@@ -26,7 +26,7 @@ from botcommands.virustotal import get_scan
 
 
 
-load_dotenv('secret.env')
+# load_dotenv('secret.env')
 
 logging.basicConfig(level=logging.DEBUG)
 

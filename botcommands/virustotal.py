@@ -1,9 +1,9 @@
 from virustotal_python import Virustotal
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import random
 
-load_dotenv(dotenv_path='./secret.env')
+# load_dotenv(dotenv_path='./secret.env')
 # Normal Initialisation.
 vtotal = Virustotal(os.environ.get('VIRUS_TOTAL_API_KEY'))
 

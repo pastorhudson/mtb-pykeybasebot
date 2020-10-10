@@ -91,6 +91,7 @@ def get_other_video(url, simulate):
             "file": None
         }
         msg = "I can't download videos from this site."
+        info = []
     finally:
         payload['msg'] = msg
         info = []
@@ -148,8 +149,9 @@ if __name__ == "__main__":
     # print(get_youtube('https://www.youtube.com/watch?v=u95wgmBZ99A', True))
     # print(get_youtube('https://www.youtube.com/watch?v=UZPPVfMrfug', True))
     # print(get_youtube('https://www.dailymotion.com/video/x7wl5ns', False))
-    print(get_video("https://twitter.com/realDonaldTrump/status/1313267615083761665", False))
+    # print(get_video("https://twitter.com/realDonaldTrump/status/1313267615083761665", False))
     # print(get_video("https://youtu.be/R3kkpVbOcsA", True))
+    print(get_video("https://www.dailymotion.com/video/x7wni23?playlist=x6lgtp", False))
     # print(get_youtube('https://www.cnn.com/2020/10/02/politics/kellyanne-conway-positive-for-covid-19/index.html', True))
 
 

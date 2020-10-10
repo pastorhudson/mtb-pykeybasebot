@@ -1,9 +1,9 @@
 from smmryAPI.smmryapi import SmmryAPI, SmmryAPIException
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import random
 
-load_dotenv('../secret.env')
+# load_dotenv('../secret.env')
 
 
 
