@@ -1,3 +1,31 @@
 keybase -home=./bothome chat edit-bot-member -u <your bot user> --allow-trigger "!test" <team name>
 
 keybase -home=./bothome chat edit-bot-member -u morethanmarvin --allow-trigger "!test" morethanbits
+
+Advertise available bot commands in the UI:
+    {"method": "advertisecommands", "params": {"options":{"alias": "helpbot", "advertisements":[{"type": "public", "commands": [{"name": "help", "description": "Get help using this bot"}]}]}}}
+Note the following are valid values for "type": "public", "teammembers", "teamconvs", "conv":
+    - public: Commands are publicly viewable by all users.
+    - teammembers: Commands are listed to members of the team in any conversation they are in. "team_name" must be specified.
+    - teamconvs:  Commands are listed in all conversations of the given team. "team_name" must be specified.
+    - conv: Commands are listed to the given conversation. "conv_id" must be specified.
+
+Clear bot commands:
+    {"method": "clearcommands"}
+Note that there is an optional filter for this method. The valid values for "type" are "public", "teammembers", "teamconvs", "conv"
+:
+    {"method": "clearcommands", "params": {"options": {"filter": {"type": "teamconvs", "team_name": "treehouse"}}}}
+
+List bot commands for a conversation:
+    {"method": "listcommands", "params": {"options": {"channel": {"name": "treehouse", "members_type": "team", "topic_name": "rando
+m"}}}}
+
+
+Install python
+Install python requirements.txt
+Install keybase
+Install Chrome/selenium
+Install Chrome Driver
+start keybase service with paperkey "oneshot"
+start morethanmarvin
+profit

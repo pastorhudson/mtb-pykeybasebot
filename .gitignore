@@ -5,3 +5,4 @@ __pycache__/
 test_config.yaml
 *.egg-info
 venv
+*.env
