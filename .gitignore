@@ -6,3 +6,6 @@ test_config.yaml
 *.egg-info
 venv
 *.env
+paper-key
+bot-token
+secret.env
