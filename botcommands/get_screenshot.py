@@ -27,7 +27,7 @@ def get_youtube_id(url):
 def get_screenshot(url):
     chrome_options = Options()
     chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), options=chrome_options)
 
     driver.get(url)
