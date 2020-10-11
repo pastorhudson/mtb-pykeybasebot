@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import random
+import os
 
 
 # //meta[@property='og:title']
@@ -27,7 +28,7 @@ def get_screenshot(url):
     chrome_options = Options()
     chrome_options.add_argument("--headless")
 
-    driver = webdriver.Chrome('./chromedriver/chromedriver', options=chrome_options)
+    driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), options=chrome_options)
 
     driver.get(url)
     # domain = get_domain(url)
