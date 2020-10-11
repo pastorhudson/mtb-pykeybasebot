@@ -25,10 +25,12 @@ def get_youtube_id(url):
 
 
 def get_screenshot(url):
-    chrome_options = Options()
-    chrome_options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
-    chrome_options.add_argument("--headless")
-    driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), options=chrome_options)
+    options = webdriver.ChromeOptions()
+    options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+    options.add_argument('--headless')
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=options)
 
     driver.get(url)
     # domain = get_domain(url)
