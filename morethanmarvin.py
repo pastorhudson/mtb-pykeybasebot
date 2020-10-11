@@ -39,6 +39,7 @@ if "win32" in sys.platform:
 
 async def handler(bot, event):
 
+
     async def advertize_commands(
         bot, channel: chat1.ChatChannel, message_id: int
     ) -> chat1.SendRes:
