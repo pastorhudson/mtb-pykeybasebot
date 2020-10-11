@@ -43,7 +43,7 @@ def get_screenshot(url):
         print(e)
     finally:
 
-        file = driver.save_screenshot("./screenshots/screenshot.png")
+        file = driver.save_screenshot(f"{os.environ.get('SCREENSHOT_DIR')}/screenshot.png")
 
     driver.quit()
     payload = {"msg": random.choice(observations), "file": "./screenshots/screenshot.png"}
