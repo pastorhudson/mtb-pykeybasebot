@@ -9,3 +9,4 @@ venv
 paper-key
 bot-token
 secret.env
+chromedriver/chromedriver
