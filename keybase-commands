@@ -35,3 +35,6 @@ https://github.com/heroku/heroku-buildpack-python.git
 https://github.com/pastorhudson/keybase-client-buildpack.git
 https://github.com/heroku/heroku-buildpack-google-chrome.git
 https://github.com/heroku/heroku-buildpack-chromedriver.git
+
+# Add ENV
+dokku config set app ENV=
