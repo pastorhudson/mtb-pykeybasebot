@@ -219,6 +219,6 @@ listen_options = {
     "filter_channels": None,
 }
 
-bot = Bot(username="morethanmarvin", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler, home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
+bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler, home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
 asyncio.run(bot.start(listen_options=listen_options))
