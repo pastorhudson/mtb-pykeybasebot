@@ -23,9 +23,6 @@ from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
 
-
-
-
 # load_dotenv('secret.env')
 
 logging.basicConfig(level=logging.DEBUG)
@@ -38,42 +35,40 @@ if "win32" in sys.platform:
 
 
 async def handler(bot, event):
-
-
     async def advertize_commands(
-        bot, channel: chat1.ChatChannel, message_id: int
+            bot, channel: chat1.ChatChannel, message_id: int
     ) -> chat1.SendRes:
         await bot.ensure_initialized()
         res = await bot.chat.execute(
             {
                 "method": "advertisecommands",
                 "params": {
-                    "options": {"alias": "morethanmarvin",
-                                "advertisements": [
-                                    {"type": "public",
-                                     "commands": [
-                                         {"name": "covid",
-                                          "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
-                                         {"name": "help",
-                                          "description": "Get help using this bot"},
-                                         {"name": "joke",
-                                          "description": "Forces me to tell a joke. For the love of God just don't."},
-                                         {"name": "pollresult",
-                                          "description": "RealClear Politics National and Pennsylvania Poll Results."},
-                                         {"name": "test",
-                                          "description": "Forces me to tell a joke. For the love of God just don't."},
-                                         {"name": "tldr",
-                                          "description": "<url> Forces me to read an entire article\n and then summarize it because you're lazy."},
-                                         {"name": "yt",
-                                          "description": "<url> Forces me to go get meta data about a youtube video."},
-                                         {"name": "ytv",
-                                          "description": "<url> Forces me to get metadata and download the stupid thing."},
-                                         {"name": "screenshot",
-                                          "description": "<url> Forces me go to a url and send a screenshot."},
-                                         {"name": "canary",
-                                          "description": "<url> Force me to give Virus Total your nasty URL and return scan results."}
-                                     ]}]}}}
-
+                    "options": {
+                        # "alias": "marvn.app",
+                        "advertisements": [
+                            {"type": "public",
+                             "commands": [
+                                 {"name": "covid",
+                                  "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
+                                 {"name": "help",
+                                  "description": "Get help using this bot"},
+                                 {"name": "joke",
+                                  "description": "Forces me to tell a joke. For the love of God just don't."},
+                                 {"name": "pollresult",
+                                  "description": "RealClear Politics National and Pennsylvania Poll Results."},
+                                 {"name": "test",
+                                  "description": "Forces me to tell a joke. For the love of God just don't."},
+                                 {"name": "tldr",
+                                  "description": "<url> Forces me to read an entire article\n and then summarize it because you're lazy."},
+                                 {"name": "yt",
+                                  "description": "<url> Forces me to go get meta data about a youtube video."},
+                                 {"name": "ytv",
+                                  "description": "<url> Forces me to get metadata and download the stupid thing."},
+                                 {"name": "screenshot",
+                                  "description": "<url> Forces me go to a url and send a screenshot."},
+                                 {"name": "canary",
+                                  "description": "<url> Force me to give Virus Total your nasty URL and return scan results."}
+                             ]}]}}}
 
         )
 
@@ -164,7 +159,7 @@ Here are the commands I currently am enslaved to:
         if ytv_payload['msg'] == "I can't download videos from this site.":
             ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
         else:
-            ytv_msg = ytv_payload['msg'] +\
+            ytv_msg = ytv_payload['msg'] + \
                       " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
                       " . .I wouldn't hold your breath."
         await bot.chat.send(conversation_id, ytv_msg)
@@ -219,6 +214,7 @@ listen_options = {
     "filter_channels": None,
 }
 
-bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler, home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
+bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler,
+          home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
 asyncio.run(bot.start(listen_options=listen_options))
