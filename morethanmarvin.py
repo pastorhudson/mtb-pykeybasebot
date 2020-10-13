@@ -23,6 +23,7 @@ from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
 from botcommands.cow_say import get_cow
+from botcommands.meh import get_meh
 
 # load_dotenv('secret.env')
 
@@ -48,16 +49,22 @@ async def handler(bot, event):
                         "advertisements": [
                             {"type": "public",
                              "commands": [
+                                 {"name": "canary",
+                                  "description": "<url> Force me to give Virus Total your nasty URL and return scan results."},
                                  {"name": "covid",
                                   "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
+                                 {"name": "cow",
+                                  "description": "<msg> Now I can't even explain this. You are a monster."},
                                  {"name": "help",
                                   "description": "Get help using this bot"},
                                  {"name": "joke",
                                   "description": "Forces me to tell a joke. For the love of God just don't."},
-                                 {"name": "cow",
-                                  "description": "<msg> Now I can't even explain this. You are a monster."},
+                                 {"name": "meh",
+                                  "description": "Get's today's meh."},
                                  {"name": "pollresult",
                                   "description": "RealClear Politics National and Pennsylvania Poll Results."},
+                                 {"name": "screenshot",
+                                  "description": "<url> Forces me go to a url and send a screenshot."},
                                  {"name": "test",
                                   "description": "Forces me to tell a joke. For the love of God just don't."},
                                  {"name": "tldr",
@@ -66,12 +73,6 @@ async def handler(bot, event):
                                   "description": "<url> Forces me to go get meta data about a youtube video."},
                                  {"name": "ytv",
                                   "description": "<url> Forces me to get metadata and download the stupid thing."},
-                                 {"name": "screenshot",
-                                  "description": "<url> Forces me go to a url and send a screenshot."},
-                                 {"name": "canary",
-                                  "description": "<url> Force me to give Virus Total your nasty URL and return scan results."},
-                                 {"name": "update",
-                                  "description": "Update available commands."}
                              ]}]}}}
         if os.environ.get('KEYBASE_BOTALIAS'):
             payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
@@ -128,6 +129,10 @@ Here are the commands I currently am enslaved to:
         conversation_id = event.msg.conv_id
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
+    if str(event.msg.content.text.body).startswith('!meh'):
+        conversation_id = event.msg.conv_id
+        msg = get_meh()
+        await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith("!test"):
         channel = event.msg.channel
         msg_id = event.msg.id
