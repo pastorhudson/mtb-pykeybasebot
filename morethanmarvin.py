@@ -22,6 +22,7 @@ from botcommands.youtube import get_video
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
+from botcommands import cow_say
 
 # load_dotenv('secret.env')
 
@@ -39,8 +40,7 @@ async def handler(bot, event):
             bot, channel: chat1.ChatChannel, message_id: int
     ) -> chat1.SendRes:
         await bot.ensure_initialized()
-        res = await bot.chat.execute(
-            {
+        payload = {
                 "method": "advertisecommands",
                 "params": {
                     "options": {
@@ -69,6 +69,10 @@ async def handler(bot, event):
                                  {"name": "canary",
                                   "description": "<url> Force me to give Virus Total your nasty URL and return scan results."}
                              ]}]}}}
+        if os.environ.get('KEYBASE_BOTALIAS'):
+            payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
+        res = await bot.chat.execute(
+
 
         )
 
@@ -128,7 +132,13 @@ Here are the commands I currently am enslaved to:
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = "Sigh. . . yes I'm still here."
-        await bot.chat.send(conversation_id, msg)
+        my_msg = await bot.chat.send(conversation_id, msg)
+    if str(event.msg.content.text.body).startswith("!cow"):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        msg = cow_say(str(event.msg.content.text.body)[:4])
+        my_msg = await bot.chat.send(conversation_id, msg)
     if "marvin" in str(event.msg.content.text.body).lower():
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -162,7 +172,7 @@ Here are the commands I currently am enslaved to:
             ytv_msg = ytv_payload['msg'] + \
                       " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
                       " . .I wouldn't hold your breath."
-        await bot.chat.send(conversation_id, ytv_msg)
+        sent_msg = await bot.chat.send(conversation_id, ytv_msg)
         ytv_payload = get_video(ytv_urls[0], False)
         if ytv_payload['file']:
             await bot.chat.attach(channel=conversation_id,
