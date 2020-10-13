@@ -1,3 +1,5 @@
+from json.decoder import JSONDecodeError
+
 import requests
 import random
 
@@ -14,11 +16,13 @@ def get_drwho(ep_number):
         "I miss Rose. . ."
     ]
     msg = f"{random.choice(observations)}```"
-
-    msg += f"Title: {ep['title']}\n" \
-           f"Air Date: {ep['originalAirDate']}\n" \
-           f"Run Time: {ep['runtime']}\n" \
-           f"```"
+    try:
+        msg += f"Title: {ep['title']}\n" \
+               f"Air Date: {ep['originalAirDate']}\n" \
+               f"Run Time: {ep['runtime']}\n" \
+               f"```"
+    except JSONDecodeError:
+        msg = f"There is no episode: {ep_number}.\nAnd you said you were a Dr Who Fan. . . :expressionless:"
 
     return msg
 
