@@ -54,6 +54,8 @@ async def handler(bot, event):
                                   "description": "Get help using this bot"},
                                  {"name": "joke",
                                   "description": "Forces me to tell a joke. For the love of God just don't."},
+                                 {"name": "cow",
+                                  "description": "<msg> Now I can't even explain this. You are a monster."},
                                  {"name": "pollresult",
                                   "description": "RealClear Politics National and Pennsylvania Poll Results."},
                                  {"name": "test",
