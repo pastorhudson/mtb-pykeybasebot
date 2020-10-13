@@ -56,6 +56,8 @@ async def handler(bot, event):
                                   "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
                                  {"name": "cow",
                                   "description": "<msg> Now I can't even explain this. You are a monster."},
+                                 {"name": "drwho",
+                                  "description": "<ep_id> OR <Ep Title> Return Dr Who Episode."},
                                  {"name": "help",
                                   "description": "Get help using this bot"},
                                  {"name": "joke",
@@ -104,6 +106,7 @@ Here are the commands I currently am enslaved to:
         await bot.chat.send(conversation_id, help)
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
+        print(str(event.msg.content.text.body)[7:])
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
