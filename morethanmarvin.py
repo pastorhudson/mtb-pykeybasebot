@@ -69,7 +69,9 @@ async def handler(bot, event):
                                  {"name": "screenshot",
                                   "description": "<url> Forces me go to a url and send a screenshot."},
                                  {"name": "canary",
-                                  "description": "<url> Force me to give Virus Total your nasty URL and return scan results."}
+                                  "description": "<url> Force me to give Virus Total your nasty URL and return scan results."},
+                                 {"name": "update",
+                                  "description": "Update available commands."}
                              ]}]}}}
         if os.environ.get('KEYBASE_BOTALIAS'):
             payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
