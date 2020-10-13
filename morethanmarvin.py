@@ -84,7 +84,7 @@ async def handler(bot, event):
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
-    if event.msg.content.text.body == '!update':
+    if str(event.msg.content.text.body).startswith('!update'):
         conversation_id = event.msg.conv_id
         msg_id = event.msg.id
         await advertize_commands(bot, event.msg.conv_id, event.msg.id)
