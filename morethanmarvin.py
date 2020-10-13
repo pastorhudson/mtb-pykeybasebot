@@ -22,7 +22,7 @@ from botcommands.youtube import get_video
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
-from botcommands import cow_say
+from botcommands.cow_say import get_cow
 
 # load_dotenv('secret.env')
 
@@ -75,10 +75,7 @@ async def handler(bot, event):
                              ]}]}}}
         if os.environ.get('KEYBASE_BOTALIAS'):
             payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
-        res = await bot.chat.execute(
-
-
-        )
+        res = await bot.chat.execute(payload)
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
@@ -141,7 +138,7 @@ Here are the commands I currently am enslaved to:
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        msg = cow_say(str(event.msg.content.text.body)[:4])
+        msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
     if "marvin" in str(event.msg.content.text.body).lower():
         channel = event.msg.channel
