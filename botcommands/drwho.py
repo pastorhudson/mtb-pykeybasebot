@@ -30,7 +30,7 @@ def get_drwho(ep):
         for episode in response.json():
             try:
                 # print(episode['title'])
-                ratio = (fuzz.ratio(episode['title'], ep))
+                ratio = (fuzz.partial_ratio(episode['title'], ep))
                 if ratio > last_ratio:
                     ep_data = episode
                     last_ratio = ratio
@@ -54,4 +54,4 @@ def get_drwho(ep):
 
 
 if __name__ == "__main__":
-    print(get_drwho("Bad wolf"))
+    print(get_drwho("the bells"))
