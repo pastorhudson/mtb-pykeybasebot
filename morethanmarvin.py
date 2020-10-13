@@ -24,6 +24,7 @@ from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
+from botcommands.drwho import get_drwho
 
 # load_dotenv('secret.env')
 
@@ -101,6 +102,10 @@ Here are the commands I currently am enslaved to:
 !test - Check to see if I'm alive or if I've mercifully died yet.
 !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```"""
         await bot.chat.send(conversation_id, help)
+    if str(event.msg.content.text.body).startswith("!drwho"):
+        conversation_id = event.msg.conv_id
+        msg = get_drwho(str(event.msg.content.text.body)[7:])
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
