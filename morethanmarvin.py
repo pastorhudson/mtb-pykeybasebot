@@ -25,7 +25,7 @@ from botcommands.virustotal import get_scan
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
 from botcommands.drwho import get_drwho
-
+from botcommands.stardate import get_stardate
 # load_dotenv('secret.env')
 
 logging.basicConfig(level=logging.DEBUG)
@@ -68,6 +68,8 @@ async def handler(bot, event):
                                   "description": "RealClear Politics National and Pennsylvania Poll Results."},
                                  {"name": "screenshot",
                                   "description": "<url> Forces me go to a url and send a screenshot."},
+                                 {"name": "stardate",
+                                  "description": "Print's the current stardate."},
                                  {"name": "test",
                                   "description": "Forces me to tell a joke. For the love of God just don't."},
                                  {"name": "tldr",
@@ -146,6 +148,12 @@ Here are the commands I currently am enslaved to:
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = "Sigh. . . yes I'm still here."
+        my_msg = await bot.chat.send(conversation_id, msg)
+    if str(event.msg.content.text.body).startswith("!stardate"):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        msg = get_stardate()
         my_msg = await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel

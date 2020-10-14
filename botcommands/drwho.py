@@ -37,7 +37,7 @@ def get_drwho(ep):
             except Exception as e:
                 print(e)
 
-
+    print(ep_data)
     observations = [
         "Now I'm watching TV. . . ",
         "What I wouldn't give to be a Dalek. . .",
