@@ -69,7 +69,7 @@ async def handler(bot, event):
                                  {"name": "screenshot",
                                   "description": "<url> Forces me go to a url and send a screenshot."},
                                  {"name": "stardate",
-                                  "description": "Print's the current stardate."},
+                                  "description": " optional: <stardate> Print's the current stardate if no stardate is given."},
                                  {"name": "test",
                                   "description": "Forces me to tell a joke. For the love of God just don't."},
                                  {"name": "tldr",
@@ -153,7 +153,10 @@ Here are the commands I currently am enslaved to:
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        msg = get_stardate()
+        try:
+            msg = get_stardate(str(event.msg.content.text.body).split(' ')[1])
+        except IndexError:
+            msg = get_stardate()
         my_msg = await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
