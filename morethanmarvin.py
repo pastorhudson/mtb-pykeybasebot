@@ -157,7 +157,6 @@ Here are the commands I currently am enslaved to:
             msg = get_stardate(str(event.msg.content.text.body).split(' ')[1])
         except IndexError:
             msg = get_stardate()
-        my_msg = await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
         msg_id = event.msg.id
