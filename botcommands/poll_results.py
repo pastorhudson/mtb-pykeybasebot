@@ -1,4 +1,5 @@
 from rcp import get_poll_data
+# from prettytable import PrettyTable
 
 
 def get_polls():
@@ -24,7 +25,7 @@ def get_polls():
                        f'Trump: {row["Trump (R)"]}  ' \
                        f'Spread: {row["Spread"]}\n\n'
 
-    x.add_row(['PENNSYLVANIA', '', '', '', '', '', ''])
+    # x.add_row(['PENNSYLVANIA', '', '', '', '', '', ''])
     for row in pa[0]["data"]:
         if row['Poll'] == 'RCP Average':
             message += f'Pennsylvania Real Clear Politics Average:\n' \
