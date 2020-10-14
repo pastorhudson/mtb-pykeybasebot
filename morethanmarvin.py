@@ -168,7 +168,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
-    if "marvin" in str(event.msg.content.text.body).lower():
+    if "marvin" or "marvn" in str(event.msg.content.text.body).lower():
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
