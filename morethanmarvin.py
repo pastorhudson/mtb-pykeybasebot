@@ -26,6 +26,7 @@ from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
+from botcommands.chuck import get_chuck
 # load_dotenv('secret.env')
 
 logging.basicConfig(level=logging.DEBUG)
@@ -168,11 +169,19 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
-    if "marvin" or "marvn" in str(event.msg.content.text.body).lower():
-        channel = event.msg.channel
-        msg_id = event.msg.id
+    if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, msg_id, ":slowclap:")
+        channel_members = await bot.chat.execute(
+            {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
+        )
+        get_chuck(channel=channel_members)
+        # my_msg = await bot.chat.send(conversation_id, res)
+
+    # if "marvin" or "marvn" in str(event.msg.content.text.body).lower():
+    #     channel = event.msg.channel
+    #     msg_id = event.msg.id
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, msg_id, ":slowclap:")
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
