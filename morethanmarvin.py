@@ -38,18 +38,8 @@ if "win32" in sys.platform:
 
 
 async def handler(bot, event):
-    async def advertize_commands(
-            bot, channel: chat1.ChatChannel, message_id: int
-    ) -> chat1.SendRes:
-        await bot.ensure_initialized()
-        payload = {
-                "method": "advertisecommands",
-                "params": {
-                    "options": {
-                        # "alias": "marvn.app",
-                        "advertisements": [
-                            {"type": "public",
-                             "commands": [
+
+    command_list = [
                                  {"name": "canary",
                                   "description": "<url> Force me to give Virus Total your nasty URL and return scan results."},
                                  {"name": "covid",
@@ -78,7 +68,20 @@ async def handler(bot, event):
                                   "description": "<url> Forces me to go get meta data about a youtube video."},
                                  {"name": "ytv",
                                   "description": "<url> Forces me to get metadata and download the stupid thing."},
-                             ]}]}}}
+                             ]
+
+    async def advertize_commands(
+            bot, channel: chat1.ChatChannel, message_id: int
+    ) -> chat1.SendRes:
+        await bot.ensure_initialized()
+        payload = {
+                "method": "advertisecommands",
+                "params": {
+                    "options": {
+                        # "alias": "marvn.app",
+                        "advertisements": [
+                            {"type": "public",
+                             "commands": command_list}]}}}
         if os.environ.get('KEYBASE_BOTALIAS'):
             payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
         res = await bot.chat.execute(payload)
@@ -96,15 +99,16 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        help = """```
-Here are the commands I currently am enslaved to:
-!joke - Forces me to tell a joke. For the love of God just don't.
-!pollresult - RealClear Politics National and Pennsylvania Poll Results
-!yt <youtube_url> - Forces me to go get meta data about a youtube video.
-!ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
-!tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
-!test - Check to see if I'm alive or if I've mercifully died yet.
-!covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```"""
+        help = "\n".join(["```!" + x['name'] + " " + x['description'] + "```" for x in command_list])
+        print(help)
+# Here are the commands I currently am enslaved to:
+# !joke - Forces me to tell a joke. For the love of God just don't.
+# !pollresult - RealClear Politics National and Pennsylvania Poll Results
+# !yt <youtube_url> - Forces me to go get meta data about a youtube video.
+# !ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
+# !tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
+# !test - Check to see if I'm alive or if I've mercifully died yet.
+# !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```"""
         await bot.chat.send(conversation_id, help)
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
@@ -157,6 +161,7 @@ Here are the commands I currently am enslaved to:
             msg = get_stardate(str(event.msg.content.text.body).split(' ')[1])
         except IndexError:
             msg = get_stardate()
+        my_msg = await bot.chat.send(conversation_id, msg)
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
         msg_id = event.msg.id
