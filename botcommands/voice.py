@@ -9,6 +9,11 @@ import random
 
 
 def get_voice(text):
+    filename = ""
+    if len(text) < 31:
+        filename = text
+    else:
+        filename = text[:30]
     observation = [
         "This is gross.",
         "I wish I was never created.",
@@ -20,7 +25,7 @@ def get_voice(text):
     service = TextToSpeechV1(authenticator=authenticator)
     service.set_service_url(os.environ.get('IBM_URL'))
 
-    with open(join(dirname(__file__), 'resources/output.mp3'),
+    with open(join(dirname(__file__), f'resources/{filename}.mp3'),
               'wb') as audio_file:
         response = service.synthesize(
             text, accept='audio/mp3',

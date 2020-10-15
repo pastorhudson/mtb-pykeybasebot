@@ -258,7 +258,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!speak'):
         conversation_id = event.msg.conv_id
-        audio_payload = get_voice((str(event.msg.content.text.body)[:7]))
+        audio_payload = get_voice((str(event.msg.content.text.body)[7:]))
         if audio_payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=audio_payload['file'],
