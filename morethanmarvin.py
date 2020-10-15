@@ -46,7 +46,7 @@ async def handler(bot, event):
          "usage": "<url>"},
         {"name": "chuck",
          "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
-         "usage": ""},
+         "usage": "<name> OR bomb <- Both Optional"},
         {"name": "covid",
          "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
          "usage": "<State> <County> <- Optional Fields"},
@@ -178,7 +178,11 @@ async def handler(bot, event):
         channel_members = await bot.chat.execute(
             {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
         )
-        chuck_msg = get_chuck(channel=channel_members)
+        try:
+            name = str(event.msg.content.text.body)[7:]
+            chuck_msg = get_chuck(name=name, channel=channel_members)
+        except:
+            chuck_msg = get_chuck(channel=channel_members)
         my_msg = await bot.chat.send(conversation_id, chuck_msg)
 
     # if "marvin" or "marvn" in str(event.msg.content.text.body).lower():
