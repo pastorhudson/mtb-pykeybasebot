@@ -34,7 +34,7 @@ def get_chuck(name=None, channel=None):
     todays_joker = random.choice(joke_names)
 
     # url = "http://api.icndb.com/jokes/random?firstName=Ron&lastName=The%20Baptist"
-    url = f"http://api.icndb.com/jokes/random?firstName&lastName=@{todays_joker}"
+    url = f"http://api.icndb.com/jokes/random?firstName&lastName=@{todays_joker}&?exclude=[explicit]"
 
     response = requests.request("GET", url)
     joke = response.json()
