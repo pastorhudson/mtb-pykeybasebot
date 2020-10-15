@@ -25,7 +25,7 @@ def get_voice(text):
     service = TextToSpeechV1(authenticator=authenticator)
     service.set_service_url(os.environ.get('IBM_URL'))
 
-    with open(join(dirname(__file__), f'resources/{filename}.mp3'),
+    with open(join(dirname(__file__), f'sounds/{filename}.mp3'),
               'wb') as audio_file:
         response = service.synthesize(
             text, accept='audio/mp3',
