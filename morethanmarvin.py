@@ -42,10 +42,11 @@ if "win32" in sys.platform:
 async def handler(bot, event):
     command_list = [
         {"name": "canary",
-         "description": "<url> Force me to give Virus Total your nasty URL and return scan results.",
+         "description": "Force me to give Virus Total your nasty URL and return scan results.",
          "usage": "<url>"},
         {"name": "chuck",
-         "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel."},
+         "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
+         "usage": ""},
         {"name": "covid",
          "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
          "usage": "<State> <County> <- Optional Fields"},
@@ -56,13 +57,17 @@ async def handler(bot, event):
          "description": "Return Dr Who Episode.",
          "usage": "<ep_id> OR <Ep Title>"},
         {"name": "help",
-         "description": "See a menu of options for ruining my life by making me do menial tasks."},
+         "description": "See a menu of options for ruining my life by making me do menial tasks.",
+         "usage": ""},
         {"name": "joke",
-         "description": "Forces me to tell a joke. For the love of God just don't."},
+         "description": "Forces me to tell a joke. For the love of God just don't.",
+         "usage": ""},
         {"name": "meh",
-         "description": "Get's today's meh."},
+         "description": "Get's today's meh.",
+         "usage": ""},
         {"name": "pollresult",
-         "description": "RealClear Politics National and Pennsylvania Poll Results."},
+         "description": "RealClear Politics National and Pennsylvania Poll Results.",
+         "usage": ""},
         {"name": "screenshot",
          "description": "Forces me go to a url and send a screenshot.",
          "usage": "<url>"},
@@ -70,7 +75,8 @@ async def handler(bot, event):
          "description": " Print's the current stardate if no stardate is given.",
          "usage": "<stardate> <- Optional"},
         {"name": "test",
-         "description": "Just check to see if I'm regretfully still here."},
+         "description": "Just check to see if I'm regretfully still here.",
+         "usage": ""},
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
@@ -105,16 +111,9 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        help = "\n".join(["`!" + x['name'] + "` ```" + x['description'] + "```" for x in command_list])
-        print(help)
-        # Here are the commands I currently am enslaved to:
-        # !joke - Forces me to tell a joke. For the love of God just don't.
-        # !pollresult - RealClear Politics National and Pennsylvania Poll Results
-        # !yt <youtube_url> - Forces me to go get meta data about a youtube video.
-        # !ytv <youtube_url> - Forces me to get metadata and download the stupid thing.
-        # !tldr <url> - Forces me to read an entire article and then summarize it because you're lazy.
-        # !test - Check to see if I'm alive or if I've mercifully died yet.
-        # !covid <state> <county> - Force me to morbidly retrieve covid numbers for a State County or State.```"""
+        help = "Here are the commands I currently am enslaved to:\n\n"
+        help += "\n".join(["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
+
         await bot.chat.send(conversation_id, help)
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
