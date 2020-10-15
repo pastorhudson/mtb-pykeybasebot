@@ -42,17 +42,21 @@ if "win32" in sys.platform:
 async def handler(bot, event):
     command_list = [
         {"name": "canary",
-         "description": "<url> Force me to give Virus Total your nasty URL and return scan results."},
+         "description": "<url> Force me to give Virus Total your nasty URL and return scan results.",
+         "usage": "<url>"},
         {"name": "chuck",
-         "description": "Forces me to tell a terribly jouvinile joke randomly mentioning someone in this channel."},
+         "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel."},
         {"name": "covid",
-         "description": "<State> <County> Force me to morbidly retrieve covid numbers for a State County or State."},
+         "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
+         "usage": "<State> <County> <- Optional Fields"},
         {"name": "cow",
-         "description": "<msg> Now I can't even explain this. You are a monster."},
+         "description": "Now I can't even explain this. You are a monster.",
+         "usage": "<msg>"},
         {"name": "drwho",
-         "description": "<ep_id> OR <Ep Title> Return Dr Who Episode."},
+         "description": "Return Dr Who Episode.",
+         "usage": "<ep_id> OR <Ep Title>"},
         {"name": "help",
-         "description": "Get help using this bot"},
+         "description": "See a menu of options for ruining my life by making me do menial tasks."},
         {"name": "joke",
          "description": "Forces me to tell a joke. For the love of God just don't."},
         {"name": "meh",
@@ -60,23 +64,31 @@ async def handler(bot, event):
         {"name": "pollresult",
          "description": "RealClear Politics National and Pennsylvania Poll Results."},
         {"name": "screenshot",
-         "description": "<url> Forces me go to a url and send a screenshot."},
+         "description": "Forces me go to a url and send a screenshot.",
+         "usage": "<url>"},
         {"name": "stardate",
-         "description": " optional: <stardate> Print's the current stardate if no stardate is given."},
+         "description": " Print's the current stardate if no stardate is given.",
+         "usage": "<stardate> <- Optional"},
         {"name": "test",
          "description": "Just check to see if I'm regretfully still here."},
         {"name": "tldr",
-         "description": "<url> Forces me to read an entire article\n and then summarize it because you're lazy."},
+         "description": "Forces me to read an entire article and then summarize it because you're lazy.",
+         "usage": "<url>"},
         {"name": "yt",
-         "description": "<url> Forces me to go get meta data about a youtube video."},
+         "description": "Forces me to go get meta data about a youtube video.",
+         "usage": "<url>"},
         {"name": "ytv",
-         "description": "<url> Forces me to get metadata and download the stupid thing."},
+         "description": "Forces me to get metadata and download the stupid thing.",
+         "usage": "<url>"},
     ]
 
-    async def advertize_commands(
-            bot, channel: chat1.ChatChannel, message_id: int
-    ) -> chat1.SendRes:
-        await bot.ensure_initialized()
+    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
+        return
+    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
+        return
+    if str(event.msg.content.text.body).startswith('!update'):
+        conversation_id = event.msg.conv_id
+        msg_id = event.msg.id
         payload = {
             "method": "advertisecommands",
             "params": {
@@ -87,16 +99,7 @@ async def handler(bot, event):
                          "commands": command_list}]}}}
         if os.environ.get('KEYBASE_BOTALIAS'):
             payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
-        res = await bot.chat.execute(payload)
-
-    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        return
-    if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        return
-    if str(event.msg.content.text.body).startswith('!update'):
-        conversation_id = event.msg.conv_id
-        msg_id = event.msg.id
-        await advertize_commands(bot, event.msg.conv_id, event.msg.id)
+        await bot.chat.execute(payload)
         await bot.chat.react(conversation_id, msg_id, ":disappointed:")
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
