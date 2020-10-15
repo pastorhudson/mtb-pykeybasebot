@@ -15,11 +15,9 @@ def get_chuck(name=None, channel=None):
         "I don't get it.",
         "Does this make you happy? Because it doesn't make me happy.",
         "I hope you don't plan on doing this all day. . .",
-        "Would you grow up already?"
+        "Would you grow up already?",
     ]
 
-    # print(channel)
-    # print(type(channel))
     joke_names = []
     for owners in channel['owners']:
         joke_names.append(owners['username'])
@@ -32,7 +30,6 @@ def get_chuck(name=None, channel=None):
     for readers in channel['readers']:
         if readers['username'] not in joke_names:
             joke_names.append(readers['username'])
-    # print(joke_names)
 
     todays_joker = random.choice(joke_names)
 
@@ -41,8 +38,6 @@ def get_chuck(name=None, channel=None):
 
     response = requests.request("GET", url)
     joke = response.json()
-    # print(type(joke))
-    # print(joke)
 
     msg = "`" + random.choice(observations) + '`\n\n'
 
