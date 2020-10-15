@@ -46,7 +46,7 @@ async def handler(bot, event):
          "usage": "<url>"},
         {"name": "chuck",
          "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
-         "usage": "<name> OR bomb <- Both Optional"},
+         "usage": "Optional: <name> OR bomb if nothing is given a member of this channel will be selected at random."},
         {"name": "covid",
          "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
          "usage": "<State> <County> <- Optional Fields"},
