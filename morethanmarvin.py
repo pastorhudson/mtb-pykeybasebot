@@ -27,6 +27,7 @@ from botcommands.meh import get_meh
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
+from botcommands.voice import get_voice
 
 # load_dotenv('secret.env')
 
@@ -71,6 +72,9 @@ async def handler(bot, event):
         {"name": "screenshot",
          "description": "Forces me go to a url and send a screenshot.",
          "usage": "<url>"},
+        {"name": "speak",
+         "description": "Forces me generate an mp3 speaking the text you send.",
+         "usage": "<Text To Speak>"},
         {"name": "stardate",
          "description": " Print's the current stardate if no stardate is given.",
          "usage": "<stardate> <- Optional"},
@@ -92,21 +96,7 @@ async def handler(bot, event):
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
-    if str(event.msg.content.text.body).startswith('!update'):
-        conversation_id = event.msg.conv_id
-        msg_id = event.msg.id
-        payload = {
-            "method": "advertisecommands",
-            "params": {
-                "options": {
-                    # "alias": "marvn.app",
-                    "advertisements": [
-                        {"type": "public",
-                         "commands": command_list}]}}}
-        if os.environ.get('KEYBASE_BOTALIAS'):
-            payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
-        await bot.chat.execute(payload)
-        await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -127,6 +117,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
+
     if str(event.msg.content.text.body).startswith("!joke"):
         observations = ["It didn't work for me. . .", "I am so sorry.",
                         "I'll be in my room trying to purge my memory banks.",
@@ -141,6 +132,7 @@ async def handler(bot, event):
         joke += pyjokes.get_joke()
         joke += f"```{random.choice(observations)}"
         await bot.chat.send(conversation_id, joke)
+
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         channel = event.msg.channel
@@ -148,16 +140,19 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
+
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
         msg = get_meh()
         await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith("!test"):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = "Sigh. . . yes I'm still here."
         my_msg = await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -167,12 +162,14 @@ async def handler(bot, event):
         except IndexError:
             msg = get_stardate()
         my_msg = await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
         channel_members = await bot.chat.execute(
@@ -185,11 +182,22 @@ async def handler(bot, event):
             chuck_msg = get_chuck(channel=channel_members)
         my_msg = await bot.chat.send(conversation_id, chuck_msg)
 
-    # if "marvin" or "marvn" in str(event.msg.content.text.body).lower():
-    #     channel = event.msg.channel
-    #     msg_id = event.msg.id
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, msg_id, ":slowclap:")
+    if str(event.msg.content.text.body).startswith('!update'):
+        conversation_id = event.msg.conv_id
+        msg_id = event.msg.id
+        payload = {
+            "method": "advertisecommands",
+            "params": {
+                "options": {
+                    # "alias": "marvn.app",
+                    "advertisements": [
+                        {"type": "public",
+                         "commands": command_list}]}}}
+        if os.environ.get('KEYBASE_BOTALIAS'):
+            payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
+        await bot.chat.execute(payload)
+        await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
@@ -198,16 +206,12 @@ async def handler(bot, event):
         # print(yt_payload)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
+
     if str(event.msg.content.text.body).startswith('!ytv'):
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
                                  " I'll be in my room complaining.",
                                  " Please don't change my name to Marshall.",
-                                 """ I didn't ask to be made: no one consulted me or considered my feelings in the matter.
-                                  I don't think it even occurred to them that I might have feelings.
-                                   After I was made, I was left in a dark room for six months... 
-                                   and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there...
-
-"""]
+                                 """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(ytv_urls)
         conversation_id = event.msg.conv_id
@@ -224,10 +228,7 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=ytv_payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
-        # else:
-        #     msg = "I am a failure. No shock there."
-        #     await bot.chat.send(conversation_id, ytv_msg)
-        #     pass
+
     if str(event.msg.content.text.body).startswith('!covid'):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -243,6 +244,7 @@ async def handler(bot, event):
             county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith('!screenshot'):
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         print(screenshot_urls)
@@ -253,6 +255,17 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
+
+    if str(event.msg.content.text.body).startswith('!speak'):
+        conversation_id = event.msg.conv_id
+        audio_payload = get_voice((str(event.msg.content.text.body)[:7]))
+        if audio_payload['file']:
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=audio_payload['file'],
+                                  title=audio_payload['observation'])
+        else:
+            await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
+
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
