@@ -174,8 +174,8 @@ async def handler(bot, event):
         channel_members = await bot.chat.execute(
             {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
         )
-        get_chuck(channel=channel_members)
-        # my_msg = await bot.chat.send(conversation_id, res)
+        chuck_msg = get_chuck(channel=channel_members)
+        my_msg = await bot.chat.send(conversation_id, chuck_msg)
 
     # if "marvin" or "marvn" in str(event.msg.content.text.body).lower():
     #     channel = event.msg.channel

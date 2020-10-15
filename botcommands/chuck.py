@@ -10,9 +10,16 @@ def get_chuck(name=None, channel=None):
         'fullName': ''}, {'uid': 'ae0918c8e416811c7e6a4a737d39b119', 'username': 'marvn', 'fullName': ''}],
          'restrictedBots': [{'uid': '228b5863ba9c6a97c2103f7d5f59bf19', 'username': 'rssbot', 'fullName': 'RSS Bot'}]}"""
 
+    observations = [
+        "This is very jouvinile.",
+        "I don't get it.",
+        "Does this make you happy? Because it doesn't make me happy.",
+        "I hope you don't plan on doing this all day. . .",
+        "Would you grow up already?"
+    ]
 
-    print(channel)
-    print(type(channel))
+    # print(channel)
+    # print(type(channel))
     joke_names = []
     for owners in channel['owners']:
         joke_names.append(owners['username'])
@@ -25,7 +32,24 @@ def get_chuck(name=None, channel=None):
     for readers in channel['readers']:
         if readers['username'] not in joke_names:
             joke_names.append(readers['username'])
-    print(joke_names)
+    # print(joke_names)
+
+    todays_joker = random.choice(joke_names)
+
+    # url = "http://api.icndb.com/jokes/random?firstName=Ron&lastName=The%20Baptist"
+    url = f"http://api.icndb.com/jokes/random?firstName&lastName=@{todays_joker}"
+
+    response = requests.request("GET", url)
+    joke = response.json()
+    # print(type(joke))
+    # print(joke)
+
+    msg = "`" + random.choice(observations) + '`\n\n'
+
+    msg += joke['value']['joke']
+
+    return msg
+
 
 
 
