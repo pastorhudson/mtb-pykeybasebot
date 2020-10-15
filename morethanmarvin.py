@@ -64,7 +64,7 @@ async def handler(bot, event):
         {"name": "stardate",
          "description": " optional: <stardate> Print's the current stardate if no stardate is given."},
         {"name": "test",
-         "description": "Forces me to tell a joke. For the love of God just don't."},
+         "description": "Just check to see if I'm regretfully still here."},
         {"name": "tldr",
          "description": "<url> Forces me to read an entire article\n and then summarize it because you're lazy."},
         {"name": "yt",
@@ -102,7 +102,7 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        help = "\n".join(["```!" + x['name'] + " " + x['description'] + "```" for x in command_list])
+        help = "\n".join(["`!" + x['name'] + "` ```" + x['description'] + "```" for x in command_list])
         print(help)
         # Here are the commands I currently am enslaved to:
         # !joke - Forces me to tell a joke. For the love of God just don't.
