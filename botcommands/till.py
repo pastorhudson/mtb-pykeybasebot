@@ -16,4 +16,4 @@ def get_till():
 
 
 if __name__ == "__main__":
-    print(get_keep())
+    print(get_till())
