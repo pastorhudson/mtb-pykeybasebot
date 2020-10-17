@@ -28,6 +28,7 @@ from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
 from botcommands.voice import get_voice
+from botcommands.till import get_till
 
 # load_dotenv('secret.env')
 
@@ -265,6 +266,11 @@ async def handler(bot, event):
                                   title=audio_payload['observation'])
         else:
             await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
+
+    if str(event.msg.content.text.body).startswith('!till'):
+        conversation_id = event.msg.conv_id
+        msg = get_till()
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
