@@ -1,7 +1,7 @@
 import datetime
 
 
-def get_keep():
+def get_till():
     observations = [
         'The end is coming.'
     ]
