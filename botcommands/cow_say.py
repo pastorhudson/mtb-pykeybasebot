@@ -1,11 +1,21 @@
 import requests
 import random
+import json
 
 def get_cow(msg):
-    payload = {}
-    headers = {}
-    url = f"https://marvn.app/say?msg={msg}"
-    response = requests.request("GET", url, headers=headers, data=payload)
+    characters = ['beavis', 'cheese', 'daemon', 'cow', 'dragon', 'ghostbusters', 'kitty', 'meow', 'milk', 'pig',
+                  'stegosaurus', 'stimpy', 'turkey', 'turtle', 'tux']
+    character = "cow"
+    if msg.split(" ")[0] in characters:
+        character = msg.split(" ")[0]
+        char_length = len(character) + 1
+        msg = msg[char_length:]
+    url = "http://marvn.app/say"
+    payload = {"message": msg, "cow": character, "balloon_type": "speak"}
+    # payload = {"message": msg}
+    response = requests.post(url, json=payload)
+
+
 
     observations = [
         "I can't believe you've done this.",
@@ -20,4 +30,4 @@ def get_cow(msg):
 
 
 if __name__ == "__main__":
-    print(get_cow("YOU ARE MY SUNSHINE"))
+    print(get_cow("cow YOU ARE MY SUNSHINE"))
