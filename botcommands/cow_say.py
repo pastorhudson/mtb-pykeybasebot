@@ -11,7 +11,7 @@ def get_cow(msg):
         character = msg.split(" ")[0]
         char_length = len(character) + 1
         msg = msg[char_length:]
-    url = "http://127.0.0.1:3000/say"
+    url = "https://marvn.app:3000/say"
     payload = {"message": msg, "cow": character, "balloon_type": "say", "face_type": "default"}
     # payload = {"message": msg}
     response = requests.post(url, json=payload)
