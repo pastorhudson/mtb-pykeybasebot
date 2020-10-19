@@ -29,6 +29,7 @@ from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
 from botcommands.voice import get_voice
 from botcommands.till import get_till
+from botcommands.cow_characters import get_characters
 
 # load_dotenv('secret.env')
 
@@ -53,7 +54,7 @@ async def handler(bot, event):
          "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
          "usage": "<State> <County> <- Optional Fields"},
         {"name": "cow",
-         "description": "Now I can't even explain this. You are a monster. Optional Characters: 'cheese', 'daemon', 'cow', 'dragon', 'ghostbusters', 'kitty', 'meow', 'milk', 'stegosaurus', 'stimpy', 'turkey', 'turtle', 'tux'",
+         "description": f"Now I can't even explain this. You are a monster. Optional Characters: {get_characters()}",
          "usage": "<character> <msg>"},
         {"name": "drwho",
          "description": "Return Dr Who Episode.",
