@@ -53,7 +53,7 @@ async def handler(bot, event):
          "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
          "usage": "<State> <County> <- Optional Fields"},
         {"name": "cow",
-         "description": "Now I can't even explain this. You are a monster. Optional Characters: 'beavis', 'cheese', 'daemon', 'cow', 'dragon', 'ghostbusters', 'kitty', 'meow', 'milk', 'pig','stegosaurus', 'stimpy', 'turkey', 'turtle', 'tux' ",
+         "description": "Now I can't even explain this. You are a monster. Optional Characters: 'cheese', 'daemon', 'cow', 'dragon', 'ghostbusters', 'kitty', 'meow', 'milk', 'stegosaurus', 'stimpy', 'turkey', 'turtle', 'tux'",
          "usage": "<character> <msg>"},
         {"name": "drwho",
          "description": "Return Dr Who Episode.",

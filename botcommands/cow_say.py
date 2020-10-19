@@ -2,16 +2,17 @@ import requests
 import random
 import json
 
+
 def get_cow(msg):
-    characters = ['beavis', 'cheese', 'daemon', 'cow', 'dragon', 'ghostbusters', 'kitty', 'meow', 'milk', 'pig',
+    characters = ['cheese', 'daemon', 'cow', 'dragon', 'ghostbusters', 'kitty', 'meow', 'milk',
                   'stegosaurus', 'stimpy', 'turkey', 'turtle', 'tux']
     character = "cow"
     if msg.split(" ")[0] in characters:
         character = msg.split(" ")[0]
         char_length = len(character) + 1
         msg = msg[char_length:]
-    url = "https://marvn.app/say"
-    payload = {"message": msg, "cow": character, "balloon_type": "speak"}
+    url = "http://127.0.0.1:3000/say"
+    payload = {"message": msg, "cow": character, "balloon_type": "say", "face_type": "default"}
     # payload = {"message": msg}
     response = requests.post(url, json=payload)
 
@@ -29,4 +30,4 @@ def get_cow(msg):
 
 
 if __name__ == "__main__":
-    print(get_cow("tux YOU ARE MY SUNSHINE"))
+    print(get_cow("stimpy YOU ARE MY SUNSHINE"))
