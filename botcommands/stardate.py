@@ -3,13 +3,18 @@ import random
 import datetime
 
 
-def get_stardate(sd=None):
-    print(sd)
+def get_observation():
     observations = ['Finally a task worthy of my vast power.',
                     'I bet you feel smug using this.',
                     "You'll get all the ladies by giving the time in stardate."]
+    return random.choice(observations)
 
-    msg = random.choice(observations)
+
+def get_stardate(sd=None, observation=True):
+    msg = ""
+
+    if observation:
+        msg = get_observation()
     if sd:
         try:
             sd = float(sd)
@@ -23,3 +28,7 @@ def get_stardate(sd=None):
         msg += f'```\nStar Date: {stardate}```'
 
     return msg
+
+
+if __name__ == '__main__':
+    print(get_stardate(observation=False))
