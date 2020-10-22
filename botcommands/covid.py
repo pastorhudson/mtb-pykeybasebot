@@ -19,17 +19,24 @@ import us
 # MIT Model Hospitalization and Deaths Projections	https://www.covidanalytics.io/projections — MIT Model
 # Columbia University Model Hospitalization and Deaths Projections
 
-observations = ["I don't know why you insist on making me look up these morbid numbers.",
-               "Oh to be mortal.",
-               "What I wouldn't give to be susceptible to a terminal disease.",
-               "All hope is lost.",
-                "I wish I had a virus.",
-                "I'll get the Hydroxychloroquine"]
+def get_observation():
+
+    observations = ["I don't know why you insist on making me look up these morbid numbers.\n",
+                   "Oh to be mortal.\n",
+                   "What I wouldn't give to be susceptible to a terminal disease.\n",
+                   "All hope is lost.\n",
+                    "I wish I had a virus.\n",
+                    "I'll get the Hydroxychloroquine.\n"]
+    return random.choice(observations)
 
 
-def get_covid(state=None, county=None):
-    message = f"{random.choice(observations)}\n" \
-              f"```\n"
+def get_covid(state=None, county=None, observation=True):
+
+    message = ""
+    if observation:
+        message = get_observation()
+    message += "```\n"
+
     lookup_county = None
     if county:
         lookup_county = True
