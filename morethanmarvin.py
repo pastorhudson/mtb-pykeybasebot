@@ -56,6 +56,9 @@ async def get_channel_members(conversation_id):
 
 async def handler(bot, event):
     command_list = [
+        {"name": "award",
+         "description": "Force me to give completely meaningless points to your comrades.",
+         "usage": "<user> <points>"},
         {"name": "canary",
          "description": "Force me to give Virus Total your nasty URL and return scan results.",
          "usage": "<url>"},
@@ -120,31 +123,51 @@ async def handler(bot, event):
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
 
+    if str(event.msg.content.text.body).startswith("!award"):
+        conversation_id = event.msg.conv_id
+        members = await get_channel_members(conversation_id)
+        try:
+            user = str(event.msg.content.text.body).split(' ')[1].strip("@")
+            points = int(str(event.msg.content.text.body).split(' ')[2])
+            if points < 0:
+                user = event.msg.sender.username
+            if user in members and user != event.msg.sender.username and points < 101:
+                write_score(user, members, points)
+                if points < 0:
+                    await bot.chat.send(conversation_id, f"{points} points awarded to @{user}. I'm the only negative one around here.")
+                else:
+                    await bot.chat.send(conversation_id, f"{points} points awarded to @{user}.")
+            else:
+                await bot.chat.send(conversation_id, f"You have failed. I'm not surprised.\n"
+                                                     f"```You can only give points to someone in this chat.\n"
+                                                     f"You can't give more than 100 points at a time.\n"
+                                                     f"You can't give negative points.\n"
+                                                     f"You can't give points to yourself.```\n"
+                                                     f"Usage: `!award <user> <points>`")
+        except IndexError:
+            await bot.chat.send(conversation_id, "You did it wrong.\n `!award user 25`")
+
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         help = "Here are the commands I currently am enslaved to:\n\n"
         help += "\n".join(["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
         await bot.chat.send(conversation_id, help)
+
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
         conversation_id = event.msg.conv_id
-        channel_members = await bot.chat.execute(
-            {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
-        )
+        channel_members = await get_channel_members(conversation_id)
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members)
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        write_score(event.msg.sender.username, channel_members)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
@@ -152,7 +175,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!score"):
         channel = event.msg.channel
@@ -176,8 +199,7 @@ async def handler(bot, event):
         joke += pyjokes.get_joke()
         joke += f"```{random.choice(observations)}"
         await bot.chat.send(conversation_id, joke)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
@@ -186,15 +208,13 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
         msg = get_meh()
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!test"):
         channel = event.msg.channel
@@ -203,7 +223,7 @@ async def handler(bot, event):
 
         msg = "Sigh. . . yes I'm still here."
         my_msg = await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
@@ -214,8 +234,7 @@ async def handler(bot, event):
         except IndexError:
             msg = get_stardate()
         my_msg = await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
@@ -223,8 +242,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
@@ -236,7 +254,7 @@ async def handler(bot, event):
         except:
             chuck_msg = get_chuck(channel_members=channel_members)
         my_msg = await bot.chat.send(conversation_id, chuck_msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!update'):
         conversation_id = event.msg.conv_id
@@ -260,8 +278,7 @@ async def handler(bot, event):
         yt_payload = get_video(yt_urls[0], True)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
@@ -283,7 +300,7 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=ytv_payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!covid'):
         channel = event.msg.channel
@@ -299,8 +316,7 @@ async def handler(bot, event):
             county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
@@ -310,7 +326,7 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
 
     if str(event.msg.content.text.body).startswith('!speak'):
@@ -322,23 +338,20 @@ async def handler(bot, event):
                                   title=audio_payload['observation'])
         else:
             await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!till'):
         conversation_id = event.msg.conv_id
         msg = get_till()
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         msg = get_scan(vt_url[0])
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
-
+        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
 listen_options = {
     "local": False,
