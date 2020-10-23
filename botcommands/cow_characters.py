@@ -1,6 +1,6 @@
 def get_characters():
-
-    characters = ['beavis.zen',
+    characters = ['cow', 'pig',
+                  'beavis.zen',
                   'bong',
                   'bud-frogs',
                   'bunny',

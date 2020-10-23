@@ -1,28 +1,13 @@
 import requests
 import random
 from html import unescape
+from botcommands.get_members import get_members
 
 def request_joke(joker):
     url = f"http://api.icndb.com/jokes/random?firstName&lastName={joker}&?exclude=[explicit]&?escape=javascript"
 
     response = requests.request("GET", url)
     return unescape(response.json()['value']['joke'])
-
-
-def get_jokers(channel):
-    joke_names = []
-    for owners in channel['owners']:
-        joke_names.append(owners['username'])
-    for admins in channel['admins']:
-        if admins['username'] not in joke_names:
-            joke_names.append(admins['username'])
-    for writers in channel['writers']:
-        if writers['username'] not in joke_names:
-            joke_names.append(writers['username'])
-    for readers in channel['readers']:
-        if readers['username'] not in joke_names:
-            joke_names.append(readers['username'])
-    return joke_names
 
 
 def get_chuck(name=None, channel=None):
@@ -45,7 +30,7 @@ def get_chuck(name=None, channel=None):
     joke = ""
 
     if not name:
-        joke_names = get_jokers(channel)
+        joke_names = get_members(channel)
         todays_joker = "@" + random.choice(joke_names)
         joke = request_joke(todays_joker)
     elif name == 'bomb':

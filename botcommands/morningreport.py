@@ -8,6 +8,7 @@ import csv
 import datetime
 import os
 import pandas as pd
+from botcommands.get_members import get_members
 
 
 def get_obaservation():
@@ -25,11 +26,12 @@ def get_score():
     return score
 
 
-def write_score(user):
+def write_score(user, channel_members):
+    members = get_members(channel_members)
     score = 0
     file_exists = os.path.isfile('./app/storage/morning_report_score.csv')
 
-    with open('morning_report_score.csv', mode='w') as morningreport_file:
+    with open('morning_report_score.csv', mode='a') as morningreport_file:
         header = ["User", "Date-time", "Points"]
         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         if not file_exists:
@@ -39,22 +41,24 @@ def write_score(user):
     return score
 
 
-def get_morningreport(user):
+def get_morningreport(user, channel_members):
+
     msg = get_obaservation()
-
-    msg += get_stardate()
+    msg += "`" + get_stardate(observation=False).strip("`") + "`"
     msg += get_till(observation=False)
-    msg += get_polls()
-    msg += get_covid(state="PA", county="Allegheny", observation=False)
-    msg += get_covid(state="PA", county="Fayette", observation=False)
-    msg += get_meh(observation=False)
-    msg += "\n`Daredevil is still blind.`"
+    msg += get_polls() + "\n"
+    msg += get_covid(state="PA", county="Allegheny", observation=False) + "\n"
+    msg += get_covid(state="PA", county="Fayette", observation=False) + "\n"
 
-    write_score(user)
+    msg += "Meh:" + get_meh(observation=False)
+    msg += "\nDaredevil is still blind."
+
+    write_score(user, channel_members)
 
     return msg
 
 
 if __name__ == "__main__":
-    # print(get_morningreport(user='pastorhudson'))
-    print(get_score())
+    channel_members = {'owners': [{'uid': 'f4089cdf5fc8ebe433d5b9f49b66d619', 'username': 'pastorhudson', 'fullName': 'Ron Hudson'}, {'uid': 'a5465087aede61be961a6bb3bf964f19', 'username': 'morethanmarvin', 'fullName': ''}], 'admins': [], 'writers': [], 'readers': [], 'bots': [], 'restrictedBots': []}
+    print(get_morningreport(user='pastorhudson', channel_members=channel_members))
+    # print(get_score())

@@ -30,6 +30,7 @@ from botcommands.chuck import get_chuck
 from botcommands.voice import get_voice
 from botcommands.till import get_till
 from botcommands.cow_characters import get_characters
+from botcommands.morningreport import get_morningreport
 
 # load_dotenv('secret.env')
 
@@ -67,6 +68,9 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "meh",
          "description": "Get's today's meh.",
+         "usage": ""},
+        {"name": "morningreport",
+         "description": "Gets today's morning report.",
          "usage": ""},
         {"name": "pollresult",
          "description": "RealClear Politics National and Pennsylvania Poll Results.",
@@ -114,6 +118,15 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         print(str(event.msg.content.text.body)[7:])
         msg = get_drwho(str(event.msg.content.text.body)[7:])
+        await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!morningreport"):
+        conversation_id = event.msg.conv_id
+        channel_members = await bot.chat.execute(
+            {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
+        )
+        print(channel_members)
+        msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members)
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):

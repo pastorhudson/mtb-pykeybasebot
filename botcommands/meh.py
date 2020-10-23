@@ -18,11 +18,11 @@ def get_meh(observation=True):
     msg = ""
     if observation:
         msg = get_observation()
-    msg += "```\n"
+    msg += "`"
 
     msg += meh['entries'][0]['title']
 
-    msg += "\n```"
+    msg += "` "
     msg += meh['entries'][0]['links'][0]['href']
     return msg
 

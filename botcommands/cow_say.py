@@ -2,6 +2,16 @@ import requests
 import random
 import json
 from botcommands.cow_characters import get_characters
+import cowsay
+
+print(cowsay.about())
+
+
+def py_cow(msg):
+    characters = cowsay.chars
+    c = random.choice(characters)
+
+    print(c("This is a test"))
 
 
 def get_cow(msg):
@@ -17,14 +27,17 @@ def get_cow(msg):
     'wired' => ["OO", "  "],
     'young' => ["..", "  "]
     """
-
-    character = "cow"
+    print(characters)
+    character = random.choice(get_characters())
+    print(msg.split(" ")[0])
     if msg.split(" ")[0] in characters:
         character = msg.split(" ")[0]
+        print(character)
         char_length = len(character) + 1
         msg = msg[char_length:]
     url = "https://marvn.app/say"
     payload = {"message": msg, "cow": character, "balloon_type": "say", "face_type": "default"}
+    print(payload)
     # payload = {"message": msg}
     response = requests.post(url, json=payload)
 
@@ -40,4 +53,4 @@ def get_cow(msg):
 
 
 if __name__ == "__main__":
-    print(get_cow("beavis.zen YOU ARE MY SUNSHINE"))
+    print(py_cow(" YOU ARE MY SUNSHINE"))

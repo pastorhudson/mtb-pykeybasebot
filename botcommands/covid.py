@@ -119,7 +119,7 @@ def get_covid(state=None, county=None, observation=True):
     for r in response3.json():
         if r['County'].lower() == county.lower() + " county" and r['State'].lower() == str(state).lower():
             data2.append(r)
-    print(data2)
+    # print(data2)
 
     message += f"COVID-19 Data for {county.capitalize()} County {state}\n" \
 
