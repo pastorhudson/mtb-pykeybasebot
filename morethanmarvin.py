@@ -132,6 +132,14 @@ async def handler(bot, event):
         return
 
     if str(event.msg.content.text.body).startswith("!award"):
+        instructions = f"You have failed. I'm not surprised.\n" \
+                       f"```You can only give points to someone in this chat.\n" \
+                       f"You can't give more than 100 points at a time.\n" \
+                       f"You can't give negative points.\n" \
+                       f"Points must be whole numbers.\n" \
+                       f"No cutesy extra characters, or I'll deduct from your score.\n" \
+                       f"You can't give points to yourself.```\n" \
+                       f"Usage: `!award <user> <points>`"
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
@@ -151,21 +159,14 @@ async def handler(bot, event):
                                     f"{points} points awarded to @{user}. I'm the only negative one around here.")
             if user in members and user != event.msg.sender.username and points < 101:
                 score = write_score(user, members, event.msg.sender.username, channel_name,  points)
-                # if points < 0:
-                #     await bot.chat.send(conversation_id, f"{points} points awarded to @{user}. I'm the only negative one around here.")
-                # else:
-                # await bot.chat.send(conversation_id, f"{points} points awarded to @{user}.")
                 await bot.chat.react(conversation_id, msg_id, ":disappointed:")
 
             else:
-                await bot.chat.send(conversation_id, f"You have failed. I'm not surprised.\n"
-                                                     f"```You can only give points to someone in this chat.\n"
-                                                     f"You can't give more than 100 points at a time.\n"
-                                                     f"You can't give negative points.\n"
-                                                     f"You can't give points to yourself.```\n"
-                                                     f"Usage: `!award <user> <points>`")
+                await bot.chat.send(conversation_id, instructions)
         except Exception as e:
-            await bot.chat.send(conversation_id, "You did it wrong.\n `!award <user> <points>`")
+            write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
+            await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
+                                                 f"for trying to be cute.\n{instructions}")
 
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
