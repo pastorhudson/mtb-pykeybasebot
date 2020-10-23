@@ -5,8 +5,8 @@ import os
 import csv
 
 
-def get_score(channel_members):
-    df = pd.read_csv("./storage/score.csv")
+def get_score(channel_members, channel):
+    df = pd.read_csv(f"./storage/{channel}.csv")
     members = channel_members
     df.set_index('User', inplace=True)
 
@@ -19,15 +19,15 @@ def get_score(channel_members):
 
 
 def write_score(user, channel_members, sender, channel, points=10):
-    file_exists = os.path.isfile('./storage/score.csv')
+    file_exists = os.path.isfile(f'./storage/{channel}.csv')
     if not file_exists:
-        with open('./storage/score.csv', mode='w') as morningreport_file:
+        with open(f'./storage/{channel}.csv', mode='w') as morningreport_file:
             header = ["User", "Date-time", "Points", "Sender", "Conv_id"]
             score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             if not file_exists:
                 score_writer.writerow(header)
 
-    with open('./storage/score.csv', mode='a') as morningreport_file:
+    with open(f'./storage/{channel}.csv', mode='a') as morningreport_file:
         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         score_writer.writerow([user, datetime.datetime.now(), points, sender, channel])
 

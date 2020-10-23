@@ -126,17 +126,20 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!award"):
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
+        channel_name = str(event.msg.channel.name).replace(",", "")
+        print(channel_name)
         try:
             user = str(event.msg.content.text.body).split(' ')[1].strip("@")
             points = int(str(event.msg.content.text.body).split(' ')[2])
             if points < 0:
                 user = event.msg.sender.username
+                score = write_score(user, members, event.msg.sender.username, channel_name,  points)
             if user in members and user != event.msg.sender.username and points < 101:
-                score = write_score(user, members, event.msg.sender.username, conversation_id,  points)
+                score = write_score(user, members, event.msg.sender.username, channel_name,  points)
                 if points < 0:
                     await bot.chat.send(conversation_id, f"{points} points awarded to @{user}. I'm the only negative one around here.")
                 else:
-                    await bot.chat.send(conversation_id, f"{points} points awarded to @{user}.\n{score}")
+                    await bot.chat.send(conversation_id, f"{points} points awarded to @{user}.")
             else:
                 await bot.chat.send(conversation_id, f"You have failed. I'm not surprised.\n"
                                                      f"```You can only give points to someone in this chat.\n"
@@ -180,9 +183,10 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!score"):
         channel = event.msg.channel
         msg_id = event.msg.id
+        channel_name = str(event.msg.channel.name).replace(",", "")
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
-        score = get_score(channel_members)
+        score = get_score(channel_members, channel_name)
         await bot.chat.send(conversation_id, score)
 
     if str(event.msg.content.text.body).startswith("!joke"):
@@ -220,7 +224,7 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-
+        print(event.msg.channel.name)
         msg = "Sigh. . . yes I'm still here."
         my_msg = await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
