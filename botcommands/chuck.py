@@ -3,6 +3,7 @@ import random
 from html import unescape
 from botcommands.get_members import get_members
 
+
 def request_joke(joker):
     url = f"http://api.icndb.com/jokes/random?firstName&lastName={joker}&?exclude=[explicit]&?escape=javascript"
 
@@ -10,7 +11,7 @@ def request_joke(joker):
     return unescape(response.json()['value']['joke'])
 
 
-def get_chuck(name=None, channel=None):
+def get_chuck(name=None, channel_members=None):
     """{'owners': [{'uid': 'f4089cdf5fc8ebe433d5b9f49b66d619', 'username': 'pastorhudson', 'fullName': 'Ron Hudson'}],
      'admins': [], 'writers': [{'uid': '7d368eae6a7292b4215ca46da021b919', 'username': 'sakanakami', 'fullName': 'Joe Eafrati'},
       {'uid': 'b3543e75d25a5b5b45e551c3cccf0e19', 'username': 'ihuman', 'fullName': 'Ethan Connor'}],
@@ -26,18 +27,18 @@ def get_chuck(name=None, channel=None):
         "I hope you don't plan on doing this all day. . .",
         "Would you grow up already?",
     ]
-    print(name)
+
     joke = ""
 
     if not name:
-        joke_names = get_members(channel)
+        joke_names = channel_members
         todays_joker = "@" + random.choice(joke_names)
         joke = request_joke(todays_joker)
     elif name == 'bomb':
-        joke_names = get_jokers(channel)
-        print(joke_names)
+        joke_names = channel_members
+
         for joker in joke_names:
-            print(joker)
+
             joke += "\n".join([request_joke("@" + joker) + "\n"])
     else:
         joke = request_joke(name)

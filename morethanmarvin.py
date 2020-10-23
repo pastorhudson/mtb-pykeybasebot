@@ -31,6 +31,9 @@ from botcommands.voice import get_voice
 from botcommands.till import get_till
 from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
+from botcommands.scorekeeper import get_score, write_score
+from botcommands.get_members import get_members
+
 
 # load_dotenv('secret.env')
 
@@ -41,6 +44,14 @@ if "win32" in sys.platform:
     asyncio.set_event_loop_policy(
         asyncio.WindowsProactorEventLoopPolicy()  # type: ignore
     )
+
+
+async def get_channel_members(conversation_id):
+    channel_members = await bot.chat.execute(
+        {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
+    )
+    members = get_members(channel_members)
+    return members
 
 
 async def handler(bot, event):
@@ -81,6 +92,9 @@ async def handler(bot, event):
         {"name": "speak",
          "description": "Forces me generate an mp3 speaking the text you send.",
          "usage": "<Text To Speak>"},
+        {"name": "score",
+         "description": "Get the score for who abuses me the most.",
+         "usage": ""},
         {"name": "stardate",
          "description": " Print's the current stardate if no stardate is given.",
          "usage": "<stardate> <- Optional"},
@@ -112,12 +126,16 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         help = "Here are the commands I currently am enslaved to:\n\n"
         help += "\n".join(["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
         await bot.chat.send(conversation_id, help)
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
         conversation_id = event.msg.conv_id
@@ -126,6 +144,7 @@ async def handler(bot, event):
         )
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members)
         await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
@@ -133,6 +152,15 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
+    if str(event.msg.content.text.body).startswith("!score"):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        channel_members = await get_channel_members(conversation_id)
+        score = get_score(channel_members)
+        await bot.chat.send(conversation_id, score)
 
     if str(event.msg.content.text.body).startswith("!joke"):
         observations = ["It didn't work for me. . .", "I am so sorry.",
@@ -148,6 +176,8 @@ async def handler(bot, event):
         joke += pyjokes.get_joke()
         joke += f"```{random.choice(observations)}"
         await bot.chat.send(conversation_id, joke)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
@@ -156,18 +186,24 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
         msg = get_meh()
         await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith("!test"):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
+
         msg = "Sigh. . . yes I'm still here."
         my_msg = await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
@@ -178,6 +214,8 @@ async def handler(bot, event):
         except IndexError:
             msg = get_stardate()
         my_msg = await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
@@ -185,18 +223,20 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
-        channel_members = await bot.chat.execute(
-            {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
-        )
+
+        channel_members = await get_channel_members(conversation_id)
         try:
             name = str(event.msg.content.text.body)[7:]
-            chuck_msg = get_chuck(name=name, channel=channel_members)
+            chuck_msg = get_chuck(name=name, channel_members=channel_members)
         except:
-            chuck_msg = get_chuck(channel=channel_members)
+            chuck_msg = get_chuck(channel_members=channel_members)
         my_msg = await bot.chat.send(conversation_id, chuck_msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!update'):
         conversation_id = event.msg.conv_id
@@ -220,6 +260,8 @@ async def handler(bot, event):
         yt_payload = get_video(yt_urls[0], True)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
@@ -241,6 +283,7 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=ytv_payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!covid'):
         channel = event.msg.channel
@@ -256,6 +299,8 @@ async def handler(bot, event):
             county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
@@ -265,6 +310,8 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!speak'):
         conversation_id = event.msg.conv_id
@@ -275,17 +322,22 @@ async def handler(bot, event):
                                   title=audio_payload['observation'])
         else:
             await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!till'):
         conversation_id = event.msg.conv_id
         msg = get_till()
         await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         msg = get_scan(vt_url[0])
         await bot.chat.send(conversation_id, msg)
+        write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
 
 
 listen_options = {
