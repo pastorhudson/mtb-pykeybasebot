@@ -116,7 +116,6 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, help)
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
-        print(str(event.msg.content.text.body)[7:])
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
@@ -125,7 +124,6 @@ async def handler(bot, event):
         channel_members = await bot.chat.execute(
             {"method": "listmembers", "params": {"options": {"conversation_id": conversation_id}}}
         )
-        print(channel_members)
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members)
         await bot.chat.send(conversation_id, msg)
 
@@ -219,9 +217,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
-        # print(yt_urls)
         yt_payload = get_video(yt_urls[0], True)
-        # print(yt_payload)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
 
@@ -231,7 +227,6 @@ async def handler(bot, event):
                                  " Please don't change my name to Marshall.",
                                  """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        print(ytv_urls)
         conversation_id = event.msg.conv_id
         ytv_payload = get_video(ytv_urls[0], True)
         if ytv_payload['msg'] == "I can't download videos from this site.":
@@ -251,7 +246,6 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        print(str(event.msg.content.text.body).split(' '))
         try:
             state = str(event.msg.content.text.body).split(' ')[1]
         except IndexError:
@@ -265,10 +259,8 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        print(screenshot_urls)
         conversation_id = event.msg.conv_id
         screenshot_payload = get_screenshot(screenshot_urls[0])
-        print(screenshot_payload)
         if screenshot_payload['file']:
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
