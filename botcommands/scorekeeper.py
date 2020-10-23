@@ -20,6 +20,12 @@ def get_score(channel_members):
 
 def write_score(user, channel_members):
     file_exists = os.path.isfile('/storage/morning_report_score.csv')
+    if not file_exists:
+        with open('morning_report_score.csv', mode='w') as morningreport_file:
+            header = ["User", "Date-time", "Points"]
+            score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            if not file_exists:
+                score_writer.writerow(header)
 
     with open('morning_report_score.csv', mode='a') as morningreport_file:
         header = ["User", "Date-time", "Points"]
