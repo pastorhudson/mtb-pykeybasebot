@@ -164,8 +164,8 @@ async def handler(bot, event):
                                                      f"You can't give negative points.\n"
                                                      f"You can't give points to yourself.```\n"
                                                      f"Usage: `!award <user> <points>`")
-        except IndexError:
-            await bot.chat.send(conversation_id, "You did it wrong.\n `!award user 25`")
+        except Exception as e:
+            await bot.chat.send(conversation_id, "You did it wrong.\n `!award <user> <points>`")
 
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
