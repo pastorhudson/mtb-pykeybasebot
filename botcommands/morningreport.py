@@ -5,6 +5,7 @@ from botcommands.stardate import get_stardate
 from botcommands.till import get_till
 import random
 from botcommands.scorekeeper import write_score, get_score
+from pyjokes import pyjokes
 import csv
 import datetime
 import os
@@ -59,7 +60,8 @@ def get_morningreport(user, channel_members):
     msg += get_covid(state="PA", county="Fayette", observation=False) + "\n"
 
     msg += "Meh:" + get_meh(observation=False)
-    msg += "\nDaredevil is still blind."
+    msg += f"\n```Today's Joke: {pyjokes.get_joke()}```"
+    msg += f"\n{get_score(channel_members)}"
 
     # write_score(user, channel_members)
 
