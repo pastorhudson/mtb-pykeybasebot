@@ -54,6 +54,14 @@ async def get_channel_members(conversation_id):
     return members
 
 
+def RepresentsInt(s):
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
 async def handler(bot, event):
     command_list = [
         {"name": "award",
@@ -130,8 +138,12 @@ async def handler(bot, event):
         channel_name = str(event.msg.channel.name).replace(",", "")
         print(channel_name)
         try:
-            user = str(event.msg.content.text.body).split(' ')[1].strip("@")
-            points = int(str(event.msg.content.text.body).split(' ')[2])
+            if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
+                user = str(event.msg.content.text.body).split(' ')[1].strip("@")
+                points = int(str(event.msg.content.text.body).split(' ')[2])
+            else:
+                user = str(event.msg.content.text.body).split(' ')[2].strip("@")
+                points = int(str(event.msg.content.text.body).split(' ')[1])
             if points < 0:
                 user = event.msg.sender.username
                 score = write_score(user, members, event.msg.sender.username, channel_name,  points)
