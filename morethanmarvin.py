@@ -124,6 +124,7 @@ async def handler(bot, event):
         return
 
     if str(event.msg.content.text.body).startswith("!award"):
+        msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
@@ -141,7 +142,9 @@ async def handler(bot, event):
                 # if points < 0:
                 #     await bot.chat.send(conversation_id, f"{points} points awarded to @{user}. I'm the only negative one around here.")
                 # else:
-                await bot.chat.send(conversation_id, f"{points} points awarded to @{user}.")
+                # await bot.chat.send(conversation_id, f"{points} points awarded to @{user}.")
+                await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+
             else:
                 await bot.chat.send(conversation_id, f"You have failed. I'm not surprised.\n"
                                                      f"```You can only give points to someone in this chat.\n"
