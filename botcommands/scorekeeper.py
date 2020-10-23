@@ -31,9 +31,9 @@ def write_score(user, channel_members, sender, channel, points=10):
         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         score_writer.writerow([user, datetime.datetime.now(), points, sender, channel])
 
-    score = get_score(channel_members)
+    # score = get_score(channel_members)
 
-    return score
+    return
 
 
 if __name__ == "__main__":
