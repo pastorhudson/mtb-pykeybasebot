@@ -132,7 +132,7 @@ async def handler(bot, event):
             if points < 0:
                 user = event.msg.sender.username
             if user in members and user != event.msg.sender.username and points < 101:
-                write_score(user, members, points)
+                write_score(user, members, event.msg.sender.username, conversation_id,  points)
                 if points < 0:
                     await bot.chat.send(conversation_id, f"{points} points awarded to @{user}. I'm the only negative one around here.")
                 else:
