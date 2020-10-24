@@ -144,7 +144,6 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
-        print(channel_name)
         try:
             if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
                 user = str(event.msg.content.text.body).split(' ')[1].strip("@")
@@ -159,7 +158,7 @@ async def handler(bot, event):
                                     f"{points} points awarded to @{user}. I'm the only negative one around here.")
             if user in members and user != event.msg.sender.username and points < 101:
                 score = write_score(user, members, event.msg.sender.username, channel_name,  points)
-                await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+                await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
             else:
                 await bot.chat.send(conversation_id, instructions)
@@ -368,6 +367,13 @@ async def handler(bot, event):
         msg = get_till()
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+    if str(event.msg.content.text.body).startswith('!weather'):
+        conversation_id = event.msg.conv_id
+        msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather."
+        members = await get_channel_members(conversation_id)
+        channel_name = str(event.msg.channel.name).replace(",", "")
+        write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
