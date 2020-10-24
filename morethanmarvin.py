@@ -186,9 +186,10 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!morningreport"):
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
-        msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members)
+        channel_name = str(event.msg.channel.name).replace(",", "")
+        msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
         await bot.chat.send(conversation_id, msg)
-        write_score(event.msg.sender.username, channel_members)
+        # write_score(event.msg.sender.username, channel_members, channel=channel_name, sender=event.msg.sender.username)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel

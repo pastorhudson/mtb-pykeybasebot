@@ -50,7 +50,7 @@ def get_obaservation():
 #     return score
 
 
-def get_morningreport(user, channel_members):
+def get_morningreport(user, channel_members, channel):
 
     msg = get_obaservation()
     msg += "`" + get_stardate(observation=False).strip("`") + "`"
@@ -61,7 +61,7 @@ def get_morningreport(user, channel_members):
 
     msg += "Meh:" + get_meh(observation=False)
     msg += f"\n```Today's Joke: {pyjokes.get_joke()}```"
-    msg += f"\n{get_score(channel_members)}"
+    msg += f"\n{get_score(channel_members, channel)}"
 
     # write_score(user, channel_members)
 
