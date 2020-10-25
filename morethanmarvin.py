@@ -178,6 +178,8 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
@@ -186,6 +188,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, channel_members, channel=channel_name, sender=event.msg.sender.username)
@@ -194,6 +197,8 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
@@ -203,6 +208,8 @@ async def handler(bot, event):
         msg_id = event.msg.id
         channel_name = str(event.msg.channel.name).replace(",", "")
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         channel_members = await get_channel_members(conversation_id)
         score = get_score(channel_members, channel_name)
         await bot.chat.send(conversation_id, score)
@@ -228,12 +235,16 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         msg = get_meh()
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
@@ -262,12 +273,15 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         channel_members = await get_channel_members(conversation_id)
         try:
@@ -336,6 +350,7 @@ async def handler(bot, event):
             county = str(event.msg.content.text.body).split(' ')[2]
         except IndexError:
             county = None
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
@@ -343,6 +358,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!screenshot'):
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         screenshot_payload = get_screenshot(screenshot_urls[0])
         if screenshot_payload['file']:
             await bot.chat.attach(channel=conversation_id,
@@ -350,9 +366,10 @@ async def handler(bot, event):
                                   title=screenshot_payload['msg'])
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
-
     if str(event.msg.content.text.body).startswith('!speak'):
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         audio_payload = get_voice((str(event.msg.content.text.body)[7:]))
         if audio_payload['file']:
             await bot.chat.attach(channel=conversation_id,
@@ -369,7 +386,8 @@ async def handler(bot, event):
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id
-        msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather."
+        msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather.\n" \
+              f"https://mars.nasa.gov/layout/embed/image/insightweather/"
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
         write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
@@ -378,6 +396,8 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         msg = get_scan(vt_url[0])
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
