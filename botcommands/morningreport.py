@@ -52,16 +52,17 @@ def get_obaservation():
 
 def get_morningreport(user, channel_members, channel):
 
-    msg = get_obaservation()
+    msg = get_obaservation() + "\n"
     msg += "`" + get_stardate(observation=False).strip("`") + "`"
     msg += get_till(observation=False)
     msg += get_polls() + "\n"
     msg += get_covid(state="PA", county="Allegheny", observation=False) + "\n"
     msg += get_covid(state="PA", county="Fayette", observation=False) + "\n"
 
-    msg += "Meh:" + get_meh(observation=False)
-    msg += f"\n```Today's Joke: {pyjokes.get_joke()}```"
-    msg += f"\n{get_score(channel_members, channel)}"
+    msg += "\nMeh:" + get_meh(observation=False)
+    msg += f"\n\nMTB Leaderboard:\n{get_score(channel_members, channel)}"
+    msg += f"\n\n```Today's Joke: {pyjokes.get_joke()}```"
+
 
     # write_score(user, channel_members)
 
