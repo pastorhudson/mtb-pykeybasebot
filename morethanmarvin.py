@@ -342,6 +342,7 @@ async def handler(bot, event):
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         try:
             state = str(event.msg.content.text.body).split(' ')[1]
         except IndexError:
@@ -350,15 +351,14 @@ async def handler(bot, event):
             county = str(event.msg.content.text.body).split(' ')[2]
         except IndexError:
             county = None
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
-        screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         screenshot_payload = get_screenshot(screenshot_urls[0])
         if screenshot_payload['file']:
             await bot.chat.attach(channel=conversation_id,
