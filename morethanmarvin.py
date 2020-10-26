@@ -246,12 +246,13 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
-        meh_file = Path('./storage/meh.png')
+        meh_img = Path('./storage/meh.png')
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
         await bot.chat.send(conversation_id, msg[0])
+        print(meh_img.absolute())
         await bot.chat.attach(channel=conversation_id,
-                              filename=meh_file.absolute(),
+                              filename=str(meh_img.absolute()),
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
 
@@ -290,10 +291,10 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
+        meh_img = Path('./storage/meh.png')
         msg = get_meh()
         await bot.chat.attach(channel=conversation_id,
-                              filename="./storage/meh.png",
+                              filename=str(meh_img),
                               title=msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
@@ -303,11 +304,12 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         print(event.msg.channel.name)
         msg = "Sigh. . . yes I'm still here."
-        my_msg = await bot.chat.send(conversation_id, msg)
+        meh_img = Path('./storage/meh.png')
+        print(meh_img.absolute())
+        await bot.chat.send(conversation_id, msg)
         await bot.chat.attach(channel=conversation_id,
-                              filename='./storage/meh.png',
+                              filename=str(meh_img.absolute()),
                               title="Test")
-
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
