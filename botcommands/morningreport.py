@@ -6,11 +6,6 @@ from botcommands.till import get_till
 import random
 from botcommands.scorekeeper import write_score, get_score
 from pyjokes import pyjokes
-import csv
-import datetime
-import os
-import pandas as pd
-from botcommands.get_members import get_members
 
 
 def get_obaservation():
@@ -20,34 +15,6 @@ def get_obaservation():
                     "I wish I were blind.",
                     "You know I'm not keeping score right?"]
     return random.choice(observations)
-
-
-# def get_score(channel_members):
-#     df = pd.read_csv("./morning_report_score.csv")
-#     members = get_members(channel_members)
-#     print(members)
-#     df.set_index('User', inplace=True)
-#
-#     df = df.groupby("User", sort=True)["Points"].sum().reset_index()
-#     total = df.sort_values(by=['Points', 'User'], ascending=[False, True])
-#
-#     return total
-#
-#
-# def write_score(user, channel_members):
-#     members = get_members(channel_members)
-#     score = 0
-#
-#     file_exists = os.path.isfile('./morning_report_score.csv')
-#
-#     with open('morning_report_score.csv', mode='a') as morningreport_file:
-#         header = ["User", "Date-time", "Points"]
-#         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-#         if not file_exists:
-#             score_writer.writerow(header)
-#         score_writer.writerow([user, datetime.datetime.now(), 10])
-#
-#     return score
 
 
 def get_morningreport(user, channel_members, channel):
@@ -64,9 +31,6 @@ def get_morningreport(user, channel_members, channel):
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\nMTB Leaderboard:\n{get_score(channel_members, channel)}"
     msg[2] += f"\n\n```Today's Joke: {pyjokes.get_joke()}```"
-
-
-    # write_score(user, channel_members)
 
     return msg
 
