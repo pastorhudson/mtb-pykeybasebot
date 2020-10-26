@@ -1,10 +1,15 @@
 import feedparser
 import random
 import requests
+from pathlib import Path
+
+storage = Path('./storage')
+print(storage.absolute())
 
 
 def download_img(pic_url):
-    with open('./storage/meh.png', 'wb') as handle:
+    # with storage.open('wb') as handle:
+    with open(f"{storage.absolute()}/meh.png", 'wb') as handle:
             response = requests.get(pic_url, stream=True)
 
             if not response.ok:
