@@ -33,7 +33,7 @@ from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
 from botcommands.scorekeeper import get_score, write_score
 from botcommands.get_members import get_members
-
+from pathlib import Path
 
 # load_dotenv('secret.env')
 
@@ -246,11 +246,12 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
+        meh_file = Path('./storage/meh.png')
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
         await bot.chat.send(conversation_id, msg[0])
         await bot.chat.attach(channel=conversation_id,
-                              filename="./storage/meh.png",
+                              filename=meh_file.absolute(),
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
 
