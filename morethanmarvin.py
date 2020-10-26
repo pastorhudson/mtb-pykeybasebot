@@ -245,8 +245,12 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
+
         msg = get_meh()
-        await bot.chat.send(conversation_id, msg)
+        # await bot.chat.send(conversation_id, msg)
+        await bot.chat.attach(channel=conversation_id,
+                              filename="./storage/meh.png",
+                              title=msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!test"):
