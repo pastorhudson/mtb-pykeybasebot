@@ -304,7 +304,10 @@ async def handler(bot, event):
         print(event.msg.channel.name)
         msg = "Sigh. . . yes I'm still here."
         my_msg = await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+        await bot.chat.attach(channel=conversation_id,
+                              filename='./storage/meh.png',
+                              title="Test")
+
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
