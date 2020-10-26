@@ -30,7 +30,7 @@ def get_morningreport(user, channel_members, channel):
 
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\nMTB Leaderboard:\n{get_score(channel_members, channel)}"
-    msg[2] += f"\n\n```Today's Joke: {pyjokes.get_joke()}```"
+    msg[2] += f"\n\nToday's Joke:```{pyjokes.get_joke()}```"
 
     return msg
 

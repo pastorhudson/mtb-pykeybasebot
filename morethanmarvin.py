@@ -250,9 +250,9 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
         await bot.chat.send(conversation_id, msg[0])
-        print(meh_img.absolute())
+        file = str(meh_img.absolute())
         await bot.chat.attach(channel=conversation_id,
-                              filename=str(meh_img.absolute()),
+                              filename=file,
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
 
