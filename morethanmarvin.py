@@ -246,13 +246,13 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
-        meh_img = Path('./storage/meh.png')
+        meh_img = str(Path('./storage/meh.png').absolute())
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
         await bot.chat.send(conversation_id, msg[0])
-        file = str(meh_img.absolute())
+        # file = str(meh_img.absolute())
         await bot.chat.attach(channel=conversation_id,
-                              filename=file,
+                              filename=meh_img,
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
 
@@ -291,10 +291,10 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        meh_img = Path('./storage/meh.png')
+        meh_img = str(Path('./storage/meh.png').absolute())
         msg = get_meh()
         await bot.chat.attach(channel=conversation_id,
-                              filename=str(meh_img),
+                              filename=meh_img,
                               title=msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
