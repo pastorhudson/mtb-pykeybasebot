@@ -70,7 +70,7 @@ async def handler(bot, event):
          "usage": "<user> <points>"},
         {"name": "bible",
          "description": "Force me to lookup Bible txt.",
-         "usage": "<reference>"},
+         "usage": "<reference> OR <search string>"},
         {"name": "canary",
          "description": "Force me to give Virus Total your nasty URL and return scan results.",
          "usage": "<url>"},
