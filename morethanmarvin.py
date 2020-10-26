@@ -190,7 +190,12 @@ async def handler(bot, event):
         channel_name = str(event.msg.channel.name).replace(",", "")
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
-        await bot.chat.send(conversation_id, msg)
+        await bot.chat.send(conversation_id, msg[0])
+        await bot.chat.attach(channel=conversation_id,
+                              filename="./storage/meh.png",
+                              title=msg[1])
+        await bot.chat.send(conversation_id, msg[2])
+
         # write_score(event.msg.sender.username, channel_members, channel=channel_name, sender=event.msg.sender.username)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
@@ -245,11 +250,9 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-
         msg = get_meh()
-        # await bot.chat.send(conversation_id, msg)
         await bot.chat.attach(channel=conversation_id,
-                              filename="/storage/meh.png",
+                              filename="./storage/meh.png",
                               title=msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
