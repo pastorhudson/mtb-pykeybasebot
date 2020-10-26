@@ -34,6 +34,7 @@ from botcommands.morningreport import get_morningreport
 from botcommands.scorekeeper import get_score, write_score
 from botcommands.get_members import get_members
 from pathlib import Path
+from botcommands.bible import get_esv_text
 
 # load_dotenv('secret.env')
 
@@ -67,6 +68,9 @@ async def handler(bot, event):
         {"name": "award",
          "description": "Force me to give completely meaningless points to your comrades.",
          "usage": "<user> <points>"},
+        {"name": "bible",
+         "description": "Force me to lookup Bible txt.",
+         "usage": "<reference>"},
         {"name": "canary",
          "description": "Force me to give Virus Total your nasty URL and return scan results.",
          "usage": "<url>"},
@@ -166,6 +170,13 @@ async def handler(bot, event):
             write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
             await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                                  f"for trying to be cute.\n{instructions}")
+
+    if str(event.msg.content.text.body).startswith("!bible"):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        passage = str(event.msg.content.text.body)[7:]
+        msg = get_esv_text(passage)
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)

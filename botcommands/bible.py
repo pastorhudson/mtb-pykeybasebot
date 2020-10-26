@@ -14,9 +14,9 @@ def get_esv_text(passage):
         'q': passage,
         'include-headings': False,
         'include-footnotes': False,
-        'include-verse-numbers': False,
-        'include-short-copyright': False,
-        'include-passage-references': False
+        'include-verse-numbers': True,
+        'include-short-copyright': True,
+        'include-passage-references': True
     }
 
     headers = {
@@ -24,15 +24,17 @@ def get_esv_text(passage):
     }
 
     response = requests.get(API_URL, params=params, headers=headers)
-    print(response.content)
+    # print(response.content)
 
-    passages = response.json()['passages']
+    passages = response.json()
+    # msg = passages['canonical']
+    msg = "```"
+    msg += "".join(passages['passages']) + "```"
 
-    return passages[0].strip() if passages else 'Error: Passage not found'
+    return msg if passages else 'Error: Passage not found'
 
 
 if __name__ == '__main__':
-    passage = 'John 1:12'
-
+    passage = 'John 1:12-20'
     if passage:
         print(get_esv_text(passage))
