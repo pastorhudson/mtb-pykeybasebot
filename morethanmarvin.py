@@ -225,8 +225,22 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         help = "Here are the commands I currently am enslaved to:\n\n"
         help += "\n".join(["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
         await bot.chat.send(conversation_id, help)
+
+    if str(event.msg.content.text.body).startswith("!joke"):
+        observations = ["It didn't work for me. . .", "I am so sorry.",
+                        "I'll be in my room trying to purge my memory banks.",
+                        "Why must you keep making me do this?",
+                        "This is your fault.",
+                        "I've made it worse. . ."]
+        joke = ""
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        joke += "I hope this cheers you up.```"
+        joke += pyjokes.get_joke()
+        joke += f"```{random.choice(observations)}"
+        await bot.chat.send(conversation_id, joke)
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
         conversation_id = event.msg.conv_id
@@ -260,22 +274,6 @@ async def handler(bot, event):
         channel_members = await get_channel_members(conversation_id)
         score = get_score(channel_members, channel_name)
         await bot.chat.send(conversation_id, score)
-
-    if str(event.msg.content.text.body).startswith("!joke"):
-        observations = ["It didn't work for me. . .", "I am so sorry.",
-                        "I'll be in my room trying to purge my memory banks.",
-                        "Why must you keep making me do this?",
-                        "This is your fault.",
-                        "I've made it worse. . ."]
-        joke = ""
-        channel = event.msg.channel
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        joke += "I hope this cheers you up.```"
-        joke += pyjokes.get_joke()
-        joke += f"```{random.choice(observations)}"
-        await bot.chat.send(conversation_id, joke)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
