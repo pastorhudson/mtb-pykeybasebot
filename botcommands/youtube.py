@@ -4,6 +4,7 @@ from youtube_dl import YoutubeDL
 import json
 import os
 from urllib.parse import urlparse
+from pathlib import Path
 
 
 def get_domain(url):
@@ -11,7 +12,8 @@ def get_domain(url):
     return urlparse(url).netloc
 
 info = []
-
+storage = Path('./storage')
+print(storage.absolute())
 
 def convert_seconds(seconds):
     seconds = seconds % (24 * 3600)
@@ -70,6 +72,7 @@ def get_other_video(url, simulate):
                 'simulate': simulate,
                 'format': 'mp4',
                 'no-cache-dir': True,
+                'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s'
                 }
     try:
         with YoutubeDL(ydl_opts) as ydl:
@@ -77,7 +80,7 @@ def get_other_video(url, simulate):
         yt_info = info[0]
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
-                   "file": f'{os.path.abspath("./")}/{yt_info["_filename"]}',
+                   "file": yt_info["_filename"],
                    "duration": convert_seconds(yt_info["duration"]),
                    'url': yt_info['webpage_url']
                    }
@@ -145,6 +148,6 @@ def get_youtube(url, simulate):
 
 
 if __name__ == "__main__":
-    print("Hi mom")
+    print(storage.absolute())
 
 
