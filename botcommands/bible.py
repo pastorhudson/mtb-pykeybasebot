@@ -3,7 +3,11 @@
 import sys
 import requests
 import os
+import random
 
+observations = [
+    "This isn't in the ESV version of the Bible.",
+]
 
 def get_esv_text(passage):
     API_KEY = os.environ.get('ESV_KEY')
@@ -34,14 +38,18 @@ def get_esv_text(passage):
     else:
         API_URL = 'https://api.esv.org/v3/passage/search/'
         response = requests.get(API_URL, params=params, headers=headers)
-        msg = ""
-        for result in response.json()['results']:
-            msg += "```" + result['reference'] + "\n" + result['content'] + "```\n"
+        if response.json()['results']:
+            msg = ""
+            for result in response.json()['results']:
+                msg += "```" + result['reference'] + "\n" + result['content'] + "```\n"
 
-        return msg
+            msg += "\n(ESV)"
+            return msg
+        else:
+            return f'"{passage}" is not found in the ESV Bible.'
 
 
 if __name__ == '__main__':
-    passage = 'baptized'
+    passage = 'penis'
     if passage:
         print(get_esv_text(passage))
