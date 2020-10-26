@@ -249,7 +249,7 @@ async def handler(bot, event):
         msg = get_meh()
         # await bot.chat.send(conversation_id, msg)
         await bot.chat.attach(channel=conversation_id,
-                              filename="./storage/meh.png",
+                              filename="/storage/meh.png",
                               title=msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
