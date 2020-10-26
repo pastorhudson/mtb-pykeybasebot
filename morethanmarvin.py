@@ -167,6 +167,58 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                                  f"for trying to be cute.\n{instructions}")
 
+    if str(event.msg.content.text.body).startswith('!canary'):
+        vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        msg = get_scan(vt_url[0])
+        await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith('!chuck'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        channel_members = await get_channel_members(conversation_id)
+        try:
+            name = str(event.msg.content.text.body)[7:]
+            chuck_msg = get_chuck(name=name, channel_members=channel_members)
+        except:
+            chuck_msg = get_chuck(channel_members=channel_members)
+        my_msg = await bot.chat.send(conversation_id, chuck_msg)
+
+    if str(event.msg.content.text.body).startswith('!covid'):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        try:
+            state = str(event.msg.content.text.body).split(' ')[1]
+        except IndexError:
+            state = None
+        try:
+            county = str(event.msg.content.text.body).split(' ')[2]
+        except IndexError:
+            county = None
+        msg = get_covid(state, county)
+        await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!cow"):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        msg = get_cow(str(event.msg.content.text.body)[5:])
+        my_msg = await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!drwho"):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        msg = get_drwho(str(event.msg.content.text.body)[7:])
+        await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -175,14 +227,6 @@ async def handler(bot, event):
         help += "\n".join(["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
         await bot.chat.send(conversation_id, help)
-
-    if str(event.msg.content.text.body).startswith("!drwho"):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        msg = get_drwho(str(event.msg.content.text.body)[7:])
-        await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
         conversation_id = event.msg.conv_id
@@ -195,8 +239,6 @@ async def handler(bot, event):
                               filename="./storage/meh.png",
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
-
-        # write_score(event.msg.sender.username, channel_members, channel=channel_name, sender=event.msg.sender.username)
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
@@ -276,29 +318,6 @@ async def handler(bot, event):
         my_msg = await bot.chat.send(conversation_id, msg)
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
-    if str(event.msg.content.text.body).startswith("!cow"):
-        channel = event.msg.channel
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        msg = get_cow(str(event.msg.content.text.body)[5:])
-        my_msg = await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
-    if str(event.msg.content.text.body).startswith('!chuck'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        channel_members = await get_channel_members(conversation_id)
-        try:
-            name = str(event.msg.content.text.body)[7:]
-            chuck_msg = get_chuck(name=name, channel_members=channel_members)
-        except:
-            chuck_msg = get_chuck(channel_members=channel_members)
-        my_msg = await bot.chat.send(conversation_id, chuck_msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
     if str(event.msg.content.text.body).startswith('!update'):
         conversation_id = event.msg.conv_id
         msg_id = event.msg.id
@@ -343,24 +362,6 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=ytv_payload['file'],
                                   title="Wouldn't want anybody to have to actually click a link. . . ")
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
-
-    if str(event.msg.content.text.body).startswith('!covid'):
-        channel = event.msg.channel
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        try:
-            state = str(event.msg.content.text.body).split(' ')[1]
-        except IndexError:
-            state = None
-        try:
-            county = str(event.msg.content.text.body).split(' ')[2]
-        except IndexError:
-            county = None
-        msg = get_covid(state, county)
-        await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id
@@ -399,15 +400,6 @@ async def handler(bot, event):
         channel_name = str(event.msg.channel.name).replace(",", "")
         write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
         await bot.chat.send(conversation_id, msg)
-
-    if str(event.msg.content.text.body).startswith('!canary'):
-        vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        msg = get_scan(vt_url[0])
-        await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
 listen_options = {
     "local": False,
