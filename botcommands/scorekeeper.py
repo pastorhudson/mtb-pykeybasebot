@@ -4,8 +4,8 @@ import datetime
 import os
 import csv
 
-# from crud import s
-# from models import Point, Team, User
+from crud import s
+from models import Point, Team, User
 from prettytable import PrettyTable
 
 
