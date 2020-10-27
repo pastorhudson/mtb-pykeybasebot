@@ -44,6 +44,21 @@ def write_score(user, channel_members, sender, channel, team_name, points=10):
     return
 
 
+def sync_score(channel):
+    with open(f'./storage/{channel.replace(",", "")}.csv', mode='r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            team = s.query(Team).filter(Team.name.match(channel)).first()
+            giver = s.query(User).filter(User.username.match(row['User'])).first()
+            receiver = s.query(User).filter(User.username.match(row['Sender'])).first()
+
+            points = Point(giver=giver, points=int(row['Points']), receiver=receiver, team_id=team.id)
+            s.add(points)
+            s.commit()
+            s.close()
+            print(row)
+
+
 if __name__ == "__main__":
     channel_members = {'owners': [{'uid': 'a5465087aede61be961a6bb3bf964f19', 'username': 'morethanmarvin', 'fullName': ''}, {'uid': 'f4089cdf5fc8ebe433d5b9f49b66d619', 'username': 'pastorhudson', 'fullName': 'Ron Hudson'}], 'admins': [], 'writers': [], 'readers': [], 'bots': [], 'restrictedBots': []}
     print(get_score(channel_members))

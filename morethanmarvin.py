@@ -31,7 +31,7 @@ from botcommands.voice import get_voice
 from botcommands.till import get_till
 from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
-from botcommands.scorekeeper import get_score, write_score
+from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
 from botcommands.bible import get_esv_text
@@ -295,6 +295,13 @@ async def handler(bot, event):
         channel_members = await get_channel_members(conversation_id)
         score = get_score(channel_members, channel_name)
         await bot.chat.send(conversation_id, score)
+
+    if str(event.msg.content.text.body).startswith("!syncscore"):
+        await sync(event=event, bot=bot)
+        sync_score(channel=event.msg.channel.name)
+        msg = "Scyn'd csv score with DB"
+        await bot.chat.send(event.msg.conv_id, msg)
+
 
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
