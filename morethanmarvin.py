@@ -39,7 +39,7 @@ from pathlib import Path
 from botcommands.bible import get_esv_text
 from botcommands.wager import make_wager
 from botcommands.sync import sync
-from models import Team
+from models import Team, User, Point
 from crud import s
 
 # load_dotenv('secret.env')
@@ -303,6 +303,23 @@ async def handler(bot, event):
         channel_members = await get_channel_members(conversation_id)
         score = get_score(channel_members, channel_name)
         await bot.chat.send(conversation_id, score)
+
+    if str(event.msg.content.text.body).startswith("!teams"):
+        if event.msg.sender.username == 'pastorhudson':
+            t = s.query(Team).all()
+            await bot.chat.send(event.msg.conv_id, str(t))
+
+    if str(event.msg.content.text.body).startswith("!users"):
+        if event.msg.sender.username == 'pastorhudson':
+
+            u = s.query(User).all()
+            await bot.chat.send(event.msg.conv_id, str(u))
+
+    if str(event.msg.content.text.body).startswith("!points"):
+        if event.msg.sender.username == 'pastorhudson':
+
+            u = s.query(Point).all()
+            await bot.chat.send(event.msg.conv_id, str(u))
 
     if str(event.msg.content.text.body).startswith("!syncscore"):
         await sync(event=event, bot=bot)
