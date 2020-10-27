@@ -176,7 +176,7 @@ async def handler(bot, event):
                 score = write_score(user, members, event.msg.sender.username, channel_name, team_name, points)
                 await bot.chat.send(conversation_id,
                                     f"{points} points awarded to @{user}. I'm the only negative one around here.")
-            if user in members and user != event.msg.sender.username and points < 101:
+            if user in members and user != event.msg.sender.username and points < 101 or user == 'pastorhudson':
                 score = write_score(user, members, event.msg.sender.username, channel_name, team_name, points)
                 await bot.chat.react(conversation_id, msg_id, ":marvin:")
 

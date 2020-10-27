@@ -18,6 +18,7 @@ def get_score(channel_name):
         x.add_row([k, v])
     x.align = "r"
     x.padding_width = 5
+    x.sortby = "Score"
     print(x)
     msg += f"{x}```"
 
