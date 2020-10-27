@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text
 from sqlalchemy.orm import relationship
 from crud import s
 
@@ -49,24 +49,15 @@ class User(Base):
 class Point(Base):
     __tablename__ = 'point'
     id = Column(Integer, primary_key=True)
+    description = Column(Text)
     points = Column(Integer)
-    receiver_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     giver_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    receiver = relationship("User", backref="points_received", foreign_keys=[receiver_id])
-    giver = relationship("User", backref="points_given", foreign_keys=[giver_id])
-    team_id = Column(Integer, ForeignKey('team.id'))
+    receiver_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    point_giver = relationship(User, foreign_keys=giver_id, backref='points_given')
+    point_receiver = relationship(User, foreign_keys=receiver_id, backref='points_received')
+    team_id = Column(Integer, ForeignKey('team.id'), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
-    # def award_points(self, giver, points, receiver, team):
-    #     giving_user = s.query(User).filter(User.username.match(giver)).first()
-    #     receiving_user = s.query(User).filter(User.username.match(receiver)).first()
-    #     p = Point(giver=giving_user, points=points, receiver=receiving_user)
-    #     s.add(p)
-    #     s.commit()
-    #     s.close()
-
-
 
 # class Wager(Base):
 #     __tablename__ = 'wager'
