@@ -11,6 +11,8 @@ import logging
 import os
 import sys
 # from dotenv import load_dotenv
+from sqlalchemy import func
+
 from botcommands.poll_results import get_polls
 from pyjokes import pyjokes
 from botcommands.tldr import get_tldr
@@ -37,6 +39,8 @@ from pathlib import Path
 from botcommands.bible import get_esv_text
 from botcommands.wager import make_wager
 from botcommands.sync import sync
+from models import Team
+from crud import s
 
 # load_dotenv('secret.env')
 
@@ -63,6 +67,10 @@ def RepresentsInt(s):
         return True
     except ValueError:
         return False
+
+
+class Points(object):
+    pass
 
 
 async def handler(bot, event):
@@ -298,8 +306,11 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!syncscore"):
         await sync(event=event, bot=bot)
-        sync_score(channel=event.msg.channel.name)
-        msg = "Scyn'd csv score with DB"
+        if event.msg.sender.username == 'pastorhudson':
+            sync_score(channel=event.msg.channel.name)
+            msg = "Scyn'd csv score with DB"
+        else:
+            msg = "You're not authorized to run this command."
         await bot.chat.send(event.msg.conv_id, msg)
 
 
@@ -326,7 +337,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!test"):
         await sync(event=event, bot=bot)
-
+        team = s.query(Team).filter(Team.name.match(event.msg.channel.name)).first()
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
