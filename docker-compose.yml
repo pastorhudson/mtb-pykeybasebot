@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - ~/.docker/mtb-bot/data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    expose:
+      - 5432
+    env_file:
+      - secret.env

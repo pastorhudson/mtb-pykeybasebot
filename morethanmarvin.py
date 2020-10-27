@@ -35,6 +35,8 @@ from botcommands.scorekeeper import get_score, write_score
 from botcommands.get_members import get_members
 from pathlib import Path
 from botcommands.bible import get_esv_text
+from botcommands.wager import make_wager
+from botcommands.sync import sync
 
 # load_dotenv('secret.env')
 
@@ -122,6 +124,9 @@ async def handler(bot, event):
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
+        {"name": "wager",
+         "description": "Forces me to setup a silly bet with points that don't matter.",
+         "usage": "<points wagered> <The Event or Thing your betting upon>"},
         {"name": "yt",
          "description": "Forces me to go get meta data about a youtube video.",
          "usage": "<url>"},
@@ -310,17 +315,18 @@ async def handler(bot, event):
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!test"):
+        await sync(event=event, bot=bot)
+
         channel = event.msg.channel
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        print(event.msg.channel.name)
-        msg = "Sigh. . . yes I'm still here."
-        meh_img = Path('./storage/meh.png')
-        print(meh_img.absolute())
+        members = await get_channel_members(conversation_id)
+
+        conversation_id = event.msg.conv_id
+
+        msg = f"Sigh. . . yes I'm still here. \nMembers: {members}\nmsg_id: {msg_id}\nChannel: {channel}"
+
         await bot.chat.send(conversation_id, msg)
-        await bot.chat.attach(channel=conversation_id,
-                              filename=str(meh_img.absolute()),
-                              title="Test")
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
@@ -348,6 +354,21 @@ async def handler(bot, event):
             payload['params']['options']['alias'] = os.environ.get('KEYBASE_BOTALIAS')
         await bot.chat.execute(payload)
         await bot.chat.react(conversation_id, msg_id, ":disappointed:")
+
+    if str(event.msg.content.text.body).startswith('!wager'):
+        conversation_id = event.msg.conv_id
+        members = await get_channel_members(conversation_id)
+        user = event.msg.sender.username
+        channel_name = str(event.msg.channel.name).replace(",", "")
+        wager = str(event.msg.content.text.body)[7:]
+        msg = make_wager(user=user, channel_members=members, channel=channel_name, wager=wager)
+        print(msg)
+        wager_msg = await bot.chat.send(conversation_id, msg)
+        print(wager_msg)
+        print(wager_msg.message_id)
+        await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
+        await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
+
 
     if str(event.msg.content.text.body).startswith('!yt '):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
