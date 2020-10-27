@@ -1,2 +1,2 @@
+release: alembic upgrade head
 web: python morethanmarvin.py
-upgrade: alembic upgrade head
