@@ -25,9 +25,16 @@ class Team(Base):
 
     def __repr__(self):
         return self.name
-    #
-    # def get_score(self):
-    #     return "Score"
+
+    def get_score(self):
+        user_score = {}
+        for p in self.points:
+            try:
+                user_score[p.point_receiver] += p.points
+            except KeyError:
+                user_score[p.point_receiver] = p.points
+
+        return user_score
 
 
 class User(Base):
@@ -58,6 +65,7 @@ class Point(Base):
     team_id = Column(Integer, ForeignKey('team.id'), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
 
 # class Wager(Base):
 #     __tablename__ = 'wager'

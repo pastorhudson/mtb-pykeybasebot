@@ -294,6 +294,7 @@ async def handler(bot, event):
         # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!score"):
+        await sync(event=event, bot=bot)
         channel = event.msg.channel
         msg_id = event.msg.id
         channel_name = str(event.msg.channel.name).replace(",", "")
@@ -301,7 +302,7 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         channel_members = await get_channel_members(conversation_id)
-        score = get_score(channel_members, channel_name)
+        score = get_score(channel_name=channel.name)
         await bot.chat.send(conversation_id, score)
 
     if str(event.msg.content.text.body).startswith("!teams"):
@@ -363,7 +364,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
 
         msg = f"Sigh. . . yes I'm still here. \nMembers: {members}\nmsg_id: {msg_id}\nChannel: {channel}"
-
+        s.close()
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!stardate"):
