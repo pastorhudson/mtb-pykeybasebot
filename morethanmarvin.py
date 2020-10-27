@@ -141,6 +141,8 @@ async def handler(bot, event):
         return
 
     if str(event.msg.content.text.body).startswith("!award"):
+        await sync(event=event, bot=bot)
+
         instructions = f"You have failed. I'm not surprised.\n" \
                        f"```You can only give points to someone in this chat.\n" \
                        f"You can't give more than 100 points at a time.\n" \
@@ -153,6 +155,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
+        team_name = event.msg.channel.name
         try:
             if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
                 user = str(event.msg.content.text.body).split(' ')[1].strip("@")
@@ -162,17 +165,17 @@ async def handler(bot, event):
                 points = int(str(event.msg.content.text.body).split(' ')[1])
             if points < 0:
                 user = event.msg.sender.username
-                score = write_score(user, members, event.msg.sender.username, channel_name,  points)
+                score = write_score(user, members, event.msg.sender.username, channel_name, team_name, points)
                 await bot.chat.send(conversation_id,
                                     f"{points} points awarded to @{user}. I'm the only negative one around here.")
             if user in members and user != event.msg.sender.username and points < 101:
-                score = write_score(user, members, event.msg.sender.username, channel_name,  points)
+                score = write_score(user, members, event.msg.sender.username, channel_name, team_name, points)
                 await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
             else:
                 await bot.chat.send(conversation_id, instructions)
         except Exception as e:
-            write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
+            write_score(user, members, event.msg.sender.username, channel_name, team_name, -5)
             await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                                  f"for trying to be cute.\n{instructions}")
 
@@ -434,7 +437,7 @@ async def handler(bot, event):
               f"https://mars.nasa.gov/layout/embed/image/insightweather/"
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
-        write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5)
+        write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5, team_name)
         await bot.chat.send(conversation_id, msg)
 
 listen_options = {

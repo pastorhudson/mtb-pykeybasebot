@@ -3,6 +3,8 @@ import datetime
 import pandas as pd
 import os
 import csv
+from crud import s
+from models import Point, Team, User
 
 
 def get_score(channel_members, channel):
@@ -18,7 +20,7 @@ def get_score(channel_members, channel):
     return msg
 
 
-def write_score(user, channel_members, sender, channel, points=10):
+def write_score(user, channel_members, sender, channel, team_name, points=10):
     file_exists = os.path.isfile(f'./storage/{channel}.csv')
     if not file_exists:
         with open(f'./storage/{channel}.csv', mode='w') as morningreport_file:
@@ -30,8 +32,14 @@ def write_score(user, channel_members, sender, channel, points=10):
     with open(f'./storage/{channel}.csv', mode='a') as morningreport_file:
         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         score_writer.writerow([user, datetime.datetime.now(), points, sender, channel])
+        team = s.query(Team).filter(Team.name.match(team_name)).first()
+        giver = s.query(User).filter(User.username.match(sender)).first()
+        receiver = s.query(User).filter(User.username.match(user)).first()
 
-    # score = get_score(channel_members)
+        points = Point(giver=giver, points=points, receiver=receiver, team_id=team.id)
+        s.add(points)
+        s.commit()
+        s.close()
 
     return
 
