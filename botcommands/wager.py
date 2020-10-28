@@ -1,3 +1,5 @@
+from prettytable import PrettyTable
+
 from crud import s
 from datetime import datetime, timedelta
 from models import User, Team, Wager, Bet, Point
@@ -13,11 +15,26 @@ def get_team_user(team_name, username):
 def get_wagers(team_name):
     team = s.query(Team).filter_by(name=team_name).first()
     wagers = team.get_wagers()
-    msg = f"Here's all the current wagers for {team_name}\n"
+    msg = f"Here's all the current wagers for `{team_name}`\n\n"
     for wager in wagers:
-        msg += f'Wager: `#{wager.id}` "{wager.description}"\n```' \
-               f'Default Bet: {wager.points}\n' \
-               f'End Time: {wager.et()}```\n\n'
+        wager_maker = wager.bets[0].user.username
+        x = PrettyTable()
+        x.field_names = ["User", "Points", "Position", "Creator"]
+        msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
+        for bet in wager.bets:
+            if bet.user.username == wager_maker:
+                x.add_row([bet.user.username, bet.points, bet.position, "*"])
+            else:
+                x.add_row([bet.user.username, bet.points, bet.position, ""])
+
+        x.align = "r"
+        x.sortby = 'Points'
+        x.reversesort = True
+
+        msg += f"```{x}\n" \
+               f"Default Bet: {wager.points}\n" \
+               f'End Time: {wager.et()}````\n'
+        msg += "\n\n"
     return msg
 
 
@@ -78,7 +95,9 @@ def get_bets(username):
     bets = user.get_bets()
     msg = f"Here's all the current wagers for @{username}\n"
     for bet in bets:
+        team = s.query(Team).get(bet.wager.team_id)
         msg += f'Wager: `#{bet.wager.id}` "{bet.wager.description}"\n' \
+               f'Team: `{team.name}`\n' \
                f'Default Bet: `{bet.wager.points}`\n' \
                f'Your Bet: `{bet.points}`\n' \
                f'Your Position: `{bet.position}`\n' \
