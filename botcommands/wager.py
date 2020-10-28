@@ -1,4 +1,5 @@
 from prettytable import PrettyTable
+from prettytable.prettytable import MSWORD_FRIENDLY
 
 from crud import s
 from datetime import datetime, timedelta
@@ -19,21 +20,24 @@ def get_wagers(team_name):
     for wager in wagers:
         wager_maker = wager.bets[0].user.username
         x = PrettyTable()
-        x.field_names = ["User", "Points", "Position", "Creator"]
+        x.set_style(MSWORD_FRIENDLY)
+        x.border = False
+        # x.padding_width = 1
+        x.field_names = ["User", "Pts", "Pos"]
         msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
         for bet in wager.bets:
             if bet.user.username == wager_maker:
-                x.add_row([bet.user.username, bet.points, bet.position, "*"])
+                x.add_row([f"{bet.user.username}*", bet.points, bet.position])
             else:
-                x.add_row([bet.user.username, bet.points, bet.position, ""])
+                x.add_row([bet.user.username, bet.points, bet.position])
 
         x.align = "r"
-        x.sortby = 'Points'
+        x.sortby = 'Pts'
         x.reversesort = True
 
-        msg += f"```{x}\n" \
+        msg += f"```{x}\n\n" \
                f"Default Bet: {wager.points}\n" \
-               f'End Time: {wager.et()}````\n'
+               f'End Time: {wager.et()}```'
         msg += "\n\n"
     return msg
 
@@ -95,14 +99,24 @@ def get_bets(username):
     bets = user.get_bets()
     msg = f"Here's all the current wagers for @{username}\n"
     for bet in bets:
-        team = s.query(Team).get(bet.wager.team_id)
-        msg += f'Wager: `#{bet.wager.id}` "{bet.wager.description}"\n' \
-               f'Team: `{team.name}`\n' \
-               f'Default Bet: `{bet.wager.points}`\n' \
-               f'Your Bet: `{bet.points}`\n' \
-               f'Your Position: `{bet.position}`\n' \
-               f'End Time: `{bet.wager.et()}`\n' \
-               f'Betting Closed: `{bet.wager.is_closed}`\n\n'
+        x = PrettyTable()
+        x.border = False
+        x.field_names = ["#", "Pts", "Pos", "Win"]
+        x.add_row([bet.wager.id, bet.points, bet.position, bet.result])
+        x.align = "r"
+        x.sortby = '#'
+        x.reversesort = True
+        msg = f"```" \
+              f"{x}" \
+              f"```"
+        # team = s.query(Team).get(bet.wager.team_id)
+        # msg += f'Wager: `#{bet.wager.id}` "{bet.wager.description}"\n' \
+        #        f'Team: `{team.name}`\n' \
+        #        f'Default Bet: `{bet.wager.points}`\n' \
+        #        f'Your Bet: `{bet.points}`\n' \
+        #        f'Your Position: `{bet.position}`\n' \
+        #        f'End Time: `{bet.wager.et()}`\n' \
+        #        f'Betting Closed: `{bet.wager.is_closed}`\n\n'
     return msg
 
 
