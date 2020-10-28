@@ -37,7 +37,7 @@ from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
 from botcommands.bible import get_esv_text
-from botcommands.wager import get_wagers, make_wager, make_bet
+from botcommands.wager import get_wagers, make_wager, make_bet, get_bets
 from botcommands.sync import sync
 from models import Team, User, Point
 from crud import s
@@ -194,13 +194,30 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         team_name = event.msg.channel.name
         username = event.msg.sender.username
-        # print(str(event.msg.content.text.body).split(" ")[1][1:])
-        if RepresentsInt(str(event.msg.content.text.body).split(" ")[1][1:]):
-            wager_id = str(event.msg.content.text.body).split(" ")[1][1:]
-            points = event.msg.content.text.body[(len(str(event.msg.content.text.body).split(" ")[1][1:]) + 6):]
+        try:
+            if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
+                points = int(str(event.msg.content.text.body).split(' ')[2])
+                digits = int((len(str(points)))) + 7
+                wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
+                position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
+
+            else:
+                points = int(str(event.msg.content.text.body).split(' ')[1])
+                digits = int((len(str(points)))) + 7
+                wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
+                position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
             print(points)
-        # position =
-        # msg = make_bet()
+            print(wager_id)
+            print(position)
+        except IndexError:
+            msg = get_bets(username)
+            wager_msg = await bot.chat.send(conversation_id, msg)
+        except ValueError:
+            msg = f"`{event.msg.content.text.body}` is woefully incorrect.\n" \
+                  f"\nUsage:\n```List Your Bets: !bet\n" \
+                  "Bet on an existing Wager: !bet <points> <#wager_id> <True/False>\n" \
+                  "Create a new wager: !wager <points> <description>```"
+            await bot.chat.send(conversation_id, msg)
 
 
     if str(event.msg.content.text.body).startswith("!bible"):
@@ -308,7 +325,6 @@ async def handler(bot, event):
 
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!score"):
         await sync(event=event, bot=bot)
@@ -357,7 +373,6 @@ async def handler(bot, event):
 
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
@@ -367,7 +382,6 @@ async def handler(bot, event):
         await bot.chat.attach(channel=conversation_id,
                               filename=meh_img,
                               title=msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith("!test"):
         await sync(event=event, bot=bot)
@@ -392,7 +406,6 @@ async def handler(bot, event):
         except IndexError:
             msg = get_stardate()
         my_msg = await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!update'):
         conversation_id = event.msg.conv_id
@@ -451,7 +464,6 @@ async def handler(bot, event):
         yt_payload = get_video(yt_urls[0], True)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
@@ -483,7 +495,6 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!speak'):
         conversation_id = event.msg.conv_id
@@ -496,13 +507,12 @@ async def handler(bot, event):
                                   title=audio_payload['observation'])
         else:
             await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
 
     if str(event.msg.content.text.body).startswith('!till'):
         conversation_id = event.msg.conv_id
         msg = get_till()
         await bot.chat.send(conversation_id, msg)
-        # write_score(event.msg.sender.username, await get_channel_members(conversation_id))
+
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id
         msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather.\n" \

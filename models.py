@@ -76,6 +76,9 @@ class User(Base):
     def __repr__(self):
         return self.username
 
+    def get_bets(self):
+        return s.query(Bet).filter(User.bets).all()
+
 
 class Point(Base):
     __tablename__ = 'point'

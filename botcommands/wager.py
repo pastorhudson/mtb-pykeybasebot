@@ -15,13 +15,18 @@ def get_wagers(team_name):
     wagers = team.get_wagers()
     msg = f"Here's all the current wagers for {team_name}\n"
     for wager in wagers:
-        msg += f'```Wager: `#{wager.id}` "{wager.description}"\n' \
+        msg += f'Wager: `#{wager.id}` "{wager.description}"\n```' \
                f'Default Bet: {wager.points}\n' \
                f'End Time: {wager.et()}```\n\n'
     return msg
 
 
 def make_wager(team_name, username, description, points, position,  minutes):
+    if points < 0:
+        return f"`{points}` is a negative number. All wagers must be positive integers.\n" \
+               f"Usage: `!wager <points> <Description>`\n" \
+               f"If you'd like to bet something will not happen reflect that in the description."
+
     team, user = get_team_user(team_name, username)
 
     existing_wager = team.wager_exists(description)
@@ -39,9 +44,9 @@ def make_wager(team_name, username, description, points, position,  minutes):
         bet.wager = wager
         user.bets.append(bet)
         s.commit()
-        msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n' \
+        msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n```' \
               f'Default Bet: {wager.points}\n' \
-              f'End Time: {wager.et()}'
+              f'End Time: {wager.et()}```'
         s.close()
         return msg
 
@@ -68,9 +73,25 @@ def make_bet(team_name, username, points, position, wager_id):
         return f'Wager: `#{wager.id}` "{wager.description}" is closed for betting.'
 
 
+def get_bets(username):
+    user = s.query(User).filter_by(username=username).first()
+    bets = user.get_bets()
+    msg = f"Here's all the current wagers for @{username}\n"
+    for bet in bets:
+        msg += f'Wager: `#{bet.wager.id}` "{bet.wager.description}"\n' \
+               f'Default Bet: `{bet.wager.points}`\n' \
+               f'Your Bet: `{bet.points}`\n' \
+               f'Your Position: `{bet.position}`\n' \
+               f'End Time: `{bet.wager.et()}`\n' \
+               f'Betting Closed: `{bet.wager.is_closed}`\n\n'
+    return msg
+
+
+
+
 if __name__ == "__main__":
     # print(make_wager('morethanmarvin,pastorhudson', 'pastorhudson', 'My db is lit', 24, 30))
-    print(get_wagers('morethanmarvin,pastorhudson'))
+    # print(get_wagers('morethanmarvin,pastorhudson'))
     # print(make_bet(team_name='morethanmarvin,pastorhudson', username='pastorhudson', points=23, position=True, wager_id=5))
     # print(make_wager(team_name='morethanmarvin,pastorhudson',
     #                  username='pastorhudson',
@@ -79,3 +100,4 @@ if __name__ == "__main__":
     #                  position=True,
     #                  minutes=60
     #                  ))
+    print(get_bets('pastorhudson'))
