@@ -81,6 +81,10 @@ def make_wager(team_name, username, description, points, position,  minutes):
         return f"`{points}` is a terrible failure. All wagers must be positive integers.\n" \
                f"Usage: `!wager <points> <Description>`\n" \
                f"If you'd like to bet something will not happen reflect that in the description."
+    if points > 5001:
+        return f"`{points}` is a terrible failure. All wagers must be positive integers less than 5001.\n" \
+               f"Usage: `!wager <points> <Description>`\n" \
+               f"If you'd like to bet something will not happen reflect that in the description."
 
     team, user = get_team_user(team_name, username)
 
@@ -108,9 +112,11 @@ def make_wager(team_name, username, description, points, position,  minutes):
 def make_bet(team_name, username, points, position, wager_id):
     if points < 1:
         return "You can't bet negative points."
+    if points > 5000:
+        return "5000 is the max bet."
     team, user = get_team_user(team_name, username)
+
     wager = s.query(Wager).get(wager_id)
-    print(wager)
     msg = ""
     if wager:
         if wager.team_id != team.id:
@@ -124,6 +130,8 @@ def make_bet(team_name, username, points, position, wager_id):
                    f"Wager `#{wager.id}`: {wager.description}\n" \
                    f"This wager will end at {wager.et()}\n" \
                    f"{get_wager_bets(wager)}"
+        if points > wager.bets[0].points:
+            return f"You can't bet more than {wager.bets[0].points} on wager `#{wager.id}`"
         else:
             bet = Bet(points=points, position=position)
             bet.wager = wager
