@@ -59,6 +59,9 @@ class Bet(Base):
     wager = relationship("Wager", back_populates="bets")
     user = relationship("User", back_populates="bets")
 
+    def __repr__(self):
+        return str([self.left_id, self.right_id, self.points, self.position, self.user])
+
 
 class User(Base):
     __tablename__ = 'user'
@@ -110,7 +113,10 @@ class Wager(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     def already_bet(self, user):
-        return s.query(Bet).filter(Wager.bets.any(Bet.user == user)).first()
+        for bet in self.bets:
+            if bet.user == user:
+                return bet
+        return False
 
     def et(self):
         return self.end_time.strftime('%d-%m %I:%M %p')

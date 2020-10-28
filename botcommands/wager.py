@@ -18,27 +18,8 @@ def get_wagers(team_name):
     wagers = team.get_wagers()
     msg = f"Here's all the current wagers for `{team_name}`\n\n"
     for wager in wagers:
-        wager_maker = wager.bets[0].user.username
-        x = PrettyTable()
-        x.set_style(MSWORD_FRIENDLY)
-        x.border = False
-        # x.padding_width = 1
-        x.field_names = ["User", "Pts", "Pos"]
         msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
-        for bet in wager.bets:
-            if bet.user.username == wager_maker:
-                x.add_row([f"{bet.user.username}*", bet.points, bet.position])
-            else:
-                x.add_row([bet.user.username, bet.points, bet.position])
-
-        x.align = "r"
-        x.sortby = 'Pts'
-        x.reversesort = True
-
-        msg += f"```{x}\n\n" \
-               f"Default Bet: {wager.points}\n" \
-               f'End Time: {wager.et()}```'
-        msg += "\n\n"
+        msg += get_wager_bets(wager)
     return msg
 
 
@@ -66,66 +47,94 @@ def make_wager(team_name, username, description, points, position,  minutes):
         user.bets.append(bet)
         s.commit()
         msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n```' \
-              f'Default Bet: {wager.points}\n' \
-              f'End Time: {wager.et()}```'
+              # f'End Time: {wager.et()}```'
         s.close()
         return msg
 
 
 def make_bet(team_name, username, points, position, wager_id):
     team, user = get_team_user(team_name, username)
-    wager = team.get_wager(wager_id)
-    if wager and not wager.is_closed:
+    wager = s.query(Wager).get(wager_id)
+    print(wager)
+    msg = ""
+    if wager:
+        if wager.team_id != team.id:
+            return f'This team is not able to access wager `#{wager.id}`.'
+        if wager.is_closed:
+            return f'Wager: `#{wager.id}` "{wager.description}" is closed for betting.'
+
         if bet := wager.already_bet(user):
-            return f"You've already placed a bet that Wager: `#{wager.id}` is `{bet.position}` for `{bet.points}`.\n" \
-                   f"This wager will end at {wager.et()}"
+            print(bet)
+            return f"You've already bet `{bet.points}` points wager `#{wager.id}` is `{bet.position}`.\n" \
+                   f"Wager `#{wager.id}`: {wager.description}\n" \
+                   f"This wager will end at {wager.et()}\n" \
+                   f"{get_wager_bets(wager)}"
         else:
-            bet = Bet(points=points, position=True)
+            bet = Bet(points=points, position=position)
             bet.wager = wager
-            user.bets.append(bet)
+            bet.user = user
+            s.add(bet)
             s.commit()
-            msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n' \
-                   f'Default Bet: {wager.points}\n' \
-                   f'End Time: {wager.et()}'
+            msg += f'Your bet has been recorded.\n' \
+                   f'Wager: `#{wager.id}` "{wager.description}"\n'
+            msg += get_wager_bets(wager)
             s.close()
             return msg
 
     else:
-        return f'Wager: `#{wager.id}` "{wager.description}" is closed for betting.'
+        return f"The immense scale of your failure is stunning, but not surprising.\n" \
+               f"There isn't a wager `#{wager_id}`."
 
 
 def get_bets(username):
     user = s.query(User).filter_by(username=username).first()
-    bets = user.get_bets()
+    bets = user.bets
     msg = f"Here's all the current wagers for @{username}\n"
+    bet_table = PrettyTable()
+    bet_table.border = False
+    bet_table.field_names = ["#", "Pts", "Pos", "Win"]
+
     for bet in bets:
-        x = PrettyTable()
-        x.border = False
-        x.field_names = ["#", "Pts", "Pos", "Win"]
-        x.add_row([bet.wager.id, bet.points, bet.position, bet.result])
-        x.align = "r"
-        x.sortby = '#'
-        x.reversesort = True
-        msg = f"```" \
-              f"{x}" \
-              f"```"
-        # team = s.query(Team).get(bet.wager.team_id)
-        # msg += f'Wager: `#{bet.wager.id}` "{bet.wager.description}"\n' \
-        #        f'Team: `{team.name}`\n' \
-        #        f'Default Bet: `{bet.wager.points}`\n' \
-        #        f'Your Bet: `{bet.points}`\n' \
-        #        f'Your Position: `{bet.position}`\n' \
-        #        f'End Time: `{bet.wager.et()}`\n' \
-        #        f'Betting Closed: `{bet.wager.is_closed}`\n\n'
+        bet_table.add_row([bet.wager.id, bet.points, bet.position, bet.result])
+    bet_table.align = "r"
+    bet_table.sortby = '#'
+    # bet_table.reversesort = True
+    msg = f"```" \
+          f"{bet_table}" \
+          f"```"
+
     return msg
 
 
+def get_wager_bets(wager):
+    """Gests all the associated bets for a given wager object, returns a pretty table"""
+    x = PrettyTable()
+    x.set_style(MSWORD_FRIENDLY)
+    x.border = False
+    wager_maker = wager.bets[0].user.username
+    x.field_names = ["User", "Pts", "Pos"]
+
+    msg = ""
+    for bet in wager.bets:
+        if bet.user.username == wager_maker:
+            x.add_row([f"{bet.user.username}*", bet.points, bet.position])
+        else:
+            x.add_row([bet.user.username, bet.points, bet.position])
+
+    x.align = "r"
+    x.sortby = 'Pts'
+    x.reversesort = True
+
+    msg += f"```{x}\n```\n\n" \
+           # f'End Time: {wager.et()}```'
+
+    return msg
 
 
 if __name__ == "__main__":
-    # print(make_wager('morethanmarvin,pastorhudson', 'pastorhudson', 'My db is lit', 24, 30))
+    # print(make_wager('morethanmarvin,pastorhudson', 'morethanmarvin', 'I am the best bot.', 100, True, 30))
     # print(get_wagers('morethanmarvin,pastorhudson'))
-    # print(make_bet(team_name='morethanmarvin,pastorhudson', username='pastorhudson', points=23, position=True, wager_id=5))
+    # print(make_bet(team_name='morethanmarvin,pastorhudson', username='pastorhudson', points=23, position=True, wager_id=6))
     # print(make_wager(team_name='morethanmarvin,pastorhudson',
     #                  username='pastorhudson',
     #                  description="The moon is flat.",

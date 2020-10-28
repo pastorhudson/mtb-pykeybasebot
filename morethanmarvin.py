@@ -194,28 +194,40 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         team_name = event.msg.channel.name
         username = event.msg.sender.username
+        bet_position = True
         try:
-            if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
-                points = int(str(event.msg.content.text.body).split(' ')[2])
-                digits = int((len(str(points)))) + 7
+            if RepresentsInt(str(event.msg.content.text.body).split(' ')[1]):
+                points = int(str(event.msg.content.text.body).split(' ')[1])
+                digits = int((len(str(points)))) + 6
                 wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
-                position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
+                if not wager_id[0] == "#":
+                    raise ValueError
+                wager_id = int(wager_id[1:])
+                try:
+                    print(str(event.msg.content.text.body)[digits:].strip().split(" ")[1])
+                    position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
+                    if position.lower() == "false":
+                        bet_position = False
+
+                except IndexError:
+                    pass
+                print(team_name, username, points, bet_position, wager_id)
+                msg = make_bet(team_name=team_name, username=username, points=points, position=bet_position, wager_id=wager_id)
+                await bot.chat.send(conversation_id, msg)
 
             else:
-                points = int(str(event.msg.content.text.body).split(' ')[1])
-                digits = int((len(str(points)))) + 7
-                wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
-                position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
-            print(points)
-            print(wager_id)
-            print(position)
+                raise ValueError
+
         except IndexError:
+            print("Index error")
             msg = get_bets(username)
             wager_msg = await bot.chat.send(conversation_id, msg)
         except ValueError:
             msg = f"`{event.msg.content.text.body}` is woefully incorrect.\n" \
-                  f"\nUsage:\n```List Your Bets: !bet\n" \
-                  "Bet on an existing Wager: !bet <points> <#wager_id> <True/False>\n" \
+                  f"\nUsage:\n```" \
+                  f"Bet on an existing Wager: !bet <points> <#wager_id> <True/False>```\n" \
+                  f"Example: `!bet 45 #3 false`\n" \
+                  f"```List Your Bets: !bet\n" \
                   "Create a new wager: !wager <points> <description>```"
             await bot.chat.send(conversation_id, msg)
 
