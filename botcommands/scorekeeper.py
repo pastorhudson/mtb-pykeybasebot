@@ -13,7 +13,7 @@ def get_score(channel_name):
     team = s.query(Team).filter_by(name=channel_name).first()
     msg = f"```{team.name}\n-- Leaderboard --\n"
     for k, v in team.get_score().items():
-        x.add_row([k, v])
+        x.add_row([k.username, v])
     x.align = "r"
     x.padding_width = 2
     x.sortby = "Score"
