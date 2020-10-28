@@ -20,6 +20,7 @@ class Team(Base):
                          secondary=association_table,
                          back_populates="teams")
     points = relationship("Point")
+    wagers = relationship("Wager")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -37,6 +38,17 @@ class Team(Base):
         return user_score
 
 
+class Bet(Base):
+    __tablename__ = 'bet'
+    left_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
+    right_id = Column(Integer, ForeignKey('wager.id'), primary_key=True)
+    points = Column(Integer)
+    position = Column(Boolean, nullable=False)
+    result = Column(Boolean, nullable=True, default=None)
+    wager = relationship("Wager", back_populates="bets")
+    user = relationship("User", back_populates="bets")
+
+
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -45,6 +57,7 @@ class User(Base):
         "Team",
         secondary=association_table,
         back_populates="users")
+    bets = relationship("Bet", back_populates="user")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -67,15 +80,22 @@ class Point(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
-# class Wager(Base):
-#     __tablename__ = 'wager'
-#     id = Column(Integer, primary_key=True)
-#     user_id = Column(Integer, ForeignKey('user.id'))
-#     user = relationship("User", back_populates="wagers")
-#     points = Column(Integer)
-#     description = Column(String)
-#     result = Column(Boolean)
-#     start_time = Column(Date)
-#     end_time = Column(Date)
-#     created_at = Column(DateTime(timezone=True), server_default=func.now())
-#     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+class Wager(Base):
+    __tablename__ = 'wager'
+    id = Column(Integer, primary_key=True)
+    team_id = Column(Integer, ForeignKey('team.id'), nullable=False)
+    points = Column(Integer)
+    description = Column(String)
+    result = Column(Boolean)
+    is_closed = Column(Boolean, default=False)
+    start_time = Column(DateTime(timezone=True), server_default=func.now())
+    end_time = Column(DateTime(timezone=True))
+    bets = relationship("Bet", back_populates="wager")
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        return f'#{self.id} "{self.description}"\nDefault Bet: {self.points}\n' \
+               f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
+               f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'

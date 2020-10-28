@@ -1,6 +1,4 @@
-# from botcommands.get_members import get_members
 import datetime
-# import pandas as pd
 import os
 import csv
 
@@ -26,26 +24,26 @@ def get_score(channel_name):
     return msg
 
 
-def write_score(user, channel_members, sender, channel, team_name, points=10):
-    file_exists = os.path.isfile(f'./storage/{channel}.csv')
-    if not file_exists:
-        with open(f'./storage/{channel}.csv', mode='w') as morningreport_file:
-            header = ["User", "Date-time", "Points", "Sender", "Conv_id"]
-            score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            if not file_exists:
-                score_writer.writerow(header)
+def write_score(user, sender, team_name, points, description):
+    # file_exists = os.path.isfile(f'./storage/{channel}.csv')
+    # if not file_exists:
+    #     with open(f'./storage/{channel}.csv', mode='w') as morningreport_file:
+    #         header = ["User", "Date-time", "Points", "Sender", "Conv_id"]
+    #         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #         if not file_exists:
+    #             score_writer.writerow(header)
+    #
+    # with open(f'./storage/{channel}.csv', mode='a') as morningreport_file:
+    #     score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #     score_writer.writerow([user, datetime.datetime.now(), points, sender, channel])
+    team = s.query(Team).filter(Team.name.match(team_name)).first()
+    giver = s.query(User).filter(User.username.match(sender)).first()
+    receiver = s.query(User).filter(User.username.match(user)).first()
 
-    with open(f'./storage/{channel}.csv', mode='a') as morningreport_file:
-        score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        score_writer.writerow([user, datetime.datetime.now(), points, sender, channel])
-        team = s.query(Team).filter(Team.name.match(team_name)).first()
-        giver = s.query(User).filter(User.username.match(sender)).first()
-        receiver = s.query(User).filter(User.username.match(user)).first()
-
-        points = Point(giver_id=giver.id, receiver_id=receiver.id, team_id=team.id, points=points)
-        s.add(points)
-        s.commit()
-        s.close()
+    points = Point(giver_id=giver.id, receiver_id=receiver.id, team_id=team.id, points=points, description=description)
+    s.add(points)
+    s.commit()
+    s.close()
 
     return
 

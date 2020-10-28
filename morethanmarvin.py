@@ -164,6 +164,7 @@ async def handler(bot, event):
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
         team_name = event.msg.channel.name
+        description = " ".join(str(event.msg.content.text.body).split(' ')[3:]).strip()
         try:
             if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
                 user = str(event.msg.content.text.body).split(' ')[1].strip("@")
@@ -171,19 +172,20 @@ async def handler(bot, event):
             else:
                 user = str(event.msg.content.text.body).split(' ')[2].strip("@")
                 points = int(str(event.msg.content.text.body).split(' ')[1])
+
             if points < 0:
                 user = event.msg.sender.username
-                score = write_score(user, members, event.msg.sender.username, channel_name, team_name, points)
+                score = write_score(user, event.msg.sender.username, team_name, points, description=description)
                 await bot.chat.send(conversation_id,
                                     f"{points} points awarded to @{user}. I'm the only negative one around here.")
             if user in members and user != event.msg.sender.username and points < 101 or user == 'pastorhudson':
-                score = write_score(user, members, event.msg.sender.username, channel_name, team_name, points)
+                score = write_score(user, event.msg.sender.username, team_name, points, description=description)
                 await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
             else:
                 await bot.chat.send(conversation_id, instructions)
         except Exception as e:
-            write_score(user, members, event.msg.sender.username, channel_name, team_name, -5)
+            write_score('marvn', event.msg.sender.username, team_name, -5, description=description)
             await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                                  f"for trying to be cute.\n{instructions}")
 
@@ -330,7 +332,6 @@ async def handler(bot, event):
         else:
             msg = "You're not authorized to run this command."
         await bot.chat.send(event.msg.conv_id, msg)
-
 
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
