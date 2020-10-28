@@ -13,6 +13,14 @@ association_table = Table('association', Base.metadata,
                           )
 
 
+class Local(Base):
+    __tablename__ = 'local'
+    id = Column(Integer, primary_key=True)
+    state = Column(String, unique=False)
+    county = Column(String, unique=False)
+    team_id = Column(Integer, ForeignKey('team.id'))
+
+
 class Team(Base):
     __tablename__ = 'team'
     id = Column(Integer, primary_key=True)
@@ -22,6 +30,7 @@ class Team(Base):
                          back_populates="teams")
     points = relationship("Point")
     wagers = relationship("Wager")
+    local = relationship("Local")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
