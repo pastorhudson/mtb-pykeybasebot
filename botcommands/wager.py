@@ -15,12 +15,16 @@ def get_team_user(team_name, username):
 
 def get_wagers(team_name):
     team = s.query(Team).filter_by(name=team_name).first()
-    wagers = team.get_wagers()
-    msg = f"Here's all the current wagers for `{team_name}`\n\n"
-    for wager in wagers:
-        msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
-        msg += get_wager_bets(wager)
-    return msg
+    try:
+        wagers = team.wagers
+        msg = f"Here's all the current wagers for `{team_name}`\n\n"
+        for wager in wagers:
+            msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
+            msg += get_wager_bets(wager)
+        return msg
+    except AttributeError:
+        return "Something went wrong. Clearly your fault."
+
 
 
 def make_wager(team_name, username, description, points, position,  minutes):
@@ -133,7 +137,7 @@ def get_wager_bets(wager):
 
 if __name__ == "__main__":
     # print(make_wager('morethanmarvin,pastorhudson', 'morethanmarvin', 'I am the best bot.', 100, True, 30))
-    # print(get_wagers('morethanmarvin,pastorhudson'))
+    print(get_wagers('someteam'))
     # print(make_bet(team_name='morethanmarvin,pastorhudson', username='pastorhudson', points=23, position=True, wager_id=6))
     # print(make_wager(team_name='morethanmarvin,pastorhudson',
     #                  username='pastorhudson',
@@ -142,4 +146,4 @@ if __name__ == "__main__":
     #                  position=True,
     #                  minutes=60
     #                  ))
-    print(get_bets('pastorhudson'))
+    # print(get_bets('pastorhudson'))
