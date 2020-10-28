@@ -289,7 +289,7 @@ async def handler(bot, event):
         await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
-        channel_name = str(event.msg.channel.name).replace(",", "")
+        channel_name = str(event.msg.channel.name)
         meh_img = str(Path('./storage/meh.png').absolute())
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_morningreport(user=event.msg.sender.username, channel_members=channel_members, channel=channel_name)
