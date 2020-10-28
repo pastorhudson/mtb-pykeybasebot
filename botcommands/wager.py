@@ -67,7 +67,8 @@ def get_wagers(team_name):
         msg = f"Here's all the current wagers for `{team_name}`\n\n"
         for wager in wagers:
             if not wager.is_closed:
-                msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
+                msg += f'Wager: `#{wager.id}`\n' \
+                       f'"{wager.description}"\n'
                 msg += get_wager_bets(wager)
         s.close()
         return msg
@@ -98,8 +99,8 @@ def make_wager(team_name, username, description, points, position,  minutes):
         bet.wager = wager
         user.bets.append(bet)
         s.commit()
-        msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n```' \
-              # f'End Time: {wager.et()}```'
+        msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n' \
+              f'{get_wager_bets(wager)}'
         s.close()
         return msg
 
