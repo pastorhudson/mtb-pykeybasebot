@@ -1,7 +1,8 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text
+from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
 from crud import s
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -36,6 +37,16 @@ class Team(Base):
                 user_score[p.point_receiver] = p.points
 
         return user_score
+
+    def get_wagers(self):
+        return s.query(Wager).filter(Team.wagers.any(Wager.is_closed==False)).all()
+
+    def wager_exists(self, description):
+        return s.query(Wager).filter(and_(Team.wagers.any(Wager.is_closed == 'false'),
+                                          Team.wagers.any(Wager.description == description))).all()
+
+    def get_wager(self, wager_id):
+        return s.query(Wager).filter(Team.wagers.any(Wager.id == wager_id)).first()
 
 
 class Bet(Base):
@@ -95,7 +106,21 @@ class Wager(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    def already_bet(self, user):
+        return s.query(Bet).filter(Wager.bets.any(Bet.user == user)).first()
+
+    def et(self):
+        return self.end_time.strftime('%d-%m %I:%M %p')
+
+    # def min_left(self):
+    #     td = self.end_time - datetime.now()
+
+        # return td.min
+
+    def st(self):
+        return self.start_time.strftime('%d-%m %I:%M %p')
+
     def __repr__(self):
-        return f'#{self.id} "{self.description}"\nDefault Bet: {self.points}\n' \
-               f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
-               f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'
+        return f'#{self.id} "{self.description}"\nDefault Bet: {self.points}\n'
+               # f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
+               # f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'
