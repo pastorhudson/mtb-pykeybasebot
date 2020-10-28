@@ -130,6 +130,6 @@ class Wager(Base):
         return self.start_time.strftime('%d-%m %I:%M %p')
 
     def __repr__(self):
-        return f'#{self.id} "{self.description}"\nDefault Bet: {self.points}\n'
+        return f'#{self.id} "{self.description}"'
                # f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
                # f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'

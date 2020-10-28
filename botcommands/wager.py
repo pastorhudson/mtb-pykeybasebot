@@ -6,9 +6,56 @@ from datetime import datetime, timedelta
 from models import User, Team, Wager, Bet, Point
 
 
+def payout_wager(username, team_name, wager_id, result):
+    team, user = get_team_user(team_name, username)
+    marvn = s.query(User).filter_by(username='marvn').first()
+    if result.lower() == 'true':
+        result = True
+    else:
+        result = False
+    msg = ""
+    for wager in team.wagers:
+        if wager.id == wager_id:
+            msg = f"Paying out wager: {wager}\n" \
+                  f"Result: {result}"
+            wager.result = result
+            payout = False
+            for bet in wager.bets[1:]:
+                if bet.position != wager.bets[0].position:
+                    payout = True
+            if payout:
+                for bet in wager.bets:
+                    bet.result = result
+                    if bet.position is not result:
+                        points = bet.points * -1
+                        msg += f"\nDeducting {bet.points} points from {bet.user}"
+                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=points)
+                        s.add(p)
+                        s.commit()
+                    else:
+                        msg += f"\nPaying {bet.points} points to {bet.user}"
+                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=bet.points)
+                        s.add(p)
+                        s.commit()
+                    wager.is_closed = True
+                    s.commit()
+                s.close()
+                return msg
+            else:
+                msg = f"Nobody took the Wager `#{wager_id}` so this didn't payout.\n" \
+                       f"`{wager.description}`"
+                wager.is_closed = True
+                s.commit()
+                s.close()
+                return msg
+
+    return f"Wager `#{wager_id}` is either already closed or non-existant."
+
+
 def get_team_user(team_name, username):
     team = s.query(Team).filter_by(name=team_name).first()
     user = s.query(User).filter_by(username=username).first()
+    # s.close()
 
     return team, user
 
@@ -19,17 +66,18 @@ def get_wagers(team_name):
         wagers = team.wagers
         msg = f"Here's all the current wagers for `{team_name}`\n\n"
         for wager in wagers:
-            msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
-            msg += get_wager_bets(wager)
+            if not wager.is_closed:
+                msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
+                msg += get_wager_bets(wager)
+        s.close()
         return msg
     except AttributeError:
         return "Something went wrong. Clearly your fault."
 
 
-
 def make_wager(team_name, username, description, points, position,  minutes):
-    if points < 0:
-        return f"`{points}` is a negative number. All wagers must be positive integers.\n" \
+    if 1 > points:
+        return f"`{points}` is a terrible failure. All wagers must be positive integers.\n" \
                f"Usage: `!wager <points> <Description>`\n" \
                f"If you'd like to bet something will not happen reflect that in the description."
 
@@ -57,6 +105,8 @@ def make_wager(team_name, username, description, points, position,  minutes):
 
 
 def make_bet(team_name, username, points, position, wager_id):
+    if points < 1:
+        return "You can't bet negative points."
     team, user = get_team_user(team_name, username)
     wager = s.query(Wager).get(wager_id)
     print(wager)
@@ -106,7 +156,7 @@ def get_bets(username):
     msg = f"```" \
           f"{bet_table}" \
           f"```"
-
+    s.close()
     return msg
 
 
@@ -131,13 +181,12 @@ def get_wager_bets(wager):
 
     msg += f"```{x}\n```\n\n" \
            # f'End Time: {wager.et()}```'
-
     return msg
 
 
 if __name__ == "__main__":
     # print(make_wager('morethanmarvin,pastorhudson', 'morethanmarvin', 'I am the best bot.', 100, True, 30))
-    print(get_wagers('someteam'))
+    # print(get_wagers('someteam'))
     # print(make_bet(team_name='morethanmarvin,pastorhudson', username='pastorhudson', points=23, position=True, wager_id=6))
     # print(make_wager(team_name='morethanmarvin,pastorhudson',
     #                  username='pastorhudson',
@@ -147,3 +196,4 @@ if __name__ == "__main__":
     #                  minutes=60
     #                  ))
     # print(get_bets('pastorhudson'))
+    print(payout_wager('pastorhudson', "morethanmarvin,pastorhudson", 7, True))

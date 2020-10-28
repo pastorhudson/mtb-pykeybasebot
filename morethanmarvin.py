@@ -37,7 +37,7 @@ from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
 from botcommands.bible import get_esv_text
-from botcommands.wager import get_wagers, make_wager, make_bet, get_bets
+from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout_wager
 from botcommands.sync import sync
 from models import Team, User, Point
 from crud import s
@@ -108,6 +108,9 @@ async def handler(bot, event):
         {"name": "morningreport",
          "description": "Gets today's morning report.",
          "usage": ""},
+        {"name": "payout",
+         "description": "Pays out a wager.",
+         "usage": "<#wager> <True/False>"},
         {"name": "pollresult",
          "description": "RealClear Politics National and Pennsylvania Poll Results.",
          "usage": ""},
@@ -329,6 +332,25 @@ async def handler(bot, event):
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
 
+    if str(event.msg.content.text.body).startswith("!payout"):
+        conversation_id = event.msg.conv_id
+        username = event.msg.sender.username
+        team_name = event.msg.channel.name
+        payload = str(event.msg.content.text.body)[8:].split(" ")
+        try:
+            if payload[0][0] != '#':
+                raise ValueError
+            elif payload[1].lower() != "true" and payload[1].lower() != 'false':
+                raise ValueError
+            else:
+                msg = payout_wager(username=username, team_name=team_name, wager_id=int(payload[0][1:]), result=payload[1])
+                await bot.chat.send(conversation_id, msg)
+        except ValueError:
+            await bot.chat.send(conversation_id, "This is a disaster. You've probably corrupted my database.\n"
+                                                 "It's probably pointless to go on.\n"
+                                                 "Usage: !payout <#wager> <True/False>\n"
+                                                 "Example: `!payout #3 True`")
+
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -396,17 +418,8 @@ async def handler(bot, event):
                               title=msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
-        await sync(event=event, bot=bot)
-        team = s.query(Team).filter(Team.name.match(event.msg.channel.name)).first()
-        channel = event.msg.channel
-        msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        members = await get_channel_members(conversation_id)
-
-        conversation_id = event.msg.conv_id
-
-        msg = f"Sigh. . . yes I'm still here. \nMembers: {members}\nmsg_id: {msg_id}\nChannel: {channel}"
-        s.close()
+        msg = f"Sigh. . . yes I'm still here."
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!stardate"):
