@@ -350,6 +350,11 @@ async def handler(bot, event):
                                                  "It's probably pointless to go on.\n"
                                                  "Usage: !payout <#wager> <True/False>\n"
                                                  "Example: `!payout #3 True`")
+        except IndexError:
+            await bot.chat.send(conversation_id, "This is a disaster. You've probably corrupted my database.\n"
+                                                 "It's probably pointless to go on.\n"
+                                                 "Usage: !payout <#wager> <True/False>\n"
+                                                 "Example: `!payout #3 True`")
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel
