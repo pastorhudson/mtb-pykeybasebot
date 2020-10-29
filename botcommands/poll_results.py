@@ -8,7 +8,6 @@ import us
 def get_poll_result(team_name, national=True):
     team = s.query(Team).filter_by(name=team_name).first()
     states = []
-
     try:
         for st in team.get_states():
             states.append(us.states.lookup(st))
@@ -46,8 +45,6 @@ def get_poll_result(team_name, national=True):
             spread = 0
             message += f"{state} Polls:\n```"
             for row in get_polls(state=str(state)):
-                # print(row['result'].split(",")[0].strip().split(" ")[1])
-                # print(row['result'].split(",")[1].strip().split(" ")[1])
                 poll_name = (row["poll"][:13] + '..') if len(row['poll']) > 13 else row['poll']
 
                 if row['result'].split(",")[0].strip().split(" ")[0] == 'Biden':
@@ -57,7 +54,7 @@ def get_poll_result(team_name, national=True):
                     biden = int(row['result'].split(",")[1].strip().split(" ")[1])
                     trump = int(row['result'].split(",")[0].strip().split(" ")[1])
                 else:
-                    break
+                    continue
                 biden_total = biden + biden_total
                 trump_total = trump + trump_total
                 if biden > trump:
@@ -68,17 +65,18 @@ def get_poll_result(team_name, national=True):
                     trump = f"{trump}+"
                 poll_table.add_row([poll_name, biden, trump, spread])
                 row_count += 1
+            if row_count < 2:
+                if biden_total > trump_total:
+                    spread_total = round(biden_total/row_count, 3) - round(trump_total/row_count, 3)
+                    biden_total = f"{round(biden_total/row_count, 1)}+"
+                    trump_total = round(trump_total/row_count, 1)
+                else:
+                    spread_total = round(trump_total/row_count, 3) - round(biden_total/row_count, 3)
+                    biden_total = round(biden_total/row_count, 1)
+                    trump_total = f"{round(trump_total / row_count, 1)}+"
 
-            if biden_total > trump_total:
-                spread_total = round(biden_total/row_count, 3) - round(trump_total/row_count, 3)
-                biden_total = f"{round(biden_total/row_count, 1)}+"
-                trump_total = round(trump_total/row_count, 1)
-            else:
-                spread_total = round(trump_total/row_count, 3) - round(biden_total/row_count, 3)
-                biden_total = round(biden_total/row_count, 1)
-                trump_total = f"{round(trump_total / row_count, 1)}+"
+                poll_table.add_row(["Total", biden_total, trump_total, round(spread_total, 2)])
 
-            poll_table.add_row(["Total", biden_total, trump_total, round(spread_total, 2)])
 
             poll_table.align = "l"
             # poll_table.sortby = '#'
@@ -87,6 +85,9 @@ def get_poll_result(team_name, national=True):
             message += "```\n\n"
     except UnboundLocalError:
         message += "Set Team Local to get State Polling Data"
+
+    except ZeroDivisionError:
+        pass
 
 
     # for row in pa[0]["data"]:
@@ -102,6 +103,7 @@ def get_poll_result(team_name, national=True):
 
 
 if __name__ == '__main__':
-    print(get_poll_result('morethanmarvin,pastorhudson', national=True))
-    # print(get_polls(state='Arkansas'))
+    # print(get_polls(state='Kentucky'))
+
+    print(get_poll_result('morethanmarvin,pastorhudson',  national=True))
 
