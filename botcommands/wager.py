@@ -42,7 +42,7 @@ def payout_wager(username, team_name, wager_id, result):
                         print("Add point")
                         s.add(p)
                     else:
-                        print(f"This person: {} is a winner")
+                        print(f"This person: {bet.user} is a winner")
                         msg += f"\nPaying {bet.points} points to {bet.user}"
                         p = Point(giver_id=marvn.id, receiver_id=bet.user.id, team_id=team.id, points=bet.points, description=f"Wager: #{wager.id}")
                         print(p)
@@ -204,6 +204,7 @@ def get_wager_bets(wager):
 
 
 if __name__ == "__main__":
+    pass
     # print(make_wager('morethanmarvin,pastorhudson', 'morethanmarvin', 'I am the best bot.', 100, True, 30))
     # print(get_wagers('someteam'))
     # print(make_bet(team_name='morethanmarvin,pastorhudson', username='pastorhudson', points=23, position=True, wager_id=6))
@@ -215,4 +216,4 @@ if __name__ == "__main__":
     #                  minutes=60
     #                  ))
     # print(get_bets('pastorhudson'))
-    print(payout_wager('pastorhudson', "morethanmarvin,pastorhudson", 7, True))
+    # print(payout_wager('pastorhudson', "morethanmarvin,pastorhudson", 7, True))
