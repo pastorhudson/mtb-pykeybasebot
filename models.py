@@ -35,7 +35,7 @@ class Team(Base):
                          back_populates="teams")
     points = relationship("Point")
     wagers = relationship("Wager")
-    local = relationship("Local")
+    local = relationship("Local", lazy="dynamic")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -61,6 +61,13 @@ class Team(Base):
 
     def get_wager(self, wager_id):
         return s.query(Wager).filter(Team.wagers.any(Wager.id == wager_id)).first()
+
+    def get_states(self):
+        states = []
+        for s in self.local.all():
+            states.append(s.state)
+        return set(states)
+
 
 
 class Bet(Base):
