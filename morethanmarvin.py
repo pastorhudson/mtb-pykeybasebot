@@ -173,7 +173,8 @@ async def handler(bot, event):
                 msg = make_bet(team_name, username, points, position, wager_id)
                 await bot.chat.edit(event.msg.conv_id, msg_id, msg)
                 # print(message.wager)
-            except ValueError:
+            except ValueError as e:
+                print(e)
                 print("ValueError")
             except AttributeError:
                 pass
