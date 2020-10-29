@@ -39,7 +39,7 @@ from pathlib import Path
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout_wager
 from botcommands.sync import sync
-from models import Team, User, Point, Local
+from models import Team, User, Point, Location
 from crud import s
 
 # load_dotenv('secret.env')
@@ -378,7 +378,7 @@ async def handler(bot, event):
             try:
                 if payload[1] == "local:add":
                     team = s.query(Team).filter_by(name=event.msg.channel.name).first()
-                    new_local = Local(state=payload[2], county=payload[3])
+                    new_local = Location(state=payload[2], county=payload[3])
                     team.location.append(new_local)
                     s.commit()
                     msg = team.location.all()
