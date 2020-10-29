@@ -28,17 +28,19 @@ def get_morningreport(channel):
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`"
     msg[0] += get_till(observation=False)
     msg[0] += get_poll_result(channel) + "\n"
-    for local in team.local:
-        msg[0] += get_covid(state=local.state, county=local.county, observation=False) + "\n"
+    print(team.local.all())
+    for l in team.local.all():
+        print(l)
+        msg[0] += get_covid(state=l.state, county=l.county, observation=False) + "\n"
 
     msg[1] += "\nMeh:" + get_meh(observation=False)
-    msg[2] += f"\n\nMTB Leaderboard:\n{get_score(channel)}"
+    msg[2] += f"\n\n{get_score(channel)}"
     msg[2] += f"\n\nToday's Joke:```{pyjokes.get_joke()}```"
-
+    s.close()
     return msg
 
 
 if __name__ == "__main__":
     # channel_members = {'owners': [{'uid': 'f4089cdf5fc8ebe433d5b9f49b66d619', 'username': 'pastorhudson', 'fullName': 'Ron Hudson'}, {'uid': 'a5465087aede61be961a6bb3bf964f19', 'username': 'morethanmarvin', 'fullName': ''}], 'admins': [], 'writers': [], 'readers': [], 'bots': [], 'restrictedBots': []}
-    print(get_morningreport('morethanmarvin,pastorhudson'))
+    get_morningreport('morethanmarvin,pastorhudson')
     # print(get_score(channel_members))
