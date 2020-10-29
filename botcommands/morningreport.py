@@ -20,19 +20,15 @@ def get_obaservation():
 
 
 def get_morningreport(channel):
-    team = s.query(Team).filter_by(name=channel).first()
-    print(team)
-    print(team.location)
     msg = ["", "", ""]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`"
     msg[0] += get_till(observation=False)
     msg[0] += get_poll_result(channel) + "\n"
-    print(team.location.all())
-    for l in team.location.all():
-        print(l)
-        msg[0] += get_covid(state=l.state, county=l.county, observation=False) + "\n"
+    team = s.query(Team).filter_by(name=channel).first()
+    for place in team.location.all():
+        msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n"
 
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\n{get_score(channel)}"
