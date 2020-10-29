@@ -152,13 +152,13 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
-    print(event)
+    # print(event)
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        print(event)
+        # print(event)
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        print(event)
+        # print(event)
         return
 
     if str(event.msg.content.text.body).startswith("!award"):
