@@ -34,7 +34,7 @@ def get_poll_result(team_name, national=True):
                            f'Biden: {row["Biden (D)"]}  ' \
                            f'Trump: {row["Trump (R)"]}\n' \
                            f'Spread: {row["Spread"]}'
-        message += "```\n"
+        message += "```\n\n"
 
     try:
         for state in states:
@@ -82,7 +82,7 @@ def get_poll_result(team_name, national=True):
             # poll_table.sortby = '#'
             # poll_table.reversesort = True
             message += poll_table.get_string()
-            message += "```\n"
+            message += "```\n\n"
             poll_table.clear_rows()
     except UnboundLocalError:
         message += "Set Team Local to get State Polling Data"

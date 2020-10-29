@@ -120,7 +120,7 @@ def get_covid(state=None, county=None, observation=True):
             data2.append(r)
     # print(data2)
 
-    message += f"COVID-19 Data for `{county.capitalize()} County {state}`\n```" \
+    message += f"COVID-19 Data:\n`{county.capitalize()} County {state}`\n```" \
 
     need_confirmed_data = True
     need_death_data = True
@@ -139,7 +139,7 @@ def get_covid(state=None, county=None, observation=True):
                     message += f"Deaths: {format(d['values'], ',d')}\n"
             message += f"7 Day Growth %: {d['7 day growth %']}\n"
             need_death_data = False
-    message += "```"
+    message += "```\n"
 
     return message
 
