@@ -210,14 +210,12 @@ async def handler(bot, event):
                     raise ValueError
                 wager_id = int(wager_id[1:])
                 try:
-                    print(str(event.msg.content.text.body)[digits:].strip().split(" ")[1])
                     position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
                     if position.lower() == "false":
                         bet_position = False
 
                 except IndexError:
                     pass
-                print(team_name, username, points, bet_position, wager_id)
                 msg = make_bet(team_name=team_name, username=username, points=points, position=bet_position, wager_id=wager_id)
                 await bot.chat.send(conversation_id, msg)
 
@@ -225,7 +223,6 @@ async def handler(bot, event):
                 raise ValueError
 
         except IndexError:
-            print("Index error")
             msg = get_bets(username)
             wager_msg = await bot.chat.send(conversation_id, msg)
         except ValueError:
@@ -365,7 +362,6 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        print(channel)
         polls = get_poll_result(channel)
         await bot.chat.send(conversation_id, polls)
 
@@ -376,12 +372,9 @@ async def handler(bot, event):
             await bot.chat.send(event.msg.conv_id, "These are not the commands you are looking for.")
         else:
             payload = str(event.msg.content.text.body).split(" ")
-            print(payload)
             try:
                 if payload[1] == "local:add":
-                    print(event.msg.channel.name)
                     team = s.query(Team).filter_by(name=event.msg.channel.name).first()
-                    print(team)
                     new_local = Local(state=payload[2], county=payload[3])
                     team.local.append(new_local)
                     s.commit()
@@ -462,6 +455,8 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!test"):
         conversation_id = event.msg.conv_id
         msg = f"Sigh. . . yes I'm still here."
+        members = await get_channel_members(conversation_id)
+        msg += str(members)
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!stardate"):
@@ -518,9 +513,7 @@ async def handler(bot, event):
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
             msg = make_wager(team_name, username, description, points, position=True, minutes=120)
             await bot.chat.send(conversation_id, msg)
-            # print(description)
-            # print(points)
-            # print(wager)
+
 
         except UnboundLocalError:
             pass
