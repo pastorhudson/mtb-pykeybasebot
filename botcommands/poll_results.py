@@ -29,7 +29,7 @@ def get_poll_result(team_name):
             message += f'National Real Clear Politics Average:\n' \
                        f'Date: {row["Date"]}\n' \
                        f'Biden: {row["Biden (D)"]}  ' \
-                       f'Trump: {row["Trump (R)"]}  ' \
+                       f'Trump: {row["Trump (R)"]}\n' \
                        f'Spread: {row["Spread"]}\n\n'
     try:
         if state:
