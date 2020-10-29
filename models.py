@@ -117,6 +117,11 @@ class Point(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    def __repr__(self):
+        return f"Point - description: {self.description}, points: {self.points}, giver_id: {self.giver_id}\n" \
+               f"point_receiver: {self.point_receiver} - {self.giver_id}, point_giver: {self.point_giver} - {self.receiver_id},\n" \
+               f"team_id: {self.team_id}, id: {self.id}"
+
 
 class Wager(Base):
     __tablename__ = 'wager'
