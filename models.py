@@ -22,6 +22,9 @@ class Local(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    def __repr__(self):
+        return f"state: {self.state}, county: {self.county}"
+
 
 class Team(Base):
     __tablename__ = 'team'

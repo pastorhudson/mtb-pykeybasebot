@@ -13,7 +13,7 @@ import sys
 # from dotenv import load_dotenv
 from sqlalchemy import func
 
-from botcommands.poll_results import get_polls
+from botcommands.poll_results import get_poll_result
 from pyjokes import pyjokes
 from botcommands.tldr import get_tldr
 import re
@@ -360,12 +360,13 @@ async def handler(bot, event):
                                                  "Example: `!payout #3 True`")
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
-        channel = event.msg.channel
+
+        channel = event.msg.channel.name
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        polls = get_polls()
+        print(channel)
+        polls = get_poll_result(channel)
         await bot.chat.send(conversation_id, polls)
 
     if str(event.msg.content.text.body).startswith("!set"):
@@ -388,7 +389,10 @@ async def handler(bot, event):
                     s.close()
                     await bot.chat.send(event.msg.conv_id, str(msg))
             except IndexError:
-                msg = "Set Commands:\n" \
+                team = s.query(Team).filter_by(name=event.msg.channel.name).first()
+                msg = "Current Settings:\n" \
+                      f"```{str(team.local)}```"
+                msg += "Set Commands:\n" \
                       "local:add <state> <county>\n" \
                       "wager:end <#wager> <datetime>\n" \
                       ""
