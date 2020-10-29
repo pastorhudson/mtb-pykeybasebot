@@ -1,6 +1,6 @@
 from botcommands.covid import get_covid
 from botcommands.meh import get_meh
-from botcommands.poll_results import get_polls
+from botcommands.poll_results import get_poll_result
 from botcommands.stardate import get_stardate
 from botcommands.till import get_till
 import random
@@ -27,7 +27,7 @@ def get_morningreport(channel):
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`"
     msg[0] += get_till(observation=False)
-    msg[0] += get_polls(channel) + "\n"
+    msg[0] += get_poll_result(channel) + "\n"
     for local in team.local:
         msg[0] += get_covid(state=local.state, county=local.county, observation=False) + "\n"
 
