@@ -13,6 +13,12 @@ def get_members(channel):
     for readers in channel['readers']:
         if readers['username'] not in members:
             members.append(readers['username'])
+    for bots in channel['bots']:
+        if bots['username'] not in members:
+            members.append(bots['username'])
+    for restrictedBots in channel['restrictedBots']:
+        if restrictedBots['username'] not in members:
+            members.append(restrictedBots['username'])
     return members
 
 
