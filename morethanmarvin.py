@@ -379,15 +379,26 @@ async def handler(bot, event):
                 if payload[1] == "local:add":
                     team = s.query(Team).filter_by(name=event.msg.channel.name).first()
                     new_local = Local(state=payload[2], county=payload[3])
-                    team.local.append(new_local)
+                    team.location.append(new_local)
                     s.commit()
-                    msg = team.local.all()
+                    msg = team.location.all()
                     s.close()
                     await bot.chat.send(event.msg.conv_id, str(msg))
+                if payload[1] == "local:del":
+                    team = s.query(Team).filter_by(name=event.msg.channel.name).first()
+                    index = int(payload[2])
+                    print(team.location.all()[2])
+                    del_loc = team.location.all()[index]
+                    s.delete(del_loc)
+                    s.commit()
+                    msg = team.location.all()
+                    s.close()
+                    await bot.chat.send(event.msg.conv_id, str(msg))
+
             except IndexError:
                 team = s.query(Team).filter_by(name=event.msg.channel.name).first()
                 msg = "Current Settings:\n" \
-                      f"```{team.local.all()}```"
+                      f"```{team.location.all()}```"
                 msg += "Set Commands:\n" \
                       "local:add <state> <county>\n" \
                       "wager:end <#wager> <datetime>\n" \

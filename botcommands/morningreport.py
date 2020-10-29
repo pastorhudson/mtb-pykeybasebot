@@ -22,14 +22,15 @@ def get_obaservation():
 def get_morningreport(channel):
     team = s.query(Team).filter_by(name=channel).first()
     print(team)
+    print(team.location)
     msg = ["", "", ""]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`"
     msg[0] += get_till(observation=False)
     msg[0] += get_poll_result(channel) + "\n"
-    print(team.local.all())
-    for l in team.local.all():
+    print(team.location.all())
+    for l in team.location.all():
         print(l)
         msg[0] += get_covid(state=l.state, county=l.county, observation=False) + "\n"
 

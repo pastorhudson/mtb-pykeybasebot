@@ -13,8 +13,8 @@ association_table = Table('association', Base.metadata,
                           )
 
 
-class Local(Base):
-    __tablename__ = 'local'
+class Location(Base):
+    __tablename__ = 'location'
     id = Column(Integer, primary_key=True)
     state = Column(String, unique=False)
     county = Column(String, unique=False)
@@ -35,7 +35,7 @@ class Team(Base):
                          back_populates="teams")
     points = relationship("Point")
     wagers = relationship("Wager")
-    local = relationship("Local", lazy="dynamic")
+    location = relationship("Location", lazy="dynamic")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -64,7 +64,7 @@ class Team(Base):
 
     def get_states(self):
         states = []
-        for s in self.local.all():
+        for s in self.location.all():
             states.append(s.state)
         return set(states)
 

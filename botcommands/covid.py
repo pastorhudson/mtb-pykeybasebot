@@ -31,6 +31,7 @@ def get_observation():
 
 
 def get_covid(state=None, county=None, observation=True):
+    print(state, county)
 
     message = ""
     if observation:
@@ -148,6 +149,6 @@ def get_covid(state=None, county=None, observation=True):
 
 if __name__ == '__main__':
     # pass
-    print(get_covid('pa', 'fayette'))
+    print(get_covid('PA', 'Fayette'))
     # print(get_covid(''))
 
