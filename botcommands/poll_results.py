@@ -58,13 +58,13 @@ def get_poll_result(team_name):
                 row_count += 1
 
             if biden_total > trump_total:
-                spread_total = round(biden_total/row_count, 2) - round(trump_total/row_count, 2)
-                biden_total = f"{round(biden_total/row_count, 2)}+"
-                trump_total = round(trump_total/row_count, 2)
+                spread_total = round(biden_total/row_count, 3) - round(trump_total/row_count, 3)
+                biden_total = f"{round(biden_total/row_count, 1)}+"
+                trump_total = round(trump_total/row_count, 1)
             else:
-                spread_total = round(trump_total/row_count, 2) - round(biden_total/row_count, 2)
-                biden_total = round(biden_total/row_count, 2)
-                trump_total = f"{round(trump_total / row_count, 2)}+"
+                spread_total = round(trump_total/row_count, 3) - round(biden_total/row_count, 3)
+                biden_total = round(biden_total/row_count, 1)
+                trump_total = f"{round(trump_total / row_count, 1)}+"
 
             poll_table.add_row(["Total", biden_total, trump_total, round(spread_total, 2)])
 
