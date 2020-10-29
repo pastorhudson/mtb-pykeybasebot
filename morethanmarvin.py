@@ -384,7 +384,7 @@ async def handler(bot, event):
             except IndexError:
                 team = s.query(Team).filter_by(name=event.msg.channel.name).first()
                 msg = "Current Settings:\n" \
-                      f"```{str(team.local)}```"
+                      f"```{team.local.all()}```"
                 msg += "Set Commands:\n" \
                       "local:add <state> <county>\n" \
                       "wager:end <#wager> <datetime>\n" \
