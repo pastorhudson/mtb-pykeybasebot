@@ -27,10 +27,9 @@ def get_morningreport(channel):
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`"
     msg[0] += get_till(observation=False)
-    msg[0] += get_polls() + "\n"
+    msg[0] += get_polls(channel) + "\n"
     for local in team.local:
         msg[0] += get_covid(state=local.state, county=local.county, observation=False) + "\n"
-        # msg[0] += get_covid(state="PA", county="Fayette", observation=False) + "\n"
 
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\nMTB Leaderboard:\n{get_score(channel)}"
