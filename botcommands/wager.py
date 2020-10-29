@@ -29,12 +29,14 @@ def payout_wager(username, team_name, wager_id, result):
                     if bet.position is not result:
                         points = bet.points * -1
                         msg += f"\nDeducting {bet.points} points from {bet.user}"
-                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=points)
+                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=points, description=f"Wager: #{wager.id}")
+                        print(p)
                         s.add(p)
                         s.commit()
                     else:
                         msg += f"\nPaying {bet.points} points to {bet.user}"
-                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=bet.points)
+                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=bet.points, description=f"Wager: #{wager.id}")
+                        print(p)
                         s.add(p)
                         s.commit()
                     wager.is_closed = True

@@ -152,9 +152,13 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
+    print(event)
+
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
+        print(event)
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
+        print(event)
         return
 
     if str(event.msg.content.text.body).startswith("!award"):
@@ -336,6 +340,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg[2])
 
     if str(event.msg.content.text.body).startswith("!payout"):
+        await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
         username = event.msg.sender.username
         team_name = event.msg.channel.name
