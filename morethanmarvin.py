@@ -378,7 +378,7 @@ async def handler(bot, event):
                     new_local = Local(state=payload[2], county=payload[3])
                     team.local.append(new_local)
                     s.commit()
-                    msg = team.local
+                    msg = team.local.all()
                     s.close()
                     await bot.chat.send(event.msg.conv_id, str(msg))
             except IndexError:
