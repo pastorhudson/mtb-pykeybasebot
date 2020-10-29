@@ -5,7 +5,7 @@ from crud import s
 import us
 
 
-def get_poll_result(team_name, state, national=True):
+def get_poll_result(team_name, national=True):
     team = s.query(Team).filter_by(name=team_name).first()
     states = []
 
