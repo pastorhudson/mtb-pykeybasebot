@@ -31,12 +31,10 @@ def get_observation():
 
 
 def get_covid(state=None, county=None, observation=True):
-    print(state, county)
 
     message = ""
     if observation:
         message = get_observation()
-    message += "```\n"
 
     lookup_county = None
     if county:
@@ -51,11 +49,11 @@ def get_covid(state=None, county=None, observation=True):
             if state == '':
                 state = 'US'
             country = state
-            message += f"COVID-19 Data for {country.capitalize()}\n"
+            message += f"COVID-19 Data for `{country.capitalize()}`\n```"
             lookup_country = True
     except TypeError:
         country = 'US'
-        message += f"COVID-19 Data for {country.capitalize()}\n"
+        message += f"COVID-19 Data for `{country.capitalize()}`\n"
         lookup_country = True
 
     if lookup_country:
@@ -83,7 +81,7 @@ def get_covid(state=None, county=None, observation=True):
         response = requests.request("GET", url, headers={}, data={})
         # print("I'm a state")
         # print(state)
-        message += f"COVID-19 Data for {state}\n"
+        message += f"COVID-19 Data for {state}\n```"
         need_data = True
         for st in response.json():
             # print(st)
@@ -122,12 +120,11 @@ def get_covid(state=None, county=None, observation=True):
             data2.append(r)
     # print(data2)
 
-    message += f"COVID-19 Data for {county.capitalize()} County {state}\n" \
+    message += f"COVID-19 Data for `{county.capitalize()} County {state}`\n```" \
 
     need_confirmed_data = True
     need_death_data = True
 
-    # print(data)
     for d in data[:2]:
         if d['Type'] == 'Confirmed' and need_confirmed_data:
             for d2 in data2:
