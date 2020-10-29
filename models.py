@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
 from crud import s
+
 from datetime import datetime
 
 Base = declarative_base()
@@ -69,7 +70,6 @@ class Team(Base):
         return set(states)
 
 
-
 class Bet(Base):
     __tablename__ = 'bet'
     left_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
@@ -123,6 +123,21 @@ class Point(Base):
                f"team_id: {self.team_id}, id: {self.id}"
 
 
+class Message(Base):
+    __tablename__ = 'message'
+    id = Column(Integer, primary_key=True)
+    msg_id = Column(String, index=True, unique=True)
+    conv_id = Column(String, index=True)
+    wager_id = Column(Integer, ForeignKey('wager.id'), nullable=False)
+    wager = relationship("Wager", back_populates="messages")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+    def __repr__(self):
+        return f"{self.msg_id},{self.wager_id}"
+
+
 class Wager(Base):
     __tablename__ = 'wager'
     id = Column(Integer, primary_key=True)
@@ -134,6 +149,7 @@ class Wager(Base):
     start_time = Column(DateTime(timezone=True), server_default=func.now())
     end_time = Column(DateTime(timezone=True))
     bets = relationship("Bet", back_populates="wager")
+    messages = relationship("Message", back_populates="wager", lazy="dynamic")
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

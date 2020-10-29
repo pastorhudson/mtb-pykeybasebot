@@ -39,7 +39,7 @@ from pathlib import Path
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout_wager
 from botcommands.sync import sync
-from models import Team, User, Point, Location
+from models import Team, User, Point, Location, Wager, Message
 from crud import s
 
 # load_dotenv('secret.env')
@@ -152,7 +152,31 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
-    # print(event)
+    if event.msg.content.type_name == 'reaction':
+        if event.msg.content.reaction.body == ":white_check_mark:" or ':no_entry_sign:':
+            if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
+                # print(event)
+                return
+            try:
+                team_name = event.msg.channel.name
+                username = event.msg.sender.username
+                msg_id = event.msg.content.reaction.message_id
+                message = s.query(Message).filter_by(msg_id=str(msg_id)).first()
+                points = message.wager.points
+                wager_id = message.wager.id
+                if event.msg.content.reaction.body == ":white_check_mark:":
+                    position = True
+                elif event.msg.content.reaction.body == ":no_entry_sign:":
+                    position = False
+                else:
+                    raise ValueError
+                msg = make_bet(team_name, username, points, position, wager_id)
+                await bot.chat.edit(event.msg.conv_id, msg_id, msg)
+                # print(message.wager)
+            except ValueError:
+                print("ValueError")
+            except AttributeError:
+                pass
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         # print(event)
@@ -202,44 +226,44 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                                  f"for trying to be cute.\n{instructions}")
 
-    if str(event.msg.content.text.body).startswith('!bet'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        team_name = event.msg.channel.name
-        username = event.msg.sender.username
-        bet_position = True
-        try:
-            if RepresentsInt(str(event.msg.content.text.body).split(' ')[1]):
-                points = int(str(event.msg.content.text.body).split(' ')[1])
-                digits = int((len(str(points)))) + 6
-                wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
-                if not wager_id[0] == "#":
-                    raise ValueError
-                wager_id = int(wager_id[1:])
-                try:
-                    position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
-                    if position.lower() == "false":
-                        bet_position = False
-
-                except IndexError:
-                    pass
-                msg = make_bet(team_name=team_name, username=username, points=points, position=bet_position, wager_id=wager_id)
-                await bot.chat.send(conversation_id, msg)
-
-            else:
-                raise ValueError
-
-        except IndexError:
-            msg = get_bets(username)
-            wager_msg = await bot.chat.send(conversation_id, msg)
-        except ValueError:
-            msg = f"`{event.msg.content.text.body}` is woefully incorrect.\n" \
-                  f"\nUsage:\n```" \
-                  f"Bet on an existing Wager: !bet <points> <#wager_id> <True/False>```\n" \
-                  f"Example: `!bet 45 #3 false`\n" \
-                  f"```List Your Bets: !bet\n" \
-                  "Create a new wager: !wager <points> <description>```"
-            await bot.chat.send(conversation_id, msg)
+    # if str(event.msg.content.text.body).startswith('!bet'):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     team_name = event.msg.channel.name
+    #     username = event.msg.sender.username
+    #     bet_position = True
+    #     try:
+    #         if RepresentsInt(str(event.msg.content.text.body).split(' ')[1]):
+    #             points = int(str(event.msg.content.text.body).split(' ')[1])
+    #             digits = int((len(str(points)))) + 6
+    #             wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
+    #             if not wager_id[0] == "#":
+    #                 raise ValueError
+    #             wager_id = int(wager_id[1:])
+    #             try:
+    #                 position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
+    #                 if position.lower() == "false":
+    #                     bet_position = False
+    #
+    #             except IndexError:
+    #                 pass
+    #             msg = make_bet(team_name=team_name, username=username, points=points, position=bet_position, wager_id=wager_id)
+    #             await bot.chat.send(conversation_id, msg)
+    #
+    #         else:
+    #             raise ValueError
+    #
+    #     except IndexError:
+    #         msg = get_bets(username)
+    #         wager_msg = await bot.chat.send(conversation_id, msg)
+    #     except ValueError:
+    #         msg = f"`{event.msg.content.text.body}` is woefully incorrect.\n" \
+    #               f"\nUsage:\n```" \
+    #               f"Bet on an existing Wager: !bet <points> <#wager_id> <True/False>```\n" \
+    #               f"Example: `!bet 45 #3 false`\n" \
+    #               f"```List Your Bets: !bet\n" \
+    #               "Create a new wager: !wager <points> <description>```"
+    #         await bot.chat.send(conversation_id, msg)
 
 
     if str(event.msg.content.text.body).startswith("!bible"):
@@ -351,9 +375,18 @@ async def handler(bot, event):
             elif payload[1].lower() != "true" and payload[1].lower() != 'false':
                 raise ValueError
             else:
-                msg = payout_wager(username=username, team_name=team_name, wager_id=int(payload[0][1:]), result=payload[1])
+                msg = await payout_wager(username=username, team_name=team_name, wager_id=int(payload[0][1:]), result=payload[1], bot=bot)
+                # msg = result['msg']
+                # print(msg)
                 await bot.chat.send(conversation_id, msg)
-        except ValueError:
+                # for m in result['wager_messages']:
+                #     print(m)
+                #     print(m.msg_id)
+                #     print(m.conv_id)
+                #     # await bot.chat.edit(m.conv_id, m.msg_id, msg)
+
+        except ValueError as e:
+            print(e)
             await bot.chat.send(conversation_id, "This is a disaster. You've probably corrupted my database.\n"
                                                  "It's probably pointless to go on.\n"
                                                  "Usage: !payout <#wager> <True/False>\n"
@@ -520,8 +553,19 @@ async def handler(bot, event):
                 digits = int((len(str(points)))) + 7
                 description = str(event.msg.content.text.body)[digits:].strip()
         except IndexError:
-            msg = get_wagers(team_name=team_name)
-            wager_msg = await bot.chat.send(conversation_id, msg)
+            wager_msgs = get_wagers(team_name=team_name)
+            for w_id, w_msg in wager_msgs.items():
+                wager_msg = await bot.chat.send(conversation_id, w_msg)
+                await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
+                await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
+
+                print(wager_msg)
+
+                cur_wager = s.query(Wager).get(w_id)
+                new_wager_message = Message(msg_id=wager_msg.message_id, conv_id=conversation_id)
+                cur_wager.messages.append(new_wager_message)
+                s.commit()
+
         except ValueError:
             msg = f"`{event.msg.content.text.body}` is woefully incorrect.\n" \
                   f"\nUsage:\n```List Wagers: !wager\n" \
@@ -531,8 +575,9 @@ async def handler(bot, event):
         try:
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
             msg = make_wager(team_name, username, description, points, position=True, minutes=120)
-            await bot.chat.send(conversation_id, msg)
-
+            wager_msg = await bot.chat.send(conversation_id, msg)
+            await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
+            await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
 
         except UnboundLocalError:
             pass

@@ -4,9 +4,19 @@ from prettytable.prettytable import MSWORD_FRIENDLY
 from crud import s
 from datetime import datetime, timedelta
 from models import User, Team, Wager, Bet, Point
+import pykeybasebot.types.chat1 as chat1
 
 
-def payout_wager(username, team_name, wager_id, result):
+
+async def update_wager_msg(bot, wager, msg):
+
+    for message in wager.messages.all():
+        # msg_id = chat1.MessageID
+        # print(msg_id)
+        await bot.chat.edit(message.conv_id, int(message.msg_id), msg)
+
+
+async def payout_wager(username, team_name, wager_id, result, bot):
     team, user = get_team_user(team_name, username)
     marvn = s.query(User).filter_by(username='marvn').first()
     if result.lower() == 'true':
@@ -17,45 +27,40 @@ def payout_wager(username, team_name, wager_id, result):
     for wager in team.wagers:
         if wager.id == wager_id:
 
-            msg = f"Paying out wager: {wager}\n" \
-                  f"Result: {result}"
+            msg = f"Wager: `#{wager.id}` - `CLOSED`\n" \
+                  f'"{wager.description}"\n' \
+                  f"{get_wager_bets(wager)}" \
+                  f"Result: `{result}`"
             wager.result = result
             payout = False
-            print("Checking if Someone bet counter position")
             for bet in wager.bets[1:]:
-                print(f"Checking if {bet} != {wager.bets[0]}")
                 if bet.position != wager.bets[0].position:
-                    print("Payout set to true")
                     payout = True
             if payout:
-                print("Now we payout")
                 for bet in wager.bets:
-                    print(f"Set the result on {bet} to {result}")
                     bet.result = result
                     if bet.position is not result:
-                        print(f"Check if bet position: {bet.position} matches result: {result}")
                         points = bet.points * -1
                         msg += f"\nDeducting {bet.points} points from {bet.user}"
-                        print(f"points = {points} is being assigned to new Point object")
                         p = Point(giver_id=marvn.id, receiver_id=bet.user.id, team_id=team.id, points=points, description=f"Wager: #{wager.id}")
-                        print(p)
-                        print("Add point")
+
                         s.add(p)
                     else:
-                        print(f"This person: {bet.user} is a winner")
                         msg += f"\nPaying {bet.points} points to {bet.user}"
                         p = Point(giver_id=marvn.id, receiver_id=bet.user.id, team_id=team.id, points=bet.points, description=f"Wager: #{wager.id}")
-                        print(p)
                         s.add(p)
                     wager.is_closed = True
                     s.commit()
+                await update_wager_msg(bot, wager, msg)
                 s.close()
                 return msg
             else:
                 msg = f"Nobody took the Wager `#{wager_id}` so this didn't payout.\n" \
                        f"`{wager.description}`"
                 wager.is_closed = True
+
                 s.commit()
+                await update_wager_msg(bot, wager, msg)
                 s.close()
                 return msg
 
@@ -72,16 +77,19 @@ def get_team_user(team_name, username):
 
 def get_wagers(team_name):
     team = s.query(Team).filter_by(name=team_name).first()
+    wager_msgs = {}
     try:
         wagers = team.wagers
-        msg = f"Here's all the current wagers for `{team_name}`\n\n"
+        # msg = f"Here's all the current wagers for `{team_name}`\n\n"
         for wager in wagers:
+            msg = ""
             if not wager.is_closed:
                 msg += f'Wager: `#{wager.id}`\n' \
                        f'"{wager.description}"\n'
                 msg += get_wager_bets(wager)
+                wager_msgs[f'{wager.id}'] = msg
         s.close()
-        return msg
+        return wager_msgs
     except AttributeError:
         return "Something went wrong. Clearly your fault."
 
@@ -136,10 +144,9 @@ def make_bet(team_name, username, points, position, wager_id):
 
         if bet := wager.already_bet(user):
             print(bet)
-            return f"You've already bet `{bet.points}` points wager `#{wager.id}` is `{bet.position}`.\n" \
-                   f"Wager `#{wager.id}`: {wager.description}\n" \
-                   f"This wager will end at {wager.et()}\n" \
-                   f"{get_wager_bets(wager)}"
+            return f"Wager `#{wager.id}`: {wager.description}\n" \
+                   f"{get_wager_bets(wager)}" \
+                   # f"\n\n{user.username} already wagered `{bet.points}` `#{wager.id}` will be `{bet.position}`.\n"
         if points > wager.bets[0].points:
             return f"You can't bet more than {wager.bets[0].points} on wager `#{wager.id}`"
         else:
@@ -148,9 +155,9 @@ def make_bet(team_name, username, points, position, wager_id):
             bet.user = user
             s.add(bet)
             s.commit()
-            msg += f'Your bet has been recorded.\n' \
-                   f'Wager: `#{wager.id}` "{wager.description}"\n'
+            msg += f'Wager: `#{wager.id}` "{wager.description}"\n'
             msg += get_wager_bets(wager)
+            # msg += f'\n@{user.username} your bet has been recorded.\n'
             s.close()
             return msg
 
@@ -198,12 +205,14 @@ def get_wager_bets(wager):
     x.sortby = 'Pts'
     x.reversesort = True
 
-    msg += f"```{x}\n```\n\n" \
+    msg += f"```{x}```" \
            # f'End Time: {wager.et()}```'
     return msg
 
 
 if __name__ == "__main__":
+    msg_id = chat1.MessageID
+    print(msg_id)
     pass
     # print(make_wager('morethanmarvin,pastorhudson', 'morethanmarvin', 'I am the best bot.', 100, True, 30))
     # print(get_wagers('someteam'))
