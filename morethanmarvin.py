@@ -39,7 +39,7 @@ from pathlib import Path
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout_wager
 from botcommands.sync import sync
-from models import Team, User, Point
+from models import Team, User, Point, Local
 from crud import s
 
 # load_dotenv('secret.env')
@@ -367,6 +367,36 @@ async def handler(bot, event):
 
         polls = get_polls()
         await bot.chat.send(conversation_id, polls)
+
+    if str(event.msg.content.text.body).startswith("!set"):
+        await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
+
+        if event.msg.sender.username != 'pastorhudson':
+            await bot.chat.send(event.msg.conv_id, "These are not the commands you are looking for.")
+        else:
+            payload = str(event.msg.content.text.body).split(" ")
+            print(payload)
+            try:
+                if payload[1] == "local:add":
+                    print(event.msg.channel.name)
+                    team = s.query(Team).filter_by(name=event.msg.channel.name).first()
+                    print(team)
+                    new_local = Local(state=payload[2], county=payload[3])
+                    team.local.append(new_local)
+                    s.commit()
+                    msg = team.local
+                    s.close()
+                    await bot.chat.send(event.msg.conv_id, str(msg))
+            except IndexError:
+                msg = "Set Commands:\n" \
+                      "local:add <state> <county>\n" \
+                      "wager:end <#wager> <datetime>\n" \
+                      ""
+                await bot.chat.send(event.msg.conv_id, msg)
+            except AttributeError:
+                msg = "Team not Sync'd I'll Sync it now. Try again in a little bit."
+                await bot.chat.send(event.msg.conv_id, msg)
+                await sync(event=event, bot=bot)
 
     if str(event.msg.content.text.body).startswith("!score"):
         await sync(event=event, bot=bot)

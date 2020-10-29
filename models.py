@@ -19,6 +19,8 @@ class Local(Base):
     state = Column(String, unique=False)
     county = Column(String, unique=False)
     team_id = Column(Integer, ForeignKey('team.id'))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 
 class Team(Base):
