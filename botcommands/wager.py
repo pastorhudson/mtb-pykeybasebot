@@ -16,29 +16,37 @@ def payout_wager(username, team_name, wager_id, result):
     msg = ""
     for wager in team.wagers:
         if wager.id == wager_id:
+
             msg = f"Paying out wager: {wager}\n" \
                   f"Result: {result}"
             wager.result = result
             payout = False
+            print("Checking if Someone bet counter position")
             for bet in wager.bets[1:]:
+                print(f"Checking if {bet} != {wager.bets[0]}")
                 if bet.position != wager.bets[0].position:
+                    print("Payout set to true")
                     payout = True
             if payout:
+                print("Now we payout")
                 for bet in wager.bets:
+                    print(f"Set the result on {bet} to {result}")
                     bet.result = result
                     if bet.position is not result:
+                        print(f"Check if bet position: {bet.position} matches result: {result}")
                         points = bet.points * -1
                         msg += f"\nDeducting {bet.points} points from {bet.user}"
-                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=points, description=f"Wager: #{wager.id}")
+                        print(f"points = {points} is being assigned to new Point object")
+                        p = Point(giver_id=marvn.id, receiver_id=bet.user.id, team_id=team.id, points=points, description=f"Wager: #{wager.id}")
                         print(p)
+                        print("Add point")
                         s.add(p)
-                        s.commit()
                     else:
+                        print(f"This person: {} is a winner")
                         msg += f"\nPaying {bet.points} points to {bet.user}"
-                        p = Point(giver_id=marvn.id, receiver_id=user.id, team_id=team.id, points=bet.points, description=f"Wager: #{wager.id}")
+                        p = Point(giver_id=marvn.id, receiver_id=bet.user.id, team_id=team.id, points=bet.points, description=f"Wager: #{wager.id}")
                         print(p)
                         s.add(p)
-                        s.commit()
                     wager.is_closed = True
                     s.commit()
                 s.close()
