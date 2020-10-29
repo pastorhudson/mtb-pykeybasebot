@@ -83,6 +83,7 @@ def get_poll_result(team_name, national=True):
             # poll_table.reversesort = True
             message += poll_table.get_string()
             message += "```\n\n"
+            poll_table.clear_rows()
     except UnboundLocalError:
         message += "Set Team Local to get State Polling Data"
 
