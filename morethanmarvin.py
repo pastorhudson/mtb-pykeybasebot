@@ -42,6 +42,7 @@ from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
 from crud import s
 from botcommands.jitsi import get_jitsi_link
+from botcommands.pacyber import get_academic_snapshot
 
 # load_dotenv('secret.env')
 
@@ -325,6 +326,14 @@ async def handler(bot, event):
 
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!grade"):
+        conversation_id = event.msg.conv_id
+        if event.msg.sender.username == 'pastorhudson':
+            grades = get_academic_snapshot()
+            await bot.chat.send(conversation_id, grades)
+        else:
+            await bot.chat.send(conversation_id, "This is a private command.")
 
     if str(event.msg.content.text.body).startswith("!help"):
         channel = event.msg.channel
