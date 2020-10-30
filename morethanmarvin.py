@@ -159,7 +159,6 @@ async def handler(bot, event):
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":white_check_mark:" or ':no_entry_sign:':
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
-                # print(event)
                 return
             try:
                 team_name = event.msg.channel.name
@@ -176,7 +175,6 @@ async def handler(bot, event):
                     raise ValueError
                 msg = make_bet(team_name, username, points, position, wager_id)
                 await bot.chat.edit(event.msg.conv_id, msg_id, msg)
-                # print(message.wager)
             except ValueError as e:
                 print(e)
                 print("ValueError")
@@ -184,10 +182,8 @@ async def handler(bot, event):
                 pass
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        # print(event)
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
-        # print(event)
         return
 
     if str(event.msg.content.text.body).startswith("!award"):
@@ -215,7 +211,7 @@ async def handler(bot, event):
                 user = str(event.msg.content.text.body).split(' ')[2].strip("@")
                 points = int(str(event.msg.content.text.body).split(' ')[1])
 
-            if points < 0:
+            if points < 0 and user != 'pastorhudson':
                 user = event.msg.sender.username
                 score = write_score(user, event.msg.sender.username, team_name, points, description=description)
                 await bot.chat.send(conversation_id,
@@ -381,14 +377,8 @@ async def handler(bot, event):
                 raise ValueError
             else:
                 msg = await payout_wager(username=username, team_name=team_name, wager_id=int(payload[0][1:]), result=payload[1], bot=bot)
-                # msg = result['msg']
-                # print(msg)
+
                 await bot.chat.send(conversation_id, msg)
-                # for m in result['wager_messages']:
-                #     print(m)
-                #     print(m.msg_id)
-                #     print(m.conv_id)
-                #     # await bot.chat.edit(m.conv_id, m.msg_id, msg)
 
         except ValueError as e:
             print(e)
@@ -417,7 +407,6 @@ async def handler(bot, event):
             await bot.chat.send(event.msg.conv_id, "These are not the commands you are looking for.")
         else:
             payload = str(event.msg.content.text.body).split(" ")
-            print(payload)
             try:
                 if payload[1] == '':
                     raise IndexError
@@ -432,7 +421,6 @@ async def handler(bot, event):
                 if payload[1] == "local:del":
                     team = s.query(Team).filter_by(name=event.msg.channel.name).first()
                     index = int(payload[2])
-                    print(team.location.all()[2])
                     del_loc = team.location.all()[index]
                     s.delete(del_loc)
                     s.commit()
@@ -572,8 +560,6 @@ async def handler(bot, event):
                 wager_msg = await bot.chat.send(conversation_id, w_msg)
                 await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
                 await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
-
-                print(wager_msg)
 
                 cur_wager = s.query(Wager).get(w_id)
                 new_wager_message = Message(msg_id=wager_msg.message_id, conv_id=conversation_id)
