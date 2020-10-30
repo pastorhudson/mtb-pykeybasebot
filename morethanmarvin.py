@@ -413,12 +413,14 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!set"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
-
         if event.msg.sender.username != 'pastorhudson':
             await bot.chat.send(event.msg.conv_id, "These are not the commands you are looking for.")
         else:
             payload = str(event.msg.content.text.body).split(" ")
+            print(payload)
             try:
+                if payload[1] == '':
+                    raise IndexError
                 if payload[1] == "local:add":
                     team = s.query(Team).filter_by(name=event.msg.channel.name).first()
                     new_local = Location(state=payload[2], county=payload[3])

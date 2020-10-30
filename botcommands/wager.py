@@ -7,12 +7,9 @@ from models import User, Team, Wager, Bet, Point
 import pykeybasebot.types.chat1 as chat1
 
 
-
 async def update_wager_msg(bot, wager, msg):
 
     for message in wager.messages.all():
-        # msg_id = chat1.MessageID
-        # print(msg_id)
         await bot.chat.edit(message.conv_id, int(message.msg_id), msg)
 
 
