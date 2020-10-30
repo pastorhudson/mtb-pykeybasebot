@@ -330,7 +330,7 @@ async def handler(bot, event):
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
-    if str(event.msg.content.text.body).startswith("!grade"):
+    if str(event.msg.content.text.body).startswith("!grades"):
         conversation_id = event.msg.conv_id
         if event.msg.sender.username == 'pastorhudson' or event.msg.sender.username == 'sakanakami':
             grades = get_academic_snapshot()
