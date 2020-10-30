@@ -41,6 +41,7 @@ from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout
 from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
 from crud import s
+from botcommands.jitsi import get_jitsi_link
 
 # load_dotenv('secret.env')
 
@@ -108,6 +109,9 @@ async def handler(bot, event):
         {"name": "meh",
          "description": "Get's today's meh.",
          "usage": ""},
+        {"name": "meet",
+         "description": "Get video conference link.",
+         "usage": "<Conference Name>"},
         {"name": "morningreport",
          "description": "Gets today's morning report.",
          "usage": ""},
@@ -504,6 +508,13 @@ async def handler(bot, event):
         await bot.chat.attach(channel=conversation_id,
                               filename=meh_img,
                               title=msg)
+
+    if str(event.msg.content.text.body).startswith('!meet'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        room = str(event.msg.content.text.body)[6:]
+        msg = get_jitsi_link(room)
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         conversation_id = event.msg.conv_id
