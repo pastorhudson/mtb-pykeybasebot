@@ -34,8 +34,9 @@ def get_jitsi_link(room, avatar=None, name=None):
         }
     encoded_jwt = jwt.encode(payload, os.environ.get('JITSI_JWT_SECRET'), algorithm='HS256')
     url = f"{os.environ.get('JITSI_URL')}/{urllib.parse.quote(room)}?jwt={encoded_jwt.decode('UTF-8')}"
-
-    return url
+    msg = f'"{room}" - Meeting Link:\n' \
+          f"{url}"
+    return msg
 
 
 if __name__ == '__main__':
