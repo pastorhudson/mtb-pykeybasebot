@@ -1,6 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+# from dotenv import load_dotenv
+
+
+""" Copy and rename the secrets_env template in this repo to secrets.env.
+    Add your own login and password for https://myschool.pacyber.org"""
+# load_dotenv('secret.env')
 
 """ Your login information below. It's probably best to store this in environment variables."""
 tbLogin = os.environ.get('TBLOGIN')
@@ -45,32 +51,36 @@ def get_academic_snapshot():
          login_data, and headers for user agent."""
         r = s.post(url, data=login_data, headers=headers)
 
-        """Now we can scrape any url that requires a user to be logged in as long as we use the same session object 's' """
+        """Now we can scrape any url that requires a user to be logged in
+        as long as we use the same session object 's' """
         page = s.get(SCRAPEURL)
-        """ Add your own beautiful soup code below"""
+
         bs = BeautifulSoup(page.content, 'html.parser')
-        mydivs = bs.findAll("div", {"class": "divinfo"})
 
-        # print(mydivs)
-        table = mydivs[0].find(lambda tag: tag.name == 'table')
+        """ Grab the tables for the subjects and their corresponding info """
+        try:
+            mydivs = bs.findAll("div", {"class": "divinfo"})
+            table = mydivs[0].find(lambda tag: tag.name == 'table')
+        except Exception as e:
+            return "Please Check your secrets.env and ensure your login and password are correctly set."
 
-        # print(table)
         rows = table.findAll(lambda tag: tag.name == 'span')
-        # print(rows)
         msg = ""
+
         for row in rows:
             try:
                 subject = row.find("div", {"class": "nicedivheader"}).text
-                msg += f"{subject}\n```"
+                msg += f"{subject}\n"
                 info = row.findAll("td", {"class": "labelhdr"})
                 for i in info:
                     msg += f"{i.text} {i.findNext('td').text}\n"
                     if i.text == 'Last Activity:':
-                        msg += "```\n"
+                        msg += "\n"
 
             except AttributeError as e:
                 pass
 
+        """I use this response txt in a bot so I can get an update on my son's progress very quickly."""
         return msg
 
 
