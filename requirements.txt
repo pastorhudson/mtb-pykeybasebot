@@ -73,4 +73,4 @@ virtualenv==20.0.31
 virustotal-python==0.0.9
 webencodings==0.5.1
 websocket-client==0.48.0
-youtube-dl==2020.9.20
+youtube-dl==2020.11.1.1
