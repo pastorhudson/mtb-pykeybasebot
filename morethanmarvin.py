@@ -43,7 +43,7 @@ from models import Team, User, Point, Location, Wager, Message
 from crud import s
 from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
-from botcommands.rickroll import get_rickroll
+# from botcommands.rickroll import get_rickroll
 
 # load_dotenv('secret.env')
 
