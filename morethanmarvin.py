@@ -43,6 +43,7 @@ from models import Team, User, Point, Location, Wager, Message
 from crud import s
 from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
+from botcommands.rickroll import get_rickroll
 
 # load_dotenv('secret.env')
 
@@ -583,8 +584,12 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, msg)
         try:
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-            msg = make_wager(team_name, username, description, points, position=True, minutes=120)
-            wager_msg = await bot.chat.send(conversation_id, msg)
+            wager_payload = make_wager(team_name, username, description, points, position=True, minutes=120)
+            wager_msg = await bot.chat.send(conversation_id, wager_payload['msg'])
+            cur_wager = s.query(Wager).get(wager_payload['wager_id'])
+            new_wager_message = Message(msg_id=wager_msg.message_id, conv_id=conversation_id)
+            cur_wager.messages.append(new_wager_message)
+            s.commit()
             await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
             await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
 
@@ -597,6 +602,23 @@ async def handler(bot, event):
         yt_payload = get_video(yt_urls[0], True)
         yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
+
+    # if str(event.msg.content.text.body).startswith('!ytr'):
+    #     try:
+    #         conversation_id = event.msg.conv_id
+    #         ytr_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)[0]
+    #         ytr_payload = get_video(ytr_url, True)
+    #         ytr_msg = ytr_payload['msg'] + \
+    #         " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
+    #         " . .I wouldn't hold your breath."
+    #         sent_msg = await bot.chat.send(conversation_id, ytr_msg)
+    #         ytr_payload = get_rickroll(ytr_url)
+    #         if ytr_payload['file']:
+    #             await bot.chat.attach(channel=conversation_id,
+    #                                   filename=ytr_payload['file'],
+    #                                   title="Wouldn't want anybody to have to actually click a link. . . ")
+    #     except IndexError:
+    #         pass
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
