@@ -121,7 +121,8 @@ def make_wager(team_name, username, description, points, position,  minutes):
         msg = f'Wager: `#{wager.id}`\n"{wager.description}"\n' \
               f'{get_wager_bets(wager)}'
         s.close()
-        return msg
+        payload = {"msg": msg, "wager_id": wager.id}
+        return payload
 
 
 def make_bet(team_name, username, points, position, wager_id):
