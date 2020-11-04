@@ -585,7 +585,9 @@ async def handler(bot, event):
         try:
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
             wager_payload = make_wager(team_name, username, description, points, position=True, minutes=120)
-            wager_msg = await bot.chat.send(conversation_id, wager_payload['msg'])
+            msg = wager_payload['msg']
+            print(msg)
+            wager_msg = await bot.chat.send(conversation_id, msg)
             cur_wager = s.query(Wager).get(wager_payload['wager_id'])
             new_wager_message = Message(msg_id=wager_msg.message_id, conv_id=conversation_id)
             cur_wager.messages.append(new_wager_message)
