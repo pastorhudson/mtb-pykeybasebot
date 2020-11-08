@@ -25,7 +25,7 @@ def get_morningreport(channel):
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`"
     msg[0] += get_till(observation=False)
-    msg[0] += get_poll_result(channel)
+    # msg[0] += get_poll_result(channel)
     team = s.query(Team).filter_by(name=channel).first()
     for place in team.location.all():
         msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n"
