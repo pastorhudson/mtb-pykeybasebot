@@ -142,7 +142,7 @@ async def handler(bot, event):
          "description": "Just check to see if I'm regretfully still here.",
          "usage": ""},
         {"name": "till",
-         "description": "Gives the days TILL US Election",
+         "description": "Gives the days TILL Christmas",
          "usage": ""},
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
