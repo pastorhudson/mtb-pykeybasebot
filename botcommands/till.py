@@ -19,7 +19,7 @@ def get_till(observation=True):
 
     days = till - datetime.date.today()
 
-    msg = f"\nThere are `{days.days}` days till Christmas!"
+    msg = f"\nThere are `{days.days}` days till Christmas!\n"
 
     return msg
 
