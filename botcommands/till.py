@@ -4,7 +4,8 @@ import datetime
 
 def get_observation():
     observations = [
-        'The end is coming.'
+        'The end is coming.',
+        'Counting the days.'
     ]
     return observations[0]
 
@@ -14,11 +15,11 @@ def get_till(observation=True):
     if observation:
         msg = get_observation()
 
-    election = datetime.date(2020, 11, 3)
+    till = datetime.date(2020, 12, 25)
 
-    days = election - datetime.date.today()
+    days = till - datetime.date.today()
 
-    msg = f"\nThere are `{days.days}` days till the US Presidental Election."
+    msg = f"\nThere are `{days.days}` days till Christmas!"
 
     return msg
 
