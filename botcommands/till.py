@@ -34,7 +34,7 @@ def get_till(team_name, observation=True):
 
 def set_till(team_name, event_name, event_time):
     team = get_team(team_name)
-    till_event = dateparser.parse(event_time)
+    till_event = dateparser.parse(event_time, settings={'PREFER_DATES_FROM': 'future'})
     current_time = datetime.now(timezone.utc)
     tills = team.tills.filter(Till.name == event_name).all()
     if len(tills) > 0:
@@ -48,3 +48,5 @@ def set_till(team_name, event_name, event_time):
 if __name__ == "__main__":
     # print(get_till(team_name='morethanmarvin,pastorhudson'))
     print(set_till(team_name='morethanmarvin,pastorhudson', event_name='Yule', event_time='8:30 AM on Monday, December 21'))
+    # print(set_till(team_name='morethanmarvin,pastorhudson', event_name='Newyears', event_time='January 1'))
+
