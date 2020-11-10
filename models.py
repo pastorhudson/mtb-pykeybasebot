@@ -37,7 +37,7 @@ class Team(Base):
                          back_populates="teams")
     points = relationship("Point")
     wagers = relationship("Wager", order_by="Wager.id")
-    tills = relationship("Till", order_by="Till.id", lazy="dynamic")
+    tills = relationship("Till", order_by="Till.event", lazy="dynamic")
     location = relationship("Location", lazy="dynamic")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

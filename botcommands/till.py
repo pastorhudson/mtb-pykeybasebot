@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from prettytable.prettytable import MSWORD_FRIENDLY
+from sqlalchemy import desc
 
 from crud import s
 from datetime import datetime, timezone
@@ -20,13 +21,11 @@ def get_till(team_name, observation=True):
     team = get_team(team_name)
     current_time = datetime.now(timezone.utc)
     tills = team.tills.filter(Till.event > current_time).all()
-    # tills = team.tills.all()
 
     msg = ""
     if observation:
         msg = get_observation()
     for till in tills:
-
         msg += f"{till}\n"
 
     return msg
@@ -46,7 +45,7 @@ def set_till(team_name, event_name, event_time):
 
 
 if __name__ == "__main__":
-    # print(get_till(team_name='morethanmarvin,pastorhudson'))
+    print(get_till(team_name='morethanmarvin,pastorhudson'))
     # print(set_till(team_name='morethanmarvin,pastorhudson', event_name='Yule', event_time='8:30 AM on Monday, December 21'))
-    print(set_till(team_name='morethanmarvin,pastorhudson', event_name='US Presidential Election', event_time='November 3 2024'))
+    # print(set_till(team_name='morethanmarvin,pastorhudson', event_name='US Presidential Election', event_time='November 3 2024'))
 
