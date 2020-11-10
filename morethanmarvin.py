@@ -30,7 +30,7 @@ from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
 from botcommands.voice import get_voice
-from botcommands.till import get_till
+from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
 from botcommands.scorekeeper import get_score, write_score, sync_score
@@ -142,8 +142,8 @@ async def handler(bot, event):
          "description": "Just check to see if I'm regretfully still here.",
          "usage": ""},
         {"name": "till",
-         "description": "Gives the days TILL Christmas",
-         "usage": ""},
+         "description": "Gives the days TILL events.",
+         "usage": "<no arguments> returns all current tills, <event_name> -t <event_datetime> adds event. Include the YEAR!"},
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
@@ -666,9 +666,19 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
 
     if str(event.msg.content.text.body).startswith('!till'):
+        msg = ""
+        commands = str(event.msg.content.text.body)[6:].split("-t")
         conversation_id = event.msg.conv_id
-        msg = get_till()
-        await bot.chat.send(conversation_id, msg)
+        team_name = event.msg.channel.name
+        try:
+            event_name = commands[0]
+            event_time = commands[1]
+            msg = set_till(team_name, event_name, event_time)
+            print(msg)
+        except IndexError:
+            msg = get_till(team_name=team_name)
+        finally:
+            await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id

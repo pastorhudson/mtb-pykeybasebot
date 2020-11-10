@@ -2,8 +2,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
 from crud import s
+from dateutil.tz import tzutc
 
-from datetime import datetime
+from datetime import datetime, date, timezone
 
 Base = declarative_base()
 
@@ -36,7 +37,7 @@ class Team(Base):
                          back_populates="teams")
     points = relationship("Point")
     wagers = relationship("Wager", order_by="Wager.id")
-    tills = relationship("Till", order_by="Till.id")
+    tills = relationship("Till", order_by="Till.id", lazy="dynamic")
     location = relationship("Location", lazy="dynamic")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -188,4 +189,5 @@ class Till(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self):
-        return f"{self.name} {self.event}"
+        tspan = self.event - datetime.now(timezone.utc)
+        return f"There are `{tspan}`, till {self.name}."

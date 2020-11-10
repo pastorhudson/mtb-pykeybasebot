@@ -5,6 +5,7 @@ from crud import s
 from datetime import datetime, timedelta
 from models import User, Team, Wager, Bet, Point
 import pykeybasebot.types.chat1 as chat1
+from botcommands.utils import get_team_user
 
 
 async def update_wager_msg(bot, wager, msg):
@@ -64,12 +65,13 @@ async def payout_wager(username, team_name, wager_id, result, bot):
     return f"Wager `#{wager_id}` is either already closed or non-existant."
 
 
-def get_team_user(team_name, username):
-    team = s.query(Team).filter_by(name=team_name).first()
-    user = s.query(User).filter_by(username=username).first()
-    # s.close()
-
-    return team, user
+#  Moved to utils.py
+# def get_team_user(team_name, username):
+#     team = s.query(Team).filter_by(name=team_name).first()
+#     user = s.query(User).filter_by(username=username).first()
+#     # s.close()
+#
+#     return team, user
 
 
 def get_wagers(team_name):
@@ -77,6 +79,7 @@ def get_wagers(team_name):
     wager_msgs = {}
     try:
         wagers = team.wagers
+        print(wagers)
         # msg = f"Here's all the current wagers for `{team_name}`\n\n"
         for wager in wagers:
             msg = ""
