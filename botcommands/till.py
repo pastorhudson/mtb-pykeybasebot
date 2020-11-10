@@ -48,4 +48,3 @@ def set_till(team_name, event_name, event_time):
 if __name__ == "__main__":
     # print(get_till(team_name='morethanmarvin,pastorhudson'))
     print(set_till(team_name='morethanmarvin,pastorhudson', event_name='Yule', event_time='8:30 AM on Monday, December 21'))
-
