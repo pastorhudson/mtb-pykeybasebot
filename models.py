@@ -190,4 +190,7 @@ class Till(Base):
 
     def __repr__(self):
         tspan = self.event - datetime.now(timezone.utc)
-        return f"There are `{tspan}` till {self.name}."
+        s = tspan.seconds
+        hours, remainder = divmod(s, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"`{tspan.days}` Days, `{hours}`Hours, `{minutes:02d}`Minutes till {self.name}"

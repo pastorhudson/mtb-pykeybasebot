@@ -1,10 +1,7 @@
 from prettytable import PrettyTable
-from prettytable.prettytable import MSWORD_FRIENDLY
-from sqlalchemy import desc
-
 from crud import s
 from datetime import datetime, timezone
-from models import User, Team, Till
+from models import Till
 from botcommands.utils import get_team
 import dateparser
 
@@ -18,13 +15,16 @@ def get_observation():
 
 
 def get_till(team_name, observation=True):
+    x = PrettyTable()
+    x.field_names = ["Event", "Till", ]
     team = get_team(team_name)
     current_time = datetime.now(timezone.utc)
     tills = team.tills.filter(Till.event > current_time).all()
 
     msg = ""
     if observation:
-        msg = get_observation()
+        msg += get_observation()
+    msg += "There are:\n"
     for till in tills:
         msg += f"{till}\n"
 
