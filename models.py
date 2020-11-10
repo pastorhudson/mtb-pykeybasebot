@@ -190,4 +190,4 @@ class Till(Base):
 
     def __repr__(self):
         tspan = self.event - datetime.now(timezone.utc)
-        return f"There are `{tspan}`, till {self.name}."
+        return f"There are `{tspan}` till {self.name}."
