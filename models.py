@@ -193,4 +193,4 @@ class Till(Base):
         s = tspan.seconds
         hours, remainder = divmod(s, 3600)
         minutes, seconds = divmod(remainder, 60)
-        return f"`{tspan.days}` Days, `{hours}` Hours, `{minutes:02d}` Minutes till {self.name}"
+        return f"`{tspan.days}` Days, `{hours}` Hours, `{minutes:02d}` Min till {self.name}"
