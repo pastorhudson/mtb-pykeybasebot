@@ -36,6 +36,7 @@ class Team(Base):
                          back_populates="teams")
     points = relationship("Point")
     wagers = relationship("Wager", order_by="Wager.id")
+    tills = relationship("Till", order_by="Till.id")
     location = relationship("Location", lazy="dynamic")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -175,3 +176,16 @@ class Wager(Base):
         return f'#{self.id} "{self.description}"'
                # f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
                # f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'
+
+
+class Till(Base):
+    __tablename__ = 'till'
+    id = Column(Integer, primary_key=True)
+    team_id = Column(Integer, ForeignKey('team.id'), nullable=False)
+    name = Column(String)
+    event = Column(DateTime(timezone=True))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        return f"{self.name} {self.event}"
