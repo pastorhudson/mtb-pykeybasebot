@@ -26,13 +26,13 @@ def get_morningreport(channel):
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
-    msg[0] += get_till(team_name=team.name, observation=False)
     # msg[0] += get_poll_result(channel)
     for place in team.location.all():
         msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n"
 
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\n{get_score(channel)}"
+    msg[2] += get_till(team_name=team.name, observation=False)
     msg[2] += f"\n\nToday's Joke:```{pyjokes.get_joke()}```"
     s.close()
     return msg
