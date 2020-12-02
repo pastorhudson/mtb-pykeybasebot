@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
 from crud import s
+import pytz
 from dateutil.tz import tzutc
 
 from datetime import datetime, date, timezone
@@ -189,8 +190,10 @@ class Till(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self):
-        tspan = self.event - datetime.now(timezone.utc)
+        tspan = self.event - datetime.now(pytz.timezone('America/New_York'))
         s = tspan.seconds
         hours, remainder = divmod(s, 3600)
         minutes, seconds = divmod(remainder, 60)
+        print(datetime.now(pytz.timezone('America/New_York')))
+        print(self.event.tzinfo)
         return f"`{tspan.days}` Days, `{hours}` Hours, `{minutes:02d}` Min till {self.name}"
