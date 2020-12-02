@@ -5,7 +5,7 @@ import json
 
 def get_county(state, county):
 
-    with open('/home/rhudson/PycharmProjects/mtb-pykeybasebot/botcommands/storage/covid-19-data/live/us-counties.csv', mode='r') as csv_file:
+    with open('./storage/covid-19-data/live/us-counties.csv', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             # print(row)
@@ -52,7 +52,7 @@ def get_county_7_day(state, county):
 
 def get_county_7_csv(state, county):
 
-    with open('/home/rhudson/PycharmProjects/mtb-pykeybasebot/botcommands/storage/7day.csv', mode='r') as csv_file:
+    with open('./storage/7day.csv', mode='r') as csv_file:
         for row in csv_file:
             try:
                 print(row)
