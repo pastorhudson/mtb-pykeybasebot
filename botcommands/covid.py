@@ -46,6 +46,7 @@ def get_covid(state=None, county=None, observation=True):
     try:
         if us.states.lookup(state):
             state = us.states.lookup(state)
+            county = county.capitalize()
             lookup_country = False
         else:
             if state == '':
@@ -114,6 +115,9 @@ def get_covid(state=None, county=None, observation=True):
     url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County"
 # https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20%7Bstate%7D%20and%20County%20like%20Fayette%20County
 
+
+    print(f'{state}')
+    print(f'{county}')
     county_data = get_county(f'{state}', f'{county}')
     print(county_data)
     payload = {}
@@ -149,7 +153,7 @@ if __name__ == '__main__':
     # pass
     # state = us.states.lookup('PA')
     # print(state)
-    print(get_covid('Pennsylvania', 'Fayette'))
+    print(get_covid('pa', 'fayette'))
     # print(get_covid(''))
 
 
