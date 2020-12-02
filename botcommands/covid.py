@@ -110,9 +110,9 @@ def get_covid(state=None, county=None, observation=True):
     print("timestamp =", timestamp)
 
 
-    url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County%20and%20Date>{timestamp}"
-    #     url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}"
-    # https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20%7Bstate%7D%20and%20County%20like%20Fayette%20County
+    # url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County%20and%20Date>{timestamp}"
+    url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County"
+# https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20%7Bstate%7D%20and%20County%20like%20Fayette%20County
     county_data = get_county(f'{state}', f'{county}')
 
     payload = {}
