@@ -68,5 +68,5 @@ def get_county_7_csv(state, county):
 
 
 if __name__ == "__main__":
-    # print(get_county('Pennsylvania', "Fayette"))
-    print(get_county_7_csv('Pennsylvania', 'Fayette'))
+    print(get_county('Pennsylvania', "Fayette"))
+    # print(get_county_7_csv('Pennsylvania', 'Fayette'))
