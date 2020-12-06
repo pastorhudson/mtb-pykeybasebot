@@ -143,7 +143,7 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "till",
          "description": "Gives the days TILL events.",
-         "usage": "<no arguments> returns all current tills, <event_name> -t <event_datetime> adds event. Include the YEAR!"},
+         "usage": "<event_name> -t <event_datetime> adds event.\n<no_arguments> lists all tills."},
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
@@ -228,46 +228,6 @@ async def handler(bot, event):
             write_score('marvn', event.msg.sender.username, team_name, -5, description=description)
             await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                                  f"for trying to be cute.\n{instructions}")
-
-    # if str(event.msg.content.text.body).startswith('!bet'):
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     team_name = event.msg.channel.name
-    #     username = event.msg.sender.username
-    #     bet_position = True
-    #     try:
-    #         if RepresentsInt(str(event.msg.content.text.body).split(' ')[1]):
-    #             points = int(str(event.msg.content.text.body).split(' ')[1])
-    #             digits = int((len(str(points)))) + 6
-    #             wager_id = str(event.msg.content.text.body)[digits:].strip().split(" ")[0]
-    #             if not wager_id[0] == "#":
-    #                 raise ValueError
-    #             wager_id = int(wager_id[1:])
-    #             try:
-    #                 position = str(event.msg.content.text.body)[digits:].strip().split(" ")[1]
-    #                 if position.lower() == "false":
-    #                     bet_position = False
-    #
-    #             except IndexError:
-    #                 pass
-    #             msg = make_bet(team_name=team_name, username=username, points=points, position=bet_position, wager_id=wager_id)
-    #             await bot.chat.send(conversation_id, msg)
-    #
-    #         else:
-    #             raise ValueError
-    #
-    #     except IndexError:
-    #         msg = get_bets(username)
-    #         wager_msg = await bot.chat.send(conversation_id, msg)
-    #     except ValueError:
-    #         msg = f"`{event.msg.content.text.body}` is woefully incorrect.\n" \
-    #               f"\nUsage:\n```" \
-    #               f"Bet on an existing Wager: !bet <points> <#wager_id> <True/False>```\n" \
-    #               f"Example: `!bet 45 #3 false`\n" \
-    #               f"```List Your Bets: !bet\n" \
-    #               "Create a new wager: !wager <points> <description>```"
-    #         await bot.chat.send(conversation_id, msg)
-
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
@@ -599,44 +559,34 @@ async def handler(bot, event):
             pass
 
     if str(event.msg.content.text.body).startswith('!yt '):
-        yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
+
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         yt_payload = get_video(yt_urls[0], True)
-        yt_msg = "At least I didn't have to download it. . . \n" + yt_payload['msg']
+        yt_msg = yt_payload['msg']
         await bot.chat.send(conversation_id, yt_msg)
 
-    # if str(event.msg.content.text.body).startswith('!ytr'):
-    #     try:
-    #         conversation_id = event.msg.conv_id
-    #         ytr_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)[0]
-    #         ytr_payload = get_video(ytr_url, True)
-    #         ytr_msg = ytr_payload['msg'] + \
-    #         " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
-    #         " . .I wouldn't hold your breath."
-    #         sent_msg = await bot.chat.send(conversation_id, ytr_msg)
-    #         ytr_payload = get_rickroll(ytr_url)
-    #         if ytr_payload['file']:
-    #             await bot.chat.attach(channel=conversation_id,
-    #                                   filename=ytr_payload['file'],
-    #                                   title="Wouldn't want anybody to have to actually click a link. . . ")
-    #     except IndexError:
-    #         pass
-
     if str(event.msg.content.text.body).startswith('!ytv'):
+        conversation_id = event.msg.conv_id
+
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
                                  " I'll be in my room complaining.",
                                  " Please don't change my name to Marshall.",
                                  """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        conversation_id = event.msg.conv_id
         ytv_payload = get_video(ytv_urls[0], True)
-        if ytv_payload['msg'] == "I can't download videos from this site.":
+        if ytv_payload['msg'] == "I have failed.":
             ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
         else:
-            ytv_msg = ytv_payload['msg'] + \
-                      " \nSigh, I guess I'll try to download this useless video when I feel up to it." \
-                      " . .I wouldn't hold your breath."
+            ytv_msg = ytv_payload['msg']
         sent_msg = await bot.chat.send(conversation_id, ytv_msg)
+        await bot.chat.react(conversation_id, sent_msg.message_id, ":tv:")
+
         ytv_payload = get_video(ytv_urls[0], False)
         if ytv_payload['file']:
             await bot.chat.attach(channel=conversation_id,

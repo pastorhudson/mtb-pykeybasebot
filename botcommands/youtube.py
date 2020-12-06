@@ -148,6 +148,5 @@ def get_youtube(url, simulate):
 
 
 if __name__ == "__main__":
-    print(storage.absolute())
-
-
+    pass
+    # print(storage.absolute())
