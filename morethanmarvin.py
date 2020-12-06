@@ -481,7 +481,8 @@ async def handler(bot, event):
         msg = f"Sigh. . . yes I'm still here."
         members = await get_channel_members(conversation_id)
         msg += str(members)
-        await bot.chat.send(conversation_id, msg)
+        test_msg = await bot.chat.send(conversation_id, msg)
+
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
@@ -589,9 +590,21 @@ async def handler(bot, event):
 
         ytv_payload = get_video(ytv_urls[0], False)
         if ytv_payload['file']:
-            await bot.chat.attach(channel=conversation_id,
-                                  filename=ytv_payload['file'],
-                                  title="Wouldn't want anybody to have to actually click a link. . . ")
+
+            try:
+
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=ytv_payload['file'],
+                                      title=ytv_msg)
+            except TimeoutError:
+                pass
+            finally:
+                await bot.chat.execute(
+                    {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
+                                                                "message_id": sent_msg.message_id}}}
+                )
+
+
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id
