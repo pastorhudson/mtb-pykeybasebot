@@ -197,7 +197,6 @@ class Till(Base):
         print(datetime.now(pytz.timezone('America/New_York')))
         print(self.event.tzinfo)
         if tspan.days > 0:
-
-            return f"{tspan.days} till: {self.name}"
+            return f"`{tspan.days} Days` till: {self.name}"
         else:
-            return f"`{hours}` Hours` till:{self.name}"
+            return f"`{hours} Hours` till:{self.name}"
