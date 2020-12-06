@@ -33,7 +33,7 @@ def get_morningreport(channel):
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
-    msg[2] += f"\n\nToday's Joke:```{pyjokes.get_joke()}```"
+    msg[2] += f"Today's Joke:```{pyjokes.get_joke()}```"
     s.close()
     return msg
 
