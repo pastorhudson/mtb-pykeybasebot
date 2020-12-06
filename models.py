@@ -196,4 +196,7 @@ class Till(Base):
         minutes, seconds = divmod(remainder, 60)
         print(datetime.now(pytz.timezone('America/New_York')))
         print(self.event.tzinfo)
-        return f"`{tspan.days}` Days, `{hours}` Hours, `{minutes:02d}` Min till:\n{self.name}"
+        if tspan.days > 0:
+            return f"{tspan.days} till: {self.name}"
+        else:
+            return f"`{hours}` Hours` till:{self.name}"
