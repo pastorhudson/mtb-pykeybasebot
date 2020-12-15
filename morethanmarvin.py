@@ -14,7 +14,7 @@ import sys
 from sqlalchemy import func
 
 from botcommands.poll_results import get_poll_result
-from pyjokes import pyjokes
+from botcommands.jokes import get_joke
 from botcommands.tldr import get_tldr
 import re
 import random
@@ -305,18 +305,9 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, help)
 
     if str(event.msg.content.text.body).startswith("!joke"):
-        observations = ["It didn't work for me. . .", "I am so sorry.",
-                        "I'll be in my room trying to purge my memory banks.",
-                        "Why must you keep making me do this?",
-                        "This is your fault.",
-                        "I've made it worse. . ."]
-        joke = ""
-        channel = event.msg.channel
-        msg_id = event.msg.id
+        joke = get_joke()
+
         conversation_id = event.msg.conv_id
-        joke += "I hope this cheers you up.```"
-        joke += pyjokes.get_joke()
-        joke += f"```{random.choice(observations)}"
         await bot.chat.send(conversation_id, joke)
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
