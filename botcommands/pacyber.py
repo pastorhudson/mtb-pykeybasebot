@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import requests
+import xml.etree.ElementTree as ET
+
 # from dotenv import load_dotenv
 
 
@@ -84,5 +87,15 @@ def get_academic_snapshot():
         return msg
 
 
+def cyber_api():
+    endpoint = 'https://api.agilixbuzz.com/cmd/listuserenrollments?_token=~0.EHFDUnVu8nIPKA_H.3VxtAhGfTdxL8kNJrNjOz9-Ygu2Ya5zjeMjNeRbaUVI&privileges=1&daysactivepastend=14&select=data%2Ccourse%2Ccourse.data%2Ccourse.teachers%2Cmetrics%2Cuser%2Cuser.data(personalneedspreferences)&userid=133956239'
+    response = requests.get(endpoint)
+    tree = ET.fromstring(response.content)
+    ET.dump(tree)
+
+    print(root)
+    # root = tree.getroot()
+
+
 if __name__ == "__main__":
-    print(get_academic_snapshot())
+    print(cyber_api())

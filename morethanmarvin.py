@@ -43,6 +43,7 @@ from models import Team, User, Point, Location, Wager, Message
 from crud import s
 from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
+from botcommands.update_vaccine import get_vaccine_data
 # from botcommands.rickroll import get_rickroll
 
 # load_dotenv('secret.env')
@@ -147,6 +148,9 @@ async def handler(bot, event):
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
+        {"name": "vac",
+         "description": "Get Vaccine Distributation data from health.pa.gov",
+         "usage": ""},
         {"name": "wager",
          "description": "Forces me to setup a silly bet with points that don't matter.",
          "usage": "<points wagered> <The Event or Thing your betting upon>"},
@@ -452,6 +456,14 @@ async def handler(bot, event):
 
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
+
+    if str(event.msg.content.text.body).startswith('!vac'):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        vac_data = get_vaccine_data()
+        await bot.chat.send(conversation_id, vac_data)
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id

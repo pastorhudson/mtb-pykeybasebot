@@ -67,6 +67,11 @@ def get_county_7_csv(state, county):
             #     return row
 
 
+def get_county_vaccine(state, county):
+    pd.read_excel('/storage/COVID-19 Vaccine_Provider Locations_Week 1.xlsx', index_col=0)
+
+
 if __name__ == "__main__":
-    print(get_county('Pennsylvania', "Fayette"))
+    # print(get_county('Pennsylvania', "Fayette"))
+    print(get_county_vaccine('Pennsylvania', 'Fayette'))
     # print(get_county_7_csv('Pennsylvania', 'Fayette'))
