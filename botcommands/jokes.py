@@ -23,7 +23,7 @@ def get_joke():
         joke = ""
 
         joke += "I hope this cheers you up.```"
-        joke += dadjokes.joke("jokes.txt")
+        joke += dadjokes.joke(storage)
         joke += f"```{random.choice(observations)}"
 
     return joke
