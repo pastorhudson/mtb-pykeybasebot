@@ -5,7 +5,8 @@ from botcommands.stardate import get_stardate
 from botcommands.till import get_till
 import random
 from botcommands.scorekeeper import write_score, get_score
-from pyjokes import pyjokes
+# from pyjokes import pyjokes
+from botcommands.jokes import get_joke
 from crud import s
 from models import Team
 
@@ -33,7 +34,7 @@ def get_morningreport(channel):
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
-    msg[2] += f"Today's Joke:```{pyjokes.get_joke()}```"
+    msg[2] += f"Today's Joke:```{get_joke(False)}```"
     s.close()
     return msg
 

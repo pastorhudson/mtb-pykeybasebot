@@ -5,7 +5,7 @@ from pathlib import Path
 storage = Path('./storage/jokes.txt')
 
 
-def get_joke():
+def get_joke(observation=True):
     try:
         dadjokes.joke(storage)
 
@@ -21,10 +21,12 @@ def get_joke():
                         "This is @alexius fault.",
                         "We used to have classy jokes. . ."]
         joke = ""
-
-        joke += "I hope this cheers you up.```"
-        joke += dadjokes.joke(storage)
-        joke += f"```{random.choice(observations)}"
+        if observation:
+            joke += "I hope this cheers you up.```"
+            joke += dadjokes.joke(storage)
+            joke += f"```{random.choice(observations)}"
+        else:
+            joke += dadjokes.joke(storage)
 
     return joke
 
