@@ -34,7 +34,7 @@ def download_vaccine_data():
 
 
 def get_vaccine_data():
-    # download_vaccine_data()
+    download_vaccine_data()
     excel_file = './storage/COVID-19 Vaccine_Provider Locations_Week 1.xlsx'
     vaccines = pd.read_excel(excel_file, engine='openpyxl')
     data_header = list(vaccines.columns)
