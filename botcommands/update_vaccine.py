@@ -41,9 +41,10 @@ def get_vaccine_data():
     vaccine_dist = pd.DataFrame(vaccines, columns=data_header)
     clean = vaccine_dist.dropna()
     clean['Provider'] = clean['Provider Location'].str.slice(0, 18)
-
+    Total = clean['Doses'].sum()
     msg = clean[['Provider', 'Doses']].to_markdown(index=False)
-    return f"```\n{msg}\n```"
+    return f"```\n{msg}\n" \
+           f"Total: {int(Total)}\n```"
 
 
 if __name__ == "__main__":
