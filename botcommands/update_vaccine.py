@@ -34,13 +34,15 @@ def download_vaccine_data():
 
 
 def get_vaccine_data():
-    download_vaccine_data()
+    # download_vaccine_data()
     excel_file = './storage/COVID-19 Vaccine_Provider Locations_Week 1.xlsx'
     vaccines = pd.read_excel(excel_file, engine='openpyxl')
     data_header = list(vaccines.columns)
     vaccine_dist = pd.DataFrame(vaccines, columns=data_header)
     clean = vaccine_dist.dropna()
-    msg = clean[['Provider Location', 'Doses']].to_markdown(index=False)
+    clean['Provider'] = clean['Provider Location'].str.slice(0, 18)
+
+    msg = clean[['Provider', 'Doses']].to_markdown(index=False)
     return f"```\n{msg}\n```"
 
 
