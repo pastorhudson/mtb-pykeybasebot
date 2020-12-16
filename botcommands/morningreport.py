@@ -24,7 +24,7 @@ def get_obaservation():
 def get_morningreport(channel):
     team = s.query(Team).filter_by(name=channel).first()
 
-    msg = ["", "", ""]
+    msg = ["", "", "", ""]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
