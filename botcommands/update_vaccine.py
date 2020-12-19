@@ -25,19 +25,21 @@ def download_vaccine_data():
         filedivs = soup.findAll("div", {"class": "ms-rtestate-field"})
         for div in filedivs:
             if "COVID-19 Vaccine Provider Locations" in div.text:
+                print(div.text)
                 a = div.find(href=True)
                 file_url = urllib.parse.urljoin(BASEURL, a['href'])
                 file_name = Path(f"./storage/{unquote(a['href'].split('/')[-1])}")
                 r = requests.get(file_url, allow_redirects=True)
                 open(file_name, 'wb').write(r.content)
-                return
+        return
 
 
 def get_vaccine_data():
-    download_vaccine_data()
+    # download_vaccine_data()
     excel_file = './storage/COVID-19 Vaccine_Provider Locations_Week 1.xlsx'
     vaccines = pd.read_excel(excel_file, engine='openpyxl')
-    data_header = list(vaccines.columns)
+    # print(vaccines)
+    data_header = list(vaccines.columns[:9])
     vaccine_dist = pd.DataFrame(vaccines, columns=data_header)
     clean = vaccine_dist.dropna()
     clean['Provider'] = clean['Provider Location'].str.slice(0, 18)
