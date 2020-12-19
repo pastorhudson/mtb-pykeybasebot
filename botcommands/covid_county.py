@@ -1,7 +1,7 @@
 import csv
 import requests
 import json
-import pandas as pd
+
 
 def get_county(state, county):
 
@@ -32,8 +32,6 @@ def get_county_7_day(state, county):
     message += f"COVID-19 Data:\n`{county.capitalize()} County {state}`\n```"
     need_confirmed_data = True
     need_death_data = True
-
-
 
     for d in data[:2]:
         if d['Type'] == 'Confirmed' and need_confirmed_data:
@@ -67,11 +65,6 @@ def get_county_7_csv(state, county):
             #     return row
 
 
-def get_county_vaccine(state, county):
-    pd.read_excel('/storage/COVID-19 Vaccine_Provider Locations_Week 1.xlsx', index_col=0)
-
-
 if __name__ == "__main__":
-    # print(get_county('Pennsylvania', "Fayette"))
-    print(get_county_vaccine('Pennsylvania', 'Fayette'))
+    print(get_county('Pennsylvania', "Fayette"))
     # print(get_county_7_csv('Pennsylvania', 'Fayette'))
