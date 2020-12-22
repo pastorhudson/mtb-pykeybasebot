@@ -45,8 +45,8 @@ def get_vaccine_data():
     clean['Provider'] = clean['Provider Location'].str.slice(0, 18)
     Total = clean['Doses'].sum()
     msg = clean[['Provider', 'Doses']].to_markdown(index=False)
-    return f"```\n{msg}\n" \
-           f"Total: {int(Total)}\n```"
+    return f"```Vaccine's Delivered in PA: " \
+           f"{int(Total)}\n```"
 
 
 if __name__ == "__main__":
