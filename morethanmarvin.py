@@ -195,9 +195,11 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!award"):
         await sync(event=event, bot=bot)
 
+        pts_max = 250
+
         instructions = f"You have failed. I'm not surprised.\n" \
                        f"```You can only give points to someone in this chat.\n" \
-                       f"You can't give more than 100 points at a time.\n" \
+                       f"You can't give more than {pts_max} points at a time.\n" \
                        f"You can't give negative points.\n" \
                        f"Points must be whole numbers.\n" \
                        f"No cutesy extra characters, or I'll deduct from your score.\n" \
@@ -217,12 +219,12 @@ async def handler(bot, event):
                 user = str(event.msg.content.text.body).split(' ')[2].strip("@")
                 points = int(str(event.msg.content.text.body).split(' ')[1])
 
-            if points < 0 and user != 'pastorhudson':
+            if points < 0 and event.msg.sender.username != 'pastorhudson':
                 user = event.msg.sender.username
-                score = write_score(user, event.msg.sender.username, team_name, points, description=description)
+                score = write_score(user, event.msg.sender.username, team_name, -5, description=description)
                 await bot.chat.send(conversation_id,
-                                    f"{points} points awarded to @{user}. I'm the only negative one around here.")
-            if user in members and user != event.msg.sender.username and points < 101 or user == 'pastorhudson':
+                                    f"`-5` points awarded to @{user}. I'm the only negative one around here.")
+            if user in members and user != event.msg.sender.username and points < pts_max or event.msg.sender.username == 'pastorhudson' or user == 'pastorhudson':
                 score = write_score(user, event.msg.sender.username, team_name, points, description=description)
                 await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
@@ -394,6 +396,7 @@ async def handler(bot, event):
                     msg = team.location.all()
                     s.close()
                     await bot.chat.send(event.msg.conv_id, str(msg))
+
 
             except IndexError:
                 team = s.query(Team).filter_by(name=event.msg.channel.name).first()
