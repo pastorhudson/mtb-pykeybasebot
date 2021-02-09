@@ -9,7 +9,7 @@ from botcommands.scorekeeper import write_score, get_score
 from botcommands.jokes import get_joke
 from crud import s
 from models import Team
-from botcommands.update_vaccine import get_vaccine_data
+# from botcommands.update_vaccine import get_vaccine_data
 
 
 def get_obaservation():
@@ -32,7 +32,7 @@ def get_morningreport(channel):
     for place in team.location.all():
         msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n"
 
-    msg[0] += get_vaccine_data()
+    # msg[0] += get_vaccine_data()
     msg[1] += "\nMeh:" + get_meh(observation=False)
     msg[2] += f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
