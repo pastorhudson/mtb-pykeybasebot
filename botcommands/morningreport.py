@@ -30,7 +30,7 @@ def get_morningreport(channel):
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
     # msg[0] += get_poll_result(channel)
     for place in team.location.all():
-        msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n"
+        msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n```"
 
     # msg[0] += get_vaccine_data()
     msg[1] += "\nMeh:" + get_meh(observation=False)
