@@ -195,7 +195,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!award"):
         await sync(event=event, bot=bot)
 
-        pts_max = 250
+        pts_max = 500
 
         instructions = f"You have failed. I'm not surprised.\n" \
                        f"```You can only give points to someone in this chat.\n" \
@@ -536,6 +536,7 @@ async def handler(bot, event):
         except IndexError:
             wager_msgs = get_wagers(team_name=team_name)
             for w_id, w_msg in wager_msgs.items():
+
                 wager_msg = await bot.chat.send(conversation_id, w_msg)
                 await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
                 await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
