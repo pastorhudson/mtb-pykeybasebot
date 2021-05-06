@@ -43,10 +43,12 @@ def get_covid(state=None, county=None, observation=True):
         lookup_county = True
     else:
         lookup_county = False
+    print(lookup_county)
     try:
         if us.states.lookup(state):
             state = us.states.lookup(state)
-            county = county.capitalize()
+            if lookup_county:
+                county = county.capitalize()
             lookup_country = False
         else:
             if state == '':
@@ -155,7 +157,7 @@ if __name__ == '__main__':
     # pass
     # state = us.states.lookup('PA')
     # print(state)
-    print(get_covid('pa', 'fayette'))
+    print(get_covid('pa'))
 
     # print(get_covid(''))
 
