@@ -1,7 +1,7 @@
 {
   "cron": [
     {
-      "command": "bash ./storage/update_covid.sh",
+      "command": "bash /app/storage/update_covid.sh",
       "schedule": "@hourly"
     }
   ]
