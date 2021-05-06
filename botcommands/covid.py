@@ -112,7 +112,7 @@ def get_covid(state=None, county=None, observation=True):
 
 
     # url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County%20and%20Date>{timestamp}"
-    url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County"
+    # url2 = f"https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20*%20where%20State%20like%20{state}%20and%20County%20like%20{county}%20County"
 # https://knowi.com/api/data/ipE4xJhLBkn8H8jisFisAdHKvepFR5I4bGzRySZ2aaXlJgie?entityName=County%207%20day%20growth%20rates&exportFormat=json&c9SqlFilter=select%20%2A%20where%20State%20like%20%7Bstate%7D%20and%20County%20like%20Fayette%20County
 
 
@@ -123,27 +123,29 @@ def get_covid(state=None, county=None, observation=True):
     payload = {}
     headers = {}
 
-    response2 = requests.request("GET", url2, headers=headers, data=payload)
-    data = []
-
-    for r in response2.json():
-        if r['County'].lower() == county.lower() + " county":
-            data.append(r)
+    # response2 = requests.request("GET", url2, headers=headers, data=payload)
+    # data = []
+    #
+    # for r in response2.json():
+    #     if r['County'].lower() == county.lower() + " county":
+    #         data.append(r)
 
     message += f"COVID-19 Data:\n`{county.capitalize()} County {state}`\n```"
-    need_confirmed_data = True
-    need_death_data = True
+    message += f"Cases: {county_data['cases']}\n"
+    message += f"Deaths: {county_data['deaths']}\n"
+    # need_confirmed_data = True
+    # need_death_data = True
 
-    for d in data[:2]:
-        if d['Type'] == 'Confirmed' and need_confirmed_data:
-            message += f"Cases: {county_data['cases']}\n"
-            message += f"7 Day Growth %: {d['7 day growth %']}\n"
-            need_confirmed_data = False
-        need_data = True
-        if d['Type'] == 'Deaths' and need_death_data:
-            message += f"Deaths: {county_data['deaths']}\n"
-            message += f"7 Day Growth %: {d['7 day growth %']}\n"
-            need_death_data = False
+    # for d in data[:2]:
+    #     if d['Type'] == 'Confirmed' and need_confirmed_data:
+    #         message += f"Cases: {county_data['cases']}\n"
+    #         message += f"7 Day Growth %: {d['7 day growth %']}\n"
+    #         need_confirmed_data = False
+    #     need_data = True
+    #     if d['Type'] == 'Deaths' and need_death_data:
+    #         message += f"Deaths: {county_data['deaths']}\n"
+    #         message += f"7 Day Growth %: {d['7 day growth %']}\n"
+    #         need_death_data = False
     message += "```\n"
 
     return message
@@ -154,6 +156,7 @@ if __name__ == '__main__':
     # state = us.states.lookup('PA')
     # print(state)
     print(get_covid('pa', 'fayette'))
+
     # print(get_covid(''))
 
 
