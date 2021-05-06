@@ -27,12 +27,13 @@ def get_till(team_name, observation=True):
         msg += get_observation()
     msg += "There are:\n"
     for till in tills:
-        msg += f"{till}\n"
+        msg += f"""{till}\n"""
 
     return msg
 
 
 def set_till(team_name, event_name, event_time):
+    event_name = event_name.strip('`')
     team = get_team(team_name)
     till_event = dateparser.parse(event_time, settings={'PREFER_DATES_FROM': 'future',
                                                         'TIMEZONE': 'US/Eastern',
