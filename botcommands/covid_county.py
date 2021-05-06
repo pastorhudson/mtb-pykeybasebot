@@ -50,7 +50,7 @@ def get_county_7_day(state, county):
 
 def get_county_7_csv(state, county):
 
-    with open('./storage/7day.csv', mode='r') as csv_file:
+    with open('/app/storage/7day.csv', mode='r') as csv_file:
         for row in csv_file:
             try:
                 print(row)
