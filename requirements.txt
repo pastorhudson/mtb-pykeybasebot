@@ -9,7 +9,7 @@ cffi==1.14.3
 chardet==3.0.4
 cleo==0.8.1
 clikit==0.6.2
-cowsay==2.0.3
+cowsay==4.0
 crashtest==0.3.1
 cryptography==3.1.1
 dataclasses-json==0.3.8
