@@ -192,11 +192,19 @@ class Till(Base):
     def __repr__(self):
         tspan = self.event - datetime.now(pytz.timezone('America/New_York'))
         s = tspan.seconds
+        # m, remainder = divmod(s, 60)
         hours, remainder = divmod(s, 3600)
         minutes, seconds = divmod(remainder, 60)
-        print(datetime.now(pytz.timezone('America/New_York')))
-        print(self.event.tzinfo)
+        # print(datetime.now(pytz.timezone('America/New_York')))
+        # print(self.event.tzinfo)
+        print(tspan.days)
         if tspan.days > 0:
             return f"`{tspan.days} Days` till: {self.name}"
-        else:
+
+        elif tspan.seconds > 3600:
             return f"`{hours} Hours` till:{self.name}"
+
+        else:
+            return f"`{minutes} Minutes {seconds} Seconds` till:{self.name}"
+
+
