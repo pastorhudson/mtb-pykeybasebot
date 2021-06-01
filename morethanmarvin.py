@@ -317,7 +317,6 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         msg = get_morbid()
         members = await get_channel_members(conversation_id)
-        msg += str(members)
         morbid_msg = await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
