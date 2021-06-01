@@ -7,7 +7,7 @@ credentials = {
     "type": "service_account",
     "project_id": "mtb-keybasebot",
     "private_key_id": "b9ddc86ae9372aa9da78935960b35678cfc61e2d",
-    "private_key": f"{os.environ.get('google_p_key')}",
+    "private_key": os.environ.get('google_p_key'),
     "client_email": "mtb-keybasebot@mtb-keybasebot.iam.gserviceaccount.com",
     "client_id": "109663810885054669361",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
