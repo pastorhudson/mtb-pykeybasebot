@@ -2,19 +2,11 @@ import gspread
 import pandas as pd
 from datetime import datetime
 import os
+import json
 
-credentials = {
-    "type": "service_account",
-    "project_id": "mtb-keybasebot",
-    "private_key_id": "b9ddc86ae9372aa9da78935960b35678cfc61e2d",
-    "private_key": f"'{os.environ.get('google_p_key')}'",
-    "client_email": "mtb-keybasebot@mtb-keybasebot.iam.gserviceaccount.com",
-    "client_id": "109663810885054669361",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mtb-keybasebot%40mtb-keybasebot.iam.gserviceaccount.com"
-}
+# print(os.environ.get('google_p_key'))
+
+credentials = json.loads(os.environ.get('google_p_key'))
 
 gc = gspread.service_account_from_dict(credentials)
 
