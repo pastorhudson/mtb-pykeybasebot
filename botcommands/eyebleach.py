@@ -2,20 +2,34 @@ import requests
 import random
 
 
+def _fetch_bleach():
+    url = "https://api.reddit.com/r/eyebleach/random/.json?is_gallery=False"
+    response = requests.get(url, headers={'User-agent': 'mtb-keybasebot 0.1'})
+    try:
+        print(response.json()[0]["data"]["children"][0]["data"]["is_gallery"])
+        return False, response
+    except KeyError:
+        return True, response
+
+
 def get_eyebleach_data(count=2):
     eyebleach = {}
     for bleach in range(count):
-        url = "https://api.reddit.com/r/eyebleach/random/"
-        response = requests.get(url, headers={'User-agent': 'mtb-keybasebot 0.1'})
+
+        is_gallery = False
+        while not is_gallery:
+            is_gallery, response = _fetch_bleach()
 
         try:
             eyebleach[f'{response.json()[0]["data"]["children"][0]["data"]["name"]}'] = response.json()[0]["data"]["children"][0]["data"]
         except Exception as e:
+            print("in the except")
+
             print(e)
     return eyebleach
 
 
-def get_eyebleach(bleach_level=2):
+def get_eyebleach(bleach_level=3):
 
     observations = [
         "Moving right along. . . ",
@@ -33,4 +47,4 @@ def get_eyebleach(bleach_level=2):
 
 
 if __name__ == "__main__":
-    print(get_eyebleach(4))
+    print(get_eyebleach())
