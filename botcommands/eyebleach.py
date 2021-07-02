@@ -26,10 +26,9 @@ def get_eyebleach(bleach_level=2):
     ]
 
     msg = random.choice(observations) + "\n"
-    # print(get_eyebleach_data(bleach_level))
+    # msg_list = []
     for bleach in get_eyebleach_data(bleach_level).items():
         msg += bleach[1]["url"] + "\n"
-
     return msg
 
 
