@@ -108,7 +108,7 @@ async def handler(bot, event):
          "description": "Return Dr Who Episode.",
          "usage": "<ep_id> OR <Ep Title>"},
         {"name": "eyebleach",
-         "description": "Returns images from r/eyebleach. Default = 2",
+         "description": "Returns images from r/eyebleach. Default = 3",
          "usage": "<bleach_level>"},
         {"name": "grades",
          "description": "Retrieve current academic snapshot from pa-cyber.",
