@@ -13,7 +13,7 @@ import re
 import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
-from botcommands.youtube import get_video
+from botcommands.youtube import get_video, get_mp3
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
@@ -319,11 +319,7 @@ async def handler(bot, event):
 
         except TypeError:
             msg = get_eyebleach()
-            await bot.chat.send(conversation_id, "")
-
-            for m in msg:
-                pain = f"This is {event.msg.sender}'s fault: {m}"
-                await bot.chat.send(conversation_id, msg)
+            await bot.chat.send(conversation_id, msg)
 
         except ValueError:
             msg = get_eyebleach()
@@ -605,6 +601,41 @@ async def handler(bot, event):
 
         except UnboundLocalError:
             pass
+
+    if str(event.msg.content.text.body).startswith('!ytm'):
+        conversation_id = event.msg.conv_id
+
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+
+        ytm_fail_observations = [" A brain the size of a planet and you pick this task.",
+                                 " I'll be in my room complaining.",
+                                 " Please don't change my name to Marshall.",
+                                 """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
+        ytm_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        ytm_payload = get_mp3(ytm_urls[0], True)
+        if ytm_payload['msg'] == "I have failed.":
+            ytm_msg = ytm_payload['msg'] + random.choice(ytm_fail_observations)
+        else:
+            ytm_msg = ytm_payload['msg']
+        sent_msg = await bot.chat.send(conversation_id, ytm_msg)
+        await bot.chat.react(conversation_id, sent_msg.message_id, ":headphones:")
+
+        ytm_payload = get_mp3(ytm_urls[0], False)
+        if ytm_payload['file']:
+
+            try:
+
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=ytm_payload['file'],
+                                      title=ytm_msg)
+            except TimeoutError:
+                pass
+            finally:
+                await bot.chat.execute(
+                    {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
+                                                                "message_id": sent_msg.message_id}}}
+                )
 
     if str(event.msg.content.text.body).startswith('!yt '):
         conversation_id = event.msg.conv_id

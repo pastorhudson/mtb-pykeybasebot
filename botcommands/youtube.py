@@ -15,6 +15,7 @@ info = []
 storage = Path('./storage')
 print(storage.absolute())
 
+
 def convert_seconds(seconds):
     seconds = seconds % (24 * 3600)
     hour = seconds // 3600
@@ -54,18 +55,6 @@ def my_hook(d):
 
 
 def get_video(url, simulate):
-    domain = get_domain(url)
-    if domain == 'youtube.com' or domain == 'youtu.be':
-        info = []
-        return get_youtube(url, simulate)
-
-    else:
-        info = []
-        return get_other_video(url, simulate)
-
-
-def get_other_video(url, simulate):
-    global info
     ydl_opts = {"forcejson": True,
                 'logger': MyLogger(),
                 'progress_hooks': [my_hook],
@@ -74,6 +63,50 @@ def get_other_video(url, simulate):
                 'no-cache-dir': True,
                 'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s'
                 }
+    domain = get_domain(url)
+    if domain == 'youtube.com' or domain == 'youtu.be':
+        info = []
+        return get_youtube(url, simulate, ydl_opts)
+
+    else:
+        info = []
+        return get_other_video(url, simulate, ydl_opts)
+
+
+def get_mp3(url, simulate):
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+    }
+    ydl_opts = {"forcejson": True,
+                'logger': MyLogger(),
+                'progress_hooks': [my_hook],
+                'simulate': simulate,
+                'no-cache-dir': True,
+                'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }],
+                }
+    domain = get_domain(url)
+    if domain == 'youtube.com' or domain == 'youtu.be':
+        info = []
+        return get_youtube(url, simulate, ydl_opts)
+
+    else:
+        info = []
+        return get_other_video(url, simulate, ydl_opts)
+
+
+def get_other_video(url, simulate, ydl_opts):
+    global info
+
     try:
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
@@ -101,16 +134,16 @@ def get_other_video(url, simulate):
         return payload
 
 
-def get_youtube(url, simulate):
+def get_youtube(url, simulate, ydl_opts):
     global info
     print(f"URL: {url}")
-    ydl_opts = {"forcejson": True,
-                'logger': MyLogger(),
-                'progress_hooks': [my_hook],
-                'simulate': simulate,
-                'format': 'mp4',
-                'no-cache-dir': True,
-                }
+    # ydl_opts = {"forcejson": True,
+    #             'logger': MyLogger(),
+    #             'progress_hooks': [my_hook],
+    #             'simulate': simulate,
+    #             'format': 'mp4',
+    #             'no-cache-dir': True,
+    #             }
     try:
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
@@ -148,5 +181,7 @@ def get_youtube(url, simulate):
 
 
 if __name__ == "__main__":
+
     pass
+
     # print(storage.absolute())

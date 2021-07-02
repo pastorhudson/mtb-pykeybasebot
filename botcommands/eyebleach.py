@@ -50,4 +50,6 @@ def get_eyebleach(bleach_level=3):
 
 
 if __name__ == "__main__":
-    print(get_eyebleach(2.5))
+    # a = abs("3")
+    pass
+
