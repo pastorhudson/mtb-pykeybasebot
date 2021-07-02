@@ -100,3 +100,4 @@ dadjokes-plus-plus==1.2
 tabulate==0.8.7
 openpyxl
 gspread
+ffmpeg
