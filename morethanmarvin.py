@@ -320,7 +320,7 @@ async def handler(bot, event):
         except TypeError:
             msg = get_eyebleach()
 
-        except IndexError:
+        except ValueError:
             msg = get_eyebleach()
         await bot.chat.send(conversation_id, msg)
 
