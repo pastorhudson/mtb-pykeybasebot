@@ -109,7 +109,7 @@ async def handler(bot, event):
          "usage": "<ep_id> OR <Ep Title>"},
         {"name": "eyebleach",
          "description": "Returns images from r/eyebleach. Default = 3",
-         "usage": "<bleach_level>"},
+         "usage": "<bleach_level> 1-11"},
         {"name": "grades",
          "description": "Retrieve current academic snapshot from pa-cyber.",
          "usage": "RESTRICTED"},
@@ -319,9 +319,15 @@ async def handler(bot, event):
 
         except TypeError:
             msg = get_eyebleach()
+            await bot.chat.send(conversation_id, "")
+
+            for m in msg:
+                pain = f"This is {event.msg.sender}'s fault: {m}"
+                await bot.chat.send(conversation_id, msg)
 
         except ValueError:
             msg = get_eyebleach()
+
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!grades"):

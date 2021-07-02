@@ -12,9 +12,12 @@ def _fetch_bleach():
         return True, response
 
 
-def get_eyebleach_data(count=2):
+def get_eyebleach_data(count):
+    if abs(count) > 11:
+        count = 11
+
     eyebleach = {}
-    for bleach in range(count):
+    for bleach in range(abs(count)):
 
         is_gallery = False
         while not is_gallery:
@@ -47,4 +50,4 @@ def get_eyebleach(bleach_level=3):
 
 
 if __name__ == "__main__":
-    print(get_eyebleach())
+    print(get_eyebleach(2.5))
