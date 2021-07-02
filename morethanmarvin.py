@@ -61,6 +61,17 @@ async def get_channel_members(conversation_id):
     return members
 
 
+async def set_unfurl(unfurl=True):
+    if unfurl:
+        unfurl = await bot.chat.execute(
+            {"method": "setunfurlsettings",
+             "params": {"options": {"mode": "always"}}})
+    else:
+        unfurl = await bot.chat.execute(
+            {"method": "setunfurlsettings",
+             "params": {"options": {"mode": "never"}}})
+
+
 def RepresentsInt(s):
     try:
         int(s)
@@ -298,6 +309,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!eyebleach"):
+        await set_unfurl(True)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
@@ -306,6 +318,9 @@ async def handler(bot, event):
             msg = get_eyebleach(int(bleach_level))
 
         except TypeError:
+            msg = get_eyebleach()
+
+        except IndexError:
             msg = get_eyebleach()
         await bot.chat.send(conversation_id, msg)
 
