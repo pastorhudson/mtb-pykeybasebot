@@ -303,12 +303,11 @@ async def handler(bot, event):
 
         try:
             bleach_level = str(event.msg.content.text.body).split(" ")[1]
-            msg_list = get_eyebleach(int(bleach_level))
+            msg = get_eyebleach(int(bleach_level))
 
         except TypeError:
-            msg_list = get_eyebleach()
-        for msg in msg_list:
-            await bot.chat.send(conversation_id, msg)
+            msg = get_eyebleach()
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!grades"):
         conversation_id = event.msg.conv_id
