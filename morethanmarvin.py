@@ -619,10 +619,11 @@ async def handler(bot, event):
         ytm_payload = get_mp3(ytm_urls[0], True)
         if ytm_payload['msg'] == "I have failed.":
             ytm_msg = ytm_payload['msg'] + random.choice(ytm_fail_observations)
-        else:
-            ytm_msg = ytm_payload['msg']
-        sent_msg = await bot.chat.send(conversation_id, ytm_msg)
-        await bot.chat.react(conversation_id, sent_msg.message_id, ":headphones:")
+            sent_msg = await bot.chat.send(conversation_id, ytm_msg)
+        # else:
+        #     ytm_msg = ytm_payload['msg']
+        # sent_msg = await bot.chat.send(conversation_id, ytm_msg)
+        # await bot.chat.react(conversation_id, sent_msg.message_id, ":headphones:")
 
         ytm_payload = get_mp3(ytm_urls[0], False)
         if ytm_payload['file']:
@@ -634,11 +635,11 @@ async def handler(bot, event):
                                       title=ytm_msg)
             except TimeoutError:
                 pass
-            finally:
-                await bot.chat.execute(
-                    {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
-                                                                "message_id": sent_msg.message_id}}}
-                )
+            # finally:
+            #     await bot.chat.execute(
+            #         {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
+            #                                                     "message_id": sent_msg.message_id}}}
+            #     )
 
     if str(event.msg.content.text.body).startswith('!yt '):
         conversation_id = event.msg.conv_id
