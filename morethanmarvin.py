@@ -303,7 +303,7 @@ async def handler(bot, event):
 
         try:
             bleach_level = str(event.msg.content.text.body).split(" ")[1]
-            msg_list = get_eyebleach(bleach_level)
+            msg_list = get_eyebleach(int(bleach_level))
 
         except TypeError:
             msg_list = get_eyebleach()
