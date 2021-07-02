@@ -38,6 +38,8 @@ from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
 from botcommands.update_vaccine import get_vaccine_data
 from botcommands.morbidity import get_morbid
+from botcommands.eyebleach import get_eyebleach
+
 # from botcommands.rickroll import get_rickroll
 
 # load_dotenv('secret.env')
@@ -94,6 +96,9 @@ async def handler(bot, event):
         {"name": "drwho",
          "description": "Return Dr Who Episode.",
          "usage": "<ep_id> OR <Ep Title>"},
+        {"name": "eyebleach",
+         "description": "Returns images from r/eyebleach. Default = 2",
+         "usage": "<bleach_level>"},
         {"name": "grades",
          "description": "Retrieve current academic snapshot from pa-cyber.",
          "usage": "RESTRICTED"},
@@ -229,8 +234,9 @@ async def handler(bot, event):
                 await bot.chat.send(conversation_id, instructions)
         except Exception as e:
             write_score('marvn', event.msg.sender.username, team_name, -5, description=description)
-            await bot.chat.send(conversation_id, f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
-                                                 f"for trying to be cute.\n{instructions}")
+            await bot.chat.send(conversation_id,
+                                f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
+                                f"for trying to be cute.\n{instructions}")
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
@@ -291,6 +297,19 @@ async def handler(bot, event):
         msg = get_drwho(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
+    if str(event.msg.content.text.body).startswith("!eyebleach"):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        try:
+            bleach_level = str(event.msg.content.text.body).split(" ")[1]
+            msg = get_eyebleach(bleach_level)
+
+        except TypeError:
+            msg = get_eyebleach()
+
+        await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith("!grades"):
         conversation_id = event.msg.conv_id
         if event.msg.sender.username == 'pastorhudson' or event.msg.sender.username == 'sakanakami':
@@ -304,7 +323,8 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         help = "Here are the commands I currently am enslaved to:\n\n"
-        help += "\n".join(["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
+        help += "\n".join(
+            ["`!" + x['name'] + " " + x['usage'] + "` ```" + x['description'] + "```" for x in command_list])
         await bot.chat.send(conversation_id, help)
 
     if str(event.msg.content.text.body).startswith("!joke"):
@@ -335,7 +355,6 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg[2])
         await bot.chat.send(conversation_id, msg[3])
 
-
     if str(event.msg.content.text.body).startswith("!payout"):
         await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
@@ -348,7 +367,8 @@ async def handler(bot, event):
             elif payload[1].lower() != "true" and payload[1].lower() != 'false':
                 raise ValueError
             else:
-                msg = await payout_wager(username=username, team_name=team_name, wager_id=int(payload[0][1:]), result=payload[1], bot=bot)
+                msg = await payout_wager(username=username, team_name=team_name, wager_id=int(payload[0][1:]),
+                                         result=payload[1], bot=bot)
 
                 await bot.chat.send(conversation_id, msg)
 
@@ -365,7 +385,6 @@ async def handler(bot, event):
                                                  "Example: `!payout #3 True`")
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
-
         channel = event.msg.channel.name
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
@@ -406,9 +425,9 @@ async def handler(bot, event):
                 msg = "Current Settings:\n" \
                       f"```{team.location.all()}```"
                 msg += "Set Commands:\n" \
-                      "local:add <state> <county>\n" \
-                      "wager:end <#wager> <datetime>\n" \
-                      ""
+                       "local:add <state> <county>\n" \
+                       "wager:end <#wager> <datetime>\n" \
+                       ""
                 await bot.chat.send(event.msg.conv_id, msg)
             except AttributeError:
                 msg = "Team not Sync'd I'll Sync it now. Try again in a little bit."
@@ -434,13 +453,11 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!users"):
         if event.msg.sender.username == 'pastorhudson':
-
             u = s.query(User).all()
             await bot.chat.send(event.msg.conv_id, str(u))
 
     if str(event.msg.content.text.body).startswith("!points"):
         if event.msg.sender.username == 'pastorhudson':
-
             u = s.query(Point).all()
             await bot.chat.send(event.msg.conv_id, str(u))
 
@@ -494,7 +511,6 @@ async def handler(bot, event):
         msg += str(members)
         test_msg = await bot.chat.send(conversation_id, msg)
 
-
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -539,7 +555,6 @@ async def handler(bot, event):
         except IndexError:
             wager_msgs = get_wagers(team_name=team_name)
             for w_id, w_msg in wager_msgs.items():
-
                 wager_msg = await bot.chat.send(conversation_id, w_msg)
                 await bot.chat.react(conversation_id, wager_msg.message_id, ":white_check_mark:")
                 await bot.chat.react(conversation_id, wager_msg.message_id, ":no_entry_sign:")
@@ -616,8 +631,6 @@ async def handler(bot, event):
                                                                 "message_id": sent_msg.message_id}}}
                 )
 
-
-
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -663,6 +676,7 @@ async def handler(bot, event):
         channel_name = str(event.msg.channel.name).replace(",", "")
         write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5, team_name)
         await bot.chat.send(conversation_id, msg)
+
 
 listen_options = {
     "local": False,
