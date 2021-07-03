@@ -5,12 +5,6 @@ import json
 import os
 from urllib.parse import urlparse
 from pathlib import Path
-import re
-
-
-def get_valid_filename(s):
-    s = str(s).strip().replace(' ', '_')
-    return re.sub(r'(?u)[^-\w.]', '', s)
 
 
 def get_domain(url):
@@ -114,7 +108,6 @@ def get_other_video(url, simulate, ydl_opts):
             dl = ydl.download([url])
         yt_info = info[0]
         # print(yt_info)
-        yt_info["_filename"] = get_valid_filename(yt_info['_filename'])
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
                    "file": yt_info["_filename"],
@@ -151,7 +144,6 @@ def get_youtube(url, simulate, ydl_opts):
         # print(info[0])
         # for i in yt_info:
         #     print(yt_info[i])
-        # yt_info["_filename"] = get_valid_filename(yt_info['_filename'])
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
