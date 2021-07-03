@@ -621,9 +621,9 @@ async def handler(bot, event):
         if ytm_payload['msg'] == "I have failed.":
             ytm_msg = ytm_payload['msg'] + random.choice(ytm_fail_observations)
             sent_msg = await bot.chat.send(conversation_id, ytm_msg)
-        # else:
-        #     ytm_msg = ytm_payload['msg']
-        # sent_msg = await bot.chat.send(conversation_id, ytm_msg)
+        else:
+            ytm_msg = ytm_payload['msg']
+        sent_msg = await bot.chat.send(conversation_id, ytm_msg)
         # await bot.chat.react(conversation_id, sent_msg.message_id, ":headphones:")
 
         ytm_payload = get_mp3(ytm_urls[0], False)
