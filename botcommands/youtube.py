@@ -114,7 +114,8 @@ def get_other_video(url, simulate, ydl_opts):
                          f"Author: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
                          "```",
-                         yt_info['webpage_url']])
+                         # yt_info['webpage_url']
+                         ])
     except Exception as e:
         payload = {
             "file": None
@@ -151,7 +152,8 @@ def get_youtube(url, simulate, ydl_opts):
                          f"Channel: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
                          "```",
-                         yt_info['webpage_url']])
+                         # yt_info['webpage_url']
+                         ])
         payload['msg'] = msg
         info = []
 
