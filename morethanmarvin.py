@@ -632,9 +632,21 @@ async def handler(bot, event):
 
             try:
 
-                await bot.chat.attach(channel=conversation_id,
-                                      filename=ytm_payload['file'],
-                                      title=ytm_msg)
+                await bot.chat.execute(
+                    {
+                        "method": "attach",
+                        "params": {
+                            "options": {"conversation_id": conversation_id,
+                                        "filename": ytm_payload['file'],
+                                        "title": ytm_msg,
+                                        "reply_to": event.msg.id}
+                        },
+                    }
+                )
+
+                # await bot.chat.attach(channel=conversation_id,
+                #                       filename=ytm_payload['file'],
+                #                       title=ytm_msg)
             except TimeoutError:
                 pass
             # finally:
@@ -647,7 +659,6 @@ async def handler(bot, event):
         url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         domain = get_domain(url[0])
         if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
-
             await set_unfurl(unfurl=False)
             conversation_id = event.msg.conv_id
 
