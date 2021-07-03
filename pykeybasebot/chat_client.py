@@ -78,6 +78,28 @@ class ChatClient:
         )
         return chat1.SendRes.from_dict(res)
 
+    async def reply(
+        self,
+        channel: Union[chat1.ChatChannel, chat1.ConvIDStr],
+        message_id: chat1.MessageID,
+        message: str,
+    ) -> chat1.SendRes:
+        await self.bot.ensure_initialized()
+        ch_key, ch_val = self._channel_or_conv_id(channel)
+        res = await self.execute(
+            {
+                "method": "send",
+                "params": {
+                    "options": {
+                        ch_key: ch_val,
+                        "message": {"body": message},
+                        "reply_to": message_id,
+                    }
+                },
+            }
+        )
+        return chat1.SendRes.from_dict(res)
+
     async def edit(
         self,
         channel: Union[chat1.ChatChannel, chat1.ConvIDStr],
