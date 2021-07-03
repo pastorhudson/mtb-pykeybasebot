@@ -13,7 +13,7 @@ import re
 import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
-from botcommands.youtube import get_video, get_mp3
+from botcommands.youtube import get_video, get_mp3, get_domain
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
@@ -643,25 +643,29 @@ async def handler(bot, event):
             #                                                     "message_id": sent_msg.message_id}}}
             #     )
 
-    if str(event.msg.content.text.body).startswith('https://youtu'):
-        await set_unfurl(unfurl=False)
-        conversation_id = event.msg.conv_id
+    if str(event.msg.content.text.body).startswith('https://'):
+        url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        domain = get_domain(url)
+        if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
 
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+            await set_unfurl(unfurl=False)
+            conversation_id = event.msg.conv_id
 
-        yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        yt_payload = get_video(yt_urls[0], True)
-        yt_msg = yt_payload['msg']
+            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-        await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+            yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            yt_payload = get_video(yt_urls[0], True)
+            yt_msg = yt_payload['msg']
 
-        # await bot.chat.execute(
-        #     {"method": "send", "params": {"options": {"conversation_id": conversation_id,
-        #                                               "message": {"body": yt_msg},
-        #                                               "reply_to": event.msg.id}}}
-        # )
+            await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
 
-        # await bot.chat.send(conversation_id, yt_msg)
+            # await bot.chat.execute(
+            #     {"method": "send", "params": {"options": {"conversation_id": conversation_id,
+            #                                               "message": {"body": yt_msg},
+            #                                               "reply_to": event.msg.id}}}
+            # )
+
+            # await bot.chat.send(conversation_id, yt_msg)
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         await set_unfurl(unfurl=False)
