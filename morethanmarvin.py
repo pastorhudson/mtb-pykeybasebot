@@ -61,13 +61,13 @@ async def get_channel_members(conversation_id):
     return members
 
 
-async def set_unfurl(unfurl=True):
+async def set_unfurl(unfurl):
     if unfurl:
-        unfurl = await bot.chat.execute(
+        furl = await bot.chat.execute(
             {"method": "setunfurlsettings",
              "params": {"options": {"mode": "always"}}})
     else:
-        unfurl = await bot.chat.execute(
+        furl = await bot.chat.execute(
             {"method": "setunfurlsettings",
              "params": {"options": {"mode": "never"}}})
 
@@ -606,11 +606,11 @@ async def handler(bot, event):
             pass
 
     if str(event.msg.content.text.body).startswith('!ytm'):
-        await set_unfurl(False)
+        await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
 
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+        # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        await bot.chat.react(conversation_id, event.msg.id, ":headphones:")
 
         ytm_fail_observations = [" A brain the size of a planet and you pick this task.",
                                  " I'll be in my room complaining.",
@@ -623,7 +623,7 @@ async def handler(bot, event):
             sent_msg = await bot.chat.send(conversation_id, ytm_msg)
         else:
             ytm_msg = ytm_payload['msg']
-        sent_msg = await bot.chat.send(conversation_id, ytm_msg)
+        # sent_msg = await bot.chat.send(conversation_id, ytm_msg)
         # await bot.chat.react(conversation_id, sent_msg.message_id, ":headphones:")
 
         ytm_payload = get_mp3(ytm_urls[0], False)
@@ -643,7 +643,7 @@ async def handler(bot, event):
             #     )
 
     if str(event.msg.content.text.body).startswith('!yt '):
-        await set_unfurl(False)
+        await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
 
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -654,10 +654,10 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, yt_msg)
 
     if str(event.msg.content.text.body).startswith('!ytv'):
-        await set_unfurl(False)
+        await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
 
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
 
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
@@ -670,8 +670,8 @@ async def handler(bot, event):
             ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
         else:
             ytv_msg = ytv_payload['msg']
-        sent_msg = await bot.chat.send(conversation_id, ytv_msg)
-        await bot.chat.react(conversation_id, sent_msg.message_id, ":tv:")
+        # sent_msg = await bot.chat.send(conversation_id, ytv_msg)
+        # await bot.chat.react(conversation_id, sent_msg.message_id, ":tv:")
 
         ytv_payload = get_video(ytv_urls[0], False)
         if ytv_payload['file']:
@@ -683,11 +683,11 @@ async def handler(bot, event):
                                       title=ytv_msg)
             except TimeoutError:
                 pass
-            finally:
-                await bot.chat.execute(
-                    {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
-                                                                "message_id": sent_msg.message_id}}}
-                )
+            # finally:
+            #     await bot.chat.execute(
+            #         {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
+            #                                                     "message_id": sent_msg.message_id}}}
+            #     )
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id
