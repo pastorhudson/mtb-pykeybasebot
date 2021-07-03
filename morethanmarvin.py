@@ -655,7 +655,7 @@ async def handler(bot, event):
 
         await bot.chat.execute(
             {"method": "send", "params": {"options": {"conversation_id": conversation_id,
-                                                      "message_id": sent_msg.message_id,
+                                                      "message": {"body": yt_msg},
                                                       "reply_to": event.msg.id}}}
         )
 
