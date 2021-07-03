@@ -165,7 +165,7 @@ def get_youtube(url, simulate, ydl_opts):
         # print(msg)
         payload['msg'] = msg
         info = []
-
+        print(payload['file'])
         return payload
     except Exception as e:
         print(type(e))
@@ -180,7 +180,6 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    print(get_video("https://www.youtube.com/watch?v=SpVOTEOMRuE", simulate=False))
     pass
 
     # print(storage.absolute())
