@@ -91,7 +91,7 @@ def get_mp3(url, simulate):
                 }],
                 }
     domain = get_domain(url)
-    if domain == 'youtube.com' or domain == 'youtu.be':
+    if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
         info = []
         return get_youtube(url, simulate, ydl_opts)
 
