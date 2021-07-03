@@ -139,7 +139,7 @@ def get_youtube(url, simulate, ydl_opts):
             dl = ydl.download([url])
 
         yt_info = info[0]
-        # print(info)
+        print(info[0])
         # for i in yt_info:
         #     print(yt_info[i])
 
@@ -156,7 +156,7 @@ def get_youtube(url, simulate, ydl_opts):
                          f"Views: {yt_info['view_count']:,}",
                          f"Average Rating: {yt_info['average_rating']}",
                          f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
-                         f"Age Limit: {yt_info['age_limit']}" f"Quality: {yt_info['quality']}",
+                         f"Age Limit: {yt_info['age_limit']} " f"Quality: {yt_info['quality']}",
                          "```",
                          # yt_info['webpage_url']
                          ])
@@ -178,12 +178,12 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    import re
-    # print(get_video("https://www.youtube.com/watch?v=4mJayYlfcWo", simulate=True))
-    url = re.findall(r'(https?://[^\s]+)', "https://www.youtube.com/watch?v=4mJayYlfcWo")
-    print(url)
-    domain = get_domain(url[0])
-    print(domain)
+    # import re
+    print(get_video("https://youtu.be/watch?v=4mJayYlfcWo", simulate=True))
+    # url = re.findall(r'(https?://[^\s]+)', "https://www.youtube.com/watch?v=4mJayYlfcWo")
+    # print(url)
+    # domain = get_domain(url[0])
+    # print(domain)
     pass
 
     # print(storage.absolute())
