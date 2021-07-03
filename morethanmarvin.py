@@ -167,9 +167,9 @@ async def handler(bot, event):
         {"name": "wager",
          "description": "Forces me to setup a silly bet with points that don't matter.",
          "usage": "<points wagered> <The Event or Thing your betting upon>"},
-        {"name": "yt",
-         "description": "Forces me to go get meta data about a youtube video.",
-         "usage": "<url>"},
+        # {"name": "yt",
+        #  "description": "Forces me to go get meta data about a youtube video.",
+        #  "usage": "<url>"},
         {"name": "ytm",
          "description": "Forces me to get metadata and download the stupid thing as an mp3.",
          "usage": "<url>"},
@@ -643,7 +643,7 @@ async def handler(bot, event):
             #                                                     "message_id": sent_msg.message_id}}}
             #     )
 
-    if str(event.msg.content.text.body).startswith('!yt '):
+    if str(event.msg.content.text.body).startswith('https://youtu'):
         await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
 
