@@ -639,7 +639,7 @@ async def handler(bot, event):
                 #             "options": {"channel": conversation_id,
                 #                         "filename": ytm_payload['file'],
                 #                         "title": ytm_msg,
-                #                         "reply_to": event.msg.id}
+                #                         }
                 #         },
                 #     }
                 # )
