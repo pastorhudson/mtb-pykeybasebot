@@ -101,3 +101,4 @@ tabulate==0.8.7
 openpyxl
 gspread
 ffmpeg
+ffprobe
