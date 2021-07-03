@@ -169,7 +169,6 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    print(get_mp3('https://www.youtube.com/watch?v=4mJayYlfcWo', simulate=False))
 
     pass
 
