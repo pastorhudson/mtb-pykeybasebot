@@ -83,11 +83,11 @@ def get_mp3(url, simulate):
                 'no-cache-dir': True,
                 'format': 'bestaudio',
                 'restrictfilenames': True,
-                'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+                'outtmpl': f'{storage.absolute()}/%(title)s.mp3',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
-                    # 'preferredcodec': 'mp3',
-                    # 'preferredquality': '192',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
                 }],
                 }
     domain = get_domain(url)
