@@ -156,8 +156,7 @@ def get_youtube(url, simulate, ydl_opts):
                          f"Views: {yt_info['view_count']:,}",
                          f"Average Rating: {yt_info['average_rating']}",
                          f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
-                         f"Age Limit: {yt_info['age_limit']}",
-                         f"Quality: {yt_info['quality']}",
+                         f"Age Limit: {yt_info['age_limit']}" f"Quality: {yt_info['quality']}",
                          "```",
                          # yt_info['webpage_url']
                          ])
