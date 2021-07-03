@@ -645,7 +645,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('https://'):
         url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        domain = get_domain(url)
+        domain = get_domain(url[0])
         if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
 
             await set_unfurl(unfurl=False)
