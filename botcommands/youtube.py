@@ -178,12 +178,7 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    # import re
-    print(get_video("https://youtu.be/watch?v=4mJayYlfcWo", simulate=True))
-    # url = re.findall(r'(https?://[^\s]+)', "https://www.youtube.com/watch?v=4mJayYlfcWo")
-    # print(url)
-    # domain = get_domain(url[0])
-    # print(domain)
+
     pass
 
     # print(storage.absolute())
