@@ -80,7 +80,7 @@ def get_mp3(url, simulate):
                 'simulate': simulate,
                 'no-cache-dir': True,
                 'format': 'bestaudio/best',
-                'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+                'outtmpl': f'{storage.absolute()}/%(title)s.mp3',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
@@ -130,21 +130,15 @@ def get_other_video(url, simulate, ydl_opts):
 def get_youtube(url, simulate, ydl_opts):
     global info
     print(f"URL: {url}")
-    # ydl_opts = {"forcejson": True,
-    #             'logger': MyLogger(),
-    #             'progress_hooks': [my_hook],
-    #             'simulate': simulate,
-    #             'format': 'mp4',
-    #             'no-cache-dir': True,
-    #             }
+
     try:
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
 
         yt_info = info[0]
         print(info)
-        # for i in yt_info:
-        #     print(yt_info[i])
+        for i in yt_info:
+            print(yt_info[i])
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
@@ -160,6 +154,7 @@ def get_youtube(url, simulate, ydl_opts):
                          yt_info['webpage_url']])
         payload['msg'] = msg
         info = []
+
         return payload
     except Exception as e:
         print(type(e))
@@ -174,6 +169,7 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
+    print(get_mp3('https://www.youtube.com/watch?v=4mJayYlfcWo', simulate=False))
 
     pass
 
