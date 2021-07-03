@@ -95,7 +95,7 @@ virustotal-python==0.0.9
 wcwidth==0.2.5
 webencodings==0.5.1
 websocket-client==0.48.0
-youtube-dl>=2021.1.8
+youtube-dl
 dadjokes-plus-plus==1.2
 tabulate==0.8.7
 openpyxl
