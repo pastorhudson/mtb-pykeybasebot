@@ -86,7 +86,7 @@ def get_mp3(url, simulate):
                 'extractaudio': True,
                 'audioformat': 'mp3',
                 'audioquality': 0,
-                'outtmpl': f'{storage.absolute()}/%(title)s.mp3',
+                'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
