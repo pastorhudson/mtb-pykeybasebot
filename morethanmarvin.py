@@ -636,7 +636,7 @@ async def handler(bot, event):
                     {
                         "method": "attach",
                         "params": {
-                            "options": {"conversation_id": conversation_id,
+                            "options": {"channel": conversation_id,
                                         "filename": ytm_payload['file'],
                                         "title": ytm_msg,
                                         "reply_to": event.msg.id}
@@ -644,9 +644,9 @@ async def handler(bot, event):
                     }
                 )
 
-                # await bot.chat.attach(channel=conversation_id,
-                #                       filename=ytm_payload['file'],
-                #                       title=ytm_msg)
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=ytm_payload['file'],
+                                      title=ytm_msg)
             except TimeoutError:
                 pass
             # finally:
@@ -745,7 +745,7 @@ async def handler(bot, event):
             event_name = commands[0]
             event_time = commands[1]
             msg = set_till(team_name, event_name, event_time)
-            print(msg)
+            # print(msg)
         except IndexError:
             msg = get_till(team_name=team_name)
         finally:
