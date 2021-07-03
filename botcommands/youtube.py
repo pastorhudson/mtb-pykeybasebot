@@ -139,7 +139,7 @@ def get_youtube(url, simulate, ydl_opts):
             dl = ydl.download([url])
 
         yt_info = info[0]
-        print(info[0])
+        # print(info[0])
         # for i in yt_info:
         #     print(yt_info[i])
 
