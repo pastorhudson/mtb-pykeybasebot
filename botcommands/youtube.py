@@ -64,7 +64,8 @@ def get_video(url, simulate):
                 'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s'
                 }
     domain = get_domain(url)
-    if domain == 'youtube.com' or domain == 'youtu.be':
+
+    if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
         info = []
         return get_youtube(url, simulate, ydl_opts)
 
@@ -104,6 +105,7 @@ def get_other_video(url, simulate, ydl_opts):
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
         yt_info = info[0]
+        # print(yt_info)
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
                    "file": yt_info["_filename"],
@@ -137,9 +139,9 @@ def get_youtube(url, simulate, ydl_opts):
             dl = ydl.download([url])
 
         yt_info = info[0]
-        print(info)
-        for i in yt_info:
-            print(yt_info[i])
+        # print(info)
+        # for i in yt_info:
+        #     print(yt_info[i])
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
@@ -151,9 +153,15 @@ def get_youtube(url, simulate, ydl_opts):
         msg = "\n".join(["```", yt_info["fulltitle"],
                          f"Channel: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
+                         f"Views: {yt_info['view_count']}",
+                         f"Average Rating: {yt_info['average_rating']}",
+                         f"Likes: {yt_info['like_count']} Dislikes: {yt_info['dislike_count']}"
+                         f"Age Limit: {yt_info['age_limit']}"
+                         f"Quality: {yt_info['quality']}"
                          "```",
                          # yt_info['webpage_url']
                          ])
+        # print(msg)
         payload['msg'] = msg
         info = []
 
@@ -171,7 +179,7 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-
+    print(get_video("https://www.youtube.com/watch?v=4mJayYlfcWo", simulate=True))
     pass
 
     # print(storage.absolute())
