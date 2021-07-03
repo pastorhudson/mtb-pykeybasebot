@@ -5,6 +5,12 @@ import json
 import os
 from urllib.parse import urlparse
 from pathlib import Path
+import re
+
+
+def get_valid_filename(s):
+    s = str(s).strip().replace(' ', '_')
+    return re.sub(r'(?u)[^-\w.]', '', s)
 
 
 def get_domain(url):
@@ -60,6 +66,7 @@ def get_video(url, simulate):
                 'progress_hooks': [my_hook],
                 'simulate': simulate,
                 'format': 'mp4',
+                'restrictfilenames': True,
                 'no-cache-dir': True,
                 'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s'
                 }
@@ -81,6 +88,7 @@ def get_mp3(url, simulate):
                 'simulate': simulate,
                 'no-cache-dir': True,
                 'format': 'bestaudio/best',
+                'restrictfilenames': True,
                 'outtmpl': f'{storage.absolute()}/%(title)s.mp3',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -106,6 +114,7 @@ def get_other_video(url, simulate, ydl_opts):
             dl = ydl.download([url])
         yt_info = info[0]
         # print(yt_info)
+        yt_info["_filename"] = get_valid_filename(yt_info['_filename'])
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
                    "file": yt_info["_filename"],
@@ -142,6 +151,7 @@ def get_youtube(url, simulate, ydl_opts):
         # print(info[0])
         # for i in yt_info:
         #     print(yt_info[i])
+        # yt_info["_filename"] = get_valid_filename(yt_info['_filename'])
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
