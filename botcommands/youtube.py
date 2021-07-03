@@ -81,13 +81,13 @@ def get_mp3(url, simulate):
                 'progress_hooks': [my_hook],
                 'simulate': simulate,
                 'no-cache-dir': True,
-                'format': 'bestaudio/best',
+                'format': 'bestaudio',
                 'restrictfilenames': True,
-                'outtmpl': f'{storage.absolute()}/%(title)s.mp3',
+                'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
+                    # 'preferredcodec': 'mp3',
+                    # 'preferredquality': '192',
                 }],
                 }
     domain = get_domain(url)
@@ -180,6 +180,7 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
+    get_mp3('https://www.youtube.com/watch?v=4mJayYlfcWo', simulate=False)
     pass
 
     # print(storage.absolute())
