@@ -606,6 +606,7 @@ async def handler(bot, event):
             pass
 
     if str(event.msg.content.text.body).startswith('!ytm'):
+        await set_unfurl(False)
         conversation_id = event.msg.conv_id
 
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -642,6 +643,7 @@ async def handler(bot, event):
             #     )
 
     if str(event.msg.content.text.body).startswith('!yt '):
+        await set_unfurl(False)
         conversation_id = event.msg.conv_id
 
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -652,6 +654,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, yt_msg)
 
     if str(event.msg.content.text.body).startswith('!ytv'):
+        await set_unfurl(False)
         conversation_id = event.msg.conv_id
 
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
