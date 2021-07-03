@@ -81,11 +81,12 @@ def get_mp3(url, simulate):
                 'progress_hooks': [my_hook],
                 'simulate': simulate,
                 'no-cache-dir': True,
-                'format': 'bestaudio',
+                # 'format': 'bestaudio',
                 'restrictfilenames': True,
                 'extractaudio': True,
                 'audioformat': 'mp3',
                 'audioquality': 0,
+                'writethumbnail': True,
                 'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -96,7 +97,10 @@ def get_mp3(url, simulate):
     domain = get_domain(url)
     if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
         info = []
-        return get_youtube(url, simulate, ydl_opts)
+        payload = get_youtube(url, simulate, ydl_opts)
+        pre, ext = os.path.splitext(payload['file'])
+        payload['file'] = pre + '.mp3'
+        return payload
 
     else:
         info = []
@@ -131,6 +135,7 @@ def get_other_video(url, simulate, ydl_opts):
         info = []
     finally:
         payload['msg'] = msg
+        print(payload)
         info = []
         return payload
 
@@ -161,14 +166,14 @@ def get_youtube(url, simulate, ydl_opts):
                          f"Views: {yt_info['view_count']:,}",
                          f"Average Rating: {yt_info['average_rating']}",
                          f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
-                         f"Age Limit: {yt_info['age_limit']} " f"Quality: {yt_info['quality']}",
+                         f"Age Limit: {yt_info['age_limit']} ",
+                         # f"Quality: {yt_info['quality']}",
                          "```",
                          # yt_info['webpage_url']
                          ])
         # print(msg)
         payload['msg'] = msg
         info = []
-        print(payload['file'])
         return payload
     except Exception as e:
         print(type(e))
@@ -183,7 +188,7 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    get_mp3('https://www.youtube.com/watch?v=4mJayYlfcWo', simulate=False)
+    print(get_mp3('https://youtu.be/yiGEo1vpvpM', simulate=False))
     pass
 
     # print(storage.absolute())
