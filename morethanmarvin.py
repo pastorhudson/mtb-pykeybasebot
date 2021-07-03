@@ -632,17 +632,17 @@ async def handler(bot, event):
 
             try:
 
-                await bot.chat.execute(
-                    {
-                        "method": "attach",
-                        "params": {
-                            "options": {"channel": conversation_id,
-                                        "filename": ytm_payload['file'],
-                                        "title": ytm_msg,
-                                        "reply_to": event.msg.id}
-                        },
-                    }
-                )
+                # await bot.chat.execute(
+                #     {
+                #         "method": "attach",
+                #         "params": {
+                #             "options": {"channel": conversation_id,
+                #                         "filename": ytm_payload['file'],
+                #                         "title": ytm_msg,
+                #                         "reply_to": event.msg.id}
+                #         },
+                #     }
+                # )
 
                 await bot.chat.attach(channel=conversation_id,
                                       filename=ytm_payload['file'],
