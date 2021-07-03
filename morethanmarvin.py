@@ -654,10 +654,9 @@ async def handler(bot, event):
         yt_msg = yt_payload['msg']
 
         await bot.chat.execute(
-            {"method": "send", "params": {
-                "options": {"channel": conversation_id, "message": yt_msg,
-                            "reply_to": event.msg.id}}}
-
+            {"method": "send", "params": {"options": {"conversation_id": conversation_id,
+                                                      "message_id": sent_msg.message_id,
+                                                      "reply_to": event.msg.id}}}
         )
 
         # await bot.chat.send(conversation_id, yt_msg)
