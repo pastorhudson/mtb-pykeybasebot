@@ -653,11 +653,13 @@ async def handler(bot, event):
         yt_payload = get_video(yt_urls[0], True)
         yt_msg = yt_payload['msg']
 
-        await bot.chat.execute(
-            {"method": "send", "params": {"options": {"conversation_id": conversation_id,
-                                                      "message": {"body": yt_msg},
-                                                      "reply_to": event.msg.id}}}
-        )
+        await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+
+        # await bot.chat.execute(
+        #     {"method": "send", "params": {"options": {"conversation_id": conversation_id,
+        #                                               "message": {"body": yt_msg},
+        #                                               "reply_to": event.msg.id}}}
+        # )
 
         # await bot.chat.send(conversation_id, yt_msg)
 
