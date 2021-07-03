@@ -620,6 +620,7 @@ async def handler(bot, event):
         ytm_payload = get_mp3(ytm_urls[0], True)
         if ytm_payload['msg'] == "I have failed.":
             ytm_msg = ytm_payload['msg'] + random.choice(ytm_fail_observations)
+
             sent_msg = await bot.chat.send(conversation_id, ytm_msg)
         else:
             ytm_msg = ytm_payload['msg']
@@ -651,7 +652,15 @@ async def handler(bot, event):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         yt_payload = get_video(yt_urls[0], True)
         yt_msg = yt_payload['msg']
-        await bot.chat.send(conversation_id, yt_msg)
+
+        await bot.chat.execute(
+            {"method": "send", "params": {
+                "options": {"channel": conversation_id, "message": yt_msg,
+                            "reply_to": event.msg.id}}}
+
+        )
+
+        # await bot.chat.send(conversation_id, yt_msg)
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         await set_unfurl(unfurl=False)
