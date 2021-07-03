@@ -74,21 +74,14 @@ def get_video(url, simulate):
 
 
 def get_mp3(url, simulate):
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
     ydl_opts = {"forcejson": True,
                 'logger': MyLogger(),
                 'progress_hooks': [my_hook],
                 'simulate': simulate,
                 'no-cache-dir': True,
                 'format': 'bestaudio/best',
-                'postprocessors': [{
+                'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+                           'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': '192',
