@@ -83,6 +83,7 @@ def get_mp3(url, simulate):
                 'no-cache-dir': True,
                 'format': 'bestaudio',
                 'restrictfilenames': True,
+                'extractaudio': True,
                 'outtmpl': f'{storage.absolute()}/%(title)s.mp3',
                            'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
