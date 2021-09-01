@@ -1,10 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import os
-import requests
-import xml.etree.ElementTree as ET
-
 # from dotenv import load_dotenv
+import unicodedata
 
 
 """ Copy and rename the secrets_env template in this repo to secrets.env.
@@ -20,7 +18,7 @@ tbPassword = os.environ.get('TBPASSWORD')
 # tbPassword = "login_pass"
 
 """ Internal URL that requires user to be logged in"""
-SCRAPEURL = 'https://myschool.pacyber.org/FEAcademicSnapshot.aspx'
+SCRAPEURL = 'https://myschool.pacyber.org/FEGradebook.aspx'
 
 """Here is where we setup headers to make it look like a browser"""
 headers = {
@@ -62,40 +60,27 @@ def get_academic_snapshot():
 
         """ Grab the tables for the subjects and their corresponding info """
         try:
-            mydivs = bs.findAll("div", {"class": "divinfo"})
-            table = mydivs[0].find(lambda tag: tag.name == 'table')
+            grade_book_table = bs.find("table", {"id": "ctl00_ContentPlaceHolder1_GradebookInfo1_gvCourses"})
+            grade_book_rows = grade_book_table.findAll('tr')
+
         except Exception as e:
             return "Please Check your secrets.env and ensure your login and password are correctly set."
 
-        rows = table.findAll(lambda tag: tag.name == 'span')
         msg = ""
-
-        for row in rows:
+        for row in grade_book_rows:
+            td = row.find_all('td')
+            row = [unicodedata.normalize("NFKD", i.text) for i in td]
             try:
-                subject = row.find("div", {"class": "nicedivheader"}).text
-                msg += f"{subject}\n"
-                info = row.findAll("td", {"class": "labelhdr"})
-                for i in info:
-                    msg += f"{i.text} {i.findNext('td').text}\n"
-                    if i.text == 'Last Activity:':
-                        msg += "\n"
+                msg += "\n".join([f"Subject: {row[2]}",
+                                  f"Score: {row[5].split(' ')[0] or None}",
+                                  f"Progress: {row[6]}",
+                                  "\n"])
 
-            except AttributeError as e:
+            except IndexError:
                 pass
 
-        """I use this response txt in a bot so I can get an update on my son's progress very quickly."""
         return msg
 
 
-def cyber_api():
-    endpoint = 'https://api.agilixbuzz.com/cmd/listuserenrollments?_token=~0.EHFDUnVu8nIPKA_H.3VxtAhGfTdxL8kNJrNjOz9-Ygu2Ya5zjeMjNeRbaUVI&privileges=1&daysactivepastend=14&select=data%2Ccourse%2Ccourse.data%2Ccourse.teachers%2Cmetrics%2Cuser%2Cuser.data(personalneedspreferences)&userid=133956239'
-    response = requests.get(endpoint)
-    tree = ET.fromstring(response.content)
-    ET.dump(tree)
-
-    print(root)
-    # root = tree.getroot()
-
-
 if __name__ == "__main__":
-    print(cyber_api())
+    print(get_academic_snapshot())
