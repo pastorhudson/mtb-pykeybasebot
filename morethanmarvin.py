@@ -37,7 +37,7 @@ from crud import s
 from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
 from botcommands.update_vaccine import get_vaccine_data
-from botcommands.morbidity import get_morbid
+# from botcommands.morbidity import get_morbid
 from botcommands.eyebleach import get_eyebleach
 
 # from botcommands.rickroll import get_rickroll
@@ -352,11 +352,11 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.send(conversation_id, joke)
 
-    if str(event.msg.content.text.body).startswith("!morbidity"):
-        conversation_id = event.msg.conv_id
-        msg = get_morbid()
-        members = await get_channel_members(conversation_id)
-        morbid_msg = await bot.chat.send(conversation_id, msg)
+    # if str(event.msg.content.text.body).startswith("!morbidity"):
+    #     conversation_id = event.msg.conv_id
+    #     msg = get_morbid()
+    #     members = await get_channel_members(conversation_id)
+    #     morbid_msg = await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
         await sync(event=event, bot=bot)

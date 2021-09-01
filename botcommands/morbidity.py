@@ -62,3 +62,7 @@ def get_morbid():
     msg += f"{get_weapon()}```"
 
     return msg
+#
+#
+# if __name__ == "__main__":
+#     print(get_morbid())
