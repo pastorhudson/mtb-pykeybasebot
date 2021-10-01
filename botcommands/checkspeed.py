@@ -23,7 +23,7 @@ def check_speed():
 def get_speed():
     msg = ""
     speed = check_speed()
-    up_mbps = speed['upload'] / 100000
+    up_mbps = speed['upload'] / 1000000
     down_mbps = speed['download'] / 1000000
     msg += "Humans are so competitive."
     msg += "```"
