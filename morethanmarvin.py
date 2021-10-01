@@ -39,6 +39,7 @@ from botcommands.pacyber import get_academic_snapshot
 from botcommands.update_vaccine import get_vaccine_data
 # from botcommands.morbidity import get_morbid
 from botcommands.eyebleach import get_eyebleach
+from botcommands.checkspeed import get_speed
 
 # from botcommands.rickroll import get_rickroll
 
@@ -146,6 +147,9 @@ async def handler(bot, event):
         {"name": "speak",
          "description": "Forces me generate an mp3 speaking the text you send.",
          "usage": "<Text To Speak>"},
+        {"name": "speed",
+         "description": "Forces me check upload download speed.",
+         "usage": ""},
         {"name": "score",
          "description": "Get the score for who abuses me the most.",
          "usage": ""},
@@ -735,6 +739,12 @@ async def handler(bot, event):
                                   title=audio_payload['observation'])
         else:
             await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
+
+    if str(event.msg.content.text.body).startswith('!speed'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        msg = get_speed()
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!till'):
         msg = ""
