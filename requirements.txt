@@ -102,3 +102,4 @@ openpyxl
 gspread
 ffmpeg
 ffprobe
+speedtest-cli
