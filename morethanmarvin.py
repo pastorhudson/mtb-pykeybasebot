@@ -40,6 +40,7 @@ from botcommands.update_vaccine import get_vaccine_data
 # from botcommands.morbidity import get_morbid
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
+from botcommands.files import get_files
 
 # from botcommands.rickroll import get_rickroll
 
@@ -111,6 +112,9 @@ async def handler(bot, event):
         {"name": "eyebleach",
          "description": "Returns images from r/eyebleach. Default = 3",
          "usage": "<bleach_level> 1-11"},
+        {"name": "files",
+         "description": "Returns list of files on marvin",
+         "usage": ""},
         {"name": "grades",
          "description": "Retrieve current academic snapshot from pa-cyber.",
          "usage": "RESTRICTED"},
@@ -331,6 +335,11 @@ async def handler(bot, event):
         except ValueError:
             msg = get_eyebleach()
 
+        await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!files"):
+        conversation_id = event.msg.conv_id
+        msg = get_files()
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!grades"):
