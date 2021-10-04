@@ -4,6 +4,8 @@ import logging
 import os
 import sys
 # from dotenv import load_dotenv
+from urllib.parse import urlparse
+
 from sqlalchemy import func
 
 from botcommands.poll_results import get_poll_result
@@ -340,7 +342,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!files"):
         conversation_id = event.msg.conv_id
         team_name = event.msg.channel.name
-        if team_name == 'morethanbits'
+        if team_name == 'morethanbits':
             msg = get_files()
         else:
             msg = "No Files."
@@ -682,7 +684,9 @@ async def handler(bot, event):
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
             yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-            yt_payload = get_video(yt_urls[0], True)
+            url = urlparse(yt_urls[0]).geturl().split('?')[0]
+
+            yt_payload = get_video(url, True)
             yt_msg = yt_payload['msg']
 
             await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
