@@ -339,7 +339,11 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!files"):
         conversation_id = event.msg.conv_id
-        msg = get_files()
+        team_name = event.msg.channel.name
+        if team_name == 'morethanbits'
+            msg = get_files()
+        else:
+            msg = "No Files."
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!grades"):
