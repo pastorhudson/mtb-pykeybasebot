@@ -342,7 +342,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!files"):
         conversation_id = event.msg.conv_id
         team_name = event.msg.channel.name
-        if team_name == 'morethanbits':
+        if team_name in ['morethanbits', 'growinlove'] or event.msg.sender == 'pastorhudson':
             msg = get_files()
         else:
             msg = "No Files."
