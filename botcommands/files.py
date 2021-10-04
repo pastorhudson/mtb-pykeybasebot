@@ -8,7 +8,7 @@ def get_files():
     print(storage.absolute())
     links = []
     msg = "Oh sure make marvn hang on to the files\n" \
-          f"{'YOUTRANSFER_URL'}\n" \
+          f"{os.environ.get('YOUTRANSFER_URL')}\n" \
           f"User: {os.environ.get('YOUTRANSFER_USER')} Pass: {os.environ.get('YOUTRANSFER_PASS')}"
     for file in list(storage.glob('**/*.json')):
         print(links)
