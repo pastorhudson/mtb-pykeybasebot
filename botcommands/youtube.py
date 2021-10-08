@@ -1,5 +1,8 @@
 # from pytube import YouTube
 from __future__ import unicode_literals
+
+from pprint import pprint
+
 from youtube_dl import YoutubeDL
 import json
 import os
@@ -157,9 +160,6 @@ def get_youtube(url, simulate, ydl_opts):
             dl = ydl.download([url])
 
         yt_info = info[0]
-        # print(info[0])
-        # for i in yt_info:
-        #     print(yt_info[i])
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
@@ -168,21 +168,32 @@ def get_youtube(url, simulate, ydl_opts):
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
                    }
-        file_size = os.path.getsize(yt_info["_filename"])
-        msg = "\n".join(["```", yt_info["fulltitle"],
-                         f"Channel: {yt_info['uploader']}",
-                         f"Duration: {convert_seconds(yt_info['duration'])}",
-                         f"Views: {yt_info['view_count']:,}",
-                         f"Average Rating: {yt_info['average_rating']}",
-                         f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
-                         f"Age Limit: {yt_info['age_limit']} ",
-                         f"Size: {sizeof_fmt(file_size)}",
-                         "```",
-                         # yt_info['webpage_url']
-                         ])
-        # print(msg)
+        if not simulate:
+            file_size = os.path.getsize(yt_info["_filename"])
+            msg = "\n".join(["```", yt_info["fulltitle"],
+                             f"Channel: {yt_info['uploader']}",
+                             f"Duration: {convert_seconds(yt_info['duration'])}",
+                             f"Views: {yt_info['view_count']:,}",
+                             f"Average Rating: {yt_info['average_rating']}",
+                             f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
+                             f"Age Limit: {yt_info['age_limit']} ",
+                             f"Size: {sizeof_fmt(file_size)}",
+                             "```",
+                             # yt_info['webpage_url']
+                             ])
+        else:
+            msg = "\n".join(["```", yt_info["fulltitle"],
+                             f"Channel: {yt_info['uploader']}",
+                             f"Duration: {convert_seconds(yt_info['duration'])}",
+                             f"Views: {yt_info['view_count']:,}",
+                             f"Average Rating: {yt_info['average_rating']}",
+                             f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
+                             f"Age Limit: {yt_info['age_limit']} ",
+                             "```",
+                             ])
         payload['msg'] = msg
         info = []
+        pprint(payload)
         return payload
     except Exception as e:
         print(type(e))
@@ -197,7 +208,7 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    print(get_video('https://youtu.be/Axq93Y3vX2w', simulate=False))
+    pprint(get_video('https://youtu.be/DgeovMetvZQ', simulate=True))
     pass
 
     # print(storage.absolute())
