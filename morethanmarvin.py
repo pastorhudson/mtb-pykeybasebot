@@ -684,9 +684,8 @@ async def handler(bot, event):
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
             yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-            url = urlparse(yt_urls[0]).geturl().split('?')[0]
 
-            yt_payload = get_video(url, True)
+            yt_payload = get_video(yt_urls[0], True)
             yt_msg = yt_payload['msg']
 
             await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
