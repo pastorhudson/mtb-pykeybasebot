@@ -140,12 +140,12 @@ def get_other_video(url, simulate, ydl_opts):
         return payload
 
 
-# def sizeof_fmt(num, suffix="B"):
-#     for unit in [" ", " Ki", " Mi", " Gi", " Ti", " Pi", " Ei", " Zi"]:
-#         if abs(num) < 1024.0:
-#             return f"{num:3.1f}{unit}{suffix}"
-#         num /= 1024.0
-#     return f"{num:.1f}Yi{suffix}"
+def sizeof_fmt(num, suffix="B"):
+    for unit in [" ", " Ki", " Mi", " Gi", " Ti", " Pi", " Ei", " Zi"]:
+        if abs(num) < 1024.0:
+            return f"{num:3.1f}{unit}{suffix}"
+        num /= 1024.0
+    return f"{num:.1f}Yi{suffix}"
 
 
 def get_youtube(url, simulate, ydl_opts):
@@ -168,7 +168,7 @@ def get_youtube(url, simulate, ydl_opts):
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
                    }
-        # file_size = os.path.getsize(yt_info["_filename"])
+        file_size = os.path.getsize(yt_info["_filename"])
         msg = "\n".join(["```", yt_info["fulltitle"],
                          f"Channel: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
@@ -176,7 +176,7 @@ def get_youtube(url, simulate, ydl_opts):
                          f"Average Rating: {yt_info['average_rating']}",
                          f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}",
                          f"Age Limit: {yt_info['age_limit']} ",
-                         # f"Size: {sizeof_fmt(file_size)}",
+                         f"Size: {sizeof_fmt(file_size)}",
                          "```",
                          # yt_info['webpage_url']
                          ])
