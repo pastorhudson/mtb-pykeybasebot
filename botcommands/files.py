@@ -5,26 +5,28 @@ import json
 
 def get_files():
     storage = Path('./uploads/')
-    print(storage.absolute())
     links = []
     msg = "Oh sure make marvn hang on to the files\n" \
           f"{os.environ.get('YOUTRANSFER_URL')}\n" \
           f"User: {os.environ.get('YOUTRANSFER_USER')} Pass: {os.environ.get('YOUTRANSFER_PASS')}"
     for file in list(storage.glob('**/*.json')):
-        print(links)
         with open(file) as f:
             data = json.load(f)
 
             print(data)
             try:
                 if data['link'] not in links:
+                    link = data['link'].split('//')[0] + "//" + str(os.environ.get('YOUTRANSFER_USER')) + \
+                           ":" + str(os.environ.get('YOUTRANSFER_PASS')) + "@" + data['link'].split('//')[1]
                     msg += f"```{data['name']} {data['filesize']}```\n" \
-                           f"{data['link']}\n\n"
+                           f"{link}\n\n"
                     links.append(data['link'])
             except KeyError:
                 if data['files'][0]['link'] not in links:
+                    link = data['files'][0]['link'].split('//')[0] + "//" + str(os.environ.get('YOUTRANSFER_USER')) + \
+                           ":" + str(os.environ.get('YOUTRANSFER_PASS')) + "@" + data['files'][0]['link'].split('//')[1]
                     msg += f"```{data['files'][0]['name']} {data['files'][0]['filesize']}```\n" \
-                           f"{data['files'][0]['link']}\n\n"
+                           f"{link}\n\n"
                     links.append(data['files'][0]['link'])
     return msg
 
