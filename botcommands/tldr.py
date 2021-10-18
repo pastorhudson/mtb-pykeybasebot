@@ -10,21 +10,30 @@ load_dotenv('../secret.env')
 
 
 def get_smmry_txt(url):
-    txt = get_text(url)
-    if len(txt) == 0:
+    article = get_text(url)
+    if len(article.text) == 0:
         raise SmmryAPIException
     api_key = os.environ.get('SMMRY_API_KEY')
-    payload = {'sm_api_input': get_text(url),
+    payload = {'sm_api_input': article.text,
                'sm_length': 3,
                'sm_keyword_count': 12}
     surl = f"https://api.smmry.com/&SM_API_KEY={api_key}"
     r = requests.post(surl, payload)
     print(r.json())
-    if "TEXT IS TOO SHORT" in r.json()['sm_api_message']:
-        if len(txt) > 0:
-            return {f'sm_api_content_reduced': f'Zero Percent because it was only {len(txt)} char',
-                        'sm_api_content': txt}
-    return r.json()
+    meta = r.json()
+    meta['authors'] = ", ".join([x for x in article.authors])
+    meta['title'] = article.title
+    meta['img'] = article.top_img
+    try:
+        if "TEXT IS TOO SHORT" in r.json()['sm_api_message']:
+            if len(article.text) > 0:
+                return {f'sm_api_content_reduced': f'Zero Percent because it was only {len(article.text)} char',
+                            'sm_api_content': article.text,
+                        'author': article.authors,
+                        'img': article.top_img,
+                        'title': article.title}
+    except Exception as e:
+        return meta
 
 
 def get_tldr(url):
@@ -37,7 +46,10 @@ def get_tldr(url):
         s = get_smmry_txt(url)
         tldr = "\n".join(
             [f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
+             s['img'],
              "```",
+             s['title'],
+             # s['authors'],
              str(s['sm_api_content']), "```"])
 
     except SmmryAPIException:
@@ -55,21 +67,24 @@ def get_text(url=None):
     article = Article(url)
     article.download()
     article.parse()
+    print(article.title)
+    print(article.top_img)
+    print(article.authors)
     try:
         article.nlp()
         print(f"Length of Article: {len(article.text)}")
 
     except Exception as e:
         pass
-    return article.text
+    return article
 
 
 if __name__ == "__main__":
     pass
     # print(get_tldr('https://www.chicagotribune.   com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
-    # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
+    print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/joe-biden-democrats-economy-supply-chain-donald-trump-2022-midterms/index.html'))
     # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
     # print(get_tldr('https://www.gearbest.com/tablet-accessories/pp_009182442856.html?wid=1433363'))
-    print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
+    # print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
     # print(get_tldr('https://www.cnn.com/videos/politics/2021/10/18/senator-bill-cassidy-republican-donald-trump-2024-ip-ldn-vpx.cnn'))
