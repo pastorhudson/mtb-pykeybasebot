@@ -217,7 +217,8 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-            urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            print(event.content)
+            urls = re.findall(r'(https?://[^\s]+)', event.msg.content.reaction.text.body)
             conversation_id = event.msg.conv_id
             ytv_payload = get_video(urls[0], False)
             if ytv_payload['file']:
@@ -546,7 +547,6 @@ async def handler(bot, event):
             #                           title=ytv_msg)
             # except TimeoutError:
             #     pass
-
 
 
     if str(event.msg.content.text.body).startswith('!vac'):
