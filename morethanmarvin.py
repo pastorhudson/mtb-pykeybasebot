@@ -237,6 +237,11 @@ async def handler(bot, event):
                 print(event.msg.content)
             except Exception as e:
                 print(e)
+            try:
+                print(f"printing event")
+                print(event)
+            except Exception as e:
+                print(e)
             # conversation_id = event.msg.conv_id
             # urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
             # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
