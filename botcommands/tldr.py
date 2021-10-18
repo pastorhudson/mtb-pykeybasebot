@@ -27,7 +27,7 @@ def get_smmry_txt(url):
     try:
         if "TEXT IS TOO SHORT" in r.json()['sm_api_message']:
             if len(article.text) > 0:
-                return {f'sm_api_content_reduced': f'Zero Percent because it was only {len(article.text)} char',
+                return {f'sm_api_content_reduced': f'0%',
                             'sm_api_content': article.text,
                         'author': article.authors,
                         'img': article.top_img,
@@ -46,7 +46,7 @@ def get_tldr(url):
         s = get_smmry_txt(url)
         tldr = "\n".join(
             [f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
-             s['img'],
+             # s['img'],
              "```",
              s['title'],
              # s['authors'],
