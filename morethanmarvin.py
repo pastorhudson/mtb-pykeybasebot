@@ -227,7 +227,7 @@ async def handler(bot, event):
 
             original_msg = await bot.chat.execute(
                 {"method": "get",
-                 "params": {"options": {"channel": conversation_id, "message_ids": [event.msg.id]}}}
+                 "params": {"options": {"conversation_id": conversation_id}, "message_ids": [event.msg.id]}}
             )
             print(original_msg)
             # conversation_id = event.msg.conv_id
