@@ -1,31 +1,26 @@
 from smmryAPI.smmryapi import SmmryAPI, SmmryAPIException
 import os
 from newspaper import Article
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import random
 import requests
 
 
-# load_dotenv('../secret.env')
+load_dotenv('../secret.env')
 
 
 def get_smmry_txt(url):
     txt = get_text(url)
-    if len(txt) > 550:
-        api_key = os.environ.get('SMMRY_API_KEY')
-        # headers = {'content-type': 'application/json'}
-        payload = {'sm_api_input': get_text(url),
-                   'sm_length': 3,
-                   'sm_keyword_count': 12}
-        surl = f"https://api.smmry.com/&SM_API_KEY={api_key}"
-        r = requests.post(surl, payload)
-        return r.json()
-
-    elif len(txt) == 0:
-        raise SmmryAPIException
-    else:
+    api_key = os.environ.get('SMMRY_API_KEY')
+    payload = {'sm_api_input': get_text(url),
+               'sm_length': 3,
+               'sm_keyword_count': 12}
+    surl = f"https://api.smmry.com/&SM_API_KEY={api_key}"
+    r = requests.post(surl, payload)
+    if r.json()['sm_api_message'] == 'TEXT IS TOO SHORT 2':
         return {f'sm_api_content_reduced': f'Zero Percent because it was only {len(txt)} char',
-                'sm_api_content': txt}
+                    'sm_api_content': txt}
+    return r.json()
 
 
 def get_tldr(url):
@@ -36,7 +31,6 @@ def get_tldr(url):
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
     try:
         s = get_smmry_txt(url)
-        # print(s)
         tldr = "\n".join(
             [f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
              "```",
@@ -64,7 +58,6 @@ def get_text(url=None):
         import nltk
         nltk.download('punkt')
         article.nlp()
-
     return article.text
 
 
@@ -76,3 +69,4 @@ if __name__ == "__main__":
     # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
     # print(get_tldr('https://www.gearbest.com/tablet-accessories/pp_009182442856.html?wid=1433363'))
     # print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
+    # print(get_tldr('https://www.bbc.com/news/av/world-58952383'))
