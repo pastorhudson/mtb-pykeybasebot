@@ -217,20 +217,39 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-            print(event.msg.content.text.body)
-            conversation_id = event.msg.conv_id
-            urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-            ytv_payload = get_video(urls[0], False)
-            if ytv_payload['file']:
-                ytv_msg = ytv_payload['msg']
-                try:
-
-                    await bot.chat.attach(channel=conversation_id,
-                                          filename=ytv_payload['file'],
-                                          title=ytv_msg)
-                except TimeoutError:
-                    pass
+            try:
+                print(f"printing event.msg.content.text")
+                print(event.msg.content.text)
+            except Exception as e:
+                print(e)
+            try:
+                print(f"printing event.msg.content.text.body")
+                print(event.msg.content.text.body)
+            except Exception as e:
+                print(e)
+            try:
+                print(f"printing event.msg.content.reaction.body")
+                print(event.msg.content.reaction.body)
+            except Exception as e:
+                print(e)
+            try:
+                print(f"printing event.msg.content")
+                print(event.msg.content)
+            except Exception as e:
+                print(e)
+            # conversation_id = event.msg.conv_id
+            # urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+            # ytv_payload = get_video(urls[0], False)
+            # if ytv_payload['file']:
+            #     ytv_msg = ytv_payload['msg']
+            #     try:
+            #
+            #         await bot.chat.attach(channel=conversation_id,
+            #                               filename=ytv_payload['file'],
+            #                               title=ytv_msg)
+            #     except TimeoutError:
+            #         pass
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
