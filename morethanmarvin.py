@@ -217,7 +217,7 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-            print(event.content)
+            print(event.msg.content.reaction.message)
             urls = re.findall(r'(https?://[^\s]+)', event.msg.content.reaction.text.body)
             conversation_id = event.msg.conv_id
             ytv_payload = get_video(urls[0], False)
