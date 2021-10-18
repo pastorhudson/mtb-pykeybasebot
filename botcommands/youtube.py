@@ -14,6 +14,7 @@ def get_domain(url):
     # print(urlparse(url).netloc)
     return urlparse(url).netloc
 
+
 info = []
 storage = Path('./storage')
 print(storage.absolute())
@@ -37,7 +38,7 @@ class MyLogger(object):
 
     def debug(self, msg):
         try:
-            jmsg= json.loads(msg)
+            jmsg = json.loads(msg)
             info.append(jmsg)
         except Exception as e:
             # print(e)
@@ -91,7 +92,7 @@ def get_mp3(url, simulate):
                 'audioquality': 0,
                 'writethumbnail': True,
                 'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
-                           'postprocessors': [{
+                'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
                     'preferredquality': '192',
@@ -103,6 +104,7 @@ def get_mp3(url, simulate):
         payload = get_youtube(url, simulate, ydl_opts)
         pre, ext = os.path.splitext(payload['file'])
         payload['file'] = pre + '.mp3'
+        pprint(payload)
         return payload
 
     else:
@@ -117,20 +119,22 @@ def get_other_video(url, simulate, ydl_opts):
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
         yt_info = info[0]
-        # print(yt_info)
+        print(yt_info)
         payload = {"title": yt_info["fulltitle"],
-                   "author": yt_info["uploader"],
+                   # "author": yt_info["uploader"],
                    "file": yt_info["_filename"],
                    "duration": convert_seconds(yt_info["duration"]),
                    'url': yt_info['webpage_url']
                    }
         msg = "\n".join(["```", yt_info["fulltitle"],
-                         f"Author: {yt_info['uploader']}",
+                         # f"Author: {yt_info['uploader']}",
                          f"Duration: {convert_seconds(yt_info['duration'])}",
                          "```",
                          # yt_info['webpage_url']
                          ])
     except Exception as e:
+        print(e)
+        print(type(e))
         payload = {
             "file": None
         }
@@ -160,6 +164,7 @@ def get_youtube(url, simulate, ydl_opts):
             dl = ydl.download([url])
 
         yt_info = info[0]
+        pprint(yt_info)
 
         payload = {"title": yt_info["fulltitle"],
                    "author": yt_info["uploader"],
@@ -168,6 +173,7 @@ def get_youtube(url, simulate, ydl_opts):
                    "views": yt_info['view_count'],
                    'url': yt_info['webpage_url']
                    }
+        pprint(payload)
         if not simulate:
             file_size = os.path.getsize(yt_info["_filename"])
             msg = "\n".join(["```", yt_info["fulltitle"],
@@ -208,7 +214,8 @@ def get_youtube(url, simulate, ydl_opts):
 
 
 if __name__ == "__main__":
-    pprint(get_video('https://youtu.be/DgeovMetvZQ', simulate=True))
+    # pprint(get_mp3('https://youtu.be/DgeovMetvZQ', simulate=False))
+    pprint(get_video('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html', simulate=True))
     pass
 
     # print(storage.absolute())
