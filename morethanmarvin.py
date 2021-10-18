@@ -518,6 +518,20 @@ async def handler(bot, event):
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
 
+        ytv_payload = get_video(urls[0], False)
+        if ytv_payload['file']:
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+            ytv_msg = ytv_payload['msg']
+            try:
+
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=ytv_payload['file'],
+                                      title=ytv_msg)
+            except TimeoutError:
+                pass
+
+
+
     if str(event.msg.content.text.body).startswith('!vac'):
         channel = event.msg.channel
         msg_id = event.msg.id
