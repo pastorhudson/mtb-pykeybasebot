@@ -17,7 +17,8 @@ def get_smmry_txt(url):
                'sm_keyword_count': 12}
     surl = f"https://api.smmry.com/&SM_API_KEY={api_key}"
     r = requests.post(surl, payload)
-    if r.json()['sm_api_message'] == 'TEXT IS TOO SHORT 2':
+    print(r.json())
+    if "TEXT IS TOO SHORT" in r.json()['sm_api_message']:
         return {f'sm_api_content_reduced': f'Zero Percent because it was only {len(txt)} char',
                     'sm_api_content': txt}
     return r.json()
@@ -69,4 +70,4 @@ if __name__ == "__main__":
     # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
     # print(get_tldr('https://www.gearbest.com/tablet-accessories/pp_009182442856.html?wid=1433363'))
     # print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
-    # print(get_tldr('https://www.bbc.com/news/av/world-58952383'))
+    # print(get_tldr('https://www.cnn.com/videos/politics/2021/10/18/senator-bill-cassidy-republican-donald-trump-2024-ip-ldn-vpx.cnn'))
