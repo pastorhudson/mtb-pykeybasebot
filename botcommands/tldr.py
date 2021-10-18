@@ -59,11 +59,8 @@ def get_text(url=None):
         article.nlp()
         print(f"Length of Article: {len(article.text)}")
 
-
     except Exception as e:
-        import nltk
-        nltk.download('punkt')
-        article.nlp()
+        pass
     return article.text
 
 

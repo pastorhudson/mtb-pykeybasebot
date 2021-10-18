@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 # from dotenv import load_dotenv
+from pprint import pprint
 from urllib.parse import urlparse
 
 from sqlalchemy import func
@@ -220,29 +221,26 @@ async def handler(bot, event):
 
             try:
                 print(f"printing event")
-                print(event)
             except Exception as e:
                 print(e)
             conversation_id = event.msg.conv_id
 
-            original_msg = await bot.chat.execute(
-                {"method": "get",
-                 "params": {"options": {"conversation_id": conversation_id}, "message_ids": [event.msg.id]}}
-            )
-            print(original_msg)
-            # conversation_id = event.msg.conv_id
-            # urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-            # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-            # ytv_payload = get_video(urls[0], False)
-            # if ytv_payload['file']:
-            #     ytv_msg = ytv_payload['msg']
-            #     try:
-            #
-            #         await bot.chat.attach(channel=conversation_id,
-            #                               filename=ytv_payload['file'],
-            #                               title=ytv_msg)
-            #     except TimeoutError:
-            #         pass
+            msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+            original_body = msg.message[0]['msg']['content']['text']['body']
+
+            urls = re.findall(r'(https?://[^\s]+)', original_body)
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+            ytv_payload = get_video(urls[0], False)
+            if ytv_payload['file']:
+                ytv_msg = ytv_payload['msg']
+                try:
+
+                    await bot.chat.attach(channel=conversation_id,
+                                          filename=ytv_payload['file'],
+                                          title=ytv_msg)
+                except TimeoutError:
+                    pass
+
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:

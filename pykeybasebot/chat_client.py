@@ -162,6 +162,31 @@ class ChatClient:
         )
         return chat1.SendRes.from_dict(res)
 
+    async def get(
+        self,
+        channel: Union[chat1.ChatChannel, chat1.ConvIDStr],
+        message_id: chat1.MessageID,
+    ) -> chat1.SendRes:
+        await self.bot.ensure_initialized()
+        ch_key, ch_val = self._channel_or_conv_id(channel)
+        res = await self.execute(
+            {
+                "method": "get",
+                "params": {
+                    "options": {
+                        ch_key: ch_val,
+                        "message_ids": [message_id],
+                    }
+                },
+            }
+        )
+        try:
+            res['message'] = res['messages']
+            return chat1.SendRes.from_dict(res)
+        except (TypeError, KeyError):
+            # this could happen if the running keybase client has an unexpected issue
+            raise ChatClientError(json.dumps(res))
+
     async def execute(self, command) -> Dict[str, str]:
         resp = await self.bot.submit("chat api", json.dumps(command).encode("utf-8"))
         try:

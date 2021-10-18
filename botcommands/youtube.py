@@ -119,7 +119,7 @@ def get_other_video(url, simulate, ydl_opts):
         with YoutubeDL(ydl_opts) as ydl:
             dl = ydl.download([url])
         yt_info = info[0]
-        print(yt_info)
+        # print(yt_info)
         payload = {"title": yt_info["fulltitle"],
                    # "author": yt_info["uploader"],
                    "file": yt_info["_filename"],
