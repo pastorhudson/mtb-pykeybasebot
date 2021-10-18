@@ -213,6 +213,23 @@ async def handler(bot, event):
             except AttributeError:
                 pass
 
+    if event.msg.content.type_name == 'reaction':
+        if event.msg.content.reaction.body == ":tv:":
+            if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
+                return
+            urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            conversation_id = event.msg.conv_id
+            ytv_payload = get_video(urls[0], False)
+            if ytv_payload['file']:
+                await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+                ytv_msg = ytv_payload['msg']
+                try:
+
+                    await bot.chat.attach(channel=conversation_id,
+                                          filename=ytv_payload['file'],
+                                          title=ytv_msg)
+                except TimeoutError:
+                    pass
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
@@ -521,14 +538,14 @@ async def handler(bot, event):
         ytv_payload = get_video(urls[0], False)
         if ytv_payload['file']:
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-            ytv_msg = ytv_payload['msg']
-            try:
-
-                await bot.chat.attach(channel=conversation_id,
-                                      filename=ytv_payload['file'],
-                                      title=ytv_msg)
-            except TimeoutError:
-                pass
+            # ytv_msg = ytv_payload['msg']
+            # try:
+            #
+            #     await bot.chat.attach(channel=conversation_id,
+            #                           filename=ytv_payload['file'],
+            #                           title=ytv_msg)
+            # except TimeoutError:
+            #     pass
 
 
 
