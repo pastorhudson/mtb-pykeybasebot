@@ -537,7 +537,7 @@ async def handler(bot, event):
 
         ytv_payload = get_video(urls[0], False)
         if ytv_payload['file']:
-            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+            await bot.chat.react(conversation_id, event.msg.id, ":tv:")
             # ytv_msg = ytv_payload['msg']
             # try:
             #
