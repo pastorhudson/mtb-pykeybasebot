@@ -217,31 +217,19 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-            try:
-                print(f"printing event.msg.content.text")
-                print(event.msg.content.text)
-            except Exception as e:
-                print(e)
-            try:
-                print(f"printing event.msg.content.text.body")
-                print(event.msg.content.text.body)
-            except Exception as e:
-                print(e)
-            try:
-                print(f"printing event.msg.content.reaction.body")
-                print(event.msg.content.reaction.body)
-            except Exception as e:
-                print(e)
-            try:
-                print(f"printing event.msg.content")
-                print(event.msg.content)
-            except Exception as e:
-                print(e)
+
             try:
                 print(f"printing event")
                 print(event)
             except Exception as e:
                 print(e)
+            conversation_id = event.msg.conv_id
+
+            original_msg = await bot.chat.execute(
+                {"method": "get",
+                 "params": {"options": {"channel": conversation_id, "message_ids": [event.msg.id]}}}
+            )
+            print(original_msg)
             # conversation_id = event.msg.conv_id
             # urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
             # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
