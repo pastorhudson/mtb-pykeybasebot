@@ -217,12 +217,12 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-            print(event.msg.content.reaction)
-            urls = re.findall(r'(https?://[^\s]+)', event.msg.content.reaction.text.body)
+            print(event.msg.content.text.body)
             conversation_id = event.msg.conv_id
+            urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
             ytv_payload = get_video(urls[0], False)
             if ytv_payload['file']:
-                await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
                 ytv_msg = ytv_payload['msg']
                 try:
 
