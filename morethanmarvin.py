@@ -219,11 +219,6 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-
-            try:
-                print(f"printing event")
-            except Exception as e:
-                print(e)
             conversation_id = event.msg.conv_id
 
             msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
@@ -710,18 +705,25 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('https://'):
         url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         domain = get_domain(url[0])
+        yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+        conversation_id = event.msg.conv_id
+
         if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
             await set_unfurl(unfurl=False)
-            conversation_id = event.msg.conv_id
 
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-            yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            # yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
 
             yt_payload = get_meta(yt_urls[0])
             yt_msg = yt_payload['msg']
 
             await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+        else:
+            yt_payload = get_meta(yt_urls[0])
+            yt_msg = yt_payload['msg']
+            if "That video url didn't work." not in yt_msg:
+                await bot.chat.react(conversation_id, event.msg.id, ":tv:")
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         await set_unfurl(unfurl=False)
