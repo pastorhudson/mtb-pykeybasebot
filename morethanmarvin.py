@@ -17,7 +17,7 @@ import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
 from botcommands.youtube import get_video, get_mp3, get_domain
-from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
+from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta, is_supported
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
@@ -708,12 +708,10 @@ async def handler(bot, event):
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
 
-        if domain == 'youtube.com' or domain == 'youtu.be' or domain == 'www.youtube.com':
+        if 'youtube' in yt_urls[0] or 'youtu.be' in yt_urls[0]:
             await set_unfurl(unfurl=False)
 
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-            # yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
 
             yt_payload = get_meta(yt_urls[0])
             yt_msg = yt_payload['msg']
@@ -722,6 +720,7 @@ async def handler(bot, event):
         else:
             yt_payload = get_meta(yt_urls[0])
             yt_msg = yt_payload['msg']
+            # if is_supported(yt_urls[0]):
             if "That video url didn't work." not in yt_msg:
                 await bot.chat.react(conversation_id, event.msg.id, ":tv:")
 

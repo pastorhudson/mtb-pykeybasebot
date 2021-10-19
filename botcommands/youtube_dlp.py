@@ -12,6 +12,14 @@ info = []
 payload = {}
 
 
+def is_supported(url):
+    extractors = yt_dlp.extractor.gen_extractors()
+    for e in extractors:
+        if e.suitable(url) and e.IE_NAME != 'generic':
+            return True
+    return False
+
+
 def sizeof_fmt(num, suffix="B"):
     for unit in [" ", " Ki", " Mi", " Gi", " Ti", " Pi", " Ei", " Zi"]:
         if abs(num) < 1024.0:
@@ -107,6 +115,11 @@ def my_hook(d):
 
 def get_mp3(url):
     global payload
+    if not is_supported(url):
+        return {"msg": "That video url didn't work.\n"
+                                 "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+                          "file": ""
+                          }
     payload = {}
 
     ydl_opts = {
@@ -133,6 +146,11 @@ def get_mp3(url):
 def get_mp4(url):
     global info
     global payload
+    if not is_supported(url):
+        return {"msg": "That video url didn't work.\n"
+                                 "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+                          "file": ""
+                          }
     ydl_opts = {
         # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
@@ -151,6 +169,11 @@ def get_mp4(url):
 
 def get_meta(url):
     global info
+    if not is_supported(url):
+        return {"msg": "That video url didn't work.\n"
+                                 "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+                          "file": ""
+                          }
 
     ydl_opts = {
         # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
