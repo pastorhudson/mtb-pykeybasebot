@@ -48,6 +48,7 @@ class MyLogger:
             self.info(msg)
 
     def info(self, msg):
+        print(msg)
         pass
 
     def warning(self, msg):
@@ -179,6 +180,7 @@ def get_meta(url):
         # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'simulate': True,
+        'nocheckcertificate': True,
         'restrictfilenames': True,
         'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'logger': MyLogger(),
