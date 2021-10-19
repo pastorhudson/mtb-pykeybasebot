@@ -210,6 +210,4 @@ def get_meta(url):
 
 
 if __name__ == '__main__':
-    print(get_mp4('https://www.reddit.com/r/ArduinoProjects/comments/qalpk6/msgeq7_and_arduino_uno_music_leds/'))
-    # get_meta('https://www.cnn.com/2021/10/18/politics/covid-vaccines-colin-powell-what-matters/index.html')
-    # print(get_mp4('https://www.cnn.com/2021/10/18/politics/covid-vaccines-colin-powell-what-matters/index.html'))
+    pass
