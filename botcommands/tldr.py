@@ -31,7 +31,8 @@ def get_smmry_txt(url):
                             'sm_api_content': article.text,
                         'author': article.authors,
                         'img': article.top_img,
-                        'title': article.title}
+                        'title': article.title,
+                        "movies": article.movies}
     except Exception as e:
         return meta
 
@@ -70,6 +71,7 @@ def get_text(url=None):
     print(article.title)
     print(article.top_img)
     print(article.authors)
+    print(article.movies)
     try:
         article.nlp()
         print(f"Length of Article: {len(article.text)}")
@@ -82,9 +84,10 @@ def get_text(url=None):
 if __name__ == "__main__":
     pass
     # print(get_tldr('https://www.chicagotribune.   com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
-    print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
+    # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/joe-biden-democrats-economy-supply-chain-donald-trump-2022-midterms/index.html'))
     # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
     # print(get_tldr('https://www.gearbest.com/tablet-accessories/pp_009182442856.html?wid=1433363'))
     # print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
     # print(get_tldr('https://www.cnn.com/videos/politics/2021/10/18/senator-bill-cassidy-republican-donald-trump-2024-ip-ldn-vpx.cnn'))
+    # print(get_text('https://www.stltoday.com/news/local/govt-and-politics/parson-issues-legal-threat-against-post-dispatch-after-database-flaws-exposed/article_93f4d7d6-f792-5b1b-b556-00b5cac23af3.html?utm_medium=social&utm_source=twitter&utm_campaign=user-share'))
