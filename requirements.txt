@@ -105,3 +105,4 @@ ffprobe
 speedtest-cli
 nltk==3.6.5
 newspaper3k
+yt-dlp

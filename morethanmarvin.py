@@ -17,6 +17,7 @@ import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
 from botcommands.youtube import get_video, get_mp3, get_domain
+from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
@@ -230,7 +231,7 @@ async def handler(bot, event):
 
             urls = re.findall(r'(https?://[^\s]+)', original_body)
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-            ytv_payload = get_video(urls[0], False)
+            ytv_payload = get_mp4(urls[0])
             if ytv_payload['file']:
                 ytv_msg = ytv_payload['msg']
                 try:
@@ -546,18 +547,9 @@ async def handler(bot, event):
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
 
-        ytv_payload = get_video(urls[0], False)
+        ytv_payload = get_mp4(urls[0])
         if ytv_payload['file']:
             await bot.chat.react(conversation_id, event.msg.id, ":tv:")
-            # ytv_msg = ytv_payload['msg']
-            # try:
-            #
-            #     await bot.chat.attach(channel=conversation_id,
-            #                           filename=ytv_payload['file'],
-            #                           title=ytv_msg)
-            # except TimeoutError:
-            #     pass
-
 
     if str(event.msg.content.text.body).startswith('!vac'):
         channel = event.msg.channel
@@ -726,18 +718,10 @@ async def handler(bot, event):
 
             yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
 
-            yt_payload = get_video(yt_urls[0], True)
+            yt_payload = get_meta(yt_urls[0])
             yt_msg = yt_payload['msg']
 
             await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
-
-            # await bot.chat.execute(
-            #     {"method": "send", "params": {"options": {"conversation_id": conversation_id,
-            #                                               "message": {"body": yt_msg},
-            #                                               "reply_to": event.msg.id}}}
-            # )
-
-            # await bot.chat.send(conversation_id, yt_msg)
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         await set_unfurl(unfurl=False)
@@ -751,15 +735,13 @@ async def handler(bot, event):
                                  " Please don't change my name to Marshall.",
                                  """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        ytv_payload = get_video(ytv_urls[0], True)
+        ytv_payload = get_meta(ytv_urls[0])
         if ytv_payload['msg'] == "I have failed.":
             ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
         else:
             ytv_msg = ytv_payload['msg']
-        # sent_msg = await bot.chat.send(conversation_id, ytv_msg)
-        # await bot.chat.react(conversation_id, sent_msg.message_id, ":tv:")
 
-        ytv_payload = get_video(ytv_urls[0], False)
+        ytv_payload = get_mp4(ytv_urls[0])
         if ytv_payload['file']:
 
             try:
@@ -769,11 +751,6 @@ async def handler(bot, event):
                                       title=ytv_msg)
             except TimeoutError:
                 pass
-            # finally:
-            #     await bot.chat.execute(
-            #         {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
-            #                                                     "message_id": sent_msg.message_id}}}
-            #     )
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id
