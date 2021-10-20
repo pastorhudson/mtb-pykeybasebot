@@ -7,7 +7,7 @@ import sys
 from pprint import pprint
 from urllib.parse import urlparse
 
-from sqlalchemy import func
+# from sqlalchemy import func
 
 from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
