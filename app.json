@@ -1,8 +1,10 @@
 {
-  "cron": [
-    {
-      "command": "bash /app/storage/update_covid.sh",
-      "schedule": "@hourly"
+  "formation": {
+    "web": {
+      "quantity": 1
+    },
+    "bot": {
+      "quantity": 1
     }
-  ]
+  }
 }
