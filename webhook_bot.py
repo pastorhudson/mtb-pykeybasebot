@@ -19,8 +19,7 @@ def send_msg(msg):
     payload = {"method": "send", "params": {
         "options": {"channel": {"name": f"{you},{them}"}, "message": {"body": msg}}}}
 
-    marvinpath = Path(f'./webhookbot')
-    subprocess.run(args=['keybase', '--home', marvinpath.resolve(), 'chat', 'api', '-m', json.dumps(payload)] )
+    subprocess.run(args=['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)] )
 
 
 if __name__ == '__main__':
