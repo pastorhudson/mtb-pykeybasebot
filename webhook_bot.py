@@ -20,8 +20,8 @@ def send_msg(msg):
     them = os.environ.get('KEYBASE_BOTNAME')
     payload = {"method": "send", "params": {
         "options": {"channel": {"name": f"{you},{them}"}, "message": {"body": msg}}}}
-    pprint(payload)
-    pprint(['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
+    print(payload)
+    print(['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
     subprocess.run(args=['./keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
 
 
