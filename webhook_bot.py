@@ -1,4 +1,6 @@
 import json
+from pprint import pprint
+
 from flask import Flask
 from pathlib import Path
 import subprocess
@@ -18,8 +20,9 @@ def send_msg(msg):
     them = os.environ.get('KEYBASE_BOTNAME')
     payload = {"method": "send", "params": {
         "options": {"channel": {"name": f"{you},{them}"}, "message": {"body": msg}}}}
-
-    subprocess.run(args=['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)] )
+    pprint(payload)
+    pprint(['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
+    subprocess.run(args=['./keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
 
 
 if __name__ == '__main__':
