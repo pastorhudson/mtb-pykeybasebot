@@ -45,6 +45,7 @@ from botcommands.update_vaccine import get_vaccine_data
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.files import get_files
+# import webhooks
 
 # from botcommands.rickroll import get_rickroll
 
@@ -220,8 +221,10 @@ async def handler(bot, event):
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
             conversation_id = event.msg.conv_id
+            pprint(event.msg.content.reaction)
 
             msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+            pprint(msg)
             original_body = msg.message[0]['msg']['content']['text']['body']
 
             urls = re.findall(r'(https?://[^\s]+)', original_body)

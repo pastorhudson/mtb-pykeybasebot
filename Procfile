@@ -1,2 +1,3 @@
 release: alembic upgrade head
-web: python morethanmarvin.py
+bot: python morethanmarvin.py
+web: python -m webhook_bot
