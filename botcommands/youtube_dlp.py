@@ -127,7 +127,7 @@ def get_mp3(url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'forcefilename': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'postprocessors': [{
@@ -161,8 +161,7 @@ def get_mp4(url):
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'restrictfilenames': True,
         # 'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
-        'trim_file_names': 10,
+        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'logger': MyLogger(),
@@ -194,7 +193,7 @@ def get_meta(url):
         'trim_file_names': 10,
         'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
@@ -246,5 +245,5 @@ def get_meta(url):
 
 
 if __name__ == '__main__':
-    print(get_mp4('https://youtu.be/F-euXKIkdw0'))
+    print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     pass
