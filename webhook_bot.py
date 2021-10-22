@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    send_msg("Hello worldddd")
+    # send_msg("Hello worldddd")
     return "<p>Hello, World!</p>"
 
 
