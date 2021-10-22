@@ -62,9 +62,10 @@ class MyCustomPP(PostProcessor):
 
     def run(self, info):
         global payload
-        # filename = info['filepath'].replace('.m4a', '.mp3')
-        # filename = info['filepath'].replace('.webm', '.mp3')
         filename = info['filepath']
+
+        filename = info['filepath'].replace('.m4a', '.mp3')
+        filename = info['filepath'].replace('.webm', '.mp3')
         print(f"FILENAME: {filename}")
         payload = {"title": info["title"],
                    # "author": yt_info["uploader"],
@@ -127,7 +128,7 @@ def get_mp3(url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s-%(id)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'forcefilename': True,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -159,8 +160,11 @@ def get_mp4(url):
         # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
+        'trim_file_names': 10,
+        'windowsfilenames': True,
         'nocleaninfojson': True,
+        'forcefilename': True,
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
