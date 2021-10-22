@@ -129,6 +129,7 @@ def get_mp3(url):
         'restrictfilenames': True,
         'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'forcefilename': True,
+        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -157,15 +158,13 @@ def get_mp4(url):
                           "file": ""
                           }
     ydl_opts = {
-        # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
+        # 'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'trim_file_names': 10,
         'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'nocleaninfojson': True,
-        # 'forcefilename': True,
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
@@ -176,7 +175,6 @@ def get_mp4(url):
         yt_info = ydl.extract_info(url)
         # pprint(yt_info)
         # pprint(ydl.sanitize_info(yt_info))
-        # pprint(yt_info)
     return payload
 
 
@@ -189,11 +187,12 @@ def get_meta(url):
                           }
 
     ydl_opts = {
-        # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
+        'trim_file_names': 10,
+        'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'logger': MyLogger(),
