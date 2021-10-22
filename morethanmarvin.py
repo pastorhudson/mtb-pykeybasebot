@@ -237,6 +237,8 @@ async def handler(bot, event):
                     await bot.chat.attach(channel=conversation_id,
                                           filename=ytv_payload['file'],
                                           title=ytv_msg)
+                    await bot.chat.delete(event.msg.conv_id, event.msg.content.reaction.message_id)
+
                 except TimeoutError:
                     pass
 
