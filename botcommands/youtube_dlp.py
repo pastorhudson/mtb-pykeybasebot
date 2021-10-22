@@ -237,4 +237,5 @@ def get_meta(url):
 
 
 if __name__ == '__main__':
+    print(get_mp4('https://youtu.be/F-euXKIkdw0'))
     pass
