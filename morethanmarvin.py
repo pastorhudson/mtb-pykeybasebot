@@ -720,6 +720,8 @@ async def handler(bot, event):
             yt_msg = yt_payload['msg']
 
             await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
         else:
             yt_payload = get_meta(yt_urls[0])
             yt_msg = yt_payload['msg']
