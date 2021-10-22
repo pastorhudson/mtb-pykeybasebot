@@ -126,7 +126,7 @@ def get_mp3(url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s-%(id)s.%(ext)s',
         'forcefilename': True,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -147,6 +147,8 @@ def get_mp3(url):
 def get_mp4(url):
     global info
     global payload
+    payload = {}
+
     if not is_supported(url):
         return {"msg": "That video url didn't work.\n"
                                  "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
@@ -156,7 +158,7 @@ def get_mp4(url):
         # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s-%(id)s.%(ext)s',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
@@ -165,6 +167,7 @@ def get_mp4(url):
         ydl.add_post_processor(MyCustomPP())
         yt_info = ydl.extract_info(url)
         # pprint(json.dumps(ydl.sanitize_info(yt_info)))
+
     return payload
 
 
@@ -182,7 +185,7 @@ def get_meta(url):
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s-%(id)s.%(ext)s',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
@@ -191,7 +194,6 @@ def get_meta(url):
         try:
             ydl.add_post_processor(MyCustomPP())
             yt_info = ydl.extract_info(url)
-            # pprint(yt_info)
             payload = {"title": yt_info["title"],
                        "file": None,
                        "duration": convert_seconds(yt_info["duration"]),
