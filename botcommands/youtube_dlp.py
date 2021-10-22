@@ -62,9 +62,10 @@ class MyCustomPP(PostProcessor):
 
     def run(self, info):
         global payload
-        filename = info['filepath'].replace('.m4a', '.mp3')
-        filename = info['filepath'].replace('.webm', '.mp3')
-
+        # filename = info['filepath'].replace('.m4a', '.mp3')
+        # filename = info['filepath'].replace('.webm', '.mp3')
+        filename = info['filepath']
+        print(f"FILENAME: {filename}")
         payload = {"title": info["title"],
                    # "author": yt_info["uploader"],
                    "file": filename,
@@ -167,7 +168,7 @@ def get_mp4(url):
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.add_post_processor(MyCustomPP())
         yt_info = ydl.extract_info(url)
-        # pprint(json.dumps(ydl.sanitize_info(yt_info)))
+        pprint(json.dumps(ydl.sanitize_info(yt_info)))
 
     return payload
 
