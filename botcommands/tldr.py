@@ -15,9 +15,9 @@ def get_smmry_txt(url):
         raise SmmryAPIException
     api_key = os.environ.get('SMMRY_API_KEY')
     payload = {'sm_api_input': article.text,
-               'sm_length': 3,
-               'sm_keyword_count': 12}
-    surl = f"https://api.smmry.com/&SM_API_KEY={api_key}"
+               'SM_LENGTH': 7,
+               'SM_KEYWORD_COUNT': 12}
+    surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH=5&SM_KEYWORD_COUNT=12"
     r = requests.post(surl, payload)
     print(r.json())
     meta = r.json()
