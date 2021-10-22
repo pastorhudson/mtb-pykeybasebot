@@ -62,8 +62,8 @@ class MyCustomPP(PostProcessor):
 
     def run(self, info):
         global payload
-        filename = info['_filename'].replace('.m4a', '.mp3')
-        filename = info['_filename'].replace('.webm', '.mp3')
+        filename = info['filepath'].replace('.m4a', '.mp3')
+        filename = info['filepath'].replace('.webm', '.mp3')
 
         payload = {"title": info["title"],
                    # "author": yt_info["uploader"],
