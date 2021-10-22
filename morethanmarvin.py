@@ -228,7 +228,7 @@ async def handler(bot, event):
             original_body = msg.message[0]['msg']['content']['text']['body']
 
             urls = re.findall(r'(https?://[^\s]+)', original_body)
-            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+            await bot.chat.react(conversation_id, msg.id, ":floppy_disk:")
             ytv_payload = get_mp4(urls[0])
             if ytv_payload['file']:
                 ytv_msg = ytv_payload['msg']
@@ -237,7 +237,7 @@ async def handler(bot, event):
                     await bot.chat.attach(channel=conversation_id,
                                           filename=ytv_payload['file'],
                                           title=ytv_msg)
-                    await bot.chat.delete(event.msg.conv_id, event.msg.content.reaction.message_id)
+                    await bot.chat.delete(conversation_id, msg.id)
 
                 except TimeoutError:
                     pass
