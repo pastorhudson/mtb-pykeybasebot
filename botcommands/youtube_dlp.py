@@ -174,7 +174,7 @@ def get_mp4(url):
         ydl.add_post_processor(MyCustomPP())
 
         yt_info = ydl.extract_info(url)
-        pprint(yt_info)
+        # pprint(yt_info)
         # pprint(ydl.sanitize_info(yt_info))
         # pprint(yt_info)
     return payload
