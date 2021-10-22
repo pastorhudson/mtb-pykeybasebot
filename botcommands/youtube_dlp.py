@@ -158,7 +158,8 @@ def get_mp4(url):
         # 'format': 'bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b', #old
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s-%(id)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
+        'nocleaninfojson': True,
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
@@ -185,7 +186,7 @@ def get_meta(url):
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title)s-%(id)s.%(ext)s',
+        'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
