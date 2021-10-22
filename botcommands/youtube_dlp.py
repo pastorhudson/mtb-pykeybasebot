@@ -7,7 +7,6 @@ import yt_dlp
 from yt_dlp.postprocessor.common import PostProcessor
 
 storage = Path('./storage')
-# print(storage.absolute())
 info = []
 payload = {}
 
@@ -48,7 +47,7 @@ class MyLogger:
             self.info(msg)
 
     def info(self, msg):
-        print(msg)
+        # print(msg)
         pass
 
     def warning(self, msg):
@@ -64,8 +63,8 @@ class MyCustomPP(PostProcessor):
         global payload
         filename = info['filepath']
 
-        filename = info['filepath'].replace('.m4a', '.mp3')
-        filename = info['filepath'].replace('.webm', '.mp3')
+        # filename = info['filepath'].replace('.m4a', '.mp3')
+        # filename = info['filepath'].replace('.webm', '.mp3')
         print(f"FILENAME: {filename}")
         payload = {"title": info["title"],
                    # "author": yt_info["uploader"],
@@ -149,6 +148,7 @@ def get_mp3(url):
 def get_mp4(url):
     global info
     global payload
+    info = {}
     payload = {}
 
     if not is_supported(url):
@@ -163,17 +163,20 @@ def get_mp4(url):
         'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
         'trim_file_names': 10,
         'windowsfilenames': True,
-        'nocleaninfojson': True,
-        'forcefilename': True,
+        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'nocleaninfojson': True,
+        # 'forcefilename': True,
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.add_post_processor(MyCustomPP())
-        yt_info = ydl.extract_info(url)
-        pprint(json.dumps(ydl.sanitize_info(yt_info)))
 
+        yt_info = ydl.extract_info(url)
+        pprint(yt_info)
+        # pprint(ydl.sanitize_info(yt_info))
+        # pprint(yt_info)
     return payload
 
 
@@ -191,6 +194,7 @@ def get_meta(url):
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
+        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'outtmpl': f'{storage.absolute()}/%(title)s.%(ext)s',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
