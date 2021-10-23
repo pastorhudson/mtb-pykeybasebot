@@ -830,6 +830,8 @@ async def handler(bot, event):
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         screenshot_payload = get_screenshot(screenshot_urls[0])
         if screenshot_payload['file']:
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+
             await bot.chat.attach(channel=conversation_id,
                                   filename=screenshot_payload['file'],
                                   title=screenshot_payload['msg'])
