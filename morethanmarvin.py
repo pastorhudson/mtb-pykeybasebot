@@ -221,27 +221,33 @@ async def handler(bot, event):
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
             conversation_id = event.msg.conv_id
-            pprint(event.msg.content.reaction)
+            pprint(event)
 
             msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
-            pprint(msg)
+            # pprint(msg.message[0]['msg']['reactions'])
             original_body = msg.message[0]['msg']['content']['text']['body']
             original_msg_id =msg.message[0]['msg']['id']
+            reactions = msg.message[0]['msg']['reactions']
+            for key, value in reactions.items():
+                for k, v in value.items():
+                    if k == ':floppy_disk:':
+                        print("found floppy")
+                        return
+                    else:
+                        urls = re.findall(r'(https?://[^\s]+)', original_body)
+                        await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                        ytv_payload = get_mp4(urls[0])
+                        if ytv_payload['file']:
+                            ytv_msg = ytv_payload['msg']
+                            try:
 
-            urls = re.findall(r'(https?://[^\s]+)', original_body)
-            await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
-            ytv_payload = get_mp4(urls[0])
-            if ytv_payload['file']:
-                ytv_msg = ytv_payload['msg']
-                try:
+                                await bot.chat.attach(channel=conversation_id,
+                                                      filename=ytv_payload['file'],
+                                                      title=ytv_msg)
+                                # await bot.chat.delete(conversation_id, original_msg_id)
 
-                    await bot.chat.attach(channel=conversation_id,
-                                          filename=ytv_payload['file'],
-                                          title=ytv_msg)
-                    await bot.chat.delete(conversation_id, original_msg_id)
-
-                except TimeoutError:
-                    pass
+                            except TimeoutError:
+                                pass
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
