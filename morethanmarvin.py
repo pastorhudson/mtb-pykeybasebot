@@ -234,9 +234,10 @@ async def handler(bot, event):
                             team_name = event.msg.channel.name
                             # print("found floppy")
                             fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
-                            score = write_score('marvn', event.msg.sender.username,
+                            score = write_score(event.msg.sender.username, 'marvn',
                                                 team_name, -10, description=fail_msg)
                             await bot.chat.send(conversation_id, fail_msg)
+                            break
 
                         else:
                             urls = re.findall(r'(https?://[^\s]+)', original_body)
@@ -272,9 +273,10 @@ async def handler(bot, event):
                             team_name = event.msg.channel.name
                             # print("found floppy")
                             fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :camera:"
-                            score = write_score('marvn', event.msg.sender.username,
+                            score = write_score(event.msg.sender.username, 'marvn',
                                                 team_name, -10, description=fail_msg)
                             await bot.chat.send(conversation_id, fail_msg)
+                            break
 
                         else:
                             urls = re.findall(r'(https?://[^\s]+)', original_body)
