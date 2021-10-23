@@ -221,7 +221,7 @@ async def handler(bot, event):
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
             conversation_id = event.msg.conv_id
-            pprint(event)
+            pprint(event.msg.sender.username)
 
             msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
             # pprint(msg.message[0]['msg']['reactions'])
@@ -231,8 +231,13 @@ async def handler(bot, event):
             for key, value in reactions.items():
                 for k, v in value.items():
                     if k == ':floppy_disk:':
+                        team_name = event.msg.channel.name
                         print("found floppy")
-                        return
+                        fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
+                        score = write_score('marvn', event.msg.sender.username,
+                                            team_name, -10, description=fail_msg)
+                        await bot.chat.send(conversation_id, fail_msg)
+
                     else:
                         urls = re.findall(r'(https?://[^\s]+)', original_body)
                         await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
