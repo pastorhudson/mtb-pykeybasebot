@@ -228,32 +228,37 @@ async def handler(bot, event):
                 original_body = msg.message[0]['msg']['content']['text']['body']
                 original_msg_id =msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
+                reaction_list = []
                 for key, value in reactions.items():
                     for k, v in value.items():
-                        if k == ':floppy_disk:':
-                            team_name = event.msg.channel.name
-                            # print("found floppy")
-                            fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
-                            score = write_score(event.msg.sender.username, 'marvn',
-                                                team_name, -10, description=fail_msg)
-                            await bot.chat.send(conversation_id, fail_msg)
-                            break
+                        try:
+                            if v['users']['morethanmarvin']:
+                                reaction_list.append(k)
+                        except KeyError:
+                            pass
+                if ':floppy_disk:' in reaction_list:
+                    team_name = event.msg.channel.name
+                    # print("found floppy")
+                    fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
+                    score = write_score(event.msg.sender.username, 'marvn',
+                                        team_name, -10, description=fail_msg)
+                    await bot.chat.send(conversation_id, fail_msg)
 
-                        else:
-                            urls = re.findall(r'(https?://[^\s]+)', original_body)
-                            await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
-                            ytv_payload = get_mp4(urls[0])
-                            if ytv_payload['file']:
-                                ytv_msg = ytv_payload['msg']
-                                try:
+                else:
+                    urls = re.findall(r'(https?://[^\s]+)', original_body)
+                    await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                    ytv_payload = get_mp4(urls[0])
+                    if ytv_payload['file']:
+                        ytv_msg = ytv_payload['msg']
+                        try:
 
-                                    await bot.chat.attach(channel=conversation_id,
-                                                          filename=ytv_payload['file'],
-                                                          title=ytv_msg)
-                                    # await bot.chat.delete(conversation_id, original_msg_id)
+                            await bot.chat.attach(channel=conversation_id,
+                                                  filename=ytv_payload['file'],
+                                                  title=ytv_msg)
+                            # await bot.chat.delete(conversation_id, original_msg_id)
 
-                                except TimeoutError:
-                                    pass
+                        except TimeoutError:
+                            pass
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":camera:":
@@ -267,28 +272,38 @@ async def handler(bot, event):
                 original_body = msg.message[0]['msg']['content']['text']['body']
                 original_msg_id = msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
+                reaction_list = []
                 for key, value in reactions.items():
                     for k, v in value.items():
-                        if k == ':floppy_disk:':
-                            team_name = event.msg.channel.name
-                            # print("found floppy")
-                            fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :camera:"
-                            score = write_score(event.msg.sender.username, 'marvn',
-                                                team_name, -10, description=fail_msg)
-                            await bot.chat.send(conversation_id, fail_msg)
-                            break
+                        # print(v)
+                        try:
+                            if v['users']['morethanmarvin']:
 
-                        else:
-                            urls = re.findall(r'(https?://[^\s]+)', original_body)
-                            await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
-                            try:
-                                screenshot_payload = get_screenshot(urls[0])
-                                if screenshot_payload['file']:
-                                    await bot.chat.attach(channel=conversation_id,
-                                                          filename=screenshot_payload['file'],
-                                                          title=screenshot_payload['msg'])
-                            except IndexError as e:
-                                pass
+                        # print(v.get('users')['morethanmarvin'])
+                                reaction_list.append(k)
+                        except KeyError:
+                            pass
+                if ':floppy_disk:' in reaction_list:
+                    team_name = event.msg.channel.name
+                    # print("found floppy")
+                    fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :camera:"
+                    score = write_score(event.msg.sender.username, 'marvn',
+                                        team_name, -10, description=fail_msg)
+                    await bot.chat.send(conversation_id, fail_msg)
+
+                else:
+                    print('Still going')
+
+                    urls = re.findall(r'(https?://[^\s]+)', original_body)
+                    await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                    try:
+                        screenshot_payload = get_screenshot(urls[0])
+                        if screenshot_payload['file']:
+                            await bot.chat.attach(channel=conversation_id,
+                                                  filename=screenshot_payload['file'],
+                                                  title=screenshot_payload['msg'])
+                    except IndexError as e:
+                        pass
 
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
