@@ -220,39 +220,70 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":tv:":
             if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
                 return
-            conversation_id = event.msg.conv_id
-            pprint(event.msg.sender.username)
+            else:
+                conversation_id = event.msg.conv_id
 
-            msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
-            # pprint(msg.message[0]['msg']['reactions'])
-            original_body = msg.message[0]['msg']['content']['text']['body']
-            original_msg_id =msg.message[0]['msg']['id']
-            reactions = msg.message[0]['msg']['reactions']
-            for key, value in reactions.items():
-                for k, v in value.items():
-                    if k == ':floppy_disk:':
-                        team_name = event.msg.channel.name
-                        print("found floppy")
-                        fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
-                        score = write_score('marvn', event.msg.sender.username,
-                                            team_name, -10, description=fail_msg)
-                        await bot.chat.send(conversation_id, fail_msg)
+                msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+                # pprint(msg.message[0]['msg']['reactions'])
+                original_body = msg.message[0]['msg']['content']['text']['body']
+                original_msg_id =msg.message[0]['msg']['id']
+                reactions = msg.message[0]['msg']['reactions']
+                for key, value in reactions.items():
+                    for k, v in value.items():
+                        if k == ':floppy_disk:':
+                            team_name = event.msg.channel.name
+                            # print("found floppy")
+                            fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
+                            score = write_score('marvn', event.msg.sender.username,
+                                                team_name, -10, description=fail_msg)
+                            await bot.chat.send(conversation_id, fail_msg)
 
-                    else:
-                        urls = re.findall(r'(https?://[^\s]+)', original_body)
-                        await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
-                        ytv_payload = get_mp4(urls[0])
-                        if ytv_payload['file']:
-                            ytv_msg = ytv_payload['msg']
-                            try:
+                        else:
+                            urls = re.findall(r'(https?://[^\s]+)', original_body)
+                            await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                            ytv_payload = get_mp4(urls[0])
+                            if ytv_payload['file']:
+                                ytv_msg = ytv_payload['msg']
+                                try:
 
+                                    await bot.chat.attach(channel=conversation_id,
+                                                          filename=ytv_payload['file'],
+                                                          title=ytv_msg)
+                                    # await bot.chat.delete(conversation_id, original_msg_id)
+
+                                except TimeoutError:
+                                    pass
+
+    if event.msg.content.type_name == 'reaction':
+        if event.msg.content.reaction.body == ":camera:":
+            if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
+                return
+            else:
+                conversation_id = event.msg.conv_id
+
+                msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+                # pprint(msg.message[0]['msg']['reactions'])
+                original_body = msg.message[0]['msg']['content']['text']['body']
+                original_msg_id = msg.message[0]['msg']['id']
+                reactions = msg.message[0]['msg']['reactions']
+                for key, value in reactions.items():
+                    for k, v in value.items():
+                        if k == ':floppy_disk:':
+                            team_name = event.msg.channel.name
+                            # print("found floppy")
+                            fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :camera:"
+                            score = write_score('marvn', event.msg.sender.username,
+                                                team_name, -10, description=fail_msg)
+                            await bot.chat.send(conversation_id, fail_msg)
+
+                        else:
+                            urls = re.findall(r'(https?://[^\s]+)', original_body)
+                            await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                            screenshot_payload = get_screenshot(urls[0])
+                            if screenshot_payload['file']:
                                 await bot.chat.attach(channel=conversation_id,
-                                                      filename=ytv_payload['file'],
-                                                      title=ytv_msg)
-                                # await bot.chat.delete(conversation_id, original_msg_id)
-
-                            except TimeoutError:
-                                pass
+                                                      filename=screenshot_payload['file'],
+                                                      title=screenshot_payload['msg'])
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
