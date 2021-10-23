@@ -5,6 +5,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import random
 import os
+from PIL import Image
+
 
 
 # //meta[@property='og:title']
@@ -22,6 +24,33 @@ def get_youtube_id(url):
     if "watch?v=" in yt_id:
         print(yt_id[8:])
     return yt_id[8:]
+
+
+def crop_screenshot(driver, filename):
+    original_size = driver.get_window_size()
+    required_width = driver.execute_script('return document.body.parentNode.scrollWidth')
+    required_height = driver.execute_script('return document.body.parentNode.scrollHeight')
+    driver.set_window_size(required_width, required_height)
+    driver.find_element_by_tag_name('body'). \
+        screenshot(filename)  # avoids scrollbar
+    driver.set_window_size(original_size['width'], original_size['height'])
+    print("Resizing & Cropping")
+    with Image.open(filename) as im:
+        # The crop method from the Image module takes four coordinates as input.
+        # The right can also be represented as (left+width)
+        # and lower can be represented as (upper+height).
+        width, height = im.size
+
+        resize_by = float(800 / width)
+        resized_im = im.resize((800, int(float(height) * resize_by)))
+
+        width, height = resized_im.size
+        if height > 1700:
+            (left, top, right, bottom) = (0, 0, width, height - (height - 1700))
+            new_im = resized_im.crop((left, top, right, bottom))
+            new_im.save(filename)
+        else:
+            resized_im.save(filename)
 
 
 def get_screenshot(url):
@@ -43,7 +72,8 @@ def get_screenshot(url):
         print(e)
     finally:
 
-        file = driver.save_screenshot(f"{os.environ.get('SCREENSHOT_DIR')}/screenshot.png")
+        # file = driver.save_screenshot(f"{os.environ.get('SCREENSHOT_DIR')}/screenshot.png")
+        crop_screenshot(driver, os.path.join(os.environ.get('SCREENSHOT_DIR'), 'screenshot.png'))
 
     driver.quit()
     payload = {"msg": random.choice(observations), "file": f"{os.environ.get('SCREENSHOT_DIR')}/screenshot.png"}
@@ -53,4 +83,4 @@ def get_screenshot(url):
 
 if __name__ == "__main__":
 
-    get_screenshot('https://stackoverflow.com/questions/38077571/xpath-for-first-child-element-inside-body-tag')
+    get_screenshot('https://twitter.com/joanpennnative/status/1450887248866594819?s=12')
