@@ -279,11 +279,15 @@ async def handler(bot, event):
                         else:
                             urls = re.findall(r'(https?://[^\s]+)', original_body)
                             await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
-                            screenshot_payload = get_screenshot(urls[0])
-                            if screenshot_payload['file']:
-                                await bot.chat.attach(channel=conversation_id,
-                                                      filename=screenshot_payload['file'],
-                                                      title=screenshot_payload['msg'])
+                            try:
+                                screenshot_payload = get_screenshot(urls[0])
+                                if screenshot_payload['file']:
+                                    await bot.chat.attach(channel=conversation_id,
+                                                          filename=screenshot_payload['file'],
+                                                          title=screenshot_payload['msg'])
+                            except IndexError as e:
+                                pass
+
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
