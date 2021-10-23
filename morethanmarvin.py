@@ -233,7 +233,7 @@ async def handler(bot, event):
                     for k, v in value.items():
                         # print(v)
                         try:
-                            if v['users']['morethanmarvin']:
+                            if v['users']['marvn']:
                                 reaction_list.append(k)
                         except KeyError:
                             pass
@@ -279,7 +279,7 @@ async def handler(bot, event):
                     for k, v in value.items():
                         # print(v)
                         try:
-                            if v['users']['morethanmarvin']:
+                            if v['users']['marvn']:
 
                                 reaction_list.append(k)
                         except KeyError:
