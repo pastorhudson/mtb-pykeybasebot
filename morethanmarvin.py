@@ -231,11 +231,13 @@ async def handler(bot, event):
                 reaction_list = []
                 for key, value in reactions.items():
                     for k, v in value.items():
+                        # print(v)
                         try:
                             if v['users']['morethanmarvin']:
                                 reaction_list.append(k)
                         except KeyError:
                             pass
+                print(reaction_list)
                 if ':floppy_disk:' in reaction_list:
                     team_name = event.msg.channel.name
                     # print("found floppy")
