@@ -735,7 +735,7 @@ async def handler(bot, event):
                                  " Please don't change my name to Marshall.",
                                  """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
         ytm_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        ytm_payload = get_mp3(ytm_urls[0], True)
+        ytm_payload = get_mp3(ytm_urls[0])
         if ytm_payload['msg'] == "I have failed.":
             ytm_msg = ytm_payload['msg'] + random.choice(ytm_fail_observations)
 
@@ -745,7 +745,7 @@ async def handler(bot, event):
         # sent_msg = await bot.chat.send(conversation_id, ytm_msg)
         # await bot.chat.react(conversation_id, sent_msg.message_id, ":headphones:")
 
-        ytm_payload = get_mp3(ytm_urls[0], False)
+        ytm_payload = get_mp3(ytm_urls[0])
         if ytm_payload['file']:
 
             try:
