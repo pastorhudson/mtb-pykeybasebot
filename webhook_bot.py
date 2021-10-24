@@ -26,7 +26,7 @@ def ytv():
             payload = get_mp4(url)
         # print(payload)
         except DownloadError as e:
-            payload = {'Error': e}
+            payload = {'Error': str(e)}
             return jsonify(payload)
 
         try:
