@@ -1,10 +1,12 @@
 import json
 from pprint import pprint
-
-from flask import Flask
+from flask import jsonify
+from flask import Flask, request
 from pathlib import Path
 import subprocess
 import os
+from botcommands.youtube_dlp import get_meta, get_mp4
+from flask import send_file
 
 app = Flask(__name__)
 
@@ -13,6 +15,18 @@ app = Flask(__name__)
 def hello_world():
     # send_msg("Hello worldddd")
     return "<p>Hello, World!</p>"
+
+
+@app.route('/ytv')
+def ytv():
+    url = request.args.get('url')
+    payload = get_mp4(url)
+    print(payload)
+    try:
+        return send_file(payload['file'],
+                         attachment_filename='v.mp4')
+    except Exception as e:
+        return jsonify(payload)
 
 
 def send_msg(msg):
