@@ -7,6 +7,7 @@ import subprocess
 import os
 from botcommands.youtube_dlp import get_meta, get_mp4
 from flask import send_file
+from yt_dlp.utils import DownloadError
 
 app = Flask(__name__)
 
@@ -21,8 +22,13 @@ def hello_world():
 def ytv():
     if request.args.get('url'):
         url = request.args.get('url')
-        payload = get_mp4(url)
+        try:
+            payload = get_mp4(url)
         # print(payload)
+        except DownloadError as e:
+            payload = {'Error': e}
+            return jsonify(payload)
+
         try:
             return send_file(payload['file'],
                              attachment_filename='v.mp4')
