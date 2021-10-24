@@ -19,14 +19,17 @@ def hello_world():
 
 @app.route('/ytv')
 def ytv():
-    url = request.args.get('url')
-    payload = get_mp4(url)
-    print(payload)
-    try:
-        return send_file(payload['file'],
-                         attachment_filename='v.mp4')
-    except Exception as e:
-        return jsonify(payload)
+    if request.args.get('url'):
+        url = request.args.get('url')
+        payload = get_mp4(url)
+        # print(payload)
+        try:
+            return send_file(payload['file'],
+                             attachment_filename='v.mp4')
+        except Exception as e:
+            return jsonify(payload)
+    else:
+        return '<p>Wat?</p>'
 
 
 def send_msg(msg):
