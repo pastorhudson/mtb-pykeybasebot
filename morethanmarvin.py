@@ -105,9 +105,9 @@ async def handler(bot, event):
         {"name": "chuck",
          "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
          "usage": "Optional: <name> OR bomb if nothing is given a member of this channel will be selected at random."},
-        {"name": "covid",
-         "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
-         "usage": "<State> <County> <- Optional Fields"},
+        # {"name": "covid",
+        #  "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
+        #  "usage": "<State> <County> <- Optional Fields"},
         {"name": "cow",
          "description": f"Now I can't even explain this. You are a monster. Optional Characters: {get_characters()}",
          "usage": "<character> <msg>"},
@@ -144,9 +144,9 @@ async def handler(bot, event):
         {"name": "payout",
          "description": "Pays out a wager.",
          "usage": "<#wager> <True/False>"},
-        {"name": "pollresult",
-         "description": "RealClear Politics National and Pennsylvania Poll Results.",
-         "usage": ""},
+        # {"name": "pollresult",
+        #  "description": "RealClear Politics National and Pennsylvania Poll Results.",
+        #  "usage": ""},
         {"name": "screenshot",
          "description": "Forces me go to a url and send a screenshot.",
          "usage": "<url>"},
@@ -174,9 +174,9 @@ async def handler(bot, event):
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
-        {"name": "vac",
-         "description": "Get Vaccine Distributation data from health.pa.gov",
-         "usage": ""},
+        # {"name": "vac",
+        #  "description": "Get Vaccine Distributation data from health.pa.gov",
+        #  "usage": ""},
         {"name": "wager",
          "description": "Forces me to setup a silly bet with points that don't matter.",
          "usage": "<points wagered> <The Event or Thing your betting upon>"},
@@ -355,12 +355,8 @@ async def handler(bot, event):
                         pass
 
     if event.msg.content.type_name == 'reaction':
-        # if event.msg.content.reaction.body == ":books:":
-        #     print('BOOKS')
-        #     tldr_length = 7
-        #     await tldr_react(event, bot, tldr_length)
+
         if event.msg.content.reaction.body == ":notebook:":
-            print('NOTEBOOK')
             tldr_length = 3
             await tldr_react(event, bot, tldr_length)
 
