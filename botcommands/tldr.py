@@ -12,49 +12,62 @@ import re
 load_dotenv('../secret.env')
 
 
-def get_smmry_txt(url, length=7):
-    article = get_text(url)
-    if len(article.text) == 0:
-        raise SmmryAPIException
+def get_smmry_txt(url, length=4, text=None):
+    if url:
+        text = get_text(url).text
+        if len(text) == 0:
+            raise SmmryAPIException
+
     api_key = os.environ.get('SMMRY_API_KEY')
-    payload = {'sm_api_input': article.text,
+    payload = {'sm_api_input': text,
                'SM_LENGTH': length,
                'SM_KEYWORD_COUNT': 12}
-    surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH=5&SM_KEYWORD_COUNT=12"
+    surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH={length}&SM_KEYWORD_COUNT={payload['SM_KEYWORD_COUNT']}"
     r = requests.post(surl, payload)
     print(r.json())
     meta = r.json()
-    meta['authors'] = ", ".join([x for x in article.authors])
-    meta['title'] = article.title
-    meta['img'] = article.top_img
+    # meta['authors'] = ", ".join([x for x in article.authors])
+    # meta['title'] = article.title
+    # meta['img'] = article.top_img
     try:
         if "TEXT IS TOO SHORT" in r.json()['sm_api_message']:
-            if len(article.text) > 0:
+            if len(text) > 0:
                 return {f'sm_api_content_reduced': f'0%',
-                            'sm_api_content': article.text,
-                        'author': article.authors,
-                        'img': article.top_img,
-                        'title': article.title,
-                        "movies": article.movies}
+                            'sm_api_content': text,
+                        # 'author': article.authors,
+                        # 'img': article.top_img,
+                        # 'title': article.title,
+                        # "movies": article.movies
+                }
     except Exception as e:
         return meta
 
 
-def get_tldr(url, length=7):
+def get_tldr(url=None, length=7, text=None, sender=None):
     tldr = ""
     observations = ["I'm sorry I'm such a failure.",
                     "I'm so sorry you have to read all these words.",
                     "I hope this makes you happy because I'm not.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
     try:
-        s = get_smmry_txt(url, length)
-        tldr = "\n".join(
-            [f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
-             # s['img'],
-             "```",
-             s['title'],
-             # s['authors'],
-             str(s['sm_api_content']), "```"])
+        s = get_smmry_txt(url, length, text)
+        if sender:
+            tldr = "\n".join(
+                [
+                    f"Here's my tl;dr of @{sender} 's words I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
+                    # s['img'],
+                    "```",
+                    # s['title'],
+                    # s['authors'],
+                    str(s['sm_api_content']), "```"])
+        else:
+            tldr = "\n".join(
+                [f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
+                 # s['img'],
+                 "```",
+                 # s['title'],
+                 # s['authors'],
+                 str(s['sm_api_content']), "```"])
 
     except SmmryAPIException:
         errors = ["You have burned out my eyes sending me this page. I hope you're happy",
@@ -93,6 +106,7 @@ async def tldr_react(event, bot, tldr_length):
         msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
         # pprint(msg.message[0]['msg']['reactions'])
         original_body = msg.message[0]['msg']['content']['text']['body']
+        original_sender = msg.message[0]['msg']['sender']['username']
         original_msg_id = msg.message[0]['msg']['id']
         reactions = msg.message[0]['msg']['reactions']
         reaction_list = []
@@ -116,9 +130,16 @@ async def tldr_react(event, bot, tldr_length):
 
         else:
             urls = re.findall(r'(https?://[^\s]+)', original_body)
+            if urls:
+                print('Found URL')
+                tldr_payload = get_tldr(urls[0], tldr_length)
+
+            else:
+                print(original_body)
+                tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
+
             await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
             try:
-                tldr_payload = get_tldr(urls[0], tldr_length)
                 await bot.chat.send(conversation_id, tldr_payload)
 
             except IndexError as e:
