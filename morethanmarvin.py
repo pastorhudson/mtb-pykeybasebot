@@ -354,6 +354,51 @@ async def handler(bot, event):
                     except IndexError as e:
                         pass
 
+    if event.msg.content.type_name == 'reaction':
+        if event.msg.content.reaction.body == ":books:":
+            tldr_length = 7
+        if event.msg.content.reaction.body == ":notebook:":
+            tldr_length = 3
+            if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
+                return
+            else:
+                conversation_id = event.msg.conv_id
+
+                msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+                # pprint(msg.message[0]['msg']['reactions'])
+                original_body = msg.message[0]['msg']['content']['text']['body']
+                original_msg_id = msg.message[0]['msg']['id']
+                reactions = msg.message[0]['msg']['reactions']
+                reaction_list = []
+                for key, value in reactions.items():
+                    for k, v in value.items():
+                        # print(v)
+                        try:
+                            if v['users']['marvn']:
+
+                                reaction_list.append(k)
+                        except KeyError:
+                            pass
+                print(reaction_list)
+                if ':floppy_disk:' in reaction_list:
+                    team_name = event.msg.channel.name
+                    # print("found floppy")
+                    fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :books:"
+                    score = write_score(event.msg.sender.username, 'marvn',
+                                        team_name, -10, description=fail_msg)
+                    await bot.chat.send(conversation_id, fail_msg)
+
+                else:
+                    print('Still going')
+
+                    urls = re.findall(r'(https?://[^\s]+)', original_body)
+                    await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                    try:
+                        tldr_payload = get_tldr(urls[0], tldr_length)
+                        await bot.chat.send(conversation_id, tldr_payload)
+
+                    except IndexError as e:
+                        pass
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return

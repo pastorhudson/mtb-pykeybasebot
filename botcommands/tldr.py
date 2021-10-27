@@ -9,13 +9,13 @@ import requests
 load_dotenv('../secret.env')
 
 
-def get_smmry_txt(url):
+def get_smmry_txt(url, length=7):
     article = get_text(url)
     if len(article.text) == 0:
         raise SmmryAPIException
     api_key = os.environ.get('SMMRY_API_KEY')
     payload = {'sm_api_input': article.text,
-               'SM_LENGTH': 7,
+               'SM_LENGTH': length,
                'SM_KEYWORD_COUNT': 12}
     surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH=5&SM_KEYWORD_COUNT=12"
     r = requests.post(surl, payload)
@@ -37,14 +37,14 @@ def get_smmry_txt(url):
         return meta
 
 
-def get_tldr(url):
+def get_tldr(url, length=7):
     tldr = ""
     observations = ["I'm sorry I'm such a failure.",
                     "I'm so sorry you have to read all these words.",
                     "I hope this makes you happy because I'm not.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
     try:
-        s = get_smmry_txt(url)
+        s = get_smmry_txt(url, length)
         tldr = "\n".join(
             [f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
              # s['img'],
