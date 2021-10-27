@@ -122,7 +122,7 @@ async def tldr_react(event, bot, tldr_length):
                 except KeyError:
                     pass
         print(reaction_list)
-        if ':floppy_disk:' in reaction_list:
+        if ':notebook:' in reaction_list:
             team_name = event.msg.channel.name
             # print("found floppy")
             fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :notebook:"
@@ -141,7 +141,7 @@ async def tldr_react(event, bot, tldr_length):
                 print(original_body)
                 tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
 
-            await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+            await bot.chat.react(conversation_id, original_msg_id, ":notebook:")
             try:
                 await bot.chat.send(conversation_id, tldr_payload)
 

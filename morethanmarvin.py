@@ -241,7 +241,7 @@ async def handler(bot, event):
                         except KeyError:
                             pass
                 print(reaction_list)
-                if ':floppy_disk:' in reaction_list:
+                if ':tv:' in reaction_list:
                     team_name = event.msg.channel.name
                     # print("found floppy")
                     fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
@@ -251,7 +251,7 @@ async def handler(bot, event):
 
                 else:
                     urls = re.findall(r'(https?://[^\s]+)', original_body)
-                    await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                    await bot.chat.react(conversation_id, original_msg_id, ":tv:")
                     ytv_payload = get_mp4(urls[0])
                     if ytv_payload['file']:
                         ytv_msg = ytv_payload['msg']
@@ -291,7 +291,7 @@ async def handler(bot, event):
                         except KeyError:
                             pass
                 print(reaction_list)
-                if ':floppy_disk:' in reaction_list:
+                if ':headphones:' in reaction_list:
                     team_name = event.msg.channel.name
                     # print("found floppy")
                     fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :headphones:"
@@ -301,7 +301,7 @@ async def handler(bot, event):
 
                 else:
                     urls = re.findall(r'(https?://[^\s]+)', original_body)
-                    await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                    await bot.chat.react(conversation_id, original_msg_id, ":headphones:")
                     ytv_payload = get_mp3(urls[0])
                     if ytv_payload['file']:
                         ytv_msg = ytv_payload['msg']
@@ -343,7 +343,7 @@ async def handler(bot, event):
                         except KeyError:
                             pass
                 print(reaction_list)
-                if ':floppy_disk:' in reaction_list:
+                if ':camera:' in reaction_list:
                     team_name = event.msg.channel.name
                     # print("found floppy")
                     fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :camera:"
@@ -355,7 +355,7 @@ async def handler(bot, event):
                     print('Still going')
 
                     urls = re.findall(r'(https?://[^\s]+)', original_body)
-                    await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
+                    await bot.chat.react(conversation_id, original_msg_id, ":camera:")
                     try:
                         screenshot_payload = get_screenshot(urls[0])
                         if screenshot_payload['file']:
