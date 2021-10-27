@@ -30,7 +30,7 @@ def get_smmry_txt(url, length=4, text=None):
     # meta['title'] = article.title
     # meta['img'] = article.top_img
     try:
-        if "TEXT IS TOO SHORT" in r.json()['sm_api_message']:
+        if "TEXT IS TOO SHORT" in r.json()['sm_api_message'] or "SOURCE IS TOO SHORT" in r.json()['sm_api_message']:
             if len(text) > 0:
                 return {f'sm_api_content_reduced': f'0%',
                             'sm_api_content': text,
@@ -147,6 +147,7 @@ async def tldr_react(event, bot, tldr_length):
 
 
 if __name__ == "__main__":
+
     pass
     # print(get_tldr('https://www.chicagotribune.   com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
