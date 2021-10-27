@@ -150,7 +150,6 @@ async def tldr_react(event, bot, tldr_length):
 
 
 if __name__ == "__main__":
-
     pass
     # print(get_tldr('https://www.chicagotribune.   com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))

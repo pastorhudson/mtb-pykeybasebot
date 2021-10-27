@@ -2,6 +2,8 @@ import feedparser
 import random
 import requests
 from pathlib import Path
+from newspaper import Article
+from dotenv import load_dotenv
 
 storage = Path('./storage')
 print(storage.absolute())
@@ -46,9 +48,19 @@ def get_meh(observation=True):
 
     msg += "```\n"
     msg += meh['entries'][0]['links'][0]['href'] + "\n"
-    download_img(img)
+    download_img(get_image())
     return msg
 
 
+def get_image():
+    article = Article('https://meh.com')
+    article.download()
+    article.parse()
+    # print(article.title)
+    # print(article.text)
+    return article.top_img
+
+
 if __name__ == '__main__':
+    get_image()
     print(get_meh(observation=False))
