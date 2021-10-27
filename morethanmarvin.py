@@ -225,7 +225,10 @@ async def handler(bot, event):
 
                 msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
                 # pprint(msg.message[0]['msg']['reactions'])
-                original_body = msg.message[0]['msg']['content']['text']['body']
+                try:
+                    original_body = msg.message[0]['msg']['content']['text']['body']
+                except KeyError:
+                    original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
                 original_msg_id =msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
                 reaction_list = []
@@ -271,7 +274,11 @@ async def handler(bot, event):
 
                 msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
                 # pprint(msg.message[0]['msg']['reactions'])
-                original_body = msg.message[0]['msg']['content']['text']['body']
+                """Handle text on attachments"""
+                try:
+                    original_body = msg.message[0]['msg']['content']['text']['body']
+                except KeyError:
+                    original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
                 original_msg_id =msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
                 reaction_list = []
@@ -318,7 +325,11 @@ async def handler(bot, event):
 
                 msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
                 # pprint(msg.message[0]['msg']['reactions'])
-                original_body = msg.message[0]['msg']['content']['text']['body']
+                # print(msg.message[0]['msg']['content']['attachment']['object']['title'])
+                try:
+                    original_body = msg.message[0]['msg']['content']['text']['body']
+                except KeyError:
+                    original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
                 original_msg_id = msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
                 reaction_list = []

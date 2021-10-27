@@ -105,7 +105,10 @@ async def tldr_react(event, bot, tldr_length):
 
         msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
         # pprint(msg.message[0]['msg']['reactions'])
-        original_body = msg.message[0]['msg']['content']['text']['body']
+        try:
+            original_body = msg.message[0]['msg']['content']['text']['body']
+        except KeyError:
+            original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
         original_sender = msg.message[0]['msg']['sender']['username']
         original_msg_id = msg.message[0]['msg']['id']
         reactions = msg.message[0]['msg']['reactions']
