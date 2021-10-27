@@ -355,12 +355,14 @@ async def handler(bot, event):
                         pass
 
     if event.msg.content.type_name == 'reaction':
-        if event.msg.content.reaction.body == ":books:":
-            tldr_length = 7
-            tldr_react(event, bot, tldr_length)
+        # if event.msg.content.reaction.body == ":books:":
+        #     print('BOOKS')
+        #     tldr_length = 7
+        #     await tldr_react(event, bot, tldr_length)
         if event.msg.content.reaction.body == ":notebook:":
+            print('NOTEBOOK')
             tldr_length = 3
-            tldr_react(event, bot, tldr_length)
+            await tldr_react(event, bot, tldr_length)
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return

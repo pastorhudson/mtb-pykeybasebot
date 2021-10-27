@@ -84,7 +84,7 @@ def get_text(url=None):
     return article
 
 
-def tldr_react(event, bot, tldr_length):
+async def tldr_react(event, bot, tldr_length):
     if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
         return
     else:
@@ -108,14 +108,13 @@ def tldr_react(event, bot, tldr_length):
         if ':floppy_disk:' in reaction_list:
             team_name = event.msg.channel.name
             # print("found floppy")
-            fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :books:"
+            fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :notebook:"
             score = write_score(event.msg.sender.username, 'marvn',
                                 team_name, -10, description=fail_msg)
             await bot.chat.send(conversation_id, fail_msg)
+            return
 
         else:
-            print('Still going')
-
             urls = re.findall(r'(https?://[^\s]+)', original_body)
             await bot.chat.react(conversation_id, original_msg_id, ":floppy_disk:")
             try:
