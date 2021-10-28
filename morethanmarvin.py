@@ -678,7 +678,7 @@ async def handler(bot, event):
 
         ytv_payload = get_mp4(urls[0])
         if ytv_payload['file']:
-            await bot.chat.react(conversation_id, event.msg.id, ":tv:")
+            await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
     if str(event.msg.content.text.body).startswith('!vac'):
         channel = event.msg.channel
@@ -852,7 +852,7 @@ async def handler(bot, event):
             yt_msg = yt_payload['msg']
 
             await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
-            await bot.chat.react(conversation_id, event.msg.id, ":tv:")
+            await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
         else:
             yt_payload = get_meta(yt_urls[0])
@@ -866,7 +866,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
 
         # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+        await bot.chat.react(conversation_id, event.msg.id, ":tv:")
 
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
                                  " I'll be in my room complaining.",
