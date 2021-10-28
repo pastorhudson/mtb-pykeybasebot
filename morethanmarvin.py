@@ -218,7 +218,7 @@ async def handler(bot, event):
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":tv:":
-            if event.msg.sender.username != 'marvn' or event.msg.sender.username != 'morethanmarvin':
+            if event.msg.sender.username != 'marvn' and event.msg.sender.username != 'morethanmarvin':
                 conversation_id = event.msg.conv_id
 
                 msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
@@ -260,7 +260,7 @@ async def handler(bot, event):
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":headphones:":
-            if event.msg.sender.username != 'marvn' or event.msg.sender.username != 'morethanmarvin':
+            if event.msg.sender.username != 'marvn' and event.msg.sender.username != 'morethanmarvin':
                 conversation_id = event.msg.conv_id
 
                 msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
@@ -304,7 +304,7 @@ async def handler(bot, event):
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":camera:":
-            if event.msg.sender.username != 'marvn' or event.msg.sender.username != 'morethanmarvin':
+            if event.msg.sender.username != 'marvn' and event.msg.sender.username != 'morethanmarvin':
                 conversation_id = event.msg.conv_id
 
                 msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
@@ -844,8 +844,8 @@ async def handler(bot, event):
         await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
 
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        # await bot.chat.react(conversation_id, event.msg.id, ":tv:")
+        # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        await bot.chat.react(conversation_id, event.msg.id, ":tv:")
 
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
                                  " I'll be in my room complaining.",
