@@ -844,8 +844,8 @@ async def handler(bot, event):
         await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
 
-        # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        await bot.chat.react(conversation_id, event.msg.id, ":tv:")
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        # await bot.chat.react(conversation_id, event.msg.id, ":tv:")
 
         ytv_fail_observations = [" A brain the size of a planet and you pick this task.",
                                  " I'll be in my room complaining.",
