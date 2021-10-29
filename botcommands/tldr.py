@@ -1,7 +1,6 @@
-from botcommands.scorekeeper import write_score
 from smmryAPI.smmryapi import SmmryAPI, SmmryAPIException
 import os
-from newspaper import Article
+from newspaper import Article, ArticleException
 from dotenv import load_dotenv
 import random
 import requests
@@ -81,23 +80,27 @@ def get_tldr(url=None, length=7, text=None, sender=None):
 
 
 def get_text(url=None):
-    article = Article(url)
-    article.download()
-    article.parse()
-    # print(article.title)
-    # print(article.top_img)
-    # print(article.authors)
-    # print(article.movies)
     try:
+        article = Article(url)
+        article.download()
+        article.parse()
+        # print(article.title)
+        # print(article.top_img)
+        # print(article.authors)
+        # print(article.movies)
         article.nlp()
-        print(f"Length of Article: {len(article.text)}")
 
-    except Exception as e:
-        pass
+    except ArticleException as a:
+        raise SmmryAPIException
+        # article = a
+        # print(a)
+
     return article
 
 
 async def tldr_react(event, bot, tldr_length):
+    from botcommands.scorekeeper import write_score
+
     if event.msg.sender.username == 'marvn' or event.msg.sender.username == 'morethanmarvin':
         return
     else:
@@ -146,11 +149,13 @@ async def tldr_react(event, bot, tldr_length):
                 await bot.chat.send(conversation_id, tldr_payload)
 
             except IndexError as e:
+
                 pass
 
 
 if __name__ == "__main__":
     pass
+    # print(get_tldr('https://screenrant.com/windows-11-taskbar-drag-and-drop-removed-bring-back-how/'))
     # print(get_tldr('https://www.chicagotribune.   com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/joe-biden-democrats-economy-supply-chain-donald-trump-2022-midterms/index.html'))
