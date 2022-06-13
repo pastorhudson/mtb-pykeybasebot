@@ -577,8 +577,10 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = make_poll(event.msg.content.text.body)
-        event = await bot.chat.send(conversation_id, msg[0])
-        print(event)
+        poll_msg = await bot.chat.send(conversation_id, msg[0])
+        for emoji in msg[1]:
+            await bot.chat.react(conversation_id, poll_msg.message_id, emoji)
+
 
     if str(event.msg.content.text.body).startswith("!set"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
