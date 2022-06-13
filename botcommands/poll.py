@@ -15,17 +15,16 @@ def get_moji(num):
 
 
 def make_poll(command):
-    command = command.split("\"")
-    if not len(command) > 1:
-        command = command[0].split("”")
-    print(command)
+    split_command = command.split("\"")
+    if not len(split_command) > 1:
+        split_command = command.split("”")
     try:
-        msg = f"Stupid Poll: {command[1]}\n"
+        msg = f"Stupid Poll: {split_command[1]}\n"
     except IndexError:
         return ["\n".join(["`You have failed.", '!poll "Should we move the office to a beach?" "Yes" "No"`']), []]
     option_num = 1
     emojis = []
-    for index, option in enumerate(command[2:]):
+    for index, option in enumerate(split_command[2:]):
         if option != " " and option != "":
             msg += f":{get_moji(option_num)}: {option}\n"
             emojis.append(f":{get_moji(option_num)}:")
