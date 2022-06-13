@@ -16,8 +16,11 @@ def get_moji(num):
 
 def make_poll(command):
     command = command.split("\"")
-          # .split("\""))
-    msg = f"Stupid Poll: {command[1]}\n"
+    print(command)
+    try:
+        msg = f"Stupid Poll: {command[1]}\n"
+    except IndexError:
+        return "\n".join(["You have failed.", '!poll "Should we move the office to a beach?" "Yes" "No"'])
     option_num = 1
     for index, option in enumerate(command[2:]):
         if option != " " and option != "":
@@ -28,4 +31,4 @@ def make_poll(command):
 
 
 if __name__ == "__main__":
-    make_poll('!poll "Should @pastorhudson change his profile picture?" "Definitely!" "Absolutely!" "Of course he should!"')
+    print(make_poll('!poll "Should we move the office to a beach?" "Yes" "No"'))
