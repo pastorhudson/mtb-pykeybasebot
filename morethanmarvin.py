@@ -141,6 +141,9 @@ async def handler(bot, event):
         {"name": "morningreport",
          "description": "Gets today's morning report.",
          "usage": ""},
+        {"name": "poll",
+         "description": "Start a poll",
+         "usage": "!poll -q Question Text? -s start time in ISO 8601 format -e end time in iso 8601 format -o comma separated list of options"},
         {"name": "payout",
          "description": "Pays out a wager.",
          "usage": "<#wager> <True/False>"},
@@ -566,6 +569,13 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         polls = get_poll_result(channel)
         await bot.chat.send(conversation_id, polls)
+
+    if str(event.msg.content.text.body).startswith("!poll"):
+        channel = event.msg.channel.name
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        await bot.chat.send(conversation_id, "Incorrect syntax please check the timestamp format.")
 
     if str(event.msg.content.text.body).startswith("!set"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
