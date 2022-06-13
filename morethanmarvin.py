@@ -584,7 +584,6 @@ async def handler(bot, event):
             for emoji in poll[1]:
                 await bot.chat.react(conversation_id, poll_msg.message_id, emoji)
 
-
     if str(event.msg.content.text.body).startswith("!set"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
         if event.msg.sender.username != 'pastorhudson':
