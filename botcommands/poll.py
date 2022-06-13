@@ -16,7 +16,7 @@ def get_moji(num):
 
 def make_poll(command):
     s = command.replace("”", '\"')
-    s = command.replace("“", '\"')
+    s = s.replace("“", '\"')
     split_command = s.split("\"")
     # print(split_command)
     # if not len(split_command) > 1:
@@ -38,7 +38,7 @@ def make_poll(command):
 
 
 if __name__ == "__main__":
-    s = '!poll “Does this work?” “Ya of course” “No”'
+    s = '!poll “Does IPhone ruin everything?” “yes” “No”'
 
     print(make_poll(s))
     # s = '!poll "Will we ever use this?" "Probably not" "You literally wasted an hour of your life" "This is @sakanakami fault"'
