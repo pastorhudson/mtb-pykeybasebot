@@ -26,7 +26,7 @@ def make_poll(command):
     for index, option in enumerate(command[2:]):
         if option != " " and option != "":
             msg += f":{get_moji(option_num)}: {option}\n"
-            emojis.append(get_moji(option_num))
+            emojis.append(get_moji(f":{option_num}:"))
             option_num += 1
 
     return msg, emojis
