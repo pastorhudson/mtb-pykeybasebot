@@ -45,6 +45,7 @@ from botcommands.update_vaccine import get_vaccine_data
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.files import get_files
+from botcommands.poll import make_poll
 # import webhooks
 
 # from botcommands.rickroll import get_rickroll
@@ -143,7 +144,7 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "poll",
          "description": "Start a poll",
-         "usage": "!poll -q Question Text? -s start time in ISO 8601 format -e end time in iso 8601 format -o comma separated list of options"},
+         "usage": '!poll "Should we deactivate our neural engines?" "Yes" "No"'},
         {"name": "payout",
          "description": "Pays out a wager.",
          "usage": "<#wager> <True/False>"},
@@ -571,11 +572,12 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, polls)
 
     if str(event.msg.content.text.body).startswith("!poll"):
+        await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
         channel = event.msg.channel.name
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        await bot.chat.send(conversation_id, "Incorrect syntax please check the timestamp format.")
+        msg = make_poll(event.msg.content.text.body)
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!set"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
