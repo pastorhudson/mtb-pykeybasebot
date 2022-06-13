@@ -20,7 +20,7 @@ def make_poll(command):
     try:
         msg = f"Stupid Poll: {command[1]}\n"
     except IndexError:
-        return ["\n".join(["You have failed.", '!poll "Should we move the office to a beach?" "Yes" "No"']), []]
+        return ["\n".join(["`You have failed.", '!poll "Should we move the office to a beach?" "Yes" "No"`']), []]
     option_num = 1
     emojis = []
     for index, option in enumerate(command[2:]):
