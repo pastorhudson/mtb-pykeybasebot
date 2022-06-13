@@ -144,7 +144,7 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "poll",
          "description": "Start a poll",
-         "usage": '!poll "Should we deactivate our neural engines?" "Yes" "No"'},
+         "usage": '"Should we deactivate our neural engines?" "Yes" "No"'},
         {"name": "payout",
          "description": "Pays out a wager.",
          "usage": "<#wager> <True/False>"},
@@ -577,7 +577,7 @@ async def handler(bot, event):
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         msg = make_poll(event.msg.content.text.body)
-        event = await bot.chat.send(conversation_id, msg)
+        event = await bot.chat.send(conversation_id, msg[0])
         print(event)
 
     if str(event.msg.content.text.body).startswith("!set"):
