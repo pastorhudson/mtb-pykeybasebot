@@ -16,6 +16,8 @@ def get_moji(num):
 
 def make_poll(command):
     command = command.split("\"")
+    if not len(command) > 1:
+        command = command[0].split("”")
     print(command)
     try:
         msg = f"Stupid Poll: {command[1]}\n"
@@ -33,4 +35,4 @@ def make_poll(command):
 
 
 if __name__ == "__main__":
-    print(make_poll('!poll "Should we move the office to a beach?" "Yes" "No"'))
+    print(make_poll('!poll “Does this work?” “Ya of course” “No”'))
