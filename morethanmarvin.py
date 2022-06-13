@@ -576,10 +576,13 @@ async def handler(bot, event):
         channel = event.msg.channel.name
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
-        msg = make_poll(event.msg.content.text.body)
-        poll_msg = await bot.chat.send(conversation_id, msg[0])
-        for emoji in msg[1]:
-            await bot.chat.react(conversation_id, poll_msg.message_id, emoji)
+        poll = make_poll(event.msg.content.text.body)
+        if not poll[1]:
+            await bot.chat.send(conversation_id, poll[0])
+        else:
+            poll_msg = await bot.chat.send(conversation_id, poll[0])
+            for emoji in poll[1]:
+                await bot.chat.react(conversation_id, poll_msg.message_id, emoji)
 
 
     if str(event.msg.content.text.body).startswith("!set"):
