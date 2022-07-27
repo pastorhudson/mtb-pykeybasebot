@@ -108,4 +108,6 @@ newspaper3k
 yt-dlp
 flask
 gunicorn
+openai
+icecream
 # Flask-SQLAlchemy
