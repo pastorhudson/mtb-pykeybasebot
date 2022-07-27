@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 
 from sqlalchemy import func
 
-from botcommands.natural_chat import get_convo
+from botcommands.natural_chat import get_chat
 from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.tldr import get_tldr, tldr_react
@@ -407,7 +407,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("@marvn"):
         conversation_id = event.msg.conv_id
         # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        msg = get_convo(str(event.msg.content.text.body)[7:])
+        msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!bible"):

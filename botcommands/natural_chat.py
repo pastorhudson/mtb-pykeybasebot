@@ -47,16 +47,6 @@ def get_chat(prompt):
         presence_penalty=0
     )
 
-    # response = openai.Completion.create(
-    #     model="text-davinci-002",
-    #     prompt=get_convo(prompt),
-    #     temperature=0.5,
-    #     max_tokens=60,
-    #     top_p=1,
-    #     frequency_penalty=0.5,
-    #     presence_penalty=0,
-    #     stop=["You:"]
-    # )
     friend = response['choices'][0]['text'].replace('\n', "")
     append_convo(f"{friend}\n")
     return response['choices'][0]['text'].split("Marv: ")[1]
@@ -64,5 +54,5 @@ def get_chat(prompt):
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
-    prompt = "What can you do?"
+    prompt = "are you awake?"
     print(get_chat(prompt))
