@@ -11,7 +11,7 @@ def read_convo():
                 data = data.split("\n")
                 ic(data)
     except FileNotFoundError:
-        data = []
+        data = ["Marv is a chatbot that reluctantly answers questions with sarcastic responses:\n"]
     return data
 
 
@@ -37,17 +37,26 @@ def append_convo(data):
 
 def get_chat(prompt):
     openai.api_key = os.getenv("OPENAI_API_KEY")
-
     response = openai.Completion.create(
         model="text-davinci-002",
         prompt=get_convo(prompt),
         temperature=0.5,
         max_tokens=60,
-        top_p=1,
+        top_p=0.3,
         frequency_penalty=0.5,
-        presence_penalty=0,
-        stop=["You:"]
+        presence_penalty=0
     )
+
+    # response = openai.Completion.create(
+    #     model="text-davinci-002",
+    #     prompt=get_convo(prompt),
+    #     temperature=0.5,
+    #     max_tokens=60,
+    #     top_p=1,
+    #     frequency_penalty=0.5,
+    #     presence_penalty=0,
+    #     stop=["You:"]
+    # )
     friend = response['choices'][0]['text'].replace('\n', "")
     append_convo(f"Friend: {friend}\n")
     return response['choices'][0]['text']
@@ -55,5 +64,5 @@ def get_chat(prompt):
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
-    prompt = "I guess it's red on the inside."
+    prompt = "How many pounds are in a kilo?"
     ic(get_chat(prompt))
