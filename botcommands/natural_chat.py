@@ -58,11 +58,11 @@ def get_chat(prompt):
     #     stop=["You:"]
     # )
     friend = response['choices'][0]['text'].replace('\n', "")
-    append_convo(f"Friend: {friend}\n")
-    return response['choices'][0]['text']
+    append_convo(f"{friend}\n")
+    return response['choices'][0]['text'].split("Marv: ")[1]
 
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
-    prompt = "How many pounds are in a kilo?"
-    ic(get_chat(prompt))
+    prompt = "What can you do?"
+    print(get_chat(prompt))
