@@ -44,7 +44,7 @@ def get_chat(prompt):
         model="text-davinci-002",
         prompt=seed + get_convo(prompt),
         temperature=0.5,
-        max_tokens=100,
+        max_tokens=500,
         top_p=0.3,
         frequency_penalty=0.5,
         presence_penalty=0
