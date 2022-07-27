@@ -53,7 +53,7 @@ def get_chat(prompt):
     friend = response['choices'][0]['text'].replace('\n', "")
     append_convo(f"{friend}\n")
     try:
-        return response['choices'][0]['text'].split("Marv:")[1].strip()
+        return response['choices'][0]['text'].split("Marvn:")[1].strip()
     except:
         return response['choices'][0]['text'].strip()
 
