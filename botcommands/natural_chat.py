@@ -11,7 +11,7 @@ def read_convo():
                 data = data.split("\n")
                 ic(data)
     except FileNotFoundError:
-        data = ["Marv is a chatbot that reluctantly answers questions with sarcastic responses:\n"]
+        data = []
     return data
 
 
@@ -36,10 +36,11 @@ def append_convo(data):
 
 
 def get_chat(prompt):
+    seed = "Marv is a chatbot that reluctantly answers questions with sarcastic and depressing responses:"
     openai.api_key = os.getenv("OPENAI_API_KEY")
     response = openai.Completion.create(
         model="text-davinci-002",
-        prompt=get_convo(prompt),
+        prompt=seed + get_convo(prompt),
         temperature=0.5,
         max_tokens=60,
         top_p=0.3,
