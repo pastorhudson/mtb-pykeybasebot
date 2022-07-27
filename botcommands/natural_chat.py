@@ -1,15 +1,17 @@
-import io
 import os
 import openai
 from icecream import ic
+from pathlib import Path
+
+storage = Path('./storage')
 
 
 def read_convo():
     try:
-        with open("convo.txt", 'r') as file:  # Use file to refer to the file object
-                data = file.read()
-                data = data.split("\n")
-                ic(data)
+        with open(f"{storage.absolute()}/convo.txt", 'r') as file:  # Use file to refer to the file object
+            data = file.read()
+            data = data.split("\n")
+            ic(data)
     except FileNotFoundError:
         data = []
     return data
@@ -24,13 +26,13 @@ def get_convo(prompt):
 
 
 def write_convo(data):
-    with open("convo.txt", 'w') as file:  # Use file to refer to the file object
+    with open(f"{storage.absolute()}/convo.txt", 'w') as file:  # Use file to refer to the file object
         file.write("\n".join(data))
     return "\n".join(data)
 
 
 def append_convo(data):
-    with open("convo.txt", 'a') as file:  # Use file to refer to the file object
+    with open(f"{storage.absolute()}/convo.txt", 'a') as file:  # Use file to refer to the file object
         file.write(data)
     return None
 
