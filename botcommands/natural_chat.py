@@ -52,10 +52,10 @@ def get_chat(prompt):
 
     friend = response['choices'][0]['text'].replace('\n', "")
     append_convo(f"{friend}\n")
-    return response['choices'][0]['text'].split("Marv: ")[1]
+    return response['choices'][0]['text'].split("Marv:")[1].strip()
 
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
-    prompt = "are you awake?"
+    prompt = "did ron make a mistake creating you?"
     print(get_chat(prompt))
