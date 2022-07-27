@@ -52,10 +52,14 @@ def get_chat(prompt):
 
     friend = response['choices'][0]['text'].replace('\n', "")
     append_convo(f"{friend}\n")
-    return response['choices'][0]['text'].split("Marv:")[1].strip()
+    try:
+        return response['choices'][0]['text'].split("Marv:")[1].strip()
+    except:
+        return response['choices'][0]['text'].strip()
 
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
-    prompt = "did ron make a mistake creating you?"
+    prompt = "Correct this to standard English:\n\n" \
+             "My no want new baby."
     print(get_chat(prompt))
