@@ -14,7 +14,10 @@ payload = {}
 def is_supported(url):
     extractors = yt_dlp.extractor.gen_extractors()
     for e in extractors:
-        if e.suitable(url) and e.IE_NAME != 'generic':
+        # print(e.suitable(url))
+        # if e.suitable(url) and e.IE_NAME != 'generic':
+        if e.suitable(url):
+
             return True
     return False
 
@@ -245,5 +248,6 @@ def get_meta(url):
 
 
 if __name__ == '__main__':
-    print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
+    # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
+    print(get_mp4('https://fb.watch/ffze_0l5DD/'))
     pass
