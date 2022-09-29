@@ -946,7 +946,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         try:
-            state = str(event.msg.content.text.body)[7:]
+            state = str(event.msg.content.text.body)[7:].strip()
             waffles_msg = get_waffle_closings(state)
         except:
             waffles_msg = get_waffle_closings()
