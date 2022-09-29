@@ -16,6 +16,7 @@ from botcommands.tldr import get_tldr, tldr_react
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
+from botcommands.waffle_house import get_waffle_closings
 from pykeybasebot import Bot
 from botcommands.youtube import get_video, get_mp3, get_domain
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta, is_supported
@@ -182,6 +183,9 @@ async def handler(bot, event):
         # {"name": "vac",
         #  "description": "Get Vaccine Distributation data from health.pa.gov",
         #  "usage": ""},
+        {"name": "waffle",
+         "description": "Get the currently closed Waffle Houses",
+         "usage": "Optional <state>"},
         {"name": "wager",
          "description": "Forces me to setup a silly bet with points that don't matter.",
          "usage": "<points wagered> <The Event or Thing your betting upon>"},
@@ -937,6 +941,16 @@ async def handler(bot, event):
             msg = get_till(team_name=team_name)
         finally:
             await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith('!waffle'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        try:
+            state = str(event.msg.content.text.body)[7:]
+            waffles_msg = get_waffle_closings(state)
+        except:
+            waffles_msg = get_waffle_closings()
+        my_msg = await bot.chat.send(conversation_id, waffles_msg)
 
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id
