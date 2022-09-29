@@ -7,9 +7,9 @@ def get_waffle_closings(state: str = None):
     x.field_names = ["Store", "State", "City"]
     msg = f"```Waffle House Index\nCurrently Closed Waffle House Locations:\n"
     for store in get_waffles(state)['stores']:
-        x.add_row([store['name'], store['state'], store['city']])
-    x.align = "r"
-    x.padding_width = 2
+        x.add_row([f"#{store['name'].split('#')[1]}", store['state'], store['city']])
+    x.align = "l"
+    x.padding_width = 1
     x.sortby = "State"
     x.reversesort = True
     print(x)
@@ -29,3 +29,5 @@ def get_waffles(state: str = None):
 
 if __name__ == '__main__':
     print(get_waffle_closings())
+    # print('!waffle fl'[7:].strip())
+    # print(f'Waffle House #703'.split('#')[1])
