@@ -176,14 +176,13 @@ def get_youtube_tldr(video_url):
     txt_formatted = formatter.format_transcript(transcript)
     rpunct = RestorePuncts()
     punctuated_txt = rpunct.punctuate(txt_formatted)
-    # return punctuated_txt
 
-    return get_tldr(length=5, text=punctuated_txt, url=None)
+    return punctuated_txt
 
 
 if __name__ == "__main__":
     # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
-    print(get_youtube_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
+    print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
     # print(get_tldr('https://spectrum.ieee.org/in-2016-microsofts-racist-chatbot-revealed-the-dangers-of-online-conversation'))
     # print(get_tldr('https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
