@@ -683,9 +683,9 @@ async def handler(bot, event):
         tldr = get_tldr(urls[0])
         await bot.chat.send(conversation_id, tldr)
 
-        ytv_payload = get_mp4(urls[0])
-        if ytv_payload['file']:
-            await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
+        # ytv_payload = get_mp4(urls[0])
+        # if ytv_payload['file']:
+        #     await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
     if str(event.msg.content.text.body).startswith('!vac'):
         channel = event.msg.channel

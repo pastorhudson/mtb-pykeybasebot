@@ -1,17 +1,12 @@
-from pprint import pprint
-
-from yt_dlp import DownloadError
-
-from smmryAPI.smmryapi import SmmryAPI, SmmryAPIException
+from smmryAPI.smmryapi import SmmryAPIException
 import os
-from newspaper import Article, ArticleException, Config
+from newspaper import Article, ArticleException
 from dotenv import load_dotenv
 import random
 import requests
 import re
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
-import json
 import yt_dlp
 from deepmultilingualpunctuation import PunctuationModel
 
@@ -21,8 +16,10 @@ load_dotenv('../secret.env')
 def get_smmry_txt(url, length=4, text=None):
     if url:
         if any(ext in url for ext in ['youtube.com', 'youtu.be']):
+            print("I think this is youtube.")
             text = get_youtube_tldr(url)
         else:
+            print("This is not youtube")
             text = get_text(url).text
         if len(text) == 0:
             raise SmmryAPIException
@@ -187,7 +184,7 @@ def get_youtube_tldr(video_url):
 
 
 if __name__ == "__main__":
-    # print(get_tldr('https://www.cnn.com/2022/09/30/politics/justice-ketanji-brown-jackson-investitutre/index.html'))
+    # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
     print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
     # print(get_tldr('https://spectrum.ieee.org/in-2016-microsofts-racist-chatbot-revealed-the-dangers-of-online-conversation'))
     # print(get_tldr('https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
