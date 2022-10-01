@@ -33,7 +33,6 @@ def get_smmry_txt(url, length=4, text=None):
                'SM_KEYWORD_COUNT': 12}
     surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH={length}&SM_KEYWORD_COUNT={payload['SM_KEYWORD_COUNT']}"
     r = requests.post(surl, payload)
-    # print(r.json())
     meta = r.json()
     # meta['authors'] = ", ".join([x for x in article.authors])
     # meta['title'] = article.title
@@ -107,10 +106,8 @@ def get_text(url=None):
         # print(article.authors)
         # print(article.movies)
         article.nlp()
-        # print(article.download_exception_msg)
 
     except ArticleException as a:
-        # print(a)
         raise SmmryAPIException
 
     return article
@@ -125,7 +122,6 @@ async def tldr_react(event, bot, tldr_length):
         conversation_id = event.msg.conv_id
 
         msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
-        # pprint(msg.message[0]['msg']['reactions'])
         try:
             original_body = msg.message[0]['msg']['content']['text']['body']
         except KeyError:
@@ -136,16 +132,13 @@ async def tldr_react(event, bot, tldr_length):
         reaction_list = []
         for key, value in reactions.items():
             for k, v in value.items():
-                # print(v)
                 try:
                     if v['users']['marvn']:
                         reaction_list.append(k)
                 except KeyError:
                     pass
-        # print(reaction_list)
         if ':notebook:' in reaction_list:
             team_name = event.msg.channel.name
-            # print("found floppy")
             fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :notebook:"
             score = write_score(event.msg.sender.username, 'marvn',
                                 team_name, -10, description=fail_msg)
@@ -155,11 +148,9 @@ async def tldr_react(event, bot, tldr_length):
         else:
             urls = re.findall(r'(https?://[^\s]+)', original_body)
             if urls:
-                # print('Found URL')
                 tldr_payload = get_tldr(urls[0], tldr_length)
 
             else:
-                # print(original_body)
                 tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
 
             await bot.chat.react(conversation_id, original_msg_id, ":notebook:")
@@ -197,7 +188,7 @@ def get_youtube_tldr(video_url):
 
 if __name__ == "__main__":
     # print(get_tldr('https://www.cnn.com/2022/09/30/politics/justice-ketanji-brown-jackson-investitutre/index.html'))
-    # print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
+    print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
     # print(get_tldr('https://spectrum.ieee.org/in-2016-microsofts-racist-chatbot-revealed-the-dangers-of-online-conversation'))
     # print(get_tldr('https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
@@ -205,7 +196,7 @@ if __name__ == "__main__":
     # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
     # print(get_tldr('https://pastorhudson.com/blog/2019/4/7/aay2jryefexlpc1vj9zk4rdkznpifl'))
     # print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
-    print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
+    # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
     # url = 'https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'
     # article = Article(url)
     # article.download()
