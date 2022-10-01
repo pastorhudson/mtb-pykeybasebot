@@ -179,7 +179,7 @@ def get_youtube_tldr(video_url):
     formatter = TextFormatter()
     txt_formatted = formatter.format_transcript(transcript)
     rpunct = RestorePuncts()
-    punctuated_txt = rpunct(txt_formatted)
+    punctuated_txt = rpunct.punctuate(txt_formatted)
 
     return get_tldr(length=2, text=punctuated_txt, url=None)
 
