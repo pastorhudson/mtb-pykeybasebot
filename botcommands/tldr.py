@@ -8,7 +8,7 @@ import re
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
 import yt_dlp
-from deepmultilingualpunctuation import PunctuationModel
+from rpunct import RestorePuncts
 
 load_dotenv('../secret.env')
 
@@ -178,7 +178,8 @@ def get_youtube_tldr(video_url):
     transcript = YouTubeTranscriptApi.get_transcript(video_id)
     formatter = TextFormatter()
     txt_formatted = formatter.format_transcript(transcript)
-    punctuated_txt = punctuate_txt(txt_formatted)
+    rpunct = RestorePuncts()
+    punctuated_txt = rpunct(txt_formatted)
 
     return get_tldr(length=2, text=punctuated_txt, url=None)
 
