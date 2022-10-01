@@ -175,7 +175,7 @@ def get_mp4(url):
         ydl.add_post_processor(MyCustomPP())
 
         yt_info = ydl.extract_info(url)
-        # pprint(yt_info)
+        pprint(yt_info)
         # pprint(ydl.sanitize_info(yt_info))
     return payload
 
@@ -249,5 +249,5 @@ def get_meta(url):
 
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
-    print(get_mp4('https://fb.watch/ffze_0l5DD/'))
+    print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
     pass
