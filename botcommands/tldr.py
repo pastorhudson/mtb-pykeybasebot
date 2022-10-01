@@ -7,8 +7,6 @@ import requests
 import re
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.formatters import TextFormatter
-import yt_dlp
-from rpunct import RestorePuncts
 
 load_dotenv('../secret.env')
 
@@ -160,6 +158,8 @@ async def tldr_react(event, bot, tldr_length):
 
 
 def get_youtube_id(url):
+    import yt_dlp
+
     # ℹ️ See help(yt_dlp.YoutubeDL) for a list of available options and public functions
     ydl_opts = {}
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -167,26 +167,23 @@ def get_youtube_id(url):
         return info['id']
 
 
-def punctuate_txt(txt):
-    model = PunctuationModel()
-    result = model.restore_punctuation(txt)
-    return result
-
-
 def get_youtube_tldr(video_url):
+    from rpunct import RestorePuncts
+
     video_id = get_youtube_id(video_url)
     transcript = YouTubeTranscriptApi.get_transcript(video_id)
     formatter = TextFormatter()
     txt_formatted = formatter.format_transcript(transcript)
     rpunct = RestorePuncts()
     punctuated_txt = rpunct.punctuate(txt_formatted)
+    # return punctuated_txt
 
-    return get_tldr(length=2, text=punctuated_txt, url=None)
+    return get_tldr(length=5, text=punctuated_txt, url=None)
 
 
 if __name__ == "__main__":
     # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
-    print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
+    print(get_youtube_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
     # print(get_tldr('https://spectrum.ieee.org/in-2016-microsofts-racist-chatbot-revealed-the-dangers-of-online-conversation'))
     # print(get_tldr('https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
