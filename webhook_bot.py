@@ -14,7 +14,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    # send_msg("Hello worldddd")
+    try:
+        send_msg("Hello worldddd")
+    except Exception as e:
+        pass
     return "<p>Hello, World!</p>"
 
 
