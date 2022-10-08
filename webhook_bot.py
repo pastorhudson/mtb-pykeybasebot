@@ -48,7 +48,7 @@ def send_msg(msg):
         "options": {"channel": {"name": f"{you},{them}"}, "message": {"body": msg}}}}
     print(payload)
     print(['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
-    subprocess.run(args=['./keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
+    subprocess.run(args=['env KEYBASE_ALLOW_ROOT=1 & ','./keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
 
 
 if __name__ == '__main__':
