@@ -23,13 +23,14 @@ def marvn_draw(prompt):
     marvn_prompt = f"depressing, hopeless, sad, dark, lonley {prompt}"
     return generate_image(marvn_prompt)
 
+
 def generate_image(prompt):
     print(f"Got the prompt: {prompt}")
     # the object returned is a python generator
     answers = stability_api.generate(
         prompt=prompt,
         # seed=0,  # if provided, specifying a random seed makes results deterministic
-        steps=30,  # defaults to 50 if not specified
+        steps=50,  # defaults to 50 if not specified
     )
 
     # iterating over the generator produces the api response
