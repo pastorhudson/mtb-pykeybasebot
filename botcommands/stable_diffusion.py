@@ -1,7 +1,6 @@
 import io
 import os
 import warnings
-import random
 
 from PIL import Image
 from stability_sdk import client
