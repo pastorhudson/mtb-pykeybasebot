@@ -30,21 +30,24 @@ def generate_image(prompt):
 
     # iterating over the generator produces the api response
     payload = {}
-    for resp in answers:
-        for artifact in resp.artifacts:
-            if artifact.finish_reason == generation.FILTER:
-                warnings.warn(
-                    "Your request activated the API's safety filters and could not be processed."
-                    "Please modify the prompt and try again.")
-                payload = {"msg": f"The prompt:{prompt} activated the API's safety filters and could not be processed."}
+    try:
+        for resp in answers:
+            for artifact in resp.artifacts:
+                if artifact.finish_reason == generation.FILTER:
+                    warnings.warn(
+                        "Your request activated the API's safety filters and could not be processed."
+                        "Please modify the prompt and try again.")
 
-            if artifact.type == generation.ARTIFACT_IMAGE:
-                img = Image.open(io.BytesIO(artifact.binary))
-                img.save(f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png")
-        payload = {"msg": prompt, "file": f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png"}
+                if artifact.type == generation.ARTIFACT_IMAGE:
+                    img = Image.open(io.BytesIO(artifact.binary))
+                    img.save(f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png")
+            payload = {"msg": prompt, "file": f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png"}
+    except Exception as e:
+        payload = {"msg": f"The prompt:'{prompt}' activated the API's safety filters and could not be processed."}
+
     print(f"payload: {payload}")
     return payload
 
 
 if __name__ == "__main__":
-    print(generate_image("the personification of the country germany, highly detailed, digital painting, artstation, concept art, sharp focus, illustration, art by greg rutkowski and alphonse mucha "))
+    print(generate_image("naked lady"))
