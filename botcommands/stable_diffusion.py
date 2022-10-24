@@ -47,7 +47,7 @@ def generate_image(prompt):
                     img.save(f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png")
             payload = {"msg": prompt, "file": f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png"}
     except Exception as e:
-        payload = {"msg": f"The prompt:'{prompt}' activated the API's safety filters and could not be processed.",
+        payload = {"msg": f"The prompt: `{prompt}` activated the API's safety filters and could not be processed.",
                    "file": False}
 
     print(f"payload: {payload}")
