@@ -25,6 +25,7 @@ from botcommands.get_screenshot import get_screenshot
 from botcommands.virustotal import get_scan
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
+from botcommands.stable_diffusion import generate_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
@@ -114,6 +115,9 @@ async def handler(bot, event):
         {"name": "cow",
          "description": f"Now I can't even explain this. You are a monster. Optional Characters: {get_characters()}",
          "usage": "<character> <msg>"},
+        {"name": "draw",
+         "description": "Forces me to draw a picture.",
+         "usage": "<prompt>"},
         {"name": "drwho",
          "description": "Return Dr Who Episode.",
          "usage": "<ep_id> OR <Ep Title>"},
@@ -465,6 +469,18 @@ async def handler(bot, event):
 
         msg = get_cow(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith('!draw'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        prompt = event.msg.content.text.body[7:]
+        draw_payload = generate_image(prompt)
+        if draw_payload['file']:
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=draw_payload['file'],
+                                  title=draw_payload['msg'])
 
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
