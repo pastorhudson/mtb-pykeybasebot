@@ -473,7 +473,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!draw'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        prompt = event.msg.content.text.body[7:]
+        prompt = event.msg.content.text.body[6:]
         draw_payload = generate_image(prompt)
         if draw_payload['file']:
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")

@@ -43,7 +43,7 @@ def generate_image(prompt):
                 img = Image.open(io.BytesIO(artifact.binary))
                 img.save(f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png")
         payload = {"msg": prompt, "file": f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png"}
-
+    print(f"payload: {payload}")
     return payload
 
 
