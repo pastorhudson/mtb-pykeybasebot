@@ -481,6 +481,8 @@ async def handler(bot, event):
             await bot.chat.attach(channel=conversation_id,
                                   filename=draw_payload['file'],
                                   title=draw_payload['msg'])
+        else:
+            await bot.chat.send(conversation_id, draw_payload['msg'])
 
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id

@@ -36,6 +36,8 @@ def generate_image(prompt):
                 warnings.warn(
                     "Your request activated the API's safety filters and could not be processed."
                     "Please modify the prompt and try again.")
+                payload = {"msg": f"The prompt:{prompt} activated the API's safety filters and could not be processed."}
+
             if artifact.type == generation.ARTIFACT_IMAGE:
                 img = Image.open(io.BytesIO(artifact.binary))
                 img.save(f"{os.environ.get('SCREENSHOT_DIR')}/genarated.png")
