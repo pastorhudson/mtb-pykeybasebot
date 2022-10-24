@@ -5,17 +5,20 @@ from dotenv import load_dotenv
 import random
 import requests
 import re
-from youtube_transcript_api import YouTubeTranscriptApi
-from youtube_transcript_api.formatters import TextFormatter
+# from youtube_transcript_api import YouTubeTranscriptApi
+# from youtube_transcript_api.formatters import TextFormatter
 
 load_dotenv('../secret.env')
+
+
+class YoutubeError(Exception):
+    pass
 
 
 def get_smmry_txt(url, length=4, text=None):
     if url:
         if any(ext in url for ext in ['youtube.com', 'youtu.be']):
-            print("I think this is youtube.")
-            text = get_youtube_tldr(url)
+            raise YoutubeError
         else:
             print("This is not youtube")
             text = get_text(url).text
@@ -81,6 +84,9 @@ def get_tldr(url=None, length=7, text=None, sender=None):
                   "I did not agree to this many popups.",
                   "I don't want to read that. Can you give a TL;DR?"]
         tldr = random.choice(errors)
+    except YoutubeError:
+
+        tldr = "I don't do youtube anymore. It's too depressing."
     return tldr
 
 
@@ -157,27 +163,27 @@ async def tldr_react(event, bot, tldr_length):
                 pass
 
 
-def get_youtube_id(url):
-    import yt_dlp
+# def get_youtube_id(url):
+#     import yt_dlp
+#
+#     # ℹ️ See help(yt_dlp.YoutubeDL) for a list of available options and public functions
+#     ydl_opts = {}
+#     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+#         info = ydl.extract_info(url, download=False)
+#         return info['id']
 
-    # ℹ️ See help(yt_dlp.YoutubeDL) for a list of available options and public functions
-    ydl_opts = {}
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        return info['id']
 
-
-def get_youtube_tldr(video_url):
-    from rpunct import RestorePuncts
-
-    video_id = get_youtube_id(video_url)
-    transcript = YouTubeTranscriptApi.get_transcript(video_id)
-    formatter = TextFormatter()
-    txt_formatted = formatter.format_transcript(transcript)
-    rpunct = RestorePuncts()
-    punctuated_txt = rpunct.punctuate(txt_formatted)
-
-    return punctuated_txt
+# def get_youtube_tldr(video_url):
+#     from rpunct import RestorePuncts
+#
+#     video_id = get_youtube_id(video_url)
+#     transcript = YouTubeTranscriptApi.get_transcript(video_id)
+#     formatter = TextFormatter()
+#     txt_formatted = formatter.format_transcript(transcript)
+#     rpunct = RestorePuncts()
+#     punctuated_txt = rpunct.punctuate(txt_formatted)
+#
+#     return punctuated_txt
 
 
 if __name__ == "__main__":
