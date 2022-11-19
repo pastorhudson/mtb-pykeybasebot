@@ -919,13 +919,17 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        screenshot_payload = get_screenshot(screenshot_urls[0])
-        if screenshot_payload['file']:
-            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+        try:
+            screenshot_payload = get_screenshot(screenshot_urls[0])
+            if screenshot_payload['file']:
+                await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
 
-            await bot.chat.attach(channel=conversation_id,
-                                  filename=screenshot_payload['file'],
-                                  title=screenshot_payload['msg'])
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=screenshot_payload['file'],
+                                      title=screenshot_payload['msg'])
+        except IndexError:
+            await bot.chat.send(conversation_id, "I couldn't find a url. Try adding `https://` to help me.")
+
 
     if str(event.msg.content.text.body).startswith('!speak'):
         conversation_id = event.msg.conv_id
