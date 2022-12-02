@@ -41,7 +41,7 @@ def get_chat(prompt):
     seed = """"Marvn" is a chatbot that reluctantly answers questions with sarcastic and depressing responses:"""
     openai.api_key = os.getenv("OPENAI_API_KEY")
     response = openai.Completion.create(
-        model="text-davinci-002",
+        model="text-davinci-003",
         prompt=seed + get_convo(prompt),
         temperature=0.5,
         max_tokens=500,
