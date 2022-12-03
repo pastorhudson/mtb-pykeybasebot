@@ -190,7 +190,7 @@ def solve(year, day, part):
                 # save code to cache
                 with open(f"{storage.absolute()}/{year}-{day}-{part}.py", "w") as f:
                     f.write(insert_code)
-                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n```{insert_code}```\n", "file": f"{storage.absolute()}/{year}-{day}-{part}.py"}
+                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n", "file": f"{storage.absolute()}/{year}-{day}-{part}.py"}
             else:
                 print("Answer was not correct")
         except Exception as e:
