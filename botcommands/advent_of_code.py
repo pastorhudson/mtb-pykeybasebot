@@ -201,8 +201,8 @@ def solve(year, day, part):
 
 def tell_solve(year, day, part):
     return solve(year, day, part)
-
-my_str = "!aoc 2021 3 1"
-prompt = my_str[5:].split(" ")
-print(tell_solve(*prompt))
-# print(tell_solve(2021,1,1))
+#
+# my_str = "!aoc 2021 3 1"
+# prompt = my_str[5:].split(" ")
+# print(tell_solve(*prompt))
+# # print(tell_solve(2021,1,1))
