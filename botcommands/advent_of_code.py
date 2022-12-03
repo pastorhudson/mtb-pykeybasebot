@@ -5,15 +5,14 @@ import openai
 import requests
 from bs4 import BeautifulSoup
 import time
-import configparser
-
-config = configparser.ConfigParser()
-config.read('config.ini')
-OPENAI_API_KEY = config['DEFAULT']['OPENAI_API_KEY']
-AOC_SESSION = config["DEFAULT"]["AOC_SESSION"]
-# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-# AOC_SESSION = os.getenv("AOC_SESSION")
-print(AOC_SESSION)
+# import configparser
+#
+# config = configparser.ConfigParser()
+# config.read('config.ini')
+# OPENAI_API_KEY = config['DEFAULT']['OPENAI_API_KEY']
+# AOC_SESSION = config["DEFAULT"]["AOC_SESSION"]
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+AOC_SESSION = os.getenv("AOC_SESSION")
 
 openai.api_key = OPENAI_API_KEY
 
