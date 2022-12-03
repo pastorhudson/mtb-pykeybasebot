@@ -7,11 +7,13 @@ from bs4 import BeautifulSoup
 import time
 import configparser
 
-# config = configparser.ConfigParser()
-# config.read('config.ini')
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-AOC_SESSION = os.getenv("AOC_SESSION")
+config = configparser.ConfigParser()
+config.read('config.ini')
+OPENAI_API_KEY = config['DEFAULT']['OPENAI_API_KEY']
+AOC_SESSION = config["DEFAULT"]["AOC_SESSION"]
+# OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# AOC_SESSION = os.getenv("AOC_SESSION")
+print(AOC_SESSION)
 
 openai.api_key = OPENAI_API_KEY
 
@@ -149,6 +151,9 @@ This part of the puzzle is complete! It provides one gold star: *
 
 
 def solve(year, day, part):
+    year = int(year)
+    day = int(day)
+    part = int(part)
     # main solve function, should work with any year, day and part
     print(f"Solving {year} day {day} part {part}...")
     tries_left = 5
@@ -174,6 +179,7 @@ def solve(year, day, part):
             print(f"answer: {answer}")
             submit_response = submit(answer, session=AOC_SESSION, year=year, day=day, part=str(part), reopen=False,
                                      quiet=True)
+            print(submit_response)
             if submit_response is not None and submit_response.status_code == 200 and "That's the right answer!" in submit_response.text:
                 submit_response.text
                 print("Answer was correct, caching solution")
@@ -181,14 +187,19 @@ def solve(year, day, part):
                 # save code to cache
                 with open(f"{year}-{day}-{part}.py", "w") as f:
                     f.write(insert_code)
-                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n```{insert_code}```\n", }
+                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n```{insert_code}```\n", "file": f"{year}-{day}-{part}.py"}
             else:
                 print("Answer was not correct")
         except Exception as e:
             print(e)
             time.sleep(10)
-    return {"code": "", "message": "I'm so sorry. I failed to solve the puzzle. . ."}
+    return {"code": "", "message": "I'm so sorry. I failed to solve the puzzle. . .", "file": None}
 
 
 def tell_solve(year, day, part):
     return solve(year, day, part)
+
+my_str = "!aoc 2021 2 2"
+prompt = my_str[5:].split(" ")
+print(tell_solve(*prompt))
+# print(tell_solve(2021,1,1))

@@ -434,8 +434,13 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
         # !aoc 2022 1 1
         prompt = str(event.msg.content.text.body)[5:].split(" ")
-        msg = tell_solve(*prompt)["message"]
-        await bot.chat.send(conversation_id, msg)
+        aoc_payload = tell_solve(*prompt)["message"]
+
+        await bot.chat.send(conversation_id, aoc_payload['message'])
+        if aoc_payload['file']:
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=aoc_payload['file'],
+                                  title=f"```{aoc_payload['code']}```")
 
     if str(event.msg.content.text.body).startswith('!canary'):
         vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
