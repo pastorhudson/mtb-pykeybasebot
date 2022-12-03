@@ -5,6 +5,7 @@ from aocd import get_data, submit
 import os
 import openai
 import requests
+from aocd.models import Puzzle
 from bs4 import BeautifulSoup
 import time
 # import configparser
@@ -174,7 +175,9 @@ def solve(year, day, part):
             exec(code, globals())
 
             # get puzzle data
-            data = get_data(session=AOC_SESSION, year=year, day=day).splitlines()
+            puzzle = Puzzle(year=year, day=day)
+            data = puzzle.input_data.split("\n").splitlines()
+            # data = get_data(session=AOC_SESSION, year=year, day=day).splitlines()
 
             # run function
             answer = globals()[fn_name](data)

@@ -432,6 +432,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!aoc"):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
+        await bot.chat.send(conversation_id, "This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
         # !aoc 2022 1 1
         prompt = str(event.msg.content.text.body)[5:].split(" ")
         aoc_payload = tell_solve(*prompt)
