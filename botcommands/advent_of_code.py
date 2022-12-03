@@ -176,7 +176,7 @@ def solve(year, day, part):
 
             # get puzzle data
             puzzle = Puzzle(year=year, day=day)
-            data = puzzle.input_data.split("\n").splitlines()
+            data = puzzle.input_data.splitlines()
             # data = get_data(session=AOC_SESSION, year=year, day=day).splitlines()
 
             # run function
