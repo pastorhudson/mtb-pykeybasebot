@@ -1,4 +1,6 @@
 # %%
+from pathlib import Path
+
 from aocd import get_data, submit
 import os
 import openai
@@ -15,12 +17,14 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 AOC_SESSION = os.getenv("AOC_SESSION")
 
 openai.api_key = OPENAI_API_KEY
+storage = Path('./storage')
 
 
 def get_task_html(year, day, part):
     # fetch the html body for a given year, day and part
 
-    filename = f"{year}-{day}-{part}.html"
+    filename = f"{storage.absolute()}/{year}-{day}-{part}.html"
+    print(filename)
 
     body = None
 
@@ -184,9 +188,9 @@ def solve(year, day, part):
                 print("Answer was correct, caching solution")
                 success = True
                 # save code to cache
-                with open(f"{year}-{day}-{part}.py", "w") as f:
+                with open(f"{storage.absolute()}/{year}-{day}-{part}.py", "w") as f:
                     f.write(insert_code)
-                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n```{insert_code}```\n", "file": f"{year}-{day}-{part}.py"}
+                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n```{insert_code}```\n", "file": f"{storage.absolute()}/{year}-{day}-{part}.py"}
             else:
                 print("Answer was not correct")
         except Exception as e:
@@ -198,7 +202,7 @@ def solve(year, day, part):
 def tell_solve(year, day, part):
     return solve(year, day, part)
 
-my_str = "!aoc 2021 2 2"
+my_str = "!aoc 2021 3 1"
 prompt = my_str[5:].split(" ")
 print(tell_solve(*prompt))
 # print(tell_solve(2021,1,1))
