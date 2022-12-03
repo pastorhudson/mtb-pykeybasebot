@@ -434,7 +434,7 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
         # !aoc 2022 1 1
         prompt = str(event.msg.content.text.body)[5:].split(" ")
-        aoc_payload = tell_solve(*prompt)["message"]
+        aoc_payload = tell_solve(*prompt)
 
         await bot.chat.send(conversation_id, aoc_payload['message'])
         if aoc_payload['file']:
