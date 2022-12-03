@@ -49,6 +49,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.files import get_files
 from botcommands.poll import make_poll
+from botcommands.advent_of_code import tell_solve
 # import webhooks
 
 # from botcommands.rickroll import get_rickroll
@@ -97,6 +98,9 @@ class Points(object):
 
 async def handler(bot, event):
     command_list = [
+        {"name": "aoc",
+         "description": "Make me solve the advent of code puzzle.",
+         "usage": "<year> <day> <part>"},
         {"name": "award",
          "description": "Force me to give completely meaningless points to your comrades.",
          "usage": "<user> <points>"},
@@ -423,6 +427,14 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         passage = str(event.msg.content.text.body)[7:]
         msg = get_esv_text(passage)
+        await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!aoc"):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
+        # !aoc 2022 1 1
+        prompt = str(event.msg.content.text.body)[5:].split(" ")
+        msg = tell_solve(*prompt)["message"]
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!canary'):
