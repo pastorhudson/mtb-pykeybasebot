@@ -434,8 +434,8 @@ async def handler(bot, event):
         prompt = str(event.msg.content.text.body)[5:].split(" ")
 
         await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
-        await bot.chat.send(conversation_id, f"Attempting to solve Advent of Code {prompt[0]} Day:{prompt[1]} Part: {prompt[2]}\n"
-                                             f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}"
+        await bot.chat.send(conversation_id, f"Attempting to solve Advent of Code {prompt[0]} Day: {prompt[1]} Part: {prompt[2]}\n"
+                                             f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}\n"
                                              f"This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
         # !aoc 2022 1 1
         aoc_payload = tell_solve(*prompt)
