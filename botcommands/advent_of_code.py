@@ -8,8 +8,10 @@ import requests
 from aocd.models import Puzzle
 from bs4 import BeautifulSoup
 import time
+from openai.error import RateLimitError
+import backoff
+
 # import configparser
-#
 # config = configparser.ConfigParser()
 # config.read('config.ini')
 # OPENAI_API_KEY = config['DEFAULT']['OPENAI_API_KEY']
@@ -76,6 +78,7 @@ def get_desc(year, day, part):
     return article.text
 
 
+@backoff.on_exception(backoff.expo, RateLimitError)
 def get_solution_code(year, day, part, temperature):
     # if we have a cached valid insert_code, load it
     filename = f"{year}-{day}-{part}.py"
@@ -99,7 +102,7 @@ def get_solution_code(year, day, part, temperature):
         frequency_penalty=0,
         presence_penalty=0
     )
-
+    print(f"This is the response: {response}")
     insert_code = response.choices[0].text
     return insert_code
 
@@ -193,19 +196,22 @@ def solve(year, day, part):
                 # save code to cache
                 with open(f"{storage.absolute()}/{year}-{day}-{part}.py", "w") as f:
                     f.write(insert_code)
-                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n", "file": f"{storage.absolute()}/{year}-{day}-{part}.py"}
+                return {"code": insert_code, "message": f"I solved it with the answer {answer}\n",
+                        "file": f"{storage.absolute()}/{year}-{day}-{part}.py"}
             else:
                 print("Answer was not correct")
         except Exception as e:
             print(e)
-            time.sleep(10)
+            time.sleep(15)
     return {"code": "", "message": "I'm so sorry. I failed to solve the puzzle. . .", "file": None}
 
 
 def tell_solve(year, day, part):
     return solve(year, day, part)
+
+
 #
-# my_str = "!aoc 2021 3 1"
+# my_str = "!aoc 2021 2 1"
 # prompt = my_str[5:].split(" ")
 # print(tell_solve(*prompt))
 # # print(tell_solve(2021,1,1))
