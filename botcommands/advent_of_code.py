@@ -202,7 +202,7 @@ def solve(year, day, part):
                 print("Answer was not correct")
         except Exception as e:
             print(e)
-            time.sleep(15)
+            time.sleep(20)
     return {"code": "", "message": "I'm so sorry. I failed to solve the puzzle. . .", "file": None}
 
 
@@ -214,4 +214,6 @@ def tell_solve(year, day, part):
 # my_str = "!aoc 2021 2 1"
 # prompt = my_str[5:].split(" ")
 # print(tell_solve(*prompt))
-# # print(tell_solve(2021,1,1))
+# print(get_prompt(2021, 2, 1, 1))
+# # print(tell_solve(2021,1,
+# ))
