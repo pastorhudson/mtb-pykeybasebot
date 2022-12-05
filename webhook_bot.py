@@ -21,16 +21,6 @@ def hello_world():
         pass
     return "<p>Hello, World!</p>"
 
-@app.route("/morningreport")
-def morning_report():
-    try:
-        report = get_morningreport('morethanbits')
-    except Exception as e:
-        report = "ERROR"
-        pass
-    return f"<p>{report}</p>"
-
-
 @app.route('/ytv')
 def ytv():
     if request.args.get('url'):
