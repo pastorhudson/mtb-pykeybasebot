@@ -8,6 +8,7 @@ import os
 from botcommands.youtube_dlp import get_meta, get_mp4
 from flask import send_file
 from yt_dlp.utils import DownloadError
+from botcommands.morningreport import get_morningreport
 
 app = Flask(__name__)
 
@@ -19,6 +20,15 @@ def hello_world():
     except Exception as e:
         pass
     return "<p>Hello, World!</p>"
+
+@app.route("/morningreport")
+def morning_report():
+    try:
+        report = get_morningreport('morethanbits')
+    except Exception as e:
+        report = "ERROR"
+        pass
+    return f"<p>{report}</p>"
 
 
 @app.route('/ytv')
