@@ -17,8 +17,14 @@ def get_score(channel_name):
     x.align = "r"
     x.padding_width = 2
     x.sortby = "Score"
-    x.reversesort = True
-    print(x)
+
+    msg += "\n{team.name}\n -- Generosity - -\n"
+    for k, v in team.get_most_generous().items():
+        x.add_row([k.username, v])
+    x.align = "r"
+    x.padding_width = 2
+    x.sortby = "Score"
+
     msg += f"{x}```"
 
     return msg
