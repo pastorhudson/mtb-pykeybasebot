@@ -23,7 +23,7 @@ def get_score(channel_name, year=datetime.datetime.utcnow().year):
     msg += f"\n-- Generosity --\n"
     y = PrettyTable(reversesort=True)
     y.field_names = ["Achiever", "Score", ]
-    for k, v in team.get_most_generous().items():
+    for k, v in team.get_most_generous(year=year).items():
         y.add_row([k.username, v])
     y.align = "r"
     y.padding_width = 2
