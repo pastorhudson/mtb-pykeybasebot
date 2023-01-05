@@ -18,14 +18,18 @@ def get_score(channel_name):
     x.padding_width = 2
     x.sortby = "Score"
 
-    msg += "\n{team.name}\n -- Generosity - -\n"
+    msg += f"{x}"
+
+    msg += f"\n-- Generosity --\n"
+    y = PrettyTable()
+    y.field_names = ["Achiever", "Score", ]
     for k, v in team.get_most_generous().items():
         x.add_row([k.username, v])
-    x.align = "r"
-    x.padding_width = 2
-    x.sortby = "Score"
+    y.align = "r"
+    y.padding_width = 2
+    y.sortby = "Score"
 
-    msg += f"{x}```"
+    msg += f"{y}```"
 
     return msg
 
