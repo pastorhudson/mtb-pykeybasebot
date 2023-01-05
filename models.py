@@ -66,9 +66,6 @@ class Team(Base):
 
         return user_generosity
 
-    def reset_score(self):
-
-
     def get_wagers(self):
         return s.query(Wager).filter(Team.wagers.any(Wager.is_closed==False)).all()
 
