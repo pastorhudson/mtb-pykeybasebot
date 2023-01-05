@@ -1,11 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Boolean, Date, Table, ForeignKey, DateTime, func, Text, and_
+from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
 from crud import s
 import pytz
-from dateutil.tz import tzutc
 
-from datetime import datetime, date, timezone
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -48,7 +47,7 @@ class Team(Base):
 
     def get_score(self):
         user_score = {}
-        for p in self.points.filter(Point.created_at >= datetime.utcnow().replace(year=2022,month=12,day=31,hour=23,minute=59)) :
+        for p in self.points.filter(Point.created_at >= datetime.utcnow().replace(year=2022,month=12,day=31,hour=23,minute=59)):
             try:
                 user_score[p.point_receiver] += p.points
             except KeyError:
@@ -58,7 +57,7 @@ class Team(Base):
 
     def get_most_generous(self):
         user_generosity = {}
-        for p in self.points:
+        for p in self.points.filter(Point.created_at >= datetime.utcnow().replace(year=2022,month=12,day=31,hour=23,minute=59)):
             try:
                 user_generosity[p.point_giver] += p.points
             except KeyError:
