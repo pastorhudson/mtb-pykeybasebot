@@ -36,7 +36,7 @@ class Team(Base):
     users = relationship("User",
                          secondary=association_table,
                          back_populates="teams")
-    points = relationship("Point")
+    points = relationship("Point", cascade="all, delete-orphan", lazy='dynamic', passive_deletes=True)
     wagers = relationship("Wager", order_by="Wager.id")
     tills = relationship("Till", order_by="Till.event", lazy="dynamic")
     location = relationship("Location", lazy="dynamic")
