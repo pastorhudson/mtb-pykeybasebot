@@ -47,16 +47,18 @@ class Team(Base):
 
     def get_score(self, year):
         user_score = {}
-        for p in self.points.filter(
+        for p in self.points.filter(and_(
                 Point.created_at >= datetime.utcnow().replace(year=year -1,
                                                               month=12,
                                                               day=31,
                                                               hour=23,
-                                                              minute=59)) <= datetime.utcnow().replace(year=year,
+                                                              minute=59)),
+                Point.created_at <= datetime.utcnow().replace(year=year,
                                                               month=12,
                                                               day=31,
                                                               hour=23,
-                                                              minute=59):
+                                                              minute=59)
+            ):
             try:
                 user_score[p.point_receiver] += p.points
             except KeyError:
@@ -66,16 +68,18 @@ class Team(Base):
 
     def get_most_generous(self, year):
         user_generosity = {}
-        for p in self.points.filter(
+        for p in self.points.filter(and_(
                 Point.created_at >= datetime.utcnow().replace(year=year -1,
                                                               month=12,
                                                               day=31,
                                                               hour=23,
-                                                              minute=59)) <= datetime.utcnow().replace(year=year,
+                                                              minute=59)),
+                Point.created_at <= datetime.utcnow().replace(year=year,
                                                               month=12,
                                                               day=31,
                                                               hour=23,
-                                                              minute=59):
+                                                              minute=59)
+            ):
             try:
                 user_generosity[p.point_giver] += p.points
             except KeyError:
