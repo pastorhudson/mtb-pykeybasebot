@@ -8,7 +8,7 @@ from prettytable import PrettyTable
 
 
 def get_score(channel_name):
-    x = PrettyTable()
+    x = PrettyTable(reversesort=True)
     x.field_names = ["Achiever", "Score",]
     team = s.query(Team).filter_by(name=channel_name).first()
     msg = f"```{team.name}\n-- Leaderboard --\n"
@@ -21,7 +21,7 @@ def get_score(channel_name):
     msg += f"{x}"
 
     msg += f"\n-- Generosity --\n"
-    y = PrettyTable()
+    y = PrettyTable(reversesort=True)
     y.field_names = ["Achiever", "Score", ]
     for k, v in team.get_most_generous().items():
         y.add_row([k.username, v])
