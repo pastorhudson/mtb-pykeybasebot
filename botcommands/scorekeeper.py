@@ -24,7 +24,7 @@ def get_score(channel_name):
     y = PrettyTable()
     y.field_names = ["Achiever", "Score", ]
     for k, v in team.get_most_generous().items():
-        x.add_row([k.username, v])
+        y.add_row([k.username, v])
     y.align = "r"
     y.padding_width = 2
     y.sortby = "Score"
