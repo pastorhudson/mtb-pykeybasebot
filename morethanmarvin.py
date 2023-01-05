@@ -690,7 +690,7 @@ async def handler(bot, event):
         try:
             year = int(event.msg.content.text.body.split(' ')[1])
             score = get_score(channel_name=channel.name, year=year)
-        except IndexError:
+        except (ValueError, IndexError):
             score = get_score(channel_name=channel.name)
         await bot.chat.send(conversation_id, score)
 
