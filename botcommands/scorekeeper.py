@@ -7,12 +7,12 @@ from models import Point, Team, User
 from prettytable import PrettyTable
 
 
-def get_score(channel_name):
+def get_score(channel_name, year=datetime.datetime.utcnow().year):
     x = PrettyTable(reversesort=True)
     x.field_names = ["Achiever", "Score",]
     team = s.query(Team).filter_by(name=channel_name).first()
     msg = f"```{team.name} {datetime.datetime.utcnow().year}\n-- Leaderboard --\n"
-    for k, v in team.get_score().items():
+    for k, v in team.get_score(year=year).items():
         x.add_row([k.username, v])
     x.align = "r"
     x.padding_width = 2

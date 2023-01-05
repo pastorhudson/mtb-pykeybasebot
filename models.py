@@ -45,10 +45,10 @@ class Team(Base):
     def __repr__(self):
         return self.name
 
-    def get_score(self, year=datetime.utcnow().year - 1):
+    def get_score(self, year):
         user_score = {}
         for p in self.points.filter(
-                Point.created_at >= datetime.utcnow().replace(year=year,
+                Point.created_at >= datetime.utcnow().replace(year=year -1,
                                                               month=12,
                                                               day=31,
                                                               hour=23,

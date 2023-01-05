@@ -678,6 +678,8 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!score"):
         await sync(event=event, bot=bot)
+
+
         channel = event.msg.channel
         msg_id = event.msg.id
         channel_name = str(event.msg.channel.name).replace(",", "")
@@ -685,7 +687,11 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         channel_members = await get_channel_members(conversation_id)
-        score = get_score(channel_name=channel.name)
+        try:
+            year = int(event.msg.content.text.body.split(' ')[1])
+            score = get_score(channel_name=channel.name, year=year)
+        except IndexError:
+            score = get_score(channel_name=channel.name)
         await bot.chat.send(conversation_id, score)
 
     if str(event.msg.content.text.body).startswith("!teams"):
