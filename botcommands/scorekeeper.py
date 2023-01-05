@@ -11,7 +11,7 @@ def get_score(channel_name):
     x = PrettyTable(reversesort=True)
     x.field_names = ["Achiever", "Score",]
     team = s.query(Team).filter_by(name=channel_name).first()
-    msg = f"```{team.name}\n-- Leaderboard --\n"
+    msg = f"```{team.name} {datetime.datetime.utcnow().year}\n-- Leaderboard --\n"
     for k, v in team.get_score().items():
         x.add_row([k.username, v])
     x.align = "r"
