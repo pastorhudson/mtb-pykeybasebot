@@ -384,7 +384,7 @@ async def handler(bot, event):
                        f"Points must be whole numbers.\n" \
                        f"No cutesy extra characters, or I'll deduct from your score.\n" \
                        f"You can't give points to yourself.```\n" \
-                       f"Usage: `!award <user> <points>`"
+                       f"Usage: `!award <@user> <points>`"
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
@@ -392,13 +392,13 @@ async def handler(bot, event):
         team_name = event.msg.channel.name
         description = " ".join(str(event.msg.content.text.body).split(' ')[3:]).strip()
         try:
-            if RepresentsInt(str(event.msg.content.text.body).split(' ')[2]):
-                user = str(event.msg.content.text.body).split(' ')[1].strip("@")
-                points = int(str(event.msg.content.text.body).split(' ')[2])
-            else:
-                user = str(event.msg.content.text.body).split(' ')[2].strip("@")
-                points = int(str(event.msg.content.text.body).split(' ')[1])
-
+            user = None
+            points = None
+            for word in str(event.msg.content.text.body).split(' '):
+                if RepresentsInt(word):
+                    points = int(word)
+                elif word.startswith('@'):
+                    user = str(word.strip("@"))
             if points < 0 and event.msg.sender.username != 'pastorhudson':
                 user = event.msg.sender.username
                 score = write_score(user, event.msg.sender.username, team_name, -5, description=description)
