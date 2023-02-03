@@ -396,9 +396,9 @@ async def handler(bot, event):
             user = None
             points = None
             for word in str(event.msg.content.text.body).split(' '):
-                if RepresentsInt(word):
+                if RepresentsInt(word) and not points:
                     points = int(word)
-                elif word.startswith('@'):
+                elif word.startswith('@') and not user:
                     user = str(word.strip("@").rstrip(punctuation))
             if points < 0 and event.msg.sender.username != 'pastorhudson':
                 user = event.msg.sender.username
