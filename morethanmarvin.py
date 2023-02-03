@@ -8,6 +8,7 @@ from pprint import pprint
 from urllib.parse import urlparse
 
 from sqlalchemy import func
+from string import punctuation
 
 from botcommands.natural_chat import get_chat
 from botcommands.poll_results import get_poll_result
@@ -398,7 +399,7 @@ async def handler(bot, event):
                 if RepresentsInt(word):
                     points = int(word)
                 elif word.startswith('@'):
-                    user = str(word.strip("@"))
+                    user = str(word.strip("@").rstrip(punctuation))
             if points < 0 and event.msg.sender.username != 'pastorhudson':
                 user = event.msg.sender.username
                 score = write_score(user, event.msg.sender.username, team_name, -5, description=description)
