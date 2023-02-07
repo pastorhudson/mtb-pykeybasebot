@@ -99,7 +99,7 @@ class Team(Base):
         generosity = 0
         generosity = self.get_most_generous(year)
         score = self.get_score(year)
-        for k in generosity:
+        for k in leading_person:
             try:
                 score = score[k]
             except KeyError:
