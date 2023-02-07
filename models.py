@@ -102,16 +102,11 @@ class Team(Base):
         print("Score", score)
         for k in leading_person:
             try:
-                print(score[k])
-                score = score[k]
-            except KeyError:
-                pass
-            try:
-                generosity = generosity[k]
-            except KeyError:
-                pass
-            finally:
-                leading_person[k] = generosity + score / 2
+                leading_person[k] = generosity[k] + score[k] / 2
+
+            except Exception as e:
+                print(type(e))
+                print(e)
         return leading_person
 
 
