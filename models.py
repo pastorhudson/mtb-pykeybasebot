@@ -89,12 +89,21 @@ class Team(Base):
 
     def get_leading_person(self,year):
         leading_person = {}
+        score = 0
+        generosity = 0
         generosity = self.get_most_generous(year)
         score = self.get_score(year)
         for k in generosity.keys():
-
-            leading_person[k] = generosity[k] + score[k] / 2
-
+            try:
+                score = score[k]
+            except KeyError:
+                pass
+            try:
+                generosity = generosity[k]
+            except KeyError:
+                pass
+            finally:
+                leading_person[k] = generosity + score / 2
         return leading_person
 
 
