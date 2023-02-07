@@ -95,12 +95,14 @@ class Team(Base):
         leading_person = {}
         for user in self.users:
             leading_person[user] = 0
-        score = 0
-        generosity = 0
         generosity = self.get_most_generous(year)
+        print("Generosity", generosity)
         score = self.get_score(year)
+
+        print("Score", score)
         for k in leading_person:
             try:
+                print(score[k])
                 score = score[k]
             except KeyError:
                 pass
