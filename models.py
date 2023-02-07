@@ -99,7 +99,7 @@ class Team(Base):
         score = self.get_score(year)
         for k in leading_person:
             try:
-                leading_person[k] = int(generosity[k] + score[k] / 2)
+                leading_person[k] = int((generosity[k] + score[k]) / 2)
             except Exception as e:
                 print(type(e))
                 print(e)
