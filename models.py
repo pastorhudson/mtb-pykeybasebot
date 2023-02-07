@@ -48,7 +48,7 @@ class Team(Base):
     def get_score(self, year):
         user_score = {}
         for user in self.users:
-            user_score[user.username] = 0
+            user_score[user] = 0
         for p in self.points.filter(and_(
                 Point.created_at >= datetime.utcnow().replace(year=year -1,
                                                               month=12,
@@ -71,7 +71,7 @@ class Team(Base):
     def get_most_generous(self, year):
         user_generosity = {}
         for user in self.users:
-            user_generosity[user.username] = 0
+            user_generosity[user] = 0
         for p in self.points.filter(and_(
                 Point.created_at >= datetime.utcnow().replace(year=year -1,
                                                               month=12,
@@ -94,7 +94,7 @@ class Team(Base):
     def get_leading_person(self,year):
         leading_person = {}
         for user in self.users:
-            leading_person[user.username] = 0
+            leading_person[user] = 0
         score = 0
         generosity = 0
         generosity = self.get_most_generous(year)
