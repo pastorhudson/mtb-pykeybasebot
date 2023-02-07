@@ -96,14 +96,10 @@ class Team(Base):
         for user in self.users:
             leading_person[user] = 0
         generosity = self.get_most_generous(year)
-        print("Generosity", generosity)
         score = self.get_score(year)
-
-        print("Score", score)
         for k in leading_person:
             try:
-                leading_person[k] = generosity[k] + score[k] / 2
-
+                leading_person[k] = int(generosity[k] + score[k] / 2)
             except Exception as e:
                 print(type(e))
                 print(e)

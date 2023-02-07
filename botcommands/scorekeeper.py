@@ -40,7 +40,7 @@ def get_score(channel_name, year=datetime.datetime.utcnow().year):
     y.padding_width = 2
     y.sortby = "Score"
 
-    msg += f"{y}"
+    msg += f"{y}```"
 
     return msg
 
