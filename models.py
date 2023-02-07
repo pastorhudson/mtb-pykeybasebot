@@ -95,6 +95,7 @@ class Team(Base):
         leading_person = {}
         for user in self.users:
             leading_person[user] = 0
+        print(leading_person)
         generosity = self.get_most_generous(year)
         score = self.get_score(year)
         for k in leading_person:
