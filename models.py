@@ -87,6 +87,17 @@ class Team(Base):
 
         return user_generosity
 
+    def get_leading_person(self,year):
+        leading_person = {}
+        generosity = self.get_most_generous(year)
+        score = self.get_score(year)
+        for k in generosity.keys():
+
+            leading_person[k] = generosity[k] + score[k] / 2
+
+        return leading_person
+
+
     def get_wagers(self):
         return s.query(Wager).filter(Team.wagers.any(Wager.is_closed==False)).all()
 
