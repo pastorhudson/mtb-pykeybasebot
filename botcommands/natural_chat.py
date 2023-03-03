@@ -57,6 +57,26 @@ def get_chat(prompt):
     except:
         return response['choices'][0]['text'].strip()
 
+def get_marvn_reaction(username, msg):
+    seed = f""""Marvn" is a chatbot that reluctantly answers questions with sarcastic and depressing responses:  @{username}: {msg} """
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=seed,
+        temperature=0.5,
+        max_tokens=500,
+        top_p=0.3,
+        frequency_penalty=0.5,
+        presence_penalty=0
+    )
+
+    friend = response['choices'][0]['text'].replace('\n', "")
+    append_convo(f"{friend}\n")
+    try:
+        return response['choices'][0]['text'].split("Marvn:")[1].strip()
+    except:
+        return response['choices'][0]['text'].strip()
+
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
