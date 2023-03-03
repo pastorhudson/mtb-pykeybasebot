@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 from sqlalchemy import func
 from string import punctuation
 
-from botcommands.natural_chat import get_chat
+from botcommands.natural_chat import get_chat, get_marvn_reaction
 from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.tldr import get_tldr, tldr_react
@@ -228,6 +228,23 @@ async def handler(bot, event):
                         raise ValueError
                     msg = make_bet(team_name, username, points, position, wager_id)
                     await bot.chat.edit(event.msg.conv_id, msg_id, msg)
+                except ValueError as e:
+                    print(e)
+                    print("ValueError")
+                except AttributeError:
+                    pass
+
+    if event.msg.content.type_name == 'reaction':
+        if event.msg.content.reaction.body == ":marvin:":
+            if event.msg.sender.username != 'marvn' or event.msg.sender.username != 'morethanmarvin':
+
+                try:
+                    username = event.msg.sender.username
+                    conversation_id = event.msg.conv_id
+
+                    msg = get_marvn_reaction(username, event.msg.content.text.body)
+                    await bot.chat.send(conversation_id, msg)
+
                 except ValueError as e:
                     print(e)
                     print("ValueError")
