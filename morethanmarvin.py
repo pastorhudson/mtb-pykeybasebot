@@ -238,6 +238,13 @@ async def handler(bot, event):
         if event.msg.content.reaction.body == ":marvin:":
             if event.msg.sender.username != 'marvn' or event.msg.sender.username != 'morethanmarvin':
 
+                msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+                """Handle text on attachments"""
+                try:
+                    original_body = msg.message[0]['msg']['content']['text']['body']
+                except KeyError:
+                    original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
+
                 try:
                     username = event.msg.sender.username
                     conversation_id = event.msg.conv_id
