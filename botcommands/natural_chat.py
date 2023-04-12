@@ -48,7 +48,7 @@ def get_chat(prompt):
             {"role": "user", "content": prompt }
         ],
         temperature=0.5,
-        max_tokens=8192,
+
         top_p=0.3,
         frequency_penalty=0.5,
         presence_penalty=0
