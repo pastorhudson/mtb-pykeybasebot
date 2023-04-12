@@ -54,12 +54,12 @@ def get_chat(prompt):
         presence_penalty=0
     )
 
-    friend = response['choices'][0]['text'].replace('\n', "")
+    friend = response.choices[0].message
     append_convo(f"{friend}\n")
     try:
-        return response['choices'][0]['text'].split("Marvn:")[1].strip()
+        return response.choices[0].message.split("Marvn:")[1].strip()
     except:
-        return response['choices'][0]['text'].strip()
+        return response.choices[0].message.strip()
 
 def get_marvn_reaction(username, msg):
     seed = f""""Marvn" is a chatbot that reluctantly answers questions with sarcastic and depressing responses:  @{username}: {msg} """
