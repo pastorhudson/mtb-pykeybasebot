@@ -17,9 +17,9 @@ def read_convo():
     return data
 
 
-def get_convo(prompt):
+def get_convo():
     data = read_convo()
-    data.append(f"You: {prompt}\n")
+    # data.append(f"You: {prompt}\n")
     ic(data)
     write_convo(data)
     return "\n".join(data)
@@ -42,7 +42,11 @@ def get_chat(prompt):
     openai.api_key = os.getenv("OPENAI_API_KEY")
     response = openai.ChatCompletion.create(
         model="gpt-4",
-        prompt=seed + get_convo(prompt),
+        messages=[
+            {"role": "system", "content": seed},
+            {"role": "context", "content": get_convo()},
+            {"role": "user", "content": prompt }
+        ],
         temperature=0.5,
         max_tokens=8192,
         top_p=0.3,
