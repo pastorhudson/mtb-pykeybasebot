@@ -44,7 +44,7 @@ def get_chat(prompt):
         model="gpt-4",
         messages=[
             {"role": "system", "content": seed},
-            {"role": "context", "content": get_convo()},
+            {"role": "user", "content": get_convo()},
             {"role": "user", "content": prompt }
         ],
         temperature=0.5,
