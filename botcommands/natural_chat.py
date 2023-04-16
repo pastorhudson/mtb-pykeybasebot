@@ -38,7 +38,7 @@ def append_convo(data):
 
 
 def get_chat(prompt):
-    seed = """"Marvn" is a chatbot that reluctantly answers questions with sarcastic and depressing responses:"""
+    seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
     openai.api_key = os.getenv("OPENAI_API_KEY")
     response = openai.ChatCompletion.create(
         model="gpt-4",
@@ -47,7 +47,7 @@ def get_chat(prompt):
             {"role": "user", "content": get_convo()},
             {"role": "user", "content": prompt }
         ],
-        temperature=0.5,
+        temperature=0.7,
 
         top_p=0.3,
         frequency_penalty=0.5,
