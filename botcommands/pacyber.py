@@ -145,8 +145,7 @@ def get_academic_snapshot():
 
                     last_activity = get_last_activity(activity_table_id, s)
             try:
-                msg += '```'
-                msg += "\n".join([f"Subject: {row[2]}",
+                msg += "\n".join([f"```Subject: {row[2]}",
                                   f"Score: {row[5].split(' ')[0] or None}",
                                   f"Progress: {row[6]}",
                                   f"Last Date: {last_activity[0]}",
@@ -154,6 +153,7 @@ def get_academic_snapshot():
                                   ])
                 # msg += '```'
             except IndexError:
+                print('Error')
                 pass
         msg += f"Total Assignments Completed Today: {assignments_completed_today}"
         return msg
