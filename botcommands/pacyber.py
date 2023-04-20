@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import unicodedata
 from datetime import datetime
+from datetime import date
 
 """ Copy and rename the secrets_env template in this repo to secrets.env.
     Add your own login and password for https://myschool.pacyber.org"""
@@ -38,8 +39,11 @@ login_data = dict(__VIEWSTATE=None,
                   tbPassword=tbPassword,
                   btLogin="")  # We'll populate this below after we initilize the session.
 
+assignments_completed_today = 0
 
 def get_last_activity(event_target, s):
+    global assignments_completed_today
+    cur_assignments_completed = 0
     data = {
         "ctl00$sm": f"ctl00$ContentPlaceHolder1$GradebookInfo1$updatePanelGridViewCourses | ctl00$ContentPlaceHolder1$GradebookInfo1$gvCourses$ctl{event_target}$MyRadioButton1",
         "__EVENTTARGET": f"ctl00$ContentPlaceHolder1$GradebookInfo1$gvCourses$ctl{event_target}$MyRadioButton1",
@@ -77,6 +81,9 @@ def get_last_activity(event_target, s):
                     cur_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
                 if last_date < cur_date:
                     last_date = cur_date
+                if cur_date.date() == date.today():
+                    assignments_completed_today += 1
+                    cur_assignments_completed += 1
                 # print(f"Current Date: {cur_date} - "
                 #       f"Last Date: {last_date} - {row[-1:]}")
             except Exception as e:
@@ -93,10 +100,11 @@ def get_last_activity(event_target, s):
         last_date = f"{last_date.strftime('%b %m, %Y')} ({days} days)"
     except:
         days = 'NA'
-    return last_date
+    return last_date, cur_assignments_completed
 
 
 def get_academic_snapshot():
+    global assignments_completed_today
     with requests.Session() as s:
         """Open a requests session, Store the correct auth headers."""
         url = 'https://myschool.pacyber.org/Login.aspx' # Login URL
@@ -141,17 +149,20 @@ def get_academic_snapshot():
                 msg += "\n".join([f"Subject: {row[2]}",
                                   f"Score: {row[5].split(' ')[0] or None}",
                                   f"Progress: {row[6]}",
-                                  f"Last Date: {last_activity}",
+                                  f"Last Date: {last_activity[0]}",
+                                  f"Completed Today: {last_activity[1]}",
                                   "\n"])
             except IndexError:
                 pass
+        msg += f"Total Assignments Completed Today: {assignments_completed_today}"
         return msg
 
 
 if __name__ == "__main__":
+    # print(date.today())
     print(get_academic_snapshot())
     # day1 = 'Mar 10, 2023'
-    # day2 = 'Apr 13, 2023'
+    # day2 = 'Apr 20, 2023'
     # first = datetime.strptime(day1, '%b %d, %Y')
     # second = datetime.strptime(day2, '%b %d, %Y')
-    # print(first > second)
+    # print(second.date() == date.today())
