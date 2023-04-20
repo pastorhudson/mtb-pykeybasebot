@@ -150,6 +150,7 @@ def get_academic_snapshot():
                                   f"Progress: {row[6]}",
                                   f"Last Date: {last_activity[0]}",
                                   f"Completed Today: {last_activity[1]}```",
+                                  "\n"
                                   ])
                 # msg += '```'
             except IndexError:
