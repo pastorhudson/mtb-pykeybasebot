@@ -40,9 +40,11 @@ login_data = dict(__VIEWSTATE=None,
                   btLogin="")  # We'll populate this below after we initilize the session.
 
 assignments_completed_today = 0
+assignments_completed_this_week = 0
 
 def get_last_activity(event_target, s):
     global assignments_completed_today
+    global assignments_completed_this_week
     cur_assignments_completed = 0
     data = {
         "ctl00$sm": f"ctl00$ContentPlaceHolder1$GradebookInfo1$updatePanelGridViewCourses | ctl00$ContentPlaceHolder1$GradebookInfo1$gvCourses$ctl{event_target}$MyRadioButton1",
@@ -84,6 +86,8 @@ def get_last_activity(event_target, s):
                 if cur_date.date() == date.today():
                     assignments_completed_today += 1
                     cur_assignments_completed += 1
+                if cur_date.isocalendar()[1] == date.today().isocalendar()[1]:
+                    assignments_completed_this_week += 1
                 # print(f"Current Date: {cur_date} - "
                 #       f"Last Date: {last_date} - {row[-1:]}")
             except Exception as e:
@@ -156,15 +160,18 @@ def get_academic_snapshot():
             except IndexError:
                 print('Error')
                 pass
-        msg += f"Total Assignments Completed Today: {assignments_completed_today}"
+        msg += f"Today: {assignments_completed_today}\n" \
+               f"This Week: {assignments_completed_this_week}"
         return msg
 
 
 if __name__ == "__main__":
     # print(date.today())
     print(get_academic_snapshot())
-    # day1 = 'Mar 10, 2023'
-    # day2 = 'Apr 20, 2023'
+    # day1 = 'Mar 21, 2023'
+    # day2 = 'Mar 20, 2023'
     # first = datetime.strptime(day1, '%b %d, %Y')
     # second = datetime.strptime(day2, '%b %d, %Y')
-    # print(second.date() == date.today())
+    # print(second.isocalendar()[1])
+    # print(first.isocalendar()[1])
+    # Year, WeekNum, DOW = date.today().isocalendar()[1]
