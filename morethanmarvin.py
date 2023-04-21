@@ -46,6 +46,7 @@ from botcommands.checkspeed import get_speed
 from botcommands.files import get_files
 from botcommands.poll import make_poll
 from botcommands.advent_of_code import tell_solve
+
 # import webhooks
 
 # from botcommands.rickroll import get_rickroll
@@ -263,7 +264,7 @@ async def handler(bot, event):
                     original_body = msg.message[0]['msg']['content']['text']['body']
                 except KeyError:
                     original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
-                original_msg_id =msg.message[0]['msg']['id']
+                original_msg_id = msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
                 reaction_list = []
                 for key, value in reactions.items():
@@ -306,7 +307,7 @@ async def handler(bot, event):
                     original_body = msg.message[0]['msg']['content']['text']['body']
                 except KeyError:
                     original_body = msg.message[0]['msg']['content']['attachment']['object']['title']
-                original_msg_id =msg.message[0]['msg']['id']
+                original_msg_id = msg.message[0]['msg']['id']
                 reactions = msg.message[0]['msg']['reactions']
                 reaction_list = []
                 for key, value in reactions.items():
@@ -357,7 +358,6 @@ async def handler(bot, event):
                     for k, v in value.items():
                         try:
                             if v['users']['marvn']:
-
                                 reaction_list.append(k)
                         except KeyError:
                             pass
@@ -454,9 +454,10 @@ async def handler(bot, event):
         prompt = str(event.msg.content.text.body)[5:].split(" ")
 
         await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
-        await bot.chat.send(conversation_id, f"Attempting to solve Advent of Code {prompt[0]} Day: {prompt[1]} Part: {prompt[2]}\n"
-                                             f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}\n"
-                                             f"This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
+        await bot.chat.send(conversation_id,
+                            f"Attempting to solve Advent of Code {prompt[0]} Day: {prompt[1]} Part: {prompt[2]}\n"
+                            f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}\n"
+                            f"This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
         # !aoc 2022 1 1
         aoc_payload = tell_solve(*prompt)
 
@@ -699,7 +700,6 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!score"):
         await sync(event=event, bot=bot)
-
 
         channel = event.msg.channel
         msg_id = event.msg.id
@@ -978,7 +978,6 @@ async def handler(bot, event):
         except IndexError:
             await bot.chat.send(conversation_id, "I couldn't find a url. Try adding `https://` to help me.")
 
-
     # if str(event.msg.content.text.body).startswith('!speak'):
     #     conversation_id = event.msg.conv_id
     #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -1045,9 +1044,10 @@ listen_options = {
 bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler,
           home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
-async def main():
-    await bot.start(listen_options=listen_options)
 
-# asyncio.run(bot.start(listen_options=listen_options))
-asyncio.run(main())
+# async def main():
+#     await bot.start(listen_options=listen_options)
+
+
+asyncio.run(bot.start(listen_options=listen_options))
 
