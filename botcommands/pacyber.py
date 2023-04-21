@@ -77,17 +77,21 @@ def get_last_activity(event_target, s):
             row = [unicodedata.normalize("NFKD", i.text) for i in td]
             """Get datetime for 'Aug 31, 2022'"""
             est = tz.gettz('America/New_York')
-            today = datetime.today()
+            today = datetime.now(timezone.utc)
             today = today.astimezone(est)
+
             try:
                 if last_date == "":
                     last_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
                     cur_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
                 else:
                     cur_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
+                print(today.date())
+                print(cur_date.date())
                 if last_date < cur_date:
                     last_date = cur_date
                 if cur_date.date() == today.date():
+                    print('today')
                     assignments_completed_today += 1
                     cur_assignments_completed += 1
                 if cur_date.isocalendar()[1] == date.today().isocalendar()[1]:
@@ -162,7 +166,7 @@ def get_academic_snapshot():
                                   ])
                 # msg += '```'
             except IndexError:
-                print('Error')
+                # print('Error')
                 pass
         msg += f"Today: {assignments_completed_today}\n" \
                f"This Week: {assignments_completed_this_week}" \
