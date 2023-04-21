@@ -3,11 +3,6 @@ import asyncio
 import logging
 import os
 import sys
-# from dotenv import load_dotenv
-from pprint import pprint
-from urllib.parse import urlparse
-
-from sqlalchemy import func
 from string import punctuation
 
 from botcommands.natural_chat import get_chat, get_marvn_reaction
