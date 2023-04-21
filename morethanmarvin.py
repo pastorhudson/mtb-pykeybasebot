@@ -25,7 +25,7 @@ from botcommands.stable_diffusion import generate_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
-from botcommands.voice import get_voice
+# from botcommands.voice import get_voice
 from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
@@ -163,9 +163,9 @@ async def handler(bot, event):
         {"name": "set",
          "description": "Admin command for setting various things",
          "usage": ""},
-        {"name": "speak",
-         "description": "Forces me generate an mp3 speaking the text you send.",
-         "usage": "<Text To Speak>"},
+        # {"name": "speak",
+        #  "description": "Forces me generate an mp3 speaking the text you send.",
+        #  "usage": "<Text To Speak>"},
         {"name": "speed",
          "description": "Forces me check upload download speed.",
          "usage": ""},
@@ -979,17 +979,17 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, "I couldn't find a url. Try adding `https://` to help me.")
 
 
-    if str(event.msg.content.text.body).startswith('!speak'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        audio_payload = get_voice((str(event.msg.content.text.body)[7:]))
-        if audio_payload['file']:
-            await bot.chat.attach(channel=conversation_id,
-                                  filename=audio_payload['file'],
-                                  title=audio_payload['observation'])
-        else:
-            await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
+    # if str(event.msg.content.text.body).startswith('!speak'):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #     audio_payload = get_voice((str(event.msg.content.text.body)[7:]))
+    #     if audio_payload['file']:
+    #         await bot.chat.attach(channel=conversation_id,
+    #                               filename=audio_payload['file'],
+    #                               title=audio_payload['observation'])
+    #     else:
+    #         await bot.chat.send(conversation_id, "Something has mercifully gone wrong.")
 
     if str(event.msg.content.text.body).startswith('!speed'):
         conversation_id = event.msg.conv_id
