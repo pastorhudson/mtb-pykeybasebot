@@ -6,7 +6,7 @@ import sys
 from string import punctuation
 
 from botcommands.natural_chat import get_chat, get_marvn_reaction
-from botcommands.poll_results import get_poll_result
+# from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.tldr import get_tldr, tldr_react
 import re
