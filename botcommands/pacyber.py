@@ -168,9 +168,10 @@ def get_academic_snapshot():
             except IndexError:
                 # print('Error')
                 pass
+        est = tz.gettz('America/New_York')
         msg += f"Today: {assignments_completed_today}\n" \
                f"This Week: {assignments_completed_this_week}" \
-               f"\n{datetime.now().astimezone()}"
+               f"\n{datetime.now().astimezone(est).date()}"
         return msg
 
 
