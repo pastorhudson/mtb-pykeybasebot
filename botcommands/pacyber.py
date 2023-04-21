@@ -172,17 +172,17 @@ def get_academic_snapshot():
 
 if __name__ == "__main__":
     # print(date.today())
-    # print(get_academic_snapshot())
+    print(get_academic_snapshot())
     # print(datetime.now().astimezone())
-    day1 = 'Mar 21, 2023'
-    day2 = 'Apr 20, 2023'
-    first = datetime.strptime(day1, '%b %d, %Y')
-    second = datetime.strptime(day2, '%b %d, %Y')
-    now = datetime.now(timezone.utc)
-    est = tz.gettz('America/New_York')
-    print(now)
-    print(now.astimezone(est))
-    print(second.astimezone(timezone.utc))
+    # day1 = 'Mar 21, 2023'
+    # day2 = 'Apr 20, 2023'
+    # first = datetime.strptime(day1, '%b %d, %Y')
+    # second = datetime.strptime(day2, '%b %d, %Y')
+    # now = datetime.now(timezone.utc)
+    # est = tz.gettz('America/New_York')
+    # print(now)
+    # print(now.astimezone(est))
+    # print(second.astimezone(timezone.utc))
     # print(second.isocalendar()[1])
     # print(first.isocalendar()[1])
     # Year, WeekNum, DOW = date.today().isocalendar()[1]
