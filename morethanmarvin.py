@@ -1045,4 +1045,9 @@ listen_options = {
 bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler,
           home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
-asyncio.run(bot.start(listen_options=listen_options))
+async def main():
+    await bot.start(listen_options=listen_options)
+
+# asyncio.run(bot.start(listen_options=listen_options))
+asyncio.run(main())
+
