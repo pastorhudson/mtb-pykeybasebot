@@ -161,13 +161,15 @@ def get_academic_snapshot():
                 print('Error')
                 pass
         msg += f"Today: {assignments_completed_today}\n" \
-               f"This Week: {assignments_completed_this_week}"
+               f"This Week: {assignments_completed_this_week}" \
+               f"\n{datetime.now().astimezone()}"
         return msg
 
 
 if __name__ == "__main__":
     # print(date.today())
     print(get_academic_snapshot())
+    # print(datetime.now().astimezone())
     # day1 = 'Mar 21, 2023'
     # day2 = 'Mar 20, 2023'
     # first = datetime.strptime(day1, '%b %d, %Y')
