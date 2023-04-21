@@ -1,14 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 import os
-from dotenv import load_dotenv
 import unicodedata
 from datetime import datetime
 from datetime import date
+from datetime import timezone
+from zoneinfo import ZoneInfo
+from dateutil import tz
 
 """ Copy and rename the secrets_env template in this repo to secrets.env.
     Add your own login and password for https://myschool.pacyber.org"""
-load_dotenv('secret.env')
 
 """ Your login information below. It's probably best to store this in environment variables."""
 tbLogin = os.environ.get('TBLOGIN')
@@ -75,6 +76,9 @@ def get_last_activity(event_target, s):
             td = row.find_all('td')
             row = [unicodedata.normalize("NFKD", i.text) for i in td]
             """Get datetime for 'Aug 31, 2022'"""
+            est = tz.gettz('America/New_York')
+            today = datetime.today()
+            today = today.astimezone(est)
             try:
                 if last_date == "":
                     last_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
@@ -83,7 +87,7 @@ def get_last_activity(event_target, s):
                     cur_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
                 if last_date < cur_date:
                     last_date = cur_date
-                if cur_date.date() == date.today():
+                if cur_date.date() == today.date():
                     assignments_completed_today += 1
                     cur_assignments_completed += 1
                 if cur_date.isocalendar()[1] == date.today().isocalendar()[1]:
@@ -168,12 +172,17 @@ def get_academic_snapshot():
 
 if __name__ == "__main__":
     # print(date.today())
-    print(get_academic_snapshot())
+    # print(get_academic_snapshot())
     # print(datetime.now().astimezone())
-    # day1 = 'Mar 21, 2023'
-    # day2 = 'Mar 20, 2023'
-    # first = datetime.strptime(day1, '%b %d, %Y')
-    # second = datetime.strptime(day2, '%b %d, %Y')
+    day1 = 'Mar 21, 2023'
+    day2 = 'Apr 20, 2023'
+    first = datetime.strptime(day1, '%b %d, %Y')
+    second = datetime.strptime(day2, '%b %d, %Y')
+    now = datetime.now(timezone.utc)
+    est = tz.gettz('America/New_York')
+    print(now)
+    print(now.astimezone(est))
+    print(second.astimezone(timezone.utc))
     # print(second.isocalendar()[1])
     # print(first.isocalendar()[1])
     # Year, WeekNum, DOW = date.today().isocalendar()[1]
