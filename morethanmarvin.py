@@ -567,6 +567,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!grades"):
         conversation_id = event.msg.conv_id
         if event.msg.sender.username == 'pastorhudson' or event.msg.sender.username == 'sakanakami':
+            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
             grades = get_academic_snapshot()
             await bot.chat.send(conversation_id, grades)
         else:
