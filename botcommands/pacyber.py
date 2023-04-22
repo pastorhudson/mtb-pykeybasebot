@@ -172,6 +172,8 @@ def get_academic_snapshot():
         msg += f"Today: {assignments_completed_today}\n" \
                f"This Week: {assignments_completed_this_week}" \
                f"\n{datetime.now().astimezone(est).date()}"
+        assignments_completed_today = 0
+        assignments_completed_this_week = 0
         return msg
 
 
