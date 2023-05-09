@@ -5,7 +5,6 @@ import unicodedata
 from datetime import datetime
 from datetime import date
 from datetime import timezone
-from zoneinfo import ZoneInfo
 from dateutil import tz
 
 """ Copy and rename the secrets_env template in this repo to secrets.env.
@@ -117,6 +116,7 @@ def get_last_activity(event_target, s):
 
 def get_academic_snapshot():
     global assignments_completed_today
+    global assignments_completed_this_week
     with requests.Session() as s:
         """Open a requests session, Store the correct auth headers."""
         url = 'https://myschool.pacyber.org/Login.aspx' # Login URL
