@@ -8,6 +8,7 @@ from string import punctuation
 from botcommands.natural_chat import get_chat, get_marvn_reaction
 # from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
+from botcommands.poll_results import get_poll_result
 from botcommands.tldr import get_tldr, tldr_react
 import re
 import random
@@ -438,6 +439,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("@marvn"):
         conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
