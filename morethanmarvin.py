@@ -86,7 +86,7 @@ def RepresentsInt(s):
     try:
         int(s)
         return True
-    except ValueError:
+    except Exception as e:
         return False
 
 
@@ -215,6 +215,7 @@ async def handler(bot, event):
                     username = event.msg.sender.username
                     msg_id = event.msg.content.reaction.message_id
                     message = s.query(Message).filter_by(msg_id=str(msg_id)).first()
+
                     points = message.wager.points
                     wager_id = message.wager.id
                     if event.msg.content.reaction.body == ":white_check_mark:":
