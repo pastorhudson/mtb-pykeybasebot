@@ -421,6 +421,9 @@ async def handler(bot, event):
                     points = int(word.strip(punctuation))
                 elif word.startswith('@') and not user:
                     user = str(word.strip("@").rstrip(punctuation))
+            if not points:
+                await bot.chat.send(conversation_id, instructions)
+
             if points < 0 and event.msg.sender.username != 'pastorhudson':
                 user = event.msg.sender.username
                 score = write_score(user, event.msg.sender.username, team_name, -5, description=description)
