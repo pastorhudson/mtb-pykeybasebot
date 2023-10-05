@@ -31,7 +31,7 @@ def get_score(channel_name, year=datetime.datetime.utcnow().year):
 
     msg += f"{y}"
 
-    msg += f"\n-- Leading Person of the Year --\n"
+    msg += f"\n-- Leading Person of the the Year --\n"
     y = PrettyTable(reversesort=True)
     y.field_names = ["Achiever", "Score", ]
     for k, v in team.get_leading_person(year=year).items():
