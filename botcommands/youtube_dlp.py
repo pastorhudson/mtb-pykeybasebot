@@ -162,6 +162,13 @@ def get_mp4(url):
                           }
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'postprocessors': [
+            {'key': 'FFmpegExtractAudio', 'preferredcodec': 'm4a', 'preferredquality': '192', },
+            {'key': 'SponsorBlock'},
+            {'key': 'ModifyChapters',
+             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
+        ],
+        'writethumbnail': True,
         'restrictfilenames': True,
         # 'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
@@ -169,29 +176,7 @@ def get_mp4(url):
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
-        'postprocessors': [
-            {
-                'key': 'SponsorBlock',
-                'categories': ['sponsor', 'selfpromo'],
-                'when': 'before_dl'
-            },
-            {
-                'key': 'ModifyChapters',
 
-            },
-
-            {
-                'key': 'FFmpegEmbedSubtitle',
-
-            },
-
-            {
-
-                'key': 'FFmpegMetadata',
-                'add_chapters': True,
-                'add_metadata': False,
-
-            }]
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
