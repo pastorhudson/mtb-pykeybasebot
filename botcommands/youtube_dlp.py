@@ -163,12 +163,8 @@ def get_mp4(url):
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'postprocessors': [
             {'key': 'SponsorBlock'},
-            {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
-            {'key': 'FFmpegEmbedSubtitle'},
-            {'key': 'FFmpegMetadata',
-             'add_chapters': True,
-             'add_metadata': False, }
+            # {'key': 'ModifyChapters',
+            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
         ],
 
         'writethumbnail': True,
