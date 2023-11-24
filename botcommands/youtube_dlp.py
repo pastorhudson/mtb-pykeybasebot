@@ -163,7 +163,6 @@ def get_mp4(url):
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'postprocessors': [
-            {'key': 'FFmpegExtractAudio', 'preferredcodec': 'm4a', 'preferredquality': '192', },
             {'key': 'SponsorBlock'},
             {'key': 'ModifyChapters',
              'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
