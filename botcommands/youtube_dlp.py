@@ -161,11 +161,11 @@ def get_mp4(url):
                 }
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-        'postprocessors': [
-            {'key': 'SponsorBlock'},
-            {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
-        ],
+        # 'postprocessors': [
+        #     {'key': 'SponsorBlock'},
+        #     {'key': 'ModifyChapters',
+        #      'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
+        # ],
 
         # 'writethumbnail': True,
         'restrictfilenames': True,
@@ -175,7 +175,6 @@ def get_mp4(url):
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
-
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -183,7 +182,6 @@ def get_mp4(url):
 
         yt_info = ydl.extract_info(url)
         pprint(yt_info)
-        # pprint(ydl.sanitize_info(yt_info))
     return payload
 
 
