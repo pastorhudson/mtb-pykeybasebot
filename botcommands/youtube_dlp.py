@@ -17,7 +17,6 @@ def is_supported(url):
         # print(e.suitable(url))
         # if e.suitable(url) and e.IE_NAME != 'generic':
         if e.suitable(url):
-
             return True
     return False
 
@@ -122,9 +121,9 @@ def get_mp3(url):
     global payload
     if not is_supported(url):
         return {"msg": "That video url didn't work.\n"
-                                 "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-                          "file": ""
-                          }
+                       "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+                "file": ""
+                }
     payload = {}
 
     ydl_opts = {
@@ -157,16 +156,21 @@ def get_mp4(url):
 
     if not is_supported(url):
         return {"msg": "That video url didn't work.\n"
-                                 "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-                          "file": ""
-                          }
+                       "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+                "file": ""
+                }
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'postprocessors': [
             {'key': 'SponsorBlock'},
             {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
+             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
+            {'key': 'FFmpegEmbedSubtitle'},
+            {'key': 'FFmpegMetadata',
+             'add_chapters': True,
+             'add_metadata': False, }
         ],
+
         'writethumbnail': True,
         'restrictfilenames': True,
         # 'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
@@ -191,9 +195,9 @@ def get_meta(url):
     global info
     if not is_supported(url):
         return {"msg": "That video url didn't work.\n"
-                                 "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-                          "file": ""
-                          }
+                       "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+                "file": ""
+                }
 
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
