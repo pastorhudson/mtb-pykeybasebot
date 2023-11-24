@@ -169,6 +169,29 @@ def get_mp4(url):
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
+        'postprocessors': [
+            {
+                'key': 'SponsorBlock',
+                'categories': ['sponsor', 'selfpromo'],
+                'when': 'before_dl'
+            },
+            {
+                'key': 'ModifyChapters',
+
+            },
+
+            {
+                'key': 'FFmpegEmbedSubtitle',
+
+            },
+
+            {
+
+                'key': 'FFmpegMetadata',
+                'add_chapters': True,
+                'add_metadata': False,
+
+            }]
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -249,5 +272,6 @@ def get_meta(url):
 
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
-    print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
+    # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
+    print(get_mp4('https://www.youtube.com/watch?v=eQUsUd65j_o'))
     pass
