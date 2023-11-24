@@ -19,7 +19,7 @@ from botcommands.youtube import get_video, get_mp3, get_domain
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta, is_supported
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
-from botcommands.virustotal import get_scan
+# from botcommands.virustotal import get_scan // Depreciated because virustotal changed api
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
 from botcommands.stable_diffusion import generate_image
@@ -105,9 +105,9 @@ async def handler(bot, event):
         {"name": "bible",
          "description": "Force me to lookup Bible txt.",
          "usage": "<reference> OR <search string>"},
-        {"name": "canary",
-         "description": "Force me to give Virus Total your nasty URL and return scan results.",
-         "usage": "<url>"},
+        # {"name": "canary",
+        #  "description": "Force me to give Virus Total your nasty URL and return scan results.",
+        #  "usage": "<url>"},
         {"name": "chuck",
          "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
          "usage": "Optional: <name> OR bomb if nothing is given a member of this channel will be selected at random."},
@@ -473,13 +473,13 @@ async def handler(bot, event):
                                   filename=aoc_payload['file'],
                                   title=f"```{aoc_payload['code']}```")
 
-    if str(event.msg.content.text.body).startswith('!canary'):
-        vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        msg = get_scan(vt_url[0])
-        await bot.chat.send(conversation_id, msg)
+    # if str(event.msg.content.text.body).startswith('!canary'):
+    #     vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #     msg = get_scan(vt_url[0])
+    #     await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
