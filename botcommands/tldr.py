@@ -183,8 +183,8 @@ def get_gpt_summary(url):
     response = openai.ChatCompletion.create(
         model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that specializes in summarizing News Articles with the most important bullet points."},
-            {"role": "user", "content": article_text}
+            {"role": "system", "content": "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."},
+            {"role": "user", "content": f"Please provide a concise summary of the following article, highlighting the main points and conclusions: {article_text}"}
         ]
     )
     summary = response['choices'][0]['message']['content']
