@@ -9,7 +9,7 @@ from botcommands.natural_chat import get_chat, get_marvn_reaction
 # from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.poll_results import get_poll_result
-from botcommands.tldr import get_tldr, tldr_react
+from botcommands.tldr import get_tldr, tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
@@ -752,7 +752,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-        tldr = get_tldr(urls[0])
+        tldr = get_gpt_summary(urls[0])
         await bot.chat.send(conversation_id, tldr)
 
         # ytv_payload = get_mp4(urls[0])

@@ -5,8 +5,9 @@ from dotenv import load_dotenv
 import random
 import requests
 import re
-# from youtube_transcript_api import YouTubeTranscriptApi
-# from youtube_transcript_api.formatters import TextFormatter
+import requests
+from bs4 import BeautifulSoup
+import openai
 
 load_dotenv('../secret.env')
 
@@ -149,7 +150,8 @@ async def tldr_react(event, bot, tldr_length):
         else:
             urls = re.findall(r'(https?://[^\s]+)', original_body)
             if urls:
-                tldr_payload = get_tldr(urls[0], tldr_length)
+                # tldr_payload = get_tldr(urls[0], tldr_length)
+                tldr_payload = get_gpt_summary(urls[0])
 
             else:
                 tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
@@ -163,34 +165,45 @@ async def tldr_react(event, bot, tldr_length):
                 pass
 
 
-# def get_youtube_id(url):
-#     import yt_dlp
-#
-#     # ℹ️ See help(yt_dlp.YoutubeDL) for a list of available options and public functions
-#     ydl_opts = {}
-#     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-#         info = ydl.extract_info(url, download=False)
-#         return info['id']
+def fetch_article_content(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    # Extract the main content of the article; this depends on the HTML structure
+    article_text = soup.find('article').get_text()
+    return article_text
 
 
-# def get_youtube_tldr(video_url):
-#     from rpunct import RestorePuncts
-#
-#     video_id = get_youtube_id(video_url)
-#     transcript = YouTubeTranscriptApi.get_transcript(video_id)
-#     formatter = TextFormatter()
-#     txt_formatted = formatter.format_transcript(transcript)
-#     rpunct = RestorePuncts()
-#     punctuated_txt = rpunct.punctuate(txt_formatted)
-#
-#     return punctuated_txt
+def get_gpt_summary(url):
+    observations = ["I'm sorry I'm such a failure.",
+                    "I'm so sorry you have to read all these words.",
+                    "I hope this makes you happy because I'm not.",
+                    "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
+    article_text = fetch_article_content(url)
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    response = openai.ChatCompletion.create(
+        model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that specializes in summarizing News Articles with the most important bullet points."},
+            {"role": "user", "content": article_text}
+        ]
+    )
+    summary = response['choices'][0]['message']['content']
+    tldr = "\n".join(
+        [
+            f"Here's my tl;dr.\n{random.choice(observations)}",
+            "```",
+            summary, "```"])
+    return tldr
+
+
 
 
 if __name__ == "__main__":
     # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
-    print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
+    # print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
     # print(get_tldr('https://spectrum.ieee.org/in-2016-microsofts-racist-chatbot-revealed-the-dangers-of-online-conversation'))
-    # print(get_tldr('https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
+    # print(get_tldr(
+    #     'https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
     # print(get_tldr('https://www.cnn.com/2021/10/18/politics/joe-biden-democrats-economy-supply-chain-donald-trump-2022-midterms/index.html'))
     # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
@@ -202,3 +215,5 @@ if __name__ == "__main__":
     # article.download()
     # article.parse()
     # print(article.text)
+    summary = get_gpt_summary('https://www.reuters.com/world/china/china-wealth-manager-zhongzhi-flags-insolvency-liabilities-64-bln-2023-11-23/')
+    print(summary)
