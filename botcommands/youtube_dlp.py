@@ -63,6 +63,7 @@ class MyCustomPP(PostProcessor):
 
     def run(self, info):
         global payload
+        print("I'm running post processor")
         filename = info['filepath']
 
         # filename = info['filepath'].replace('.m4a', '.mp3')
@@ -161,24 +162,38 @@ def get_mp4(url):
                 }
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-        # 'postprocessors': [
-        #     {'key': 'SponsorBlock'},
-        #     {'key': 'ModifyChapters',
-        #      'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
-        # ],
-
-        # 'writethumbnail': True,
         'restrictfilenames': True,
-        # 'outtmpl': f'{storage.absolute()}/%(title)s.%(format_id)s.%(ext)s',
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
     }
+    # ydl_opts = {
+    #     'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+    #     'postprocessors': [
+    #         # {'key': 'FFmpegExtractAudio', 'preferredcodec': 'm4a', 'preferredquality': '192', },
+    #         {'key': 'SponsorBlock'},
+    #         {'key': 'ModifyChapters',
+    #          'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
+    #     ],
+    #
+    #     # 'writethumbnail': True,
+    #     'restrictfilenames': True,
+    #     'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+    #     'windowsfilenames': True,
+    #
+    #     # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+    #     'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+    #
+    #     'logger': MyLogger(),
+    #     'progress_hooks': [my_hook],
+    # }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.add_post_processor(MyCustomPP())
+        ydl.add_post_processor(MyCustomPP(), when='post_process')
 
         yt_info = ydl.extract_info(url)
         pprint(yt_info)
