@@ -209,13 +209,15 @@ def get_meta(url):
                 }
 
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'format': '[vcodec=h264]+[acodec=aac]/best[ext=mp4]',
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
         'trim_file_names': 10,
         'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg',
+
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
