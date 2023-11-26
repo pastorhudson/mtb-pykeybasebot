@@ -184,8 +184,8 @@ def get_mp4(url):
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'windowsfilenames': True,
 
-        # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
 
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
