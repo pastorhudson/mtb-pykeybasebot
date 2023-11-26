@@ -209,7 +209,7 @@ def get_meta(url):
                 }
 
     ydl_opts = {
-        'format': '[vcodec=h264]+[acodec=aac]/best[ext=mp4]',
+        # 'format': '[vcodec=h264]+[acodec=aac]/best[ext=mp4]',
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
