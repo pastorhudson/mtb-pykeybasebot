@@ -160,37 +160,36 @@ def get_mp4(url):
                        "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
                 "file": ""
                 }
-    ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-        'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-        'windowsfilenames': True,
-        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
-
-        'logger': MyLogger(),
-        'progress_hooks': [my_hook],
-    }
     # ydl_opts = {
     #     'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
-    #     'postprocessors': [
-    #         # {'key': 'FFmpegExtractAudio', 'preferredcodec': 'm4a', 'preferredquality': '192', },
-    #         {'key': 'SponsorBlock'},
-    #         {'key': 'ModifyChapters',
-    #          'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
-    #     ],
-    #
-    #     # 'writethumbnail': True,
     #     'restrictfilenames': True,
     #     'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
     #     'windowsfilenames': True,
-    #
-    #     # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-    #     'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+    #     'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+    #     # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
     #
     #     'logger': MyLogger(),
     #     'progress_hooks': [my_hook],
     # }
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'postprocessors': [
+            {'key': 'SponsorBlock'},
+            {'key': 'ModifyChapters',
+             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
+        ],
+
+        'writethumbnail': True,
+        'restrictfilenames': True,
+        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+        'windowsfilenames': True,
+
+        # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+
+        'logger': MyLogger(),
+        'progress_hooks': [my_hook],
+    }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.add_post_processor(MyCustomPP(), when='post_process')
@@ -209,14 +208,14 @@ def get_meta(url):
                 }
 
     ydl_opts = {
-        'format': '[vcodec=h264]+[acodec=aac]',
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         'simulate': True,
         'nocheckcertificate': True,
         'restrictfilenames': True,
         'trim_file_names': 10,
         'windowsfilenames': True,
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg',
+        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
 
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'logger': MyLogger(),
@@ -272,5 +271,5 @@ def get_meta(url):
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
-    print(get_mp4('https://www.youtube.com/watch?v=eQUsUd65j_o'))
+    print(get_mp4('https://www.youtube.com/watch?v=oI8zv_4RKA8'))
     pass
