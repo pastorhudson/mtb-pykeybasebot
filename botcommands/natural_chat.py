@@ -55,7 +55,8 @@ def get_chat(prompt):
     )
 
     friend = response.choices[0].message
-    append_convo(f"{friend['content']}\n")
+    append_convo('Request:' + prompt + '\n\n')
+    append_convo(f"marvn: {friend['content']}\n\n")
     try:
         return response.choices[0].message['content']
     except:
@@ -85,5 +86,5 @@ def get_marvn_reaction(username, msg):
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
     prompt = "Correct this to standard English:\n\n" \
-             "My no want new baby."
+             "Dogs like chicken aaa."
     print(get_chat(prompt))
