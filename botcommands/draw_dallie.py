@@ -20,7 +20,7 @@ def generate_image(prompt):
     image_url = response.data[0].url
 
     return {
-        "msg": "\n".join([prompt,image_url]),
+        "msg": "\n".join([prompt, image_url]),
         "file": None
     }
 
