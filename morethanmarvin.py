@@ -445,7 +445,16 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("@marvn"):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        pprint(event.msg.content)
+        if event.msg.content.type == "attachment":
+            message_id = event.msg.id
+            channel = event.msg.conv_id
+
+            filename = event.msg.content.attachment.object.filename
+
+            # Download the file
+
+            await bot.download(channel, message_id, filename)
+            print(f"File downloaded: {filename}")
         msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
