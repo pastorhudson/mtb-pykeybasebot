@@ -103,7 +103,7 @@ def get_chat_with_image(image_path, prompt):
         model="gpt-4-vision-preview",
         messages=[
             {"role": "system", "content": seed},
-            # {"role": "user", "content": get_convo()},
+            {"role": "user", "content": get_convo()},
             {
                 "role": "user",
                 "content": [
@@ -135,6 +135,7 @@ def get_chat_with_image(image_path, prompt):
 
 if __name__ == "__main__":
     # ic(os.getenv("OPENAI_API_KEY"))
+    print(get_convo())
     img = 'C://Users//geekt//Downloads//ds9meme.png'
     prompt = "What's going on with this image??"
     print(get_chat_with_image(img, prompt))
