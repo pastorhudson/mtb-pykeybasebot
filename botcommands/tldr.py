@@ -1,5 +1,7 @@
 # from smmryAPI.smmryapi import SmmryAPIException
 import os
+from pprint import pprint
+
 # from newspaper import Article, ArticleException
 from dotenv import load_dotenv
 import random
@@ -7,6 +9,7 @@ import requests
 import re
 import requests
 from bs4 import BeautifulSoup
+from newspaper import Article
 from openai import OpenAI
 
 from botcommands.natural_chat import get_convo
@@ -93,28 +96,13 @@ class YoutubeError(Exception):
 #     return tldr
 
 
-# def get_text(url=None):
-#     try:
-#         # USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0) Gecko/20100101 Firefox/78.0'
-#         #
-#         # config = Config()
-#         # config.browser_user_agent = USER_AGENT
-#         # config.request_timeout = 10
-#         # article = Article(url, config)
-#
-#         article = Article(url)
-#         article.download()
-#         article.parse()
-#
-#         # print(article.top_img)
-#         # print(article.authors)
-#         # print(article.movies)
-#         article.nlp()
-#
-#     except ArticleException as a:
-#         raise SmmryAPIException
-#
-#     return article
+def get_text(url=None):
+
+    article = Article(url)
+    article.download()
+    article.parse()
+
+    return article
 
 
 async def tldr_react(event, bot, tldr_length):
@@ -171,7 +159,6 @@ def fetch_article_content(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
         'X-Forwarded-For': '66.249.66.1',
-
     }
     response = requests.get(url, headers)
     soup = BeautifulSoup(response.content, 'html.parser')
@@ -185,7 +172,11 @@ def get_gpt_summary(url):
                     "I'm so sorry you have to read all these words.",
                     "I hope this makes you happy because I'm not.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
-    article_text = fetch_article_content(url)
+    try:
+        article_text = get_text(url).text
+    except Exception as e:
+        article_text = fetch_article_content(url)
+
     client = OpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
@@ -223,5 +214,6 @@ if __name__ == "__main__":
     # article.download()
     # article.parse()
     # print(article.text)
-    summary = get_gpt_summary('https://www.reuters.com/world/china/china-wealth-manager-zhongzhi-flags-insolvency-liabilities-64-bln-2023-11-23/')
-    print(summary)
+    pprint(get_text('https://www.theatlantic.com/international/archive/2014/11/how-the-media-makes-the-israel-story/383262/').text)
+    # summary = get_gpt_summary('https://www.theatlantic.com/international/archive/2014/11/how-the-media-makes-the-israel-story/383262/')
+    # print(summary)
