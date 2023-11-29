@@ -23,7 +23,8 @@ from botcommands.get_screenshot import get_screenshot
 # from botcommands.virustotal import get_scan // Depreciated because virustotal changed api
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
-from botcommands.stable_diffusion import generate_image
+# from botcommands.stable_diffusion import generate_image
+from botcommands.draw_dallie import generate_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_chuck
