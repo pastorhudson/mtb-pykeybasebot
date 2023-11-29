@@ -211,6 +211,25 @@ async def handler(bot, event):
         if event.msg.content.type_name == 'attachment':
             logging.info(event.msg.content.attachment.object.title)
             logging.info(event.msg.content.attachment.object.filename)
+            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
+                logging.info("I'm triggering @marvn")
+                conversation_id = event.msg.conv_id
+                await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+                logging.info(event.msg)
+                if event.msg.content.type_name == "attachment":
+                    logging.info("I got an attachment")
+
+                    message_id = event.msg.id
+                    prompt = event.msg.content.attachment.object.title
+                    filename = event.msg.content.attachment.object.filename
+
+                    # Download the file
+
+                    await bot.download(conversation_id, message_id, filename)
+                    logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+                msg = get_chat(str(event.msg.content.text.body)[7:])
+                await bot.chat.send(conversation_id, msg)
+
     except AttributeError:
         print("Not an attachment")
 
@@ -452,28 +471,27 @@ async def handler(bot, event):
                                 f"for trying to be cute.\n{instructions}")
 
 
-    try:
-        if str(event.msg.content.text.body).startswith("@marvn") or str(event.msg.content.attachment.title).startswith("@marvn"):
-            logging.info("I'm triggering @marvn")
-            conversation_id = event.msg.conv_id
-            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-            logging.info(event.msg)
-            if event.msg.content.type_name == "attachment":
-                logging.info("I got an attachment")
 
-                message_id = event.msg.id
-                channel = event.msg.conv_id
-                prompt = event.msg.content.attachment.title
-                filename = event.msg.content.attachment.object.filename
+    if str(event.msg.content.text.body).startswith("@marvn"):
+        logging.info("I'm triggering @marvn")
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        logging.info(event.msg)
+        if event.msg.content.type_name == "attachment":
+            logging.info("I got an attachment")
 
-                # Download the file
+            message_id = event.msg.id
+            channel = event.msg.conv_id
+            prompt = event.msg.content.attachment.title
+            filename = event.msg.content.attachment.object.filename
 
-                await bot.download(channel, message_id, filename)
-                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-            msg = get_chat(str(event.msg.content.text.body)[7:])
-            await bot.chat.send(conversation_id, msg)
-    except AttributeError:
-        pass
+            # Download the file
+
+            await bot.download(channel, message_id, filename)
+            logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+        msg = get_chat(str(event.msg.content.text.body)[7:])
+        await bot.chat.send(conversation_id, msg)
+
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
