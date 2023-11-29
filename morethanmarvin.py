@@ -800,6 +800,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
+        logging.info("Yes I'm still here.")
         conversation_id = event.msg.conv_id
         msg = f"Sigh. . . yes I'm still here."
         members = await get_channel_members(conversation_id)
