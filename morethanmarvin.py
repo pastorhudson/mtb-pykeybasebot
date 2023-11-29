@@ -3,6 +3,7 @@ import asyncio
 import logging
 import os
 import sys
+from pprint import pprint
 from string import punctuation
 
 from botcommands.natural_chat import get_chat, get_marvn_reaction
@@ -444,7 +445,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("@marvn"):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        pprint(event.msg.content)
         msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
