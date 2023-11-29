@@ -207,7 +207,13 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
-    logging.info(event.msg.content)
+    try:
+        if event.msg.content.type_name == 'attachment':
+            logging.info(event.msg.content.attachment)
+    except AttributeError:
+        print("Not an attachment")
+
+    # logging.info(event.msg.content)
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":white_check_mark:" or ':no_entry_sign:':
@@ -445,26 +451,28 @@ async def handler(bot, event):
                                 f"for trying to be cute.\n{instructions}")
 
 
+    try:
+        if str(event.msg.content.text.body).startswith("@marvn") or str(event.msg.content.attachment.title).startswith("@marvn"):
+            logging.info("I'm triggering @marvn")
+            conversation_id = event.msg.conv_id
+            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+            logging.info(event.msg)
+            if event.msg.content.type_name == "attachment":
+                logging.info("I got an attachment")
 
-    if str(event.msg.content.text.body).startswith("@marvn") or str(event.msg.content.attachment.title).startswith("@marvn"):
-        logging.info("I'm triggering @marvn")
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        logging.info(event.msg)
-        if event.msg.content.type_name == "attachment":
-            logging.info("I got an attachment")
+                message_id = event.msg.id
+                channel = event.msg.conv_id
+                prompt = event.msg.content.attachment.title
+                filename = event.msg.content.attachment.object.filename
 
-            message_id = event.msg.id
-            channel = event.msg.conv_id
-            prompt = event.msg.content.attachment.title
-            filename = event.msg.content.attachment.object.filename
+                # Download the file
 
-            # Download the file
-
-            await bot.download(channel, message_id, filename)
-            logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-        msg = get_chat(str(event.msg.content.text.body)[7:])
-        await bot.chat.send(conversation_id, msg)
+                await bot.download(channel, message_id, filename)
+                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+            msg = get_chat(str(event.msg.content.text.body)[7:])
+            await bot.chat.send(conversation_id, msg)
+    except AttributeError:
+        pass
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
