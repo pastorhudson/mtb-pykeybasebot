@@ -234,7 +234,7 @@ async def handler(bot, event):
                 await bot.chat.download(conversation_id, message_id, filename)
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
                 msg = get_chat_with_image(filename, prompt)
-                await bot.chat.send(conversation_id, msg)
+                await bot.chat.reply(conversation_id, msg)
 
     except AttributeError:
         print("Not an attachment")
@@ -581,7 +581,7 @@ async def handler(bot, event):
                                   filename=draw_payload['file'],
                                   title=draw_payload['msg'])
         else:
-            await bot.chat.send(conversation_id, draw_payload['msg'])
+            await bot.chat.reply(conversation_id, draw_payload['msg'])
 
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
@@ -804,7 +804,7 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         tldr = get_gpt_summary(urls[0])
-        await bot.chat.send(conversation_id, tldr)
+        await bot.chat.reply(conversation_id, tldr)
 
         # ytv_payload = get_mp4(urls[0])
         # if ytv_payload['file']:
