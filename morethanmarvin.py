@@ -234,7 +234,7 @@ async def handler(bot, event):
                 await bot.chat.download(conversation_id, message_id, filename)
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
                 msg = get_chat_with_image(filename, prompt)
-                await bot.chat.reply(conversation_id, msg)
+                await bot.chat.reply(conversation_id, msg, event.msg.id)
 
     except AttributeError:
         print("Not an attachment")
@@ -581,7 +581,7 @@ async def handler(bot, event):
                                   filename=draw_payload['file'],
                                   title=draw_payload['msg'])
         else:
-            await bot.chat.reply(conversation_id, draw_payload['msg'])
+            await bot.chat.reply(conversation_id, draw_payload['msg'], event.msg.id)
 
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
@@ -804,7 +804,7 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         tldr = get_gpt_summary(urls[0])
-        await bot.chat.reply(conversation_id, tldr)
+        await bot.chat.reply(conversation_id, tldr, event.msg.id)
 
         # ytv_payload = get_mp4(urls[0])
         # if ytv_payload['file']:
@@ -840,7 +840,7 @@ async def handler(bot, event):
         msg = f"Sigh. . . yes I'm still here."
         members = await get_channel_members(conversation_id)
         msg += str(members)
-        test_msg = await bot.chat.send(conversation_id, msg)
+        test_msg = await bot.chat.reply(conversation_id, msg, event.msg.id)
 
     if str(event.msg.content.text.body).startswith("!stardate"):
         channel = event.msg.channel
@@ -982,7 +982,7 @@ async def handler(bot, event):
             yt_payload = get_meta(yt_urls[0])
             yt_msg = yt_payload['msg']
 
-            await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+            await bot.chat.reply(conversation_id, event.msg.id, yt_msg, event.msg.id)
             await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
         else:
