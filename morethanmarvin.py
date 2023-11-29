@@ -210,6 +210,7 @@ async def handler(bot, event):
     try:
         if event.msg.content.type_name == 'attachment':
             logging.info(event.msg.content.attachment.object.title)
+            logging.info(event.msg.content.attachment.object.filename)
     except AttributeError:
         print("Not an attachment")
 
