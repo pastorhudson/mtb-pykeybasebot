@@ -210,8 +210,6 @@ async def handler(bot, event):
 
     try:
         if event.msg.content.type_name == 'attachment':
-            # logging.info(event.msg.content.attachment.object.title)
-            # logging.info(event.msg.content.attachment.object.filename)
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 storage = Path('./storage')
 
