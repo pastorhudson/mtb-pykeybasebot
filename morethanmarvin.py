@@ -47,7 +47,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.files import get_files
 from botcommands.poll import make_poll
-from botcommands.advent_of_code import tell_solve
+# from botcommands.advent_of_code import tell_solve
 
 # import webhooks
 
@@ -97,9 +97,9 @@ class Points(object):
 
 async def handler(bot, event):
     command_list = [
-        {"name": "aoc",
-         "description": "Make me solve the advent of code puzzle.",
-         "usage": "<year> <day> <part>"},
+        # {"name": "aoc",
+        #  "description": "Make me solve the advent of code puzzle.",
+        #  "usage": "<year> <day> <part>"},
         {"name": "award",
          "description": "Force me to give completely meaningless points to your comrades.",
          "usage": "<user> <points>"},
@@ -456,23 +456,23 @@ async def handler(bot, event):
         msg = get_esv_text(passage)
         await bot.chat.send(conversation_id, msg)
 
-    if str(event.msg.content.text.body).startswith("!aoc"):
-        conversation_id = event.msg.conv_id
-        prompt = str(event.msg.content.text.body)[5:].split(" ")
-
-        await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
-        await bot.chat.send(conversation_id,
-                            f"Attempting to solve Advent of Code {prompt[0]} Day: {prompt[1]} Part: {prompt[2]}\n"
-                            f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}\n"
-                            f"This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
-        # !aoc 2022 1 1
-        aoc_payload = tell_solve(*prompt)
-
-        await bot.chat.send(conversation_id, aoc_payload['message'])
-        if aoc_payload['file']:
-            await bot.chat.attach(channel=conversation_id,
-                                  filename=aoc_payload['file'],
-                                  title=f"```{aoc_payload['code']}```")
+    # if str(event.msg.content.text.body).startswith("!aoc"):
+    #     conversation_id = event.msg.conv_id
+    #     prompt = str(event.msg.content.text.body)[5:].split(" ")
+    #
+    #     await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
+    #     await bot.chat.send(conversation_id,
+    #                         f"Attempting to solve Advent of Code {prompt[0]} Day: {prompt[1]} Part: {prompt[2]}\n"
+    #                         f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}\n"
+    #                         f"This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
+    #     # !aoc 2022 1 1
+    #     aoc_payload = tell_solve(*prompt)
+    #
+    #     await bot.chat.send(conversation_id, aoc_payload['message'])
+    #     if aoc_payload['file']:
+    #         await bot.chat.attach(channel=conversation_id,
+    #                               filename=aoc_payload['file'],
+    #                               title=f"```{aoc_payload['code']}```")
 
     # if str(event.msg.content.text.body).startswith('!canary'):
     #     vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
