@@ -58,13 +58,10 @@ def get_chat(prompt):
         presence_penalty=0
     )
 
-    friend = chat_completion.choices[0].message
-    append_convo('Request:' + prompt + '\n\n')
-    append_convo(f"marvn: {friend['content']}\n\n")
     try:
-        return chat_completion.choices[0].message['content']
+        return chat_completion.choices[0].message.content
     except:
-        return chat_completion.choices[0].message['content'].strip()
+        return chat_completion.choices[0].message.content.strip()
 
 
 def get_marvn_reaction(username, msg):
