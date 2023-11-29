@@ -225,7 +225,7 @@ async def handler(bot, event):
                 message_id = event.msg.id
                 logging.info(f"Event msg id: {message_id}")
                 prompt = event.msg.content.attachment.object.title
-                filename = f"{storage.absolute()}/event.msg.content.attachment.object.filename"
+                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
 
                 # Download the file
                 logging.info("Trying to download")
