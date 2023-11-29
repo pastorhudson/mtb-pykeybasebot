@@ -6,7 +6,7 @@ import sys
 from pprint import pprint
 from string import punctuation
 
-from botcommands.natural_chat import get_chat, get_marvn_reaction
+from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 # from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.poll_results import get_poll_result
@@ -225,15 +225,15 @@ async def handler(bot, event):
                 message_id = event.msg.id
                 logging.info(f"Event msg id: {message_id}")
                 prompt = event.msg.content.attachment.object.title
-                filename = event.msg.content.attachment.object.filename
+                filename = f"{storage.absolute()}/event.msg.content.attachment.object.filename"
 
                 # Download the file
                 logging.info("Trying to download")
 
-                await bot.chat.download(conversation_id, message_id, f"{storage.absolute()}/{filename}")
+                await bot.chat.download(conversation_id, message_id, filename)
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-                # msg = get_chat(prompt, )
-                # await bot.chat.send(conversation_id, msg)
+                msg = get_chat_with_image(filename, prompt)
+                await bot.chat.send(conversation_id, msg)
 
     except AttributeError:
         print("Not an attachment")
