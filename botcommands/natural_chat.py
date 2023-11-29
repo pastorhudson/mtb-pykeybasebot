@@ -1,9 +1,7 @@
 import os
-import openai
 from icecream import ic
 from pathlib import Path
 import base64
-import requests
 from openai import OpenAI
 
 storage = Path('./storage')
