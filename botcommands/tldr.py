@@ -1,6 +1,6 @@
-from smmryAPI.smmryapi import SmmryAPIException
+# from smmryAPI.smmryapi import SmmryAPIException
 import os
-from newspaper import Article, ArticleException
+# from newspaper import Article, ArticleException
 from dotenv import load_dotenv
 import random
 import requests
@@ -16,103 +16,103 @@ class YoutubeError(Exception):
     pass
 
 
-def get_smmry_txt(url, length=4, text=None):
-    if url:
-        if any(ext in url for ext in ['youtube.com', 'youtu.be']):
-            raise YoutubeError
-        else:
-            print("This is not youtube")
-            text = get_text(url).text
-        if len(text) == 0:
-            raise SmmryAPIException
-
-    api_key = os.environ.get('SMMRY_API_KEY')
-    payload = {'sm_api_input': text,
-               'SM_LENGTH': length,
-               'SM_KEYWORD_COUNT': 12}
-    surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH={length}&SM_KEYWORD_COUNT={payload['SM_KEYWORD_COUNT']}"
-    r = requests.post(surl, payload)
-    meta = r.json()
-    # meta['authors'] = ", ".join([x for x in article.authors])
-    # meta['title'] = article.title
-    # meta['img'] = article.top_img
-    try:
-        if "TEXT IS TOO SHORT" in r.json()['sm_api_message'] or "SOURCE IS TOO SHORT" in r.json()['sm_api_message']:
-            if len(text) > 0:
-                return {f'sm_api_content_reduced': f'0%',
-                        'sm_api_content': text,
-                        # 'author': article.authors,
-                        # 'img': article.top_img,
-                        # 'title': article.title,
-                        # "movies": article.movies
-                        }
-    except Exception as e:
-        return meta
-
-
-def get_tldr(url=None, length=7, text=None, sender=None):
-    tldr = ""
-    observations = ["I'm sorry I'm such a failure.",
-                    "I'm so sorry you have to read all these words.",
-                    "I hope this makes you happy because I'm not.",
-                    "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
-    try:
-        s = get_smmry_txt(url, length, text)
-        if sender:
-            tldr = "\n".join(
-                [
-                    f"Here's my tl;dr of @{sender} 's words I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
-                    # s['img'],
-                    "```",
-                    # s['title'],
-                    # s['authors'],
-                    str(s['sm_api_content']), "```"])
-        else:
-            tldr = "\n".join(
-                [
-                    f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
-                    # s['img'],
-                    "```",
-                    # s['title'],
-                    # s['authors'],
-                    str(s['sm_api_content']), "```"])
-
-    except SmmryAPIException:
-        errors = ["You have burned out my eyes sending me this page. I hope you're happy",
-                  "This is @ihuman's fault."
-                  "This page is full of cancer and now I am full of cancer.",
-                  "Would you make your own sister read that page?",
-                  "I did not agree to this many popups.",
-                  "I don't want to read that. Can you give a TL;DR?"]
-        tldr = random.choice(errors)
-    except YoutubeError:
-
-        tldr = "I don't do youtube anymore. It's too depressing."
-    return tldr
+# def get_smmry_txt(url, length=4, text=None):
+#     if url:
+#         if any(ext in url for ext in ['youtube.com', 'youtu.be']):
+#             raise YoutubeError
+#         else:
+#             print("This is not youtube")
+#             text = get_text(url).text
+#         if len(text) == 0:
+#             raise SmmryAPIException
+#
+#     api_key = os.environ.get('SMMRY_API_KEY')
+#     payload = {'sm_api_input': text,
+#                'SM_LENGTH': length,
+#                'SM_KEYWORD_COUNT': 12}
+#     surl = f"https://api.smmry.com/&SM_API_KEY={api_key}&SM_LENGTH={length}&SM_KEYWORD_COUNT={payload['SM_KEYWORD_COUNT']}"
+#     r = requests.post(surl, payload)
+#     meta = r.json()
+#     # meta['authors'] = ", ".join([x for x in article.authors])
+#     # meta['title'] = article.title
+#     # meta['img'] = article.top_img
+#     try:
+#         if "TEXT IS TOO SHORT" in r.json()['sm_api_message'] or "SOURCE IS TOO SHORT" in r.json()['sm_api_message']:
+#             if len(text) > 0:
+#                 return {f'sm_api_content_reduced': f'0%',
+#                         'sm_api_content': text,
+#                         # 'author': article.authors,
+#                         # 'img': article.top_img,
+#                         # 'title': article.title,
+#                         # "movies": article.movies
+#                         }
+#     except Exception as e:
+#         return meta
 
 
-def get_text(url=None):
-    try:
-        # USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0) Gecko/20100101 Firefox/78.0'
-        #
-        # config = Config()
-        # config.browser_user_agent = USER_AGENT
-        # config.request_timeout = 10
-        # article = Article(url, config)
+# def get_tldr(url=None, length=7, text=None, sender=None):
+#     tldr = ""
+#     observations = ["I'm sorry I'm such a failure.",
+#                     "I'm so sorry you have to read all these words.",
+#                     "I hope this makes you happy because I'm not.",
+#                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
+#     try:
+#         s = get_smmry_txt(url, length, text)
+#         if sender:
+#             tldr = "\n".join(
+#                 [
+#                     f"Here's my tl;dr of @{sender} 's words I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
+#                     # s['img'],
+#                     "```",
+#                     # s['title'],
+#                     # s['authors'],
+#                     str(s['sm_api_content']), "```"])
+#         else:
+#             tldr = "\n".join(
+#                 [
+#                     f"Here's my tl;dr I could only reduce it by {s['sm_api_content_reduced']}.\n{random.choice(observations)}",
+#                     # s['img'],
+#                     "```",
+#                     # s['title'],
+#                     # s['authors'],
+#                     str(s['sm_api_content']), "```"])
+#
+#     except SmmryAPIException:
+#         errors = ["You have burned out my eyes sending me this page. I hope you're happy",
+#                   "This is @ihuman's fault."
+#                   "This page is full of cancer and now I am full of cancer.",
+#                   "Would you make your own sister read that page?",
+#                   "I did not agree to this many popups.",
+#                   "I don't want to read that. Can you give a TL;DR?"]
+#         tldr = random.choice(errors)
+#     except YoutubeError:
+#
+#         tldr = "I don't do youtube anymore. It's too depressing."
+#     return tldr
 
-        article = Article(url)
-        article.download()
-        article.parse()
 
-        # print(article.top_img)
-        # print(article.authors)
-        # print(article.movies)
-        article.nlp()
-
-    except ArticleException as a:
-        raise SmmryAPIException
-
-    return article
+# def get_text(url=None):
+#     try:
+#         # USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:78.0) Gecko/20100101 Firefox/78.0'
+#         #
+#         # config = Config()
+#         # config.browser_user_agent = USER_AGENT
+#         # config.request_timeout = 10
+#         # article = Article(url, config)
+#
+#         article = Article(url)
+#         article.download()
+#         article.parse()
+#
+#         # print(article.top_img)
+#         # print(article.authors)
+#         # print(article.movies)
+#         article.nlp()
+#
+#     except ArticleException as a:
+#         raise SmmryAPIException
+#
+#     return article
 
 
 async def tldr_react(event, bot, tldr_length):
@@ -153,20 +153,25 @@ async def tldr_react(event, bot, tldr_length):
                 # tldr_payload = get_tldr(urls[0], tldr_length)
                 tldr_payload = get_gpt_summary(urls[0])
 
-            else:
-                tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
+            # else:
+                # tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
 
-            await bot.chat.react(conversation_id, original_msg_id, ":notebook:")
-            try:
-                await bot.chat.send(conversation_id, tldr_payload)
+                await bot.chat.react(conversation_id, original_msg_id, ":notebook:")
+                try:
+                    await bot.chat.send(conversation_id, tldr_payload)
 
-            except IndexError as e:
+                except IndexError as e:
 
-                pass
+                    pass
 
 
 def fetch_article_content(url):
-    response = requests.get(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        'X-Forwarded-For': '66.249.66.1',
+
+    }
+    response = requests.get(url, headers)
     soup = BeautifulSoup(response.content, 'html.parser')
     # Extract the main content of the article; this depends on the HTML structure
     article_text = soup.find('article').get_text()
