@@ -446,18 +446,19 @@ async def handler(bot, event):
         logging.info("I'm triggering @marvn")
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        if event.msg.content.type == "attachment":
-            logging.info("I got an attachment")
-
-            message_id = event.msg.id
-            channel = event.msg.conv_id
-
-            filename = event.msg.content.attachment.object.filename
-
-            # Download the file
-
-            await bot.download(channel, message_id, filename)
-            logging.info(f"File downloaded: {filename}")
+        logging.info(event.msg)
+        # if event.msg.content.type == "attachment":
+        #     logging.info("I got an attachment")
+        #
+        #     message_id = event.msg.id
+        #     channel = event.msg.conv_id
+        #
+        #     filename = event.msg.content.attachment.object.filename
+        #
+        #     # Download the file
+        #
+        #     await bot.download(channel, message_id, filename)
+        #     logging.info(f"File downloaded: {filename}")
         msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
