@@ -7,7 +7,9 @@ import requests
 import re
 import requests
 from bs4 import BeautifulSoup
-import openai
+from openai import OpenAI
+
+from botcommands.natural_chat import get_convo
 
 load_dotenv('../secret.env')
 
@@ -184,23 +186,24 @@ def get_gpt_summary(url):
                     "I hope this makes you happy because I'm not.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
     article_text = fetch_article_content(url)
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
-    response = openai.ChatCompletion.create(
+    client = OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"),
+    )
+    chat_complettion = client.chat.completions.create(
         model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
         messages=[
             {"role": "system", "content": "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."},
+            {"role": "user", "content": get_convo()},
             {"role": "user", "content": f"Please provide a concise summary of the following article, highlighting the main points and conclusions: {article_text}"}
         ]
     )
-    summary = response['choices'][0]['message']['content']
+    summary = chat_complettion.choices[0].message.content
     tldr = "\n".join(
         [
             f"Here's my tl;dr.\n{random.choice(observations)}",
             "```",
             summary, "```"])
     return tldr
-
-
 
 
 if __name__ == "__main__":
