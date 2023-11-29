@@ -209,24 +209,27 @@ async def handler(bot, event):
 
     try:
         if event.msg.content.type_name == 'attachment':
-            logging.info(event.msg.content.attachment.object.title)
-            logging.info(event.msg.content.attachment.object.filename)
+            # logging.info(event.msg.content.attachment.object.title)
+            # logging.info(event.msg.content.attachment.object.filename)
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 logging.info("I'm triggering @marvn")
                 conversation_id = event.msg.conv_id
+                logging.info("got conv id")
                 await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
                 logging.info(event.msg)
-                if event.msg.content.type_name == "attachment":
-                    logging.info("I got an attachment")
 
-                    message_id = event.msg.id
-                    prompt = event.msg.content.attachment.object.title
-                    filename = event.msg.content.attachment.object.filename
+                logging.info("I got an attachment")
 
-                    # Download the file
+                message_id = event.msg.id
+                logging.info(f"Event msg id: {message_id}")
+                prompt = event.msg.content.attachment.object.title
+                filename = event.msg.content.attachment.object.filename
 
-                    await bot.download(conversation_id, message_id, filename)
-                    logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+                # Download the file
+                logging.info("Trying to download")
+
+                await bot.download(conversation_id, message_id, filename)
+                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
                 msg = get_chat(str(event.msg.content.text.body)[7:])
                 await bot.chat.send(conversation_id, msg)
 
