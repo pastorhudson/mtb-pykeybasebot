@@ -3,7 +3,7 @@ import asyncio
 import logging
 import os
 import sys
-from pprint import pprint
+# from pprint import pprint
 from string import punctuation
 
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
@@ -40,13 +40,13 @@ from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout
 from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
 from crud import s
-from botcommands.jitsi import get_jitsi_link
+# from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
-from botcommands.update_vaccine import get_vaccine_data
+# from botcommands.update_vaccine import get_vaccine_data
 # from botcommands.morbidity import get_morbid
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
-from botcommands.files import get_files
+# from botcommands.files import get_files
 from botcommands.poll import make_poll
 # from botcommands.advent_of_code import tell_solve
 
@@ -128,9 +128,9 @@ async def handler(bot, event):
         {"name": "eyebleach",
          "description": "Returns images from r/eyebleach. Default = 3",
          "usage": "<bleach_level> 1-11"},
-        {"name": "files",
-         "description": "Returns list of files on marvin",
-         "usage": ""},
+        # {"name": "files",
+        #  "description": "Returns list of files on marvin",
+        #  "usage": ""},
         {"name": "grades",
          "description": "Retrieve current academic snapshot from pa-cyber.",
          "usage": "RESTRICTED"},
@@ -608,14 +608,14 @@ async def handler(bot, event):
 
         await bot.chat.send(conversation_id, msg)
 
-    if str(event.msg.content.text.body).startswith("!files"):
-        conversation_id = event.msg.conv_id
-        team_name = event.msg.channel.name
-        if team_name in ['morethanbits', 'growinlove'] or event.msg.sender == 'pastorhudson':
-            msg = get_files()
-        else:
-            msg = "No Files."
-        await bot.chat.send(conversation_id, msg)
+    # if str(event.msg.content.text.body).startswith("!files"):
+    #     conversation_id = event.msg.conv_id
+    #     team_name = event.msg.channel.name
+    #     if team_name in ['morethanbits', 'growinlove'] or event.msg.sender == 'pastorhudson':
+    #         msg = get_files()
+    #     else:
+    #         msg = "No Files."
+    #     await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!grades"):
         conversation_id = event.msg.conv_id
@@ -810,13 +810,13 @@ async def handler(bot, event):
         # if ytv_payload['file']:
         #     await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
-    if str(event.msg.content.text.body).startswith('!vac'):
-        channel = event.msg.channel
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        vac_data = get_vaccine_data()
-        await bot.chat.send(conversation_id, vac_data)
+    # if str(event.msg.content.text.body).startswith('!vac'):
+    #     channel = event.msg.channel
+    #     msg_id = event.msg.id
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     vac_data = get_vaccine_data()
+    #     await bot.chat.send(conversation_id, vac_data)
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
@@ -827,12 +827,12 @@ async def handler(bot, event):
                               filename=meh_img,
                               title=msg)
 
-    if str(event.msg.content.text.body).startswith('!meet'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        room = str(event.msg.content.text.body)[6:]
-        msg = get_jitsi_link(room)
-        await bot.chat.send(conversation_id, msg)
+    # if str(event.msg.content.text.body).startswith('!meet'):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     room = str(event.msg.content.text.body)[6:]
+    #     msg = get_jitsi_link(room)
+    #     await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
@@ -850,7 +850,7 @@ async def handler(bot, event):
             msg = get_stardate(str(event.msg.content.text.body).split(' ')[1])
         except IndexError:
             msg = get_stardate()
-        my_msg = await bot.chat.send(conversation_id, msg)
+        my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
     if str(event.msg.content.text.body).startswith('!update'):
         conversation_id = event.msg.conv_id

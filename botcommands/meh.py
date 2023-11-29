@@ -3,6 +3,8 @@ import random
 import requests
 from pathlib import Path
 from newspaper import Article
+from botcommands.natural_chat import get_chat_with_image
+
 from dotenv import load_dotenv
 
 storage = Path('./storage')
@@ -26,29 +28,34 @@ def download_img(pic_url):
 
 
 def get_observation():
-    observations = [
-        "Now I'm doing the shopping. . . ",
-        "Where did it all go wrong?",
-        "Meh.",
-        "I'd snatch that up.",
-        "Nobody is going to buy this."
-    ]
-    return random.choice(observations)
+    try:
+        return get_chat_with_image(f"{storage.absolute()}/meh.png", "This is a daily deal can you tell us about the product and weather or not it is worth purchasing? If it is underwelming then use the word 'meh' excessively.")
+    except Exception as e:
+
+        observations = [
+            "Now I'm doing the shopping. . . ",
+            "Where did it all go wrong?",
+            "Meh.",
+            "I'd snatch that up.",
+            "Nobody is going to buy this."
+        ]
+        return random.choice(observations)
 
 
 def get_meh(observation=True):
     meh = feedparser.parse('https://meh.com/deals.rss')
+    download_img(get_image())
+
     msg = ""
     if observation:
         msg = get_observation()
-    msg += "```"
+    msg += "\n```"
 
     msg += meh['entries'][0]['title']
     img = meh['entries'][0]['summary'].split('=')[1].split('"')[1]
 
     msg += "```\n"
     msg += meh['entries'][0]['links'][0]['href'] + "\n"
-    download_img(get_image())
     return msg
 
 
@@ -62,5 +69,5 @@ def get_image():
 
 
 if __name__ == '__main__':
-    get_image()
-    print(get_meh(observation=False))
+    # get_image()
+    print(get_meh(observation=True))
