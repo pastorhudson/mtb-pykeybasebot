@@ -207,6 +207,8 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
+    logging.info(event.msg.content)
+
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body == ":white_check_mark:" or ':no_entry_sign:':
             if event.msg.sender.username != 'marvn' or event.msg.sender.username != 'morethanmarvin':
