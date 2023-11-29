@@ -230,7 +230,7 @@ async def handler(bot, event):
                 # Download the file
                 logging.info("Trying to download")
 
-                await bot.chat.download(event.msg.channel, message_id, f"{storage.absolute()}/{filename}")
+                await bot.chat.download(event.msg.channel.name, message_id, f"{storage.absolute()}/{filename}")
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
                 msg = get_chat(str(event.msg.content.text.body)[7:])
                 await bot.chat.send(conversation_id, msg)
