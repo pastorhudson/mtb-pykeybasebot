@@ -10,11 +10,11 @@ from botcommands.natural_chat import get_chat, get_marvn_reaction
 # from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.poll_results import get_poll_result
-from botcommands.tldr import get_tldr, tldr_react, get_gpt_summary
+from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
-from botcommands.waffle_house import get_waffle_closings
+# from botcommands.waffle_house import get_waffle_closings
 from pykeybasebot import Bot
 from botcommands.youtube import get_video, get_mp3, get_domain
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta, is_supported
@@ -142,9 +142,9 @@ async def handler(bot, event):
         {"name": "meh",
          "description": "Get's today's meh.",
          "usage": ""},
-        {"name": "meet",
-         "description": "Get video conference link.",
-         "usage": "<Conference Name>"},
+        # {"name": "meet",
+        #  "description": "Get video conference link.",
+        #  "usage": "<Conference Name>"},
         # {"name": "morbidity",
         #  "description": "Return data about current mass shootings in the US.",
         #  "usage": ""},
@@ -190,9 +190,9 @@ async def handler(bot, event):
         # {"name": "vac",
         #  "description": "Get Vaccine Distributation data from health.pa.gov",
         #  "usage": ""},
-        {"name": "waffle",
-         "description": "Get the currently closed Waffle Houses",
-         "usage": "Optional <state>"},
+        # {"name": "waffle",
+        #  "description": "Get the currently closed Waffle Houses",
+        #  "usage": "Optional <state>"},
         {"name": "wager",
          "description": "Forces me to setup a silly bet with points that don't matter.",
          "usage": "<points wagered> <The Event or Thing your betting upon>"},
@@ -209,7 +209,7 @@ async def handler(bot, event):
 
     try:
         if event.msg.content.type_name == 'attachment':
-            logging.info(event.msg.content.attachment)
+            logging.info(event.msg.content.attachment.object.title)
     except AttributeError:
         print("Not an attachment")
 
