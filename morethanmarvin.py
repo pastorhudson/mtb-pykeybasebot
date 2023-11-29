@@ -444,23 +444,25 @@ async def handler(bot, event):
                                 f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
                                 f"for trying to be cute.\n{instructions}")
 
-    if str(event.msg.content.text.body).startswith("@marvn"):
+
+
+    if str(event.msg.content.text.body).startswith("@marvn") or str(event.msg.content.attachment.title).startswith("@marvn"):
         logging.info("I'm triggering @marvn")
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         logging.info(event.msg)
-        # if event.msg.content.type == "attachment":
-        #     logging.info("I got an attachment")
-        #
-        #     message_id = event.msg.id
-        #     channel = event.msg.conv_id
-        #
-        #     filename = event.msg.content.attachment.object.filename
-        #
-        #     # Download the file
-        #
-        #     await bot.download(channel, message_id, filename)
-        #     logging.info(f"File downloaded: {filename}")
+        if event.msg.content.type_name == "attachment":
+            logging.info("I got an attachment")
+
+            message_id = event.msg.id
+            channel = event.msg.conv_id
+            prompt = event.msg.content.attachment.title
+            filename = event.msg.content.attachment.object.filename
+
+            # Download the file
+
+            await bot.download(channel, message_id, filename)
+            logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
 
