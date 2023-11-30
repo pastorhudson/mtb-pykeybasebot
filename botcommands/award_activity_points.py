@@ -10,7 +10,7 @@ async def award_activity_points(event, bot):
     # members = await get_channel_members(conversation_id. bot)
     # channel_name = str(event.msg.channel.name).replace(",", "")
     team_name = event.msg.channel.name
-    score = write_score(event.msg.sender.username, '@marvn', team_name, 13, description='sent msg')
+    score = write_score(event.msg.sender.username, '@marvn', team_name, 11, description='sent msg')
     pass
 
 # def award(event):
