@@ -3,32 +3,25 @@ import asyncio
 import logging
 import os
 import sys
-# from pprint import pprint
 from string import punctuation
-
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
-# from botcommands.poll_results import get_poll_result
 from botcommands.jokes import get_joke
 from botcommands.poll_results import get_poll_result
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
-# from botcommands.waffle_house import get_waffle_closings
 from pykeybasebot import Bot
 from botcommands.youtube import get_video, get_mp3, get_domain
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta, is_supported
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
-# from botcommands.virustotal import get_scan // Depreciated because virustotal changed api
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
-# from botcommands.stable_diffusion import generate_image
 from botcommands.draw_dallie import generate_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
-# from botcommands.voice import get_voice
 from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
@@ -40,21 +33,13 @@ from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout
 from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
 from crud import s
-# from botcommands.jitsi import get_jitsi_link
 from botcommands.pacyber import get_academic_snapshot
-# from botcommands.update_vaccine import get_vaccine_data
-# from botcommands.morbidity import get_morbid
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
-# from botcommands.files import get_files
 from botcommands.poll import make_poll
-# from botcommands.advent_of_code import tell_solve
-
+from botcommands.award_activity_points import award_activity_points
 # import webhooks
 
-# from botcommands.rickroll import get_rickroll
-
-# load_dotenv('secret.env')
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -94,6 +79,8 @@ def RepresentsInt(s):
 
 class Points(object):
     pass
+
+
 
 
 async def handler(bot, event):
@@ -207,7 +194,8 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
-    logging.info(event.msg.content)
+    #award points based on activity
+    await award_activity_points(event)
 
     try:
         if event.msg.content.type_name == 'attachment':
