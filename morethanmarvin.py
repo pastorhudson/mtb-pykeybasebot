@@ -27,7 +27,7 @@ from botcommands.meh import get_meh
 from botcommands.draw_dallie import generate_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
-from botcommands.chuck import get_chuck
+from botcommands.chuck import get_new_chuck
 # from botcommands.voice import get_voice
 from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
@@ -112,7 +112,7 @@ async def handler(bot, event):
         #  "usage": "<url>"},
         {"name": "chuck",
          "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
-         "usage": "Optional: <name> OR bomb if nothing is given a member of this channel will be selected at random."},
+         # "usage": "Optional: <name> OR bomb if nothing is given a member of this channel will be selected at random."},
         # {"name": "covid",
         #  "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
         #  "usage": "<State> <County> <- Optional Fields"},
@@ -535,12 +535,13 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         channel_members = await get_channel_members(conversation_id)
-        try:
-            name = str(event.msg.content.text.body)[7:]
-            chuck_msg = get_chuck(name=name, channel_members=channel_members)
-        except:
-            chuck_msg = get_chuck(channel_members=channel_members)
-        my_msg = await bot.chat.send(conversation_id, chuck_msg)
+        # try:
+        #     name = str(event.msg.content.text.body)[7:]
+        #     chuck_msg = get_chuck(name=name, channel_members=channel_members)
+        # except:
+        #     chuck_msg = get_chuck(channel_members=channel_members)
+        chuck_msg = get_new_chuck()
+        my_msg = await bot.chat.reply(conversation_id, event.msg.id, chuck_msg)
 
     if str(event.msg.content.text.body).startswith('!covid'):
         channel = event.msg.channel

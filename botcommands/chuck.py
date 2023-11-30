@@ -4,11 +4,13 @@ from html import unescape
 from botcommands.get_members import get_members
 
 
-def request_joke(joker):
-    url = f"http://api.icndb.com/jokes/random?firstName&lastName={joker}&?exclude=[explicit]&?escape=javascript"
+def request_joke():
+    # url = f"http://api.icndb.com/jokes/random?firstName&lastName={joker}&?exclude=[explicit]&?escape=javascript"
+    url = f"https://api.chucknorris.io/jokes/random"
 
     response = requests.request("GET", url)
-    return unescape(response.json()['value']['joke'])
+
+    return response.json()['value']
 
 
 def get_chuck(name=None, channel_members=None):
@@ -49,5 +51,23 @@ def get_chuck(name=None, channel_members=None):
     return msg
 
 
+def get_new_chuck():
+    observations = [
+        "This is very jouvinile.",
+        "I can't even. . . ",
+        "I'm so sorry. . . I was created. . ."
+        "Does this make you happy? Because it doesn't make me happy.",
+        "I hope you don't plan on doing this all day. . .",
+        "Would you grow up already?",
+    ]
+
+    joke = ""
+    joke = request_joke()
+    msg = "`" + random.choice(observations) + '`\n'
+    msg += "```" + joke + "```"
+
+    return msg
 
 
+if __name__ == "__main__":
+    print(get_new_chuck())
