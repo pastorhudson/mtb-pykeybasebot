@@ -207,6 +207,8 @@ async def handler(bot, event):
          "usage": "<url>"},
     ]
 
+    logging.info(event.msg.content)
+
     try:
         if event.msg.content.type_name == 'attachment':
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
@@ -438,7 +440,7 @@ async def handler(bot, event):
                        f"Points must be whole numbers.\n" \
                        f"No cutesy extra characters, or I'll deduct from your score.\n" \
                        f"You can't give points to yourself.```\n" \
-                       f"Usage: `!award <@user> <points>`"
+                       f"Usage: `!award <@user> <points> <description>`"
         msg_id = event.msg.id
         conversation_id = event.msg.conv_id
         members = await get_channel_members(conversation_id)
