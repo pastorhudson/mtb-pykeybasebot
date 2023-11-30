@@ -1,5 +1,6 @@
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
 
 async def award_activity_points(event, bot):
@@ -10,7 +11,7 @@ async def award_activity_points(event, bot):
     # members = await get_channel_members(conversation_id. bot)
     # channel_name = str(event.msg.channel.name).replace(",", "")
     team_name = event.msg.channel.name
-    logging.INFO(f'Giving {event.msg.sender.username} 11 pts')
+    logging.info(f'Giving {event.msg.sender.username} 11 pts')
     # score = write_score(event.msg.sender.username, '@marvn', team_name, 11, description='sent msg')
     pass
 
