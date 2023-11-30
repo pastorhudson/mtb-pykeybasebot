@@ -1,10 +1,8 @@
 import logging
 
-from botcommands.scorekeeper import write_score
-from botcommands.sync import sync
 
 
-async def award_activity_points(event, bot, logging):
+async def award_activity_points(event, bot):
     # await sync(event=event, bot=bot)
 
     # msg_id = event.msg.id
