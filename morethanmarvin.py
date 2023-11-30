@@ -310,9 +310,9 @@ async def handler(bot, event):
                             pass
                 if ':tv:' in reaction_list:
                     team_name = event.msg.channel.name
-                    fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :tv:"
+                    fail_msg = f"`-1000pts` awarded to @{event.msg.sender.username} for spamming :tv:"
                     score = write_score(event.msg.sender.username, 'marvn',
-                                        team_name, -10, description=fail_msg)
+                                        team_name, -1000, description=fail_msg)
                     await bot.chat.send(conversation_id, fail_msg)
 
                 else:
@@ -354,9 +354,9 @@ async def handler(bot, event):
                 print(reaction_list)
                 if ':headphones:' in reaction_list:
                     team_name = event.msg.channel.name
-                    fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :headphones:"
+                    fail_msg = f"`-379pts` awarded to @{event.msg.sender.username} for spamming :headphones:"
                     score = write_score(event.msg.sender.username, 'marvn',
-                                        team_name, -10, description=fail_msg)
+                                        team_name, -379, description=fail_msg)
                     await bot.chat.send(conversation_id, fail_msg)
 
                 else:
@@ -397,9 +397,9 @@ async def handler(bot, event):
                             pass
                 if ':camera:' in reaction_list:
                     team_name = event.msg.channel.name
-                    fail_msg = f"`-10pts` awarded to @{event.msg.sender.username} for spamming :camera:"
+                    fail_msg = f"`-1200pts` awarded to @{event.msg.sender.username} for spamming :camera:"
                     score = write_score(event.msg.sender.username, 'marvn',
-                                        team_name, -10, description=fail_msg)
+                                        team_name, -1200, description=fail_msg)
                     await bot.chat.send(conversation_id, fail_msg)
 
                 else:
@@ -429,7 +429,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!award"):
         await sync(event=event, bot=bot)
 
-        pts_max = 500
+        pts_max = 5000
 
         instructions = f"You have failed. I'm not surprised.\n" \
                        f"```You can only give points to someone in this chat.\n" \
@@ -453,15 +453,23 @@ async def handler(bot, event):
                     points = int(word.strip(punctuation))
                 elif word.startswith('@') and not user:
                     user = str(word.strip("@").rstrip(punctuation))
+            logging.info(f"{event.msg.sender.username} is trying to give {user} {points}pts.")
             if not points:
                 await bot.chat.send(conversation_id, instructions)
 
             if points < 0 and event.msg.sender.username != 'pastorhudson':
+                logging.info("Points are Negative!")
                 user = event.msg.sender.username
-                score = write_score(user, event.msg.sender.username, team_name, -5, description=description)
+                score = write_score(user, event.msg.sender.username, team_name, -500, description=description)
                 await bot.chat.send(conversation_id,
-                                    f"`-5` points awarded to @{user}. I'm the only negative one around here.")
-            if user in members and user != event.msg.sender.username and points <= pts_max or event.msg.sender.username == 'pastorhudson' or user == 'pastorhudson':
+                                    f"`-500` points awarded to @{user}. I'm the only negative one around here.")
+            if user in members:
+                logging.info("User is in members")
+            if user != event.msg.sender.username:
+                logging.info(f"{event.msg.sender.username} is not {user}")
+            if points <= pts_max:
+                logging.info(f"{points} is less than or equal to {pts_max}")
+            if user in members and user != event.msg.sender.username and points <= pts_max:
                 score = write_score(user, event.msg.sender.username, team_name, points, description=description)
                 await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
