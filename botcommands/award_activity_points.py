@@ -6,11 +6,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 async def award_activity_points(event):
-    # await sync(event=event, bot=bot)
-    # msg_id = event.msg.id
-    # conversation_id = event.msg.conv_id
-    # members = await get_channel_members(conversation_id. bot)
-    # channel_name = str(event.msg.channel.name).replace(",", "")
+
     if event.msg.content.type_name == "text":
 
         team_name = event.msg.channel.name
