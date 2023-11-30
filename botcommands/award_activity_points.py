@@ -5,8 +5,7 @@ from botcommands.scorekeeper import write_score
 logging.basicConfig(level=logging.DEBUG)
 
 
-
-async def award_activity_points(event, command_list):
+async def award_activity_points(event):
     # await sync(event=event, bot=bot)
     # msg_id = event.msg.id
     # conversation_id = event.msg.conv_id
