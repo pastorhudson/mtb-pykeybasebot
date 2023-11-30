@@ -111,8 +111,7 @@ async def handler(bot, event):
         #  "description": "Force me to give Virus Total your nasty URL and return scan results.",
         #  "usage": "<url>"},
         {"name": "chuck",
-         "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel.",
-         # "usage": "Optional: <name> OR bomb if nothing is given a member of this channel will be selected at random."},
+         "description": "Forces me to tell a terribly jouvinile possibly NSFW joke randomly mentioning someone in this channel."},
         # {"name": "covid",
         #  "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
         #  "usage": "<State> <County> <- Optional Fields"},
@@ -1068,15 +1067,15 @@ async def handler(bot, event):
         finally:
             await bot.chat.send(conversation_id, msg)
 
-    if str(event.msg.content.text.body).startswith('!waffle'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        try:
-            state = str(event.msg.content.text.body)[7:].strip()
-            waffles_msg = get_waffle_closings(state)
-        except:
-            waffles_msg = get_waffle_closings()
-        my_msg = await bot.chat.send(conversation_id, waffles_msg)
+    # if str(event.msg.content.text.body).startswith('!waffle'):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     try:
+    #         state = str(event.msg.content.text.body)[7:].strip()
+    #         waffles_msg = get_waffle_closings(state)
+    #     except:
+    #         waffles_msg = get_waffle_closings()
+    #     my_msg = await bot.chat.send(conversation_id, waffles_msg)
 
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id
