@@ -466,9 +466,9 @@ async def handler(bot, event):
             else:
                 await bot.chat.send(conversation_id, instructions)
         except Exception as e:
-            write_score('marvn', event.msg.sender.username, team_name, -5, description=description)
+            write_score('marvn', event.msg.sender.username, team_name, -42, description=description)
             await bot.chat.send(conversation_id,
-                                f"You did it wrong.\n `-5` points deducted from  @{event.msg.sender.username} "
+                                f"You did it wrong.\n `-42` points deducted from  @{event.msg.sender.username} "
                                 f"for trying to be cute.\n{instructions}")
 
 
