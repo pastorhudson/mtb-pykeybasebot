@@ -2,7 +2,7 @@ import json
 import os
 from pathlib import Path
 from pprint import pprint
-
+import webvtt
 import yt_dlp
 from yt_dlp.postprocessor.common import PostProcessor
 
@@ -268,8 +268,34 @@ def get_meta(url):
         return payload
 
 
+def extract_transcript_from_vtt(vtt_file):
+
+    vtt = webvtt.read(vtt_file)
+    transcript = ""
+
+    lines = []
+    for line in vtt:
+        # Strip the newlines from the end of the text.
+        # Split the string if it has a newline in the middle
+        # Add the lines to an array
+        lines.extend(line.text.strip().splitlines())
+
+    # Remove repeated lines
+    previous = None
+    for line in lines:
+        if line == previous:
+            continue
+        transcript += " " + line
+        previous = line
+
+    return transcript
+
+
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
-    print(get_meta('https://www.youtube.com/watch?v=oI8zv_4RKA8'))
+    # print(get_meta('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
+    vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
+    transcript = extract_transcript_from_vtt(vtt_file)
+    print(transcript)
     pass
