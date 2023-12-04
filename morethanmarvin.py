@@ -472,8 +472,7 @@ async def handler(bot, event):
                                 f"for trying to be cute.\n{instructions}")
 
 
-
-    if str(event.msg.content.text.body).lower.startswith("@marvn"):
+    if str(event.msg.content.text.body).lower().startswith("@marvn"):
         logging.info("I'm triggering @marvn")
         logging.info(event.msg)
         conversation_id = event.msg.conv_id
