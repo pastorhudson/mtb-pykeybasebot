@@ -1,6 +1,4 @@
-from botcommands.covid import get_covid
 from botcommands.meh import get_meh
-from botcommands.poll_results import get_poll_result
 from botcommands.stardate import get_stardate
 from botcommands.till import get_till
 import random
@@ -9,7 +7,11 @@ from botcommands.scorekeeper import write_score, get_score
 from botcommands.jokes import get_joke
 from crud import s
 from models import Team
-# from botcommands.update_vaccine import get_vaccine_data
+import logging
+
+from botcommands.scorekeeper import write_score
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def get_obaservation():
@@ -39,6 +41,23 @@ def get_morningreport(channel):
     msg[3] += f"Today's Joke:```{get_joke(False)}```"
     s.close()
     return msg
+
+
+# async def send_report(event):
+#
+#
+#     if event.msg.content.type_name == "text":
+#         team_name = event.msg.channel.name
+#         if str(event.msg.content.text.body).startswith("!"):
+#             score = write_score('@marvn', event.msg.sender.username, team_name, 3, description='sent msg')
+#         else:
+#             logging.info(f'Giving {event.msg.sender.username} {len(str(event.msg.content.text.body))}pts')
+#             score = write_score('@marvn', event.msg.sender.username, team_name, len(str(event.msg.content.text.body)), description='msg')
+#     if event.msg.content.type_name == 'reaction' and event.msg.sender.username != '@marvn':
+#         team_name = event.msg.channel.name
+#         logging.info(f'Giving {event.msg.sender.username} 4 pts')
+#         score = write_score('@marvn', event.msg.sender.username, team_name, 4, description='react')
+#     pass
 
 
 if __name__ == "__main__":
