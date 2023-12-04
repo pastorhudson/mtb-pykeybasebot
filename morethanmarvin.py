@@ -469,8 +469,8 @@ async def handler(bot, event):
 
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        logging.info(event.msg)
-        if event.msg.content.reply_to:
+        logging.info(event.msg.content.text)
+        if event.msg.content.text.reply_to:
             logging.info("I have a reply")
             original_msg = bot.chat.get(conversation_id, event.msg.content.reply_t)
             logging.info(original_msg)
