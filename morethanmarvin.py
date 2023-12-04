@@ -196,20 +196,13 @@ async def handler(bot, event):
 
     #award points based on activity
     await award_activity_points(event=event)
-    logging.info(event)
 
     try:
         if event.msg.content.type_name == 'attachment':
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 storage = Path('./storage')
-
-                logging.info("I'm triggering @marvn")
                 conversation_id = event.msg.conv_id
-                logging.info("got conv id")
                 await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-                logging.info(event.msg)
-
-                logging.info("I got an attachment")
 
                 message_id = event.msg.id
                 logging.info(f"Event msg id: {message_id}")
@@ -472,28 +465,23 @@ async def handler(bot, event):
                                 f"You did it wrong.\n `-42` points deducted from  @{event.msg.sender.username} "
                                 f"for trying to be cute.\n{instructions}")
 
-
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
-        logging.info("I'm triggering @marvn")
-        logging.info(event)
+
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        logging.info(event.msg)
-        if event.msg.content.type_name == "attachment":
-            logging.info("I got an attachment")
-
-            message_id = event.msg.id
-            channel = event.msg.conv_id
-            prompt = event.msg.content.attachment.title
-            filename = event.msg.content.attachment.object.filename
-
-            # Download the file
-
-            await bot.download(channel, message_id, filename)
-            logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+        if event.msg.content.reply_to:
+            logging.info("I have a reply")
+            original_msg = bot.chat.get(conversation_id, event.msg.content.reply_t)
+            logging.info(original_msg)
+        #     message_id = event.msg.id
+        #     channel = event.msg.conv_id
+        #     prompt = event.msg.content.attachment.title
+        #     filename = event.msg.content.attachment.object.filename
+        #     # Download the file
+        #     await bot.download(channel, message_id, filename)
+        #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         msg = get_chat(str(event.msg.content.text.body)[7:])
         await bot.chat.send(conversation_id, msg)
-
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
