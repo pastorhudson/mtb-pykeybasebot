@@ -196,6 +196,7 @@ async def handler(bot, event):
 
     #award points based on activity
     await award_activity_points(event=event)
+    logging.info(event)
 
     try:
         if event.msg.content.type_name == 'attachment':
