@@ -474,7 +474,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
         logging.info("I'm triggering @marvn")
-        logging.info(event.msg)
+        logging.info(event)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         logging.info(event.msg)
