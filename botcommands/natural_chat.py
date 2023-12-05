@@ -2,7 +2,7 @@ import os
 from icecream import ic
 from pathlib import Path
 import base64
-from openai import OpenAI
+from openai import OpenAI, AsyncOpenAI
 
 storage = Path('./storage')
 
@@ -40,7 +40,7 @@ def append_convo(data):
 
 async def get_chat(prompt):
     seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
-    client = OpenAI(
+    client = AsyncOpenAI(
         # defaults to os.environ.get("OPENAI_API_KEY")
         api_key=os.getenv("OPENAI_API_KEY"),
     )
@@ -66,7 +66,7 @@ async def get_chat(prompt):
 
 def get_marvn_reaction(username, msg):
     seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
-    client = OpenAI(
+    client = AsyncOpenAI(
         # defaults to os.environ.get("OPENAI_API_KEY")
         api_key=os.getenv("OPENAI_API_KEY"),
     )
@@ -96,7 +96,7 @@ def get_chat_with_image(image_path, prompt):
     base64_image = encode_image(image_path)
 
     seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
-    client = OpenAI(
+    client = AsyncOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_complettion = client.chat.completions.create(
