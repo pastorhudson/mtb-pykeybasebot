@@ -473,13 +473,13 @@ async def handler(bot, event):
         if event.msg.content.text.reply_to:
             logging.info("I have a reply")
             original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-            logging.info(original_msg.message[0]['msg']['content'])
+            logging.info(original_msg.message[0]['msg']['content']['text']['body'])
             logging.info(type(original_msg.message[0]['msg']['content']))
-            # if original_msg.message[0]['msg']['content']['type'] == "text":
-            #     prompt = f"Original Message from {original_msg.message[0].sender.username}: {original_msg.message[0].content.body}\n\n" \
-            #              f"Question from {msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-            #     msg = get_chat(prompt)
-            #     await bot.chat.send(conversation_id, msg)
+            if original_msg.message[0]['msg']['content']['type'] == "text":
+                prompt = f"Original Message from {original_msg.message[0].sender.username}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+                         f"Question from {msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+                msg = get_chat(prompt)
+                await bot.chat.send(conversation_id, msg)
 
             # Download the file
             # file = await bot.download(conversation_id, original_msg_id, original_msg.)
