@@ -116,7 +116,7 @@ async def get_text(url=None):
             article = Article(url)
             article.set_html(content)
             article.parse()
-    return article
+    return article.text
 
 
 async def fetch_article_content(url):
