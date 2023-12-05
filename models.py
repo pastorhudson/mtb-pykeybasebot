@@ -59,7 +59,7 @@ class Team(Base):
                                                               month=12,
                                                               day=31,
                                                               hour=23,
-                                                              minute=59)
+                                                              minute=59),
             ):
             try:
                 user_score[p.point_receiver] += p.points
@@ -82,8 +82,10 @@ class Team(Base):
                                                               month=12,
                                                               day=31,
                                                               hour=23,
-                                                              minute=59)
-            ):
+                                                              minute=59),
+                Point.description not in ["sent msg", "msg", "react"]
+
+        ):
             try:
                 user_generosity[p.point_giver] += p.points
             except KeyError:
