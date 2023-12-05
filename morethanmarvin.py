@@ -473,16 +473,28 @@ async def handler(bot, event):
         if event.msg.content.text.reply_to:
             logging.info("I have a reply")
             original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-            logging.info(original_msg)
+            logging.info(original_msg.content.type)
+            if original_msg.content.type == "text":
+                prompt = f"Original Message from {original_msg.sender.username}: {original_msg.content.body}\n\n" \
+                         f"Question from {msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+                msg = get_chat(prompt)
+                await bot.chat.send(conversation_id, msg)
+
+            logging.info(original_msg.content.body)
+            # Download the file
+            # file = await bot.download(conversation_id, original_msg_id, original_msg.)
+            # logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+
         #     message_id = event.msg.id
         #     channel = event.msg.conv_id
         #     prompt = event.msg.content.attachment.title
         #     filename = event.msg.content.attachment.object.filename
         #     # Download the file
         #     await bot.download(channel, message_id, filename)
-        #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-        msg = get_chat(str(event.msg.content.text.body)[7:])
-        await bot.chat.send(conversation_id, msg)
+        #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")\
+        else:
+            msg = get_chat(str(event.msg.content.text.body)[7:])
+            await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
