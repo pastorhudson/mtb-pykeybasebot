@@ -482,10 +482,11 @@ async def handler(bot, event):
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 msg = get_chat(prompt)
                 await bot.chat.send(conversation_id, msg)
+            # elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
             # Download the file
-            # file = await bot.download(conversation_id, original_msg_id, original_msg.)
-            # logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+            #     file = await bot.download(conversation_id, original_msg[0]['msg']['id'], original_msg.)
+            #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
 
         #     message_id = event.msg.id
         #     channel = event.msg.conv_id

@@ -1,5 +1,6 @@
 # from smmryAPI.smmryapi import SmmryAPIException
 import os
+from pathlib import Path
 from pprint import pprint
 
 # from newspaper import Article, ArticleException
@@ -13,6 +14,7 @@ from newspaper import Article
 from openai import OpenAI
 
 from botcommands.natural_chat import get_convo
+from botcommands.youtube_dlp import get_meta, extract_transcript_from_vtt
 
 load_dotenv('../secret.env')
 
@@ -167,13 +169,26 @@ def fetch_article_content(url):
     return article_text
 
 
+def fetch_youtube_transcript(url):
+
+    meta = get_meta(url)
+
+    return meta['transcript']
+
 def get_gpt_summary(url):
     observations = ["I'm sorry I'm such a failure.",
                     "I'm so sorry you have to read all these words.",
                     "I hope this makes you happy because I'm not.",
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
+
     try:
-        article_text = get_text(url).text
+        if url.startswith('https://youtu'):
+            article_text = fetch_youtube_transcript(url)
+            system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
+
+        else:
+            article_text = get_text(url).text
+            system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
     except Exception as e:
         article_text = fetch_article_content(url)
 
@@ -183,7 +198,7 @@ def get_gpt_summary(url):
     chat_complettion = client.chat.completions.create(
         model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": get_convo()},
             {"role": "user", "content": f"Please provide a concise summary of the following article, highlighting the main points and conclusions: {article_text}"}
         ]
@@ -214,6 +229,7 @@ if __name__ == "__main__":
     # article.download()
     # article.parse()
     # print(article.text)
-    pprint(get_text('https://www.theatlantic.com/international/archive/2014/11/how-the-media-makes-the-israel-story/383262/').text)
+    # pprint(get_text('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq').text)
+    pprint(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # summary = get_gpt_summary('https://www.theatlantic.com/international/archive/2014/11/how-the-media-makes-the-israel-story/383262/')
     # print(summary)

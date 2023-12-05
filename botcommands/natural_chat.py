@@ -38,13 +38,13 @@ def append_convo(data):
     return None
 
 
-def get_chat(prompt):
+async def get_chat(prompt):
     seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
     client = OpenAI(
         # defaults to os.environ.get("OPENAI_API_KEY")
         api_key=os.getenv("OPENAI_API_KEY"),
     )
-    chat_completion = client.chat.completions.create(
+    chat_completion = await client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": seed},
