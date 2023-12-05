@@ -210,7 +210,7 @@ async def get_gpt_summary(url):
 
     try:
         logging.info(url)
-        if url.startswith('https://youtu'):
+        if url.startswith('https://youtu') or url.startswith('https://www.youtu'):
             logging.info("This is a youtube video")
             article_text = await fetch_youtube_transcript(url)
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
