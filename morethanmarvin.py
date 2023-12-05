@@ -480,7 +480,7 @@ async def handler(bot, event):
             if original_msg.message[0]['msg']['content']['type'] == "text":
                 prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-                msg = get_chat(prompt)
+                msg = await get_chat(prompt)
                 await bot.chat.send(conversation_id, msg)
             # elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
@@ -496,7 +496,7 @@ async def handler(bot, event):
         #     await bot.download(channel, message_id, filename)
         #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")\
         else:
-            msg = get_chat(str(event.msg.content.text.body)[7:])
+            msg = await get_chat(str(event.msg.content.text.body)[7:])
             await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!bible"):
