@@ -72,6 +72,7 @@ class MyCustomPP(PostProcessor):
         payload = {"title": info["title"],
                    # "author": yt_info["uploader"],
                    "file": filename,
+                   'transcript': extract_transcript_from_vtt(info['requested_subtitles']['en']['filepath']),
                    "duration": convert_seconds(info["duration"]),
                    'url': info['webpage_url']
                    }
@@ -226,8 +227,10 @@ def get_meta(url):
         try:
             ydl.add_post_processor(MyCustomPP())
             yt_info = ydl.extract_info(url)
+            pprint(yt_info['requested_subtitles']['en']['filepath'])
             payload = {"title": yt_info["title"],
                        "file": None,
+                       'transcript': extract_transcript_from_vtt(yt_info['requested_subtitles']['en']['filepath']),
                        "duration": convert_seconds(yt_info["duration"]),
                        'url': yt_info['webpage_url']
                        }
@@ -294,8 +297,11 @@ def extract_transcript_from_vtt(vtt_file):
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
-    # print(get_meta('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
-    vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
-    transcript = extract_transcript_from_vtt(vtt_file)
-    print(transcript)
+    meta = get_mp4('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq')
+    print(meta)
+    # vtt_file = meta['title'].replace(' ', '_') + ".en.vtt"
+    # print(vtt_file)
+    # vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
+    # transcript = extract_transcript_from_vtt(vtt_file)
+    # print(transcript)
     pass
