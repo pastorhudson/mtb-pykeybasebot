@@ -1,4 +1,5 @@
 # from smmryAPI.smmryapi import SmmryAPIException
+import logging
 import os
 from pathlib import Path
 from pprint import pprint
@@ -182,7 +183,9 @@ def get_gpt_summary(url):
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
 
     try:
+        logging.info(url)
         if url.startswith('https://youtu'):
+            logging.info("This is a youtube video")
             article_text = fetch_youtube_transcript(url)
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
 
