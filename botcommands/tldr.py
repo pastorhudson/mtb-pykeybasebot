@@ -173,7 +173,7 @@ def fetch_article_content(url):
 def fetch_youtube_transcript(url):
 
     meta = get_meta(url)
-
+    logging.info(meta)
     return meta['transcript']
 
 def get_gpt_summary(url):
