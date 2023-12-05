@@ -804,7 +804,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-        tldr = get_gpt_summary(urls[0])
+        tldr = await get_gpt_summary(urls[0])
         await bot.chat.reply(conversation_id, event.msg.id, tldr)
 
         # ytv_payload = get_mp4(urls[0])

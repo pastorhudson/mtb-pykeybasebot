@@ -1,9 +1,11 @@
 # from smmryAPI.smmryapi import SmmryAPIException
+import asyncio
 import logging
 import os
 from pathlib import Path
 from pprint import pprint
 
+import aiohttp
 # from newspaper import Article, ArticleException
 from dotenv import load_dotenv
 import random
@@ -99,13 +101,32 @@ class YoutubeError(Exception):
 #     return tldr
 
 
-def get_text(url=None):
+# def get_text(url=None):
+#
+#     article = Article(url)
+#     article.download()
+#     article.parse()
+#
+#     return article
 
-    article = Article(url)
-    article.download()
-    article.parse()
-
+async def get_text(url=None):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            content = await response.text()
+            article = Article(url)
+            article.set_html(content)
+            article.parse()
     return article
+
+
+async def fetch_article_content(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            content = await response.text()
+            soup = BeautifulSoup(content, 'html.parser')
+            # Extract the main content of the article; this depends on the HTML structure
+            article_text = soup.find('article').get_text()
+    return article_text
 
 
 async def tldr_react(event, bot, tldr_length):
@@ -158,25 +179,30 @@ async def tldr_react(event, bot, tldr_length):
                     pass
 
 
-def fetch_article_content(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        'X-Forwarded-For': '66.249.66.1',
-    }
-    response = requests.get(url, headers)
-    soup = BeautifulSoup(response.content, 'html.parser')
-    # Extract the main content of the article; this depends on the HTML structure
-    article_text = soup.find('article').get_text()
-    return article_text
+# def fetch_article_content(url):
+#     headers = {
+#         'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+#         'X-Forwarded-For': '66.249.66.1',
+#     }
+#     response = requests.get(url, headers)
+#     soup = BeautifulSoup(response.content, 'html.parser')
+#     # Extract the main content of the article; this depends on the HTML structure
+#     article_text = soup.find('article').get_text()
+#     return article_text
 
 
-def fetch_youtube_transcript(url):
-
+# def fetch_youtube_transcript(url):
+#
+#     meta = get_meta(url)
+#     logging.info(meta)
+#     return meta['transcript']
+async def fetch_youtube_transcript(url):
     meta = get_meta(url)
     logging.info(meta)
     return meta['transcript']
 
-def get_gpt_summary(url):
+
+async def get_gpt_summary(url):
     observations = ["I'm sorry I'm such a failure.",
                     "I'm so sorry you have to read all these words.",
                     "I hope this makes you happy because I'm not.",
@@ -186,14 +212,13 @@ def get_gpt_summary(url):
         logging.info(url)
         if url.startswith('https://youtu'):
             logging.info("This is a youtube video")
-            article_text = fetch_youtube_transcript(url)
+            article_text = await fetch_youtube_transcript(url)
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
-
         else:
-            article_text = get_text(url).text
+            article_text = await get_text(url)
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
     except Exception as e:
-        article_text = fetch_article_content(url)
+        article_text = await fetch_article_content(url)
 
     client = OpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
@@ -214,25 +239,47 @@ def get_gpt_summary(url):
             summary, "```"])
     return tldr
 
+# def get_gpt_summary(url):
+#     observations = ["I'm sorry I'm such a failure.",
+#                     "I'm so sorry you have to read all these words.",
+#                     "I hope this makes you happy because I'm not.",
+#                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
+#
+#     try:
+#         logging.info(url)
+#         if url.startswith('https://youtu'):
+#             logging.info("This is a youtube video")
+#             article_text = fetch_youtube_transcript(url)
+#             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
+#
+#         else:
+#             article_text = get_text(url).text
+#             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
+#     except Exception as e:
+#         article_text = fetch_article_content(url)
+#
+#     client = OpenAI(
+#         api_key=os.getenv("OPENAI_API_KEY"),
+#     )
+#     chat_complettion = client.chat.completions.create(
+#         model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
+#         messages=[
+#             {"role": "system", "content": system_prompt},
+#             {"role": "user", "content": get_convo()},
+#             {"role": "user", "content": f"Please provide a concise summary of the following article, highlighting the main points and conclusions: {article_text}"}
+#         ]
+#     )
+#     summary = chat_complettion.choices[0].message.content
+#     tldr = "\n".join(
+#         [
+#             f"Here's my tl;dr.\n{random.choice(observations)}",
+#             "```",
+#             summary, "```"])
+#     return tldr
+
 
 if __name__ == "__main__":
-    # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
-    # print(get_tldr('https://www.youtube.com/watch?v=R0sJ5JGlIjI'))
-    # print(get_tldr('https://spectrum.ieee.org/in-2016-microsofts-racist-chatbot-revealed-the-dangers-of-online-conversation'))
-    # print(get_tldr(
-    #     'https://www.chicagotribune.com/coronavirus/ct-nw-hope-hicks-trump-covid-19-20201002-mdjcmul6pnajvg56zoxqrcnf5m-story.html'))
-    # print(get_tldr('https://www.cnn.com/2021/10/18/politics/colin-powell-dies/index.html'))
-    # print(get_tldr('https://www.cnn.com/2021/10/18/politics/joe-biden-democrats-economy-supply-chain-donald-trump-2022-midterms/index.html'))
-    # print(len(get_text('https://patch.com/pennsylvania/pittsburgh/consumer-alert-issued-pittsburgh-area-pizza-shop')))
-    # print(get_tldr('https://pastorhudson.com/blog/2019/4/7/aay2jryefexlpc1vj9zk4rdkznpifl'))
-    # print(get_tldr('https://www.theplayerstribune.com/posts/kordell-stewart-nfl-football-pittsburgh-steelers'))
-    # print(get_tldr('https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'))
-    # url = 'https://getpocket.com/explore/item/the-neuroscience-of-breaking-out-of-negative-thinking-and-how-to-do-it-in-under-30-seconds?utm_source=pocket-newtab'
-    # article = Article(url)
-    # article.download()
-    # article.parse()
-    # print(article.text)
-    # pprint(get_text('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq').text)
-    pprint(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
-    # summary = get_gpt_summary('https://www.theatlantic.com/international/archive/2014/11/how-the-media-makes-the-israel-story/383262/')
-    # print(summary)
+    loop = asyncio.get_event_loop()
+    result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
+    pprint(result)
+
