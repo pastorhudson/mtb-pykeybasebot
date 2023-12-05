@@ -165,7 +165,7 @@ async def tldr_react(event, bot, tldr_length):
             urls = re.findall(r'(https?://[^\s]+)', original_body)
             if urls:
                 # tldr_payload = get_tldr(urls[0], tldr_length)
-                tldr_payload = get_gpt_summary(urls[0])
+                tldr_payload = await get_gpt_summary(urls[0])
 
             # else:
                 # tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
@@ -280,6 +280,7 @@ async def get_gpt_summary(url):
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
+    # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
+    result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/business/environment/ac-companies-plan-cool-designs-warming-world-high-costs-hurdle-2023-12-05/'))
     pprint(result)
 
