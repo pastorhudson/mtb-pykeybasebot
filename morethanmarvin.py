@@ -473,9 +473,9 @@ async def handler(bot, event):
         if event.msg.content.text.reply_to:
             logging.info("I have a reply")
             original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-            logging.info(original_msg.message[0])
-            if original_msg.message.content.type == "text":
-                prompt = f"Original Message from {original_msg.message.sender.username}: {original_msg.message.content.body}\n\n" \
+            logging.info(original_msg.message[0].content.text)
+            if original_msg.message.message[0].content.type == "text":
+                prompt = f"Original Message from {original_msg.message[0].sender.username}: {original_msg.message[0].content.body}\n\n" \
                          f"Question from {msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 msg = get_chat(prompt)
                 await bot.chat.send(conversation_id, msg)
