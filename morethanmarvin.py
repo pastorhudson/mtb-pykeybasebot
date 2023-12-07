@@ -485,30 +485,21 @@ async def handler(bot, event):
             elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
                 # Download the file
-                #     file = await bot.download(conversation_id, original_msg[0]['msg']['id'], original_msg.)
-                #     prompt = f"Original Message from {original_msg.message[0]['msg']['content']['attachment']['object']['title']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-                #              f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-                #     prompt = event.msg.content.attachment.object.title
-                #     filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
+                prompt = f"Original Message from {original_msg.message[0]['msg']['content']['attachment']['object']['title']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+                         f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+                org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
+
+                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
 
                 # Download the file
                 logging.info("Trying to download")
                 attachment_title = original_msg.message[0]['msg']['content']['attachment']['object']['title']
-                filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
                 logging.info(conversation_id)
                 logging.info(attachment_title)
                 logging.info(filename)
-                logging.info(original_msg.message[0])
-                # await bot.chat.download(conversation_id, message_id, filename)
-                # logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-
-        #     message_id = event.msg.id
-        #     channel = event.msg.conv_id
-        #     prompt = event.msg.content.attachment.title
-        #     filename = event.msg.content.attachment.object.filename
-        #     # Download the file
-        #     await bot.download(channel, message_id, filename)
-        #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")\
+                org_conversation_id = original_msg.message[0]['msg']['conversation_id']
+                file = await bot.download(org_conversation_id, original_msg[0]['msg']['id'], org_filename)
+                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         else:
             msg = await get_chat(str(event.msg.content.text.body)[7:])
             await bot.chat.send(conversation_id, msg)
