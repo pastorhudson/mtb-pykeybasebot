@@ -500,7 +500,10 @@ async def handler(bot, event):
                 logging.info(attachment_title)
                 logging.info(filename)
                 org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-                file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], org_filename)
+                file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+                msg = get_chat_with_image(filename, prompt)
+                await bot.chat.send(conversation_id, msg)
+
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         else:
             msg = await get_chat(str(event.msg.content.text.body)[7:])
