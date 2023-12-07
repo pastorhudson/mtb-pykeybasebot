@@ -214,9 +214,12 @@ async def get_gpt_summary(url):
             logging.info("This is a youtube video")
             article_text = await fetch_youtube_transcript(url)
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
+            content_type = 'video'
+
         else:
             article_text = await get_text(url)
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
+            content_type = 'article'
     except Exception as e:
         article_text = await fetch_article_content(url)
 
@@ -228,7 +231,7 @@ async def get_gpt_summary(url):
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": get_convo()},
-            {"role": "user", "content": f"Please provide a concise summary of the following article, highlighting the main points and conclusions: {article_text}"}
+            {"role": "user", "content": f"Please provide a concise summary of the following {content_type}, highlighting the main points and conclusions: {article_text}"}
         ]
     )
     summary = chat_complettion.choices[0].message.content
