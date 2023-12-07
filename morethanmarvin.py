@@ -484,11 +484,20 @@ async def handler(bot, event):
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 msg = await get_chat(prompt)
                 await bot.chat.send(conversation_id, msg)
-            # elif original_msg.message[0]['msg']['content']['type'] == "attachment":
+            elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
             # Download the file
             #     file = await bot.download(conversation_id, original_msg[0]['msg']['id'], original_msg.)
-            #     logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+            #     prompt = f"Original Message from {original_msg.message[0]['msg']['content']['attachment']['object']['title']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+            #              f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+            #     prompt = event.msg.content.attachment.object.title
+            #     filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
+
+                # Download the file
+                logging.info("Trying to download")
+                logging.info(original_msg.message[0]['msg']['content'])
+                # await bot.chat.download(conversation_id, message_id, filename)
+                # logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
 
         #     message_id = event.msg.id
         #     channel = event.msg.conv_id
