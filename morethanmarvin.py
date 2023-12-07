@@ -498,8 +498,7 @@ async def handler(bot, event):
                 logging.info(conversation_id)
                 logging.info(attachment_title)
                 logging.info(filename)
-                logging.info(original_msg_id)
-
+                logging.info(original_msg.message[0])
                 # await bot.chat.download(conversation_id, message_id, filename)
                 # logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
 
