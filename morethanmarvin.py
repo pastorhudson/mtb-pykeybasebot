@@ -485,7 +485,7 @@ async def handler(bot, event):
             elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
                 # Download the file
-                prompt = f"Original Message from {original_msg.message[0]['msg']['content']['attachment']['object']['title']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+                prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
 
