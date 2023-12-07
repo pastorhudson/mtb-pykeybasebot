@@ -475,7 +475,7 @@ async def handler(bot, event):
         if event.msg.content.text.reply_to:
             logging.info("I have a reply")
             original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-            logging.info(original_msg.message[0]['msg']['content']['text']['body'])
+            # logging.info(original_msg.message[0]['msg']['content']['text']['body'])
             logging.info(type(original_msg.message[0]['msg']['content']))
             logging.info(original_msg.message[0]['msg']['sender']['username'])
 
