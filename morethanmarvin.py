@@ -491,7 +491,7 @@ async def handler(bot, event):
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
 
-                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
+                filename = f"{storage.absolute()}/{org_filename}"
 
                 # Download the file
                 logging.info("Trying to download")
