@@ -217,7 +217,9 @@ async def handler(bot, event):
                 msg = await get_chat_with_image(filename, prompt)
                 await bot.chat.reply(conversation_id, event.msg.id, msg)
 
-    except AttributeError:
+    except Exception as e:
+        print(e)
+        print(type(e))
         print("Not an attachment")
 
     # logging.info(event.msg.content)

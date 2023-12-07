@@ -1,3 +1,4 @@
+import asyncio
 import os
 from icecream import ic
 from pathlib import Path
@@ -91,19 +92,18 @@ def encode_image(image_path):
     return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def get_chat_with_image(image_path, prompt):
-    # Getting the base64 string
-    base64_image = encode_image(image_path)
+async def get_chat_with_image(image_path, prompt):
+    base64_image = await asyncio.to_thread(encode_image, image_path)
 
-    seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
+    seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endearing in a comical dark humor way."""
     client = AsyncOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
-    chat_complettion = client.chat.completions.create(
+    chat_complettion = await client.chat.completions.create(
         model="gpt-4-vision-preview",
         messages=[
             {"role": "system", "content": seed},
-            {"role": "user", "content": get_convo()},
+            {"role": "user", "content": await asyncio.to_thread(get_convo)},
             {
                 "role": "user",
                 "content": [
@@ -126,17 +126,24 @@ def get_chat_with_image(image_path, prompt):
         frequency_penalty=0.5,
         presence_penalty=0
     )
-
     try:
         return chat_complettion.choices[0].message.content
     except:
         return chat_complettion.choices[0].message.content.strip()
 
-
 if __name__ == "__main__":
-    # ic(os.getenv("OPENAI_API_KEY"))
-    print(get_convo())
+    loop = asyncio.get_event_loop()
+    # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     img = 'C://Users//geekt//Downloads//ds9meme.png'
     prompt = "What's going on with this image??"
-    print(get_chat_with_image(img, prompt))
+
+    result = loop.run_until_complete(get_chat_with_image(img, prompt))
+    print(result)
+
+
+    # ic(os.getenv("OPENAI_API_KEY"))
+    # print(get_convo())
+    # img = 'C://Users//geekt//Downloads//ds9meme.png'
+    # prompt = "What's going on with this image??"
+    # print(get_chat_with_image(img, prompt))
     # print(get_chat(prompt))
