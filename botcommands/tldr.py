@@ -242,45 +242,6 @@ async def get_gpt_summary(url):
             summary, "```"])
     return tldr
 
-# def get_gpt_summary(url):
-#     observations = ["I'm sorry I'm such a failure.",
-#                     "I'm so sorry you have to read all these words.",
-#                     "I hope this makes you happy because I'm not.",
-#                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
-#
-#     try:
-#         logging.info(url)
-#         if url.startswith('https://youtu'):
-#             logging.info("This is a youtube video")
-#             article_text = fetch_youtube_transcript(url)
-#             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
-#
-#         else:
-#             article_text = get_text(url).text
-#             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
-#     except Exception as e:
-#         article_text = fetch_article_content(url)
-#
-#     client = OpenAI(
-#         api_key=os.getenv("OPENAI_API_KEY"),
-#     )
-#     chat_complettion = client.chat.completions.create(
-#         model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
-#         messages=[
-#             {"role": "system", "content": system_prompt},
-#             {"role": "user", "content": get_convo()},
-#             {"role": "user", "content": f"Please provide a concise summary of the following article, highlighting the main points and conclusions: {article_text}"}
-#         ]
-#     )
-#     summary = chat_complettion.choices[0].message.content
-#     tldr = "\n".join(
-#         [
-#             f"Here's my tl;dr.\n{random.choice(observations)}",
-#             "```",
-#             summary, "```"])
-#     return tldr
-
-
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
