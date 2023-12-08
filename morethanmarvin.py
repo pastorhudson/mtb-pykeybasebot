@@ -3,6 +3,7 @@ import asyncio
 import logging
 import os
 import sys
+from pprint import pprint
 from string import punctuation
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
@@ -849,6 +850,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
+        logging.info(pprint(event))
         conversation_id = event.msg.conv_id
         msg = f"Sigh. . . yes I'm still here."
         members = await get_channel_members(conversation_id)
@@ -1114,6 +1116,7 @@ listen_options = {
 
 bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler,
           home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
+
 
 async def periodic_task(bot):
     while True:
