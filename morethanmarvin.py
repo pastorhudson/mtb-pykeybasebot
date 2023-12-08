@@ -38,6 +38,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
+from botcommands.db_events import run_db_events
 # import webhooks
 
 
@@ -1114,10 +1115,24 @@ listen_options = {
 bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler,
           home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
+async def periodic_task(bot):
+    while True:
+        # Here's where you put your db call.
+        await run_db_events(bot)
+        await asyncio.sleep(10)  # sleep for 600 seconds (10 minutes)
 
+
+async def main():
+    # schedule the periodic task and bot.start to run in parallel
+    await asyncio.gather(
+        bot.start(listen_options=listen_options),
+        periodic_task(bot),
+    )
+
+asyncio.run(main())
 # async def main():
 #     await bot.start(listen_options=listen_options)
 
 
-asyncio.run(bot.start(listen_options=listen_options))
+# asyncio.run(bot.start(listen_options=listen_options))
 
