@@ -24,8 +24,11 @@ async def run_db_events(bot):
                 # Query to get the first user who has points for today
                 point = s.query(Point).filter(func.date(Point.created_at) == tomorrow) \
                     .order_by(Point.created_at.asc()).first()
+                logging.info(point)
                 if point:
                     logging.info(f"user:{point.point_receiver}")
+                else:
+                    logging.info(f"No early bird for {team.name} yet")
                 early_bird = point.point_receiver
     #     early_bird = None
     #     mst = await bot.chat.send(ron_marvn, f'Test Message! {datetime.utcnow()}')
