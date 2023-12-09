@@ -27,10 +27,10 @@ async def run_db_events(bot):
                 logging.info(point)
                 if point:
                     logging.info(f"user:{point.point_receiver}")
+                    early_bird = point.point_receiver
+
                 else:
                     logging.info(f"No early bird for {team.name} yet")
-                early_bird = point.point_receiver
-    #     early_bird = None
     #     mst = await bot.chat.send(ron_marvn, f'Test Message! {datetime.utcnow()}')
     except Exception as e:
         logging.info(e)
