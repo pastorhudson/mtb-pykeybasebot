@@ -20,9 +20,9 @@ async def run_db_events(bot):
         else:
             logging.info(f"Real Team: {team.name}")
             # Query to get the first user who has points for today
-            # user_id = s.query(Point).filter(func.date(Point.created_at) == today) \
-            #     .order_by(Point.created_at.asc()).first()
-            # logging.info(f"user_id:{user_id}")
+            user_id = s.query(Point).filter(func.date(Point.created_at) == today) \
+                .order_by(Point.created_at.asc()).first()
+            logging.info(f"user_id:{user_id}")
             # user = s.query(User).filter(User.id == user_id).first()
             # logging.info(f"User: {user}")
     early_bird = None
