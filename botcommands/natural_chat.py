@@ -7,6 +7,29 @@ from openai import OpenAI, AsyncOpenAI
 
 storage = Path('./storage')
 
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "award points",
+            "description": "Give points to another user",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "points": {
+                        "type": "int",
+                        "description": "The amount of points to award",
+                    },
+                    "user": {
+                        "type": "string",
+                        "description": "The user that gets the points.",
+                    },
+                },
+                "required": ["points", "user"],
+            },
+        }
+    },
+]
 
 def read_convo():
     try:
