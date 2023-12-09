@@ -1122,7 +1122,7 @@ async def periodic_task(bot):
     while True:
         # Here's where you put your db call.
         await run_db_events(bot)
-        await asyncio.sleep(60)  # sleep for 600 seconds (10 minutes)
+        await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
 
 async def main():
