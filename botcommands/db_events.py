@@ -16,13 +16,16 @@ async def run_db_events(bot):
         teams = s.query(Team).all()
         for team in teams:
             if team.name == ron_marvn:
-                logging.info("RON AND MARVN ACTION")
+                # logging.info("RON AND MARVN ACTION")
+                pass
             elif "," in team.name:
-                logging.info(f"Comma Team:{team.name}")
+                # logging.info(f"Comma Team:{team.name}")
+                pass
             else:
                 logging.info(f"Real Team: {team.name}")
+
                 # Query to get the first user who has points for today
-                point = s.query(Point).filter(func.date(Point.created_at) == tomorrow) \
+                point = s.query(Point).filter(func.date(Point.created_at) == today) \
                     .order_by(Point.created_at.asc()).first()
                 logging.info(point)
                 if point:
