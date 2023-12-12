@@ -70,13 +70,24 @@ class MyCustomPP(PostProcessor):
         # filename = info['filepath'].replace('.m4a', '.mp3')
         # filename = info['filepath'].replace('.webm', '.mp3')
         logging.info(f"FILENAME: {filename}")
-        payload = {"title": info["title"],
-                   # "author": yt_info["uploader"],
-                   "file": filename,
-                   'transcript': extract_transcript_from_vtt(info['requested_subtitles']['en']['filepath']),
-                   "duration": convert_seconds(info["duration"]),
-                   'url': info['webpage_url']
-                   }
+        try:
+            """We're going to try to get subtitles"""
+            payload = {"title": info["title"],
+                       # "author": yt_info["uploader"],
+                       "file": filename,
+                       'transcript': extract_transcript_from_vtt(info['requested_subtitles']['en']['filepath']),
+                       "duration": convert_seconds(info["duration"]),
+                       'url': info['webpage_url']
+                       }
+        except KeyError:
+            """We can't get subs"""
+            payload = {"title": info["title"],
+                       # "author": yt_info["uploader"],
+                       "file": filename,
+                       'transcript': None,
+                       "duration": convert_seconds(info["duration"]),
+                       'url': info['webpage_url']
+                       }
         file_size = os.path.getsize(filename)
 
         try:
