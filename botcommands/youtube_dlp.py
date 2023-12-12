@@ -50,26 +50,26 @@ class MyLogger:
             self.info(msg)
 
     def info(self, msg):
-        # print(msg)
+        logging.info(msg)
         pass
 
     def warning(self, msg):
         pass
 
     def error(self, msg):
-        print(msg)
+        logging.error(msg)
 
 
 class MyCustomPP(PostProcessor):
 
     def run(self, info):
         global payload
-        print("I'm running post processor")
+        logging.info("I'm running post processor")
         filename = info['filepath']
 
         # filename = info['filepath'].replace('.m4a', '.mp3')
         # filename = info['filepath'].replace('.webm', '.mp3')
-        print(f"FILENAME: {filename}")
+        logging.info(f"FILENAME: {filename}")
         payload = {"title": info["title"],
                    # "author": yt_info["uploader"],
                    "file": filename,
@@ -109,7 +109,7 @@ class MyCustomPP(PostProcessor):
             msg += "```"
 
         except Exception as e:
-            print(e)
+            logging.info(e)
 
         payload['msg'] = msg
         return [], info
