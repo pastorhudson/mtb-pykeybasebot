@@ -235,7 +235,8 @@ def get_meta(url):
             'logger': MyLogger(),
             'progress_hooks': [my_hook],
         }
-    except KeyError:
+    except Exception as e:
+        print(e)
         """We don't have subs"""
         ydl_opts = {
             'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
@@ -261,15 +262,24 @@ def get_meta(url):
 
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+
         try:
             ydl.add_post_processor(MyCustomPP())
             yt_info = ydl.extract_info(url)
-            payload = {"title": yt_info["title"],
-                       "file": None,
-                       'transcript': extract_transcript_from_vtt(yt_info['requested_subtitles']['en']['filepath']),
-                       "duration": convert_seconds(yt_info["duration"]),
-                       'url': yt_info['webpage_url']
-                       }
+            try:
+                payload = {"title": yt_info["title"],
+                           "file": None,
+                           'transcript': extract_transcript_from_vtt(yt_info['requested_subtitles']['en']['filepath']),
+                           "duration": convert_seconds(yt_info["duration"]),
+                           'url': yt_info['webpage_url']
+                           }
+            except Exception as e:
+                payload = {"title": yt_info["title"],
+                           "file": None,
+                           'transcript': None,
+                           "duration": convert_seconds(yt_info["duration"]),
+                           'url': yt_info['webpage_url']
+                           }
 
             try:
                 msg = "```"
@@ -336,7 +346,7 @@ def extract_transcript_from_vtt(vtt_file):
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
-    meta = get_mp4('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq')
+    meta = get_meta('https://www.youtube.com/watch?v=U2Qp5pL3ovA&t=31')
     print(meta)
     # vtt_file = meta['title'].replace(' ', '_') + ".en.vtt"
     # print(vtt_file)
