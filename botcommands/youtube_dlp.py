@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from pathlib import Path
 from pprint import pprint
@@ -260,6 +261,8 @@ def get_meta(url):
                 msg += "```"
             except Exception as e:
                 print(e)
+                logging.info(e)
+                logging.info(msg)
 
             payload['msg'] = msg
         except Exception as e:
