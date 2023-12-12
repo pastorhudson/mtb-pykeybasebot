@@ -70,6 +70,7 @@ class MyCustomPP(PostProcessor):
         # filename = info['filepath'].replace('.m4a', '.mp3')
         # filename = info['filepath'].replace('.webm', '.mp3')
         logging.info(f"FILENAME: {filename}")
+
         try:
             """We're going to try to get subtitles"""
             payload = {"title": info["title"],
@@ -213,7 +214,6 @@ def get_meta(url):
                        "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
                 "file": ""
                 }
-
     ydl_opts = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
         'postprocessors': [
@@ -235,17 +235,18 @@ def get_meta(url):
         'progress_hooks': [my_hook],
     }
 
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
             ydl.add_post_processor(MyCustomPP())
             yt_info = ydl.extract_info(url)
-            pprint(yt_info['requested_subtitles']['en']['filepath'])
             payload = {"title": yt_info["title"],
                        "file": None,
                        'transcript': extract_transcript_from_vtt(yt_info['requested_subtitles']['en']['filepath']),
                        "duration": convert_seconds(yt_info["duration"]),
                        'url': yt_info['webpage_url']
                        }
+
             try:
                 msg = "```"
                 msg += yt_info["title"] + '\n'
