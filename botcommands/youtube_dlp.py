@@ -214,26 +214,50 @@ def get_meta(url):
                        "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
                 "file": ""
                 }
-    ydl_opts = {
-        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        'postprocessors': [
-            {'key': 'SponsorBlock'},
-            {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
-        ],
-        'writeautomaticsub': True,  # Download auto-generated subtitles
-        'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-        'writethumbnail': True,
-        'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-        'windowsfilenames': True,
+    try:
+        ydl_opts = {
+            'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+            'postprocessors': [
+                {'key': 'SponsorBlock'},
+                {'key': 'ModifyChapters',
+                 'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
+            ],
+            'writeautomaticsub': True,  # Download auto-generated subtitles
+            'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+            'writethumbnail': True,
+            'restrictfilenames': True,
+            'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+            'windowsfilenames': True,
 
-        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+            'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+            # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
 
-        'logger': MyLogger(),
-        'progress_hooks': [my_hook],
-    }
+            'logger': MyLogger(),
+            'progress_hooks': [my_hook],
+        }
+    except KeyError:
+        """We don't have subs"""
+        ydl_opts = {
+            'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+            'postprocessors': [
+                {'key': 'SponsorBlock'},
+                {'key': 'ModifyChapters',
+                 'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
+                                             'interaction']}
+            ],
+            'writeautomaticsub': True,  # Download auto-generated subtitles
+            # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+            'writethumbnail': True,
+            'restrictfilenames': True,
+            'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+            'windowsfilenames': True,
+
+            'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+            # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+
+            'logger': MyLogger(),
+            'progress_hooks': [my_hook],
+        }
 
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
