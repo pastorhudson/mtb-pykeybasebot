@@ -28,13 +28,13 @@ print(storage.absolute())
 #     return "meh.png"
 
 
-async def download_img(pic_url):
+async def download_img(pic_url, file_name='meh.png'):
     async with aiohttp.ClientSession() as session:
         async with session.get(pic_url) as response:
             if response.status != 200:
                 return None
 
-            file_path = f"{storage.absolute()}/meh.png"
+            file_path = f"{storage.absolute()}/{file_name}"
 
             with open(file_path, 'wb') as file:
                 while True:
@@ -43,7 +43,7 @@ async def download_img(pic_url):
                         break
                     file.write(chunk)
 
-            return "meh.png"
+            return file_path
 
 
 async def get_observation():

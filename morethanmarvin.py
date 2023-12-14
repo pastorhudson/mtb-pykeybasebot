@@ -591,7 +591,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         prompt = event.msg.content.text.body[6:]
-        draw_payload = generate_dalle_image(prompt)
+        draw_payload = await generate_dalle_image(prompt)
         if draw_payload['file']:
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
 
