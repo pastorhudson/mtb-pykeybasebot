@@ -18,9 +18,10 @@ def generate_dalle_image(prompt):
     )
 
     image_url = response.data[0].url
+    revised_prompt = f"Revised Prompt:```{response.data[0].revised_prompt}```"
 
     return {
-        "msg": "\n".join([prompt, image_url]),
+        "msg": "\n".join([prompt, image_url, revised_prompt]),
         "file": None
     }
 
