@@ -836,7 +836,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         meh_img = str(Path('./storage/meh.png').absolute())
-        msg = get_meh()
+        msg = await get_meh()
         await bot.chat.attach(channel=conversation_id,
                               filename=meh_img,
                               title=msg)
