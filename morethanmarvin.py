@@ -19,7 +19,7 @@ from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import get_cow
 from botcommands.meh import get_meh
-from botcommands.draw_dallie import generate_image
+from botcommands.draw_dallie import generate_dalle_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
@@ -40,6 +40,7 @@ from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import run_db_events
+from botcommands.stable_diffusion import generate_image
 # import webhooks
 
 
@@ -108,7 +109,10 @@ async def handler(bot, event):
          "description": f"Now I can't even explain this. You are a monster. Optional Characters: {get_characters()}",
          "usage": "<character> <msg>"},
         {"name": "draw",
-         "description": "Forces me to draw a picture.",
+         "description": "Forces me to draw a picture using dall-e-3.",
+         "usage": "<prompt>"},
+        {"name": "stabledraw",
+         "description": "Forces me to draw a picture using stable diffusion.",
          "usage": "<prompt>"},
         {"name": "drwho",
          "description": "Return Dr Who Episode.",
@@ -584,6 +588,20 @@ async def handler(bot, event):
         my_msg = await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!draw'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        prompt = event.msg.content.text.body[6:]
+        draw_payload = generate_dalle_image(prompt)
+        if draw_payload['file']:
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=draw_payload['file'],
+                                  title=draw_payload['msg'])
+        else:
+            await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
+
+    if str(event.msg.content.text.body).startswith('!stabledraw'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         prompt = event.msg.content.text.body[6:]

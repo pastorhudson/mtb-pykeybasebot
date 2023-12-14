@@ -4,7 +4,7 @@ from openai import OpenAI
 import os
 
 
-def generate_image(prompt):
+def generate_dalle_image(prompt):
     client = OpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
@@ -26,4 +26,4 @@ def generate_image(prompt):
 
 
 if __name__ == '__main__':
-    pprint(generate_image('A cool spaceship'))
+    pprint(generate_dalle_image('A cool spaceship'))
