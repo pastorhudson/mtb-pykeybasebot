@@ -485,8 +485,8 @@ async def handler(bot, event):
             logging.info(original_msg.message[0]['msg']['sender']['username'])
 
             if original_msg.message[0]['msg']['content']['type'] == "text":
-                prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-                         f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+                prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+                         f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 msg = await get_chat(prompt, team_name)
                 await bot.chat.reply(conversation_id, msg_id, msg)
             elif original_msg.message[0]['msg']['content']['type'] == "attachment":
