@@ -47,18 +47,18 @@ def get_convo(team='convo'):
     data = read_convo(team)
     # data.append(f"You: {prompt}\n")
     ic(data)
-    write_convo(data)
+    write_convo(data, team)
     return "\n".join(data)
 
 
-def write_convo(data):
-    with open(f"{storage.absolute()}/convo.txt", 'w') as file:  # Use file to refer to the file object
+def write_convo(data, team='convo'):
+    with open(f"{storage.absolute()}/{team}.txt", 'w') as file:  # Use file to refer to the file object
         file.write("\n".join(data))
     return "\n".join(data)
 
 
-def append_convo(data):
-    with open(f"{storage.absolute()}/convo.txt", 'a') as file:  # Use file to refer to the file object
+def append_convo(data, team='convo'):
+    with open(f"{storage.absolute()}/{team}.txt", 'a') as file:  # Use file to refer to the file object
         file.write(data)
     return None
 
