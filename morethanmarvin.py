@@ -474,6 +474,7 @@ async def handler(bot, event):
                                 f"for trying to be cute.\n{instructions}")
 
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
+        msg_id = event.msg.id
 
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -487,7 +488,7 @@ async def handler(bot, event):
                 prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
                 msg = await get_chat(prompt)
-                await bot.chat.send(conversation_id, msg)
+                await bot.chat.reply(conversation_id, msg_id, msg)
             elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
                 # Download the file
@@ -509,12 +510,12 @@ async def handler(bot, event):
                 file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
                 msg = await get_chat_with_image(filename, prompt)
                 logging.info(msg)
-                await bot.chat.send(conversation_id, msg)
+                await bot.chat.reply(conversation_id,msg_id, msg)
 
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         else:
             msg = await get_chat(str(event.msg.content.text.body)[7:])
-            await bot.chat.send(conversation_id, msg)
+            await bot.chat.reply(conversation_id,msg_id, msg)
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
