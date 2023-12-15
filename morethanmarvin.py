@@ -475,7 +475,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
         msg_id = event.msg.id
-
+        team_name = event.msg.channel.name
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         if event.msg.content.text.reply_to:
@@ -487,7 +487,7 @@ async def handler(bot, event):
             if original_msg.message[0]['msg']['content']['type'] == "text":
                 prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
                          f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-                msg = await get_chat(prompt)
+                msg = await get_chat(prompt, team_name)
                 await bot.chat.reply(conversation_id, msg_id, msg)
             elif original_msg.message[0]['msg']['content']['type'] == "attachment":
 
@@ -514,7 +514,7 @@ async def handler(bot, event):
 
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         else:
-            msg = await get_chat(str(event.msg.content.text.body)[7:])
+            msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
             await bot.chat.reply(conversation_id,msg_id, msg)
 
     if str(event.msg.content.text.body).startswith("!bible"):

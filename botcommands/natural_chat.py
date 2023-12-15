@@ -31,9 +31,10 @@ tools = [
     },
 ]
 
-def read_convo():
+
+def read_convo(convo='convo'):
     try:
-        with open(f"{storage.absolute()}/convo.txt", 'r') as file:  # Use file to refer to the file object
+        with open(f"{storage.absolute()}/{convo}.txt", 'r') as file:  # Use file to refer to the file object
             data = file.read()
             data = data.split("\n")
             ic(data)
@@ -42,8 +43,8 @@ def read_convo():
     return data
 
 
-def get_convo():
-    data = read_convo()
+def get_convo(team='convo'):
+    data = read_convo(team)
     # data.append(f"You: {prompt}\n")
     ic(data)
     write_convo(data)
@@ -62,7 +63,7 @@ def append_convo(data):
     return None
 
 
-async def get_chat(prompt):
+async def get_chat(prompt, team='convo'):
     seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
     client = AsyncOpenAI(
         # defaults to os.environ.get("OPENAI_API_KEY")
@@ -72,7 +73,7 @@ async def get_chat(prompt):
         model="gpt-4",
         messages=[
             {"role": "system", "content": seed},
-            {"role": "user", "content": get_convo()},
+            {"role": "user", "content": get_convo(team)},
             {"role": "user", "content": prompt}
         ],
         temperature=0.7,
