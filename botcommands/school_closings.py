@@ -35,13 +35,18 @@ def search_closings(specific_words=None):
 
     # Define columns for Pretty Table
     table = PrettyTable(['Name', 'Status'])
-
+    no_school = True
     # For each closing, check if it's one of the specified organizations
     for closing in closings:
         name = closing.find('FORCED_ORGANIZATION_NAME').text
         if any(word in name.lower() for word in specific_words):
+            no_school = False
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
+
+    if no_school:
+        table.add_row(["Your Mom", "Open For Business"])
+
     return table
 
 
