@@ -41,6 +41,7 @@ from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import run_db_events
 from botcommands.stable_diffusion import generate_image
+from botcommands.school_closings import get_school_closings
 # import webhooks
 
 
@@ -153,6 +154,9 @@ async def handler(bot, event):
         # {"name": "pollresult",
         #  "description": "RealClear Politics National and Pennsylvania Poll Results.",
         #  "usage": ""},
+        {"name": "school",
+         "description": "Forces me go to get the SW PA school closings.",
+         "usage": "Optional: <school name>, <school name>"},
         {"name": "screenshot",
          "description": "Forces me go to a url and send a screenshot.",
          "usage": "<url>"},
@@ -1054,6 +1058,20 @@ async def handler(bot, event):
                                       title=ytv_msg)
             except TimeoutError:
                 pass
+
+    if str(event.msg.content.text.body).startswith('!school'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        try:
+            schools = str(event.msg.content.text.body)[7:].strip().split(",")
+            schools = [school.strip() for school in schools]
+            school_closings = get_school_closings(schools)
+            my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
+
+        except Exception as e:
+            school_closings = get_school_closings()
+            my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id
