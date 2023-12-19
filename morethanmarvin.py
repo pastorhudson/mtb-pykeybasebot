@@ -154,7 +154,7 @@ async def handler(bot, event):
         # {"name": "pollresult",
         #  "description": "RealClear Politics National and Pennsylvania Poll Results.",
         #  "usage": ""},
-        {"name": "school",
+        {"name": "closings",
          "description": "Forces me go to get the SW PA school closings.",
          "usage": "Optional: <school name>, <school name>"},
         {"name": "screenshot",
@@ -1059,12 +1059,12 @@ async def handler(bot, event):
             except TimeoutError:
                 pass
 
-    if str(event.msg.content.text.body).startswith('!school'):
+    if str(event.msg.content.text.body).startswith('!closings'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         try:
-            schools = str(event.msg.content.text.body)[7:].lower().strip().split(",")
+            schools = str(event.msg.content.text.body)[9:].lower().strip().split(",")
             schools = [school.strip() for school in schools]
             school_closings = get_school_closings(schools)
             my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
