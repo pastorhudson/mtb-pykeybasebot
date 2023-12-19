@@ -1064,7 +1064,7 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         try:
-            schools = str(event.msg.content.text.body)[7:].strip().split(",")
+            schools = str(event.msg.content.text.body)[7:].lower().strip().split(",")
             schools = [school.strip() for school in schools]
             school_closings = get_school_closings(schools)
             my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])

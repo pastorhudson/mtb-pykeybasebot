@@ -39,7 +39,7 @@ def search_closings(specific_words=None):
     # For each closing, check if it's one of the specified organizations
     for closing in closings:
         name = closing.find('FORCED_ORGANIZATION_NAME').text
-        if any(word in name for word in specific_words):
+        if any(word in name.lower() for word in specific_words):
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
     return table
@@ -64,11 +64,11 @@ def get_school_closings(search=None):
 
 
 if __name__ == "__main__":
-    schools = "!school Uniontown, Albert Gallatin"
-    schools = schools[7:].strip().split(",")
+    schools = "!school uniontown, Albert"
+    schools = schools[7:].lower().strip().split(",")
     schools = [school.strip() for school in schools]
     print(schools)
-    specific_words = ["Albert Gallatin", "Uniontown", "North Hills"]
+    # specific_words = ["Albert Gallatin", "uniontown", "North Hills"]
     print(get_school_closings(schools))
 
 # schools = "!school Uniontown, Albert Gallatin"
