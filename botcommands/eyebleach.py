@@ -8,7 +8,7 @@ def _fetch_bleach():
     try:
         print(response.json()[0]["data"]["children"][0]["data"]["is_gallery"])
         return False, response
-    except KeyError:
+    except Exception as e:
         return True, response
 
 
@@ -50,6 +50,6 @@ def get_eyebleach(bleach_level=3):
 
 
 if __name__ == "__main__":
-    # a = abs("3")
+    print(get_eyebleach())
     pass
 
