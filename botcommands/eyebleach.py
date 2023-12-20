@@ -4,11 +4,12 @@ import random
 
 def _fetch_bleach():
     url = "https://api.reddit.com/r/eyebleach/random/.json?is_gallery=False"
-    response = requests.get(url, headers={'User-agent': 'mtb-keybasebot 0.1'})
+    response = requests.get(url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0'})
     try:
         print(response.json()[0]["data"]["children"][0]["data"]["is_gallery"])
         return False, response
     except Exception as e:
+        print(e)
         return True, response
 
 
@@ -52,4 +53,3 @@ def get_eyebleach(bleach_level=3):
 if __name__ == "__main__":
     print(get_eyebleach())
     pass
-
