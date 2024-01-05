@@ -70,7 +70,15 @@ class MyCustomPP(PostProcessor):
         # filename = info['filepath'].replace('.m4a', '.mp3')
         # filename = info['filepath'].replace('.webm', '.mp3')
         logging.info(f"FILENAME: {filename}")
+        # Access the upload date from the 'info' dictionary
+        print(info['upload_date'])
+        upload_date = info['upload_date']
 
+        if upload_date:
+            # Format the date if needed, here it is kept in YYYYMMDD format
+            formatted_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
+        else:
+            formatted_date = "Unknown"
         try:
             """We're going to try to get subtitles"""
             payload = {"title": info["title"],
@@ -78,6 +86,7 @@ class MyCustomPP(PostProcessor):
                        "file": filename,
                        'transcript': extract_transcript_from_vtt(info['requested_subtitles']['en']['filepath']),
                        "duration": convert_seconds(info["duration"]),
+                       "upload_date": formatted_date,  # Add this line
                        'url': info['webpage_url']
                        }
         except KeyError:
@@ -87,6 +96,7 @@ class MyCustomPP(PostProcessor):
                        "file": filename,
                        'transcript': None,
                        "duration": convert_seconds(info["duration"]),
+                       "upload_date": formatted_date,  # Add this line
                        'url': info['webpage_url']
                        }
         file_size = os.path.getsize(filename)
@@ -96,6 +106,10 @@ class MyCustomPP(PostProcessor):
             msg += info["title"] + '\n'
             try:
                 msg += f"Channel: {info['uploader']}\n"
+            except KeyError:
+                pass
+            try:
+                msg += f"Upload Date: {formatted_date}\n"
             except KeyError:
                 pass
             try:
@@ -214,55 +228,50 @@ def get_meta(url):
                        "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
                 "file": ""
                 }
-    try:
-        ydl_opts = {
-            'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-            'postprocessors': [
-                {'key': 'SponsorBlock'},
-                {'key': 'ModifyChapters',
-                 'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
-            ],
-            'writeautomaticsub': True,  # Download auto-generated subtitles
-            'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-            'writethumbnail': True,
-            'restrictfilenames': True,
-            'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-            'windowsfilenames': True,
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'postprocessors': [
+            {'key': 'SponsorBlock'},
+            {'key': 'ModifyChapters',
+             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']}
+        ],
+        'writeautomaticsub': True,  # Download auto-generated subtitles
+        'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+        'writethumbnail': True,
+        'restrictfilenames': True,
+        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+        'windowsfilenames': True,
 
-            'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-            # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
 
-            'logger': MyLogger(),
-            'progress_hooks': [my_hook],
-        }
-    except Exception as e:
-        print(e)
-        """We don't have subs"""
-        ydl_opts = {
-            'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-            'postprocessors': [
-                {'key': 'SponsorBlock'},
-                {'key': 'ModifyChapters',
-                 'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
-                                             'interaction']}
-            ],
-            'writeautomaticsub': True,  # Download auto-generated subtitles
-            # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-            'writethumbnail': True,
-            'restrictfilenames': True,
-            'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-            'windowsfilenames': True,
+        'logger': MyLogger(),
+        'progress_hooks': [my_hook],
+    }
+    ydl_opts_no_subs = {
+        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'postprocessors': [
+            {'key': 'SponsorBlock'},
+            {'key': 'ModifyChapters',
+             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
+                                         'interaction']}
+        ],
+        'writeautomaticsub': True,  # Download auto-generated subtitles
+        # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+        'writethumbnail': True,
+        'restrictfilenames': True,
+        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+        'windowsfilenames': True,
 
-            'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-            # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
+        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
 
-            'logger': MyLogger(),
-            'progress_hooks': [my_hook],
-        }
+        'logger': MyLogger(),
+        'progress_hooks': [my_hook],
+    }
 
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-
+    with yt_dlp.YoutubeDL(ydl_opts_no_subs) as ydl:
         try:
             ydl.add_post_processor(MyCustomPP())
             yt_info = ydl.extract_info(url)
@@ -274,6 +283,7 @@ def get_meta(url):
                            'url': yt_info['webpage_url']
                            }
             except Exception as e:
+
                 payload = {"title": yt_info["title"],
                            "file": None,
                            'transcript': None,
@@ -304,14 +314,18 @@ def get_meta(url):
                     msg += f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}\n"
                 except KeyError:
                     pass
+
                 msg += "```"
             except Exception as e:
                 print(e)
+                print(yt_info)
+
                 logging.info(e)
                 logging.info(msg)
 
             payload['msg'] = msg
         except Exception as e:
+            print(e)
             payload = {"msg": "That video url didn't work.\n"
                               "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
                        "file": ""
@@ -346,7 +360,7 @@ def extract_transcript_from_vtt(vtt_file):
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
-    meta = get_meta('https://www.youtube.com/watch?v=U2Qp5pL3ovA&t=31')
+    meta = get_meta('https://youtu.be/w0ZHlp6atUQ?si=qhGgjVxVrl0olCyZ')
     print(meta)
     # vtt_file = meta['title'].replace(' ', '_') + ".en.vtt"
     # print(vtt_file)
