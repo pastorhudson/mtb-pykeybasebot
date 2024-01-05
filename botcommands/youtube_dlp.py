@@ -71,7 +71,6 @@ class MyCustomPP(PostProcessor):
         # filename = info['filepath'].replace('.webm', '.mp3')
         logging.info(f"FILENAME: {filename}")
         # Access the upload date from the 'info' dictionary
-        print(info['upload_date'])
         upload_date = info['upload_date']
 
         if upload_date:
@@ -89,7 +88,8 @@ class MyCustomPP(PostProcessor):
                        "upload_date": formatted_date,  # Add this line
                        'url': info['webpage_url']
                        }
-        except KeyError:
+
+        except (KeyError, TypeError):
             """We can't get subs"""
             payload = {"title": info["title"],
                        # "author": yt_info["uploader"],
@@ -99,6 +99,7 @@ class MyCustomPP(PostProcessor):
                        "upload_date": formatted_date,  # Add this line
                        'url': info['webpage_url']
                        }
+
         file_size = os.path.getsize(filename)
 
         try:
@@ -275,11 +276,20 @@ def get_meta(url):
         try:
             ydl.add_post_processor(MyCustomPP())
             yt_info = ydl.extract_info(url)
+            upload_date = yt_info['upload_date']
+
+            if upload_date:
+                print('HERE')
+                # Format the date if needed, here it is kept in YYYYMMDD format
+                formatted_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
+            else:
+                formatted_date = "Unknown"
             try:
                 payload = {"title": yt_info["title"],
                            "file": None,
                            'transcript': extract_transcript_from_vtt(yt_info['requested_subtitles']['en']['filepath']),
                            "duration": convert_seconds(yt_info["duration"]),
+                           "upload_date": formatted_date,
                            'url': yt_info['webpage_url']
                            }
             except Exception as e:
@@ -288,6 +298,7 @@ def get_meta(url):
                            "file": None,
                            'transcript': None,
                            "duration": convert_seconds(yt_info["duration"]),
+                           "upload_date": formatted_date,
                            'url': yt_info['webpage_url']
                            }
 
@@ -296,6 +307,10 @@ def get_meta(url):
                 msg += yt_info["title"] + '\n'
                 try:
                     msg += f"Channel: {yt_info['uploader']}\n"
+                except KeyError:
+                    pass
+                try:
+                    msg += f"Uploaded: {formatted_date}\n"
                 except KeyError:
                     pass
                 try:
@@ -361,7 +376,7 @@ if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
     meta = get_meta('https://youtu.be/w0ZHlp6atUQ?si=qhGgjVxVrl0olCyZ')
-    print(meta)
+    pprint(meta)
     # vtt_file = meta['title'].replace(' ', '_') + ".en.vtt"
     # print(vtt_file)
     # vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
