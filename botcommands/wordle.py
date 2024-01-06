@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -22,7 +23,8 @@ def scrape_wordle(date_to_query=None):
         'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
     # Path to your WebDriver (e.g., chromedriver)
-    driver_path = 'C://Users\geekt\PycharmProjects//2021\mtb-pykeybasebot\chromedriver\chromedriver.exe'
+
+    driver_path = os.environ.get('CHROMEDRIVER_PATH')
 
     # Initialize the WebDriver with the specified options
     driver = webdriver.Chrome(options=options, executable_path=driver_path)
