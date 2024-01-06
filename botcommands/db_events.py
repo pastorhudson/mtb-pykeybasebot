@@ -1,7 +1,10 @@
 import logging
 from datetime import datetime, timedelta
+from pathlib import Path
 from zoneinfo import ZoneInfo
 from sqlalchemy import func
+
+from botcommands.morningreport import get_morningreport
 from crud import s
 from models import Team, Point, User, CompletedTasks
 
@@ -18,7 +21,27 @@ async def run_db_events(bot):
         teams = s.query(Team).all()
         for team in teams:
             if team.name == ron_marvn:
-                # logging.info("RON AND MARVN ACTION")
+                logging.info("RON AND MARVN ACTION")
+                logging.info(f"Right Now: {now_time}")
+                if now_time >= top_of_the_morning:
+                    logging.info("Yes, it's Time to post! America/New_York time.")
+                    completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
+                                                               .filter(
+                        func.date(CompletedTasks.task_name) == 'morning_report')) \
+                        .order_by(Point.created_at.asc()).first()
+                    if not completed:
+                        morning_report = await get_morningreport(channel=team.name)
+                        await bot.chat.send(ron_marvn, morning_report[0])
+                        meh_img = str(Path('./storage/meh.png').absolute())
+                        await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
+                                              filename=meh_img,
+                                              title=morning_report[1])
+                        await bot.chat.send(ron_marvn, morning_report[2])
+                        # mst = await bot.chat.send(ron_marvn, morning_report)
+
+                    print(completed)
+                else:
+                    logging.info("No, it's not 1:35pm America/New_York time.")
                 pass
             elif "," in team.name:
                 # logging.info(f"Comma Team:{team.name}")
@@ -37,15 +60,7 @@ async def run_db_events(bot):
                 else:
                     logging.info(f"No early bird for {team.name} yet")
 
-                logging.info(f"Right Now: {now_time}")
-                if now_time >= top_of_the_morning:
-                    logging.info("Yes, it's Time to post! America/New_York time.")
-                    completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
-                        .filter(func.date(CompletedTasks.task_name) == 'morning_report')) \
-                        .order_by(Point.created_at.asc()).first()
-                    print(completed)
-                else:
-                    logging.info("No, it's not 1:35pm America/New_York time.")
+
     except Exception as e:
         logging.info(e)
     logging.info("Running db_events")
