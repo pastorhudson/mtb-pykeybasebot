@@ -59,6 +59,7 @@ def get_mom():
     ]
     return random.choice(moms)
 
+
 def get_closings():
     # Make a request to the website
     response = requests.get("https://assets1.cbsnewsstatic.com/Integrations/SchoolClosings/PRODUCTION/CBS/kdka/NEWSROOM/KDKAclosings.xml")
@@ -73,7 +74,9 @@ def get_closings():
 
 def get_closings_list():
     closings = get_closings()
-
+    no_school = False
+    if closings:
+        no_school = True
     # Define columns for Pretty Table
     table = PrettyTable(['Name', 'Status'])
 
@@ -82,7 +85,10 @@ def get_closings_list():
         name = closing.find('FORCED_ORGANIZATION_NAME').text
         status = closing.find('COMPLETE_STATUS').text
         table.add_row([name, status])
-    return table
+    if not no_school:
+
+        table.add_row(["Your Mom", get_mom()])
+    return table, no_school
 
 
 def search_closings(specific_words=None):
@@ -90,7 +96,7 @@ def search_closings(specific_words=None):
 
     # Define columns for Pretty Table
     table = PrettyTable(['Name', 'Status'])
-    no_school = True
+    no_school = False
     # For each closing, check if it's one of the specified organizations
     for closing in closings:
         name = closing.find('FORCED_ORGANIZATION_NAME').text
@@ -99,7 +105,7 @@ def search_closings(specific_words=None):
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
 
-    if no_school:
+    if not no_school:
         table.add_row(["Your Mom", get_mom()])
 
     return table, no_school
@@ -110,7 +116,7 @@ def get_school_closings(search=None, observations=True):
     if search:
         table, no_school = search_closings(search)
     else:
-        table = get_closings_list()
+        table, no_school = get_closings_list()
 
     observation = [
         "I hope you have school",
@@ -129,12 +135,12 @@ def get_school_closings(search=None, observations=True):
 
 
 if __name__ == "__main__":
-    schools = "!school uniontown, Albert"
-    schools = schools[7:].lower().strip().split(",")
-    schools = [school.strip() for school in schools]
-    print(schools)
+    # schools = "!school uniontown, Albert"
+    # schools = schools[7:].lower().strip().split(",")
+    # schools = [school.strip() for school in schools]
+    # print(schools)
     # specific_words = ["Albert Gallatin", "uniontown", "North Hills"]
-    print(get_school_closings(schools))
+    print(get_school_closings())
 
 # schools = "!school Uniontown, Albert Gallatin"
 # schools = schools[7:].strip().split(",")
