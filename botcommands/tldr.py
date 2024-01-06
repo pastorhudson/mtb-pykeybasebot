@@ -138,10 +138,13 @@ async def get_gpt_summary(url):
 
 
 def scrape_article(url):
-
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
-    options.headless = False
+    options.headless = True
+    options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=options)
     options.add_argument(
         'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
@@ -174,7 +177,7 @@ def scrape_article(url):
 
 if __name__ == "__main__":
     # loop = asyncio.get_event_loop()
-    scrape_article('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/')
+    pprint(scrape_article('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
 
