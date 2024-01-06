@@ -8,7 +8,7 @@ from models import Team, Point, User, CompletedTasks
 
 async def run_db_events(bot):
     today = datetime.now().date()
-    now = datetime.now(ZoneInfo('America/New_York'))
+    now_time = datetime.now(ZoneInfo('America/New_York'))
     tomorrow = today + timedelta(days=1)
 
     ron_marvn = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
@@ -26,7 +26,7 @@ async def run_db_events(bot):
 
                 # Query to get the first user who has points for today
                 point = s.query(Point).filter(func.date(Point.created_at) == today) \
-                    .order_by(Point.created_at.asc()).first()
+                    .order_by(Point.created_at.desc()).first()
                 logging.info(point)
                 if point:
                     logging.info(f"Early Bird:{point.point_receiver}")
@@ -38,7 +38,8 @@ async def run_db_events(bot):
             #     logging.info("Yes, it's 5:23am America/New_York time.")
             # else:
             #     logging.info("No, it's not 5:23am America/New_York time.")
-            if now.hour >= 13 and now.minute >= 35:
+            logging.info(f"Right Now: {now_time.strftime}")
+            if now_time.hour >= 13 and now_time.minute >= 35:
                 logging.info("Yes, it's Time to post! America/New_York time.")
                 completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
                     .filter(func.date(CompletedTasks.task_name) == 'morning_report')) \
