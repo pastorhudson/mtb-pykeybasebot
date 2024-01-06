@@ -41,8 +41,8 @@ async def get_morningreport(channel):
     msg[1] += "\nMeh:" + meh
     msg[2] += f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
-    msg[3] += f"Today's Joke:```{get_joke(False)}"
-    msg[4] += f"```"
+    msg[3] += f"Today's Joke:```{get_joke(False)}```"
+    msg[4] += get_school_closings(schools, observation=False)
     s.close()
     return msg
 
