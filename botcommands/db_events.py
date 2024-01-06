@@ -6,7 +6,7 @@ from sqlalchemy import func
 
 from botcommands.morningreport import get_morningreport
 from crud import s
-from models import Team, Point, User, CompletedTasks
+from models import Team, Point, CompletedTasks
 
 
 async def run_db_events(bot):
@@ -26,6 +26,7 @@ async def run_db_events(bot):
                 if now_time >= top_of_the_morning:
                     logging.info("Yes, it's Time to post! America/New_York time.")
                     completed = False
+
                     # completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
                     # .filter(
                     #     func.date(CompletedTasks.task_name) == 'morning_report')) \
