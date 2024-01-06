@@ -263,3 +263,12 @@ class Till(Base):
             return f"`{minutes} Minutes {seconds} Seconds` till:{self.name}"
 
 
+class CompletedTasks(Base):
+    __tablename__ = 'completed_tasks'
+    id = Column(Integer, primary_key=True)
+    task_name = Column(String)
+    completed_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        return f"Task Name: {self.task_name} Completed At: {self.completed_at}"
