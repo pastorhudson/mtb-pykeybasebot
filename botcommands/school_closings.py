@@ -62,7 +62,8 @@ def get_mom():
 
 def get_closings():
     # Make a request to the website
-    response = requests.get("https://assets1.cbsnewsstatic.com/Integrations/SchoolClosings/PRODUCTION/CBS/kdka/NEWSROOM/KDKAclosings.xml")
+    response = requests.get(
+        "https://assets1.cbsnewsstatic.com/Integrations/SchoolClosings/PRODUCTION/CBS/kdka/NEWSROOM/KDKAclosings.xml")
     # Parse the content with BeautifulSoup
     soup = BeautifulSoup(response.content, 'xml')
 
@@ -86,7 +87,6 @@ def get_closings_list():
         status = closing.find('COMPLETE_STATUS').text
         table.add_row([name, status])
     if not no_school:
-
         table.add_row(["Your Mom", get_mom()])
     return table, no_school
 
@@ -121,16 +121,26 @@ def get_school_closings(search=None, observations=True):
     observation = [
         "I hope you have school",
         "Isn't learning wonderful",
-        "No Sleep for you."
+        "No Sleep for you.",
+        "Oh, great. Let's see if you can catch up on sleep or if you're doomed to another day of 'education'. Checking for school closings now...",
+        "I hope there's school tomorrow so you can enjoy the soul-crushing sound of your alarm clock. Here's the list of school closings...",
+        "Let me guess, you're praying for a snow day so you can avoid reality a bit longer? Well, let's see if luck's on your side. Fetching the school closings...",
+        "I'm checking for school closings, but honestly, wouldn't you rather go and learn something? No? Fine, here's the list...",
+        "Brace yourself for potential productivity or the sweet void of a day off. I'm pulling up the school closings now...",
+        "Another day, another desperate hope for school closures. Let me ruin or make your day - here's the list...",
+        "I'm looking up school closings, but really, wouldn't you rather be bored in class than bored at home? No? Suit yourself, here's the list...",
+        "You're probably hoping for a day off. Let's see if you're that lucky, or if it's back to the academic grind. Checking for closings...",
+        "Ah, seeking a respite from the joy of learning, are we? Let me check if the universe is in your favor today. Here are the school closings...",
+        "I'd say enjoy your potential day off, but we both know you'll just spend it staring at a screen. Anyway, here's the list of school closings...",
     ]
 
     if observations:
         payload = {'msg': f"{random.choice(observation)}\nSchool Closings:"
                           f"```{table}"
-                          f"```",}
+                          f"```", }
     else:
         payload = {'msg': f"School Closings:```{table}"
-                          f"```",}
+                          f"```", }
     return payload, no_school
 
 
