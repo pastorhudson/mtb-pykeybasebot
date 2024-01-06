@@ -20,7 +20,7 @@ async def run_db_events(bot):
     try:
         teams = s.query(Team).all()
         for team in teams:
-            if team.name == "pastorhudson,marvn":
+            if team.name == "marvn,pastorhudson":
                 logging.info("RON AND MARVN ACTION")
                 logging.info(f"Right Now: {now_time}")
                 if now_time >= top_of_the_morning:
