@@ -17,7 +17,6 @@ def scrape_wordle(date_to_query=None):
     else:
         today = datetime.today().strftime("%Y/%m/%d")
         url = f"https://www.nytimes.com/{today}/crosswords/wordle-review.html"
-
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
     options.headless = True
@@ -79,4 +78,4 @@ def get_wordle(date_to_query=None):
 
 
 if __name__ == "__main__":
-    get_wordle(date_to_query="1-6-2024")
+    get_wordle(date_to_query="jan 5 2024")
