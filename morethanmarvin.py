@@ -1160,7 +1160,7 @@ listen_options = {
 }
 
 bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.get('KEYBASE_PAPERKEY'), handler=handler,
-          home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}', keybase="/app/.keybase/bin/keybase")
+          home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
 
 async def periodic_task(bot):
