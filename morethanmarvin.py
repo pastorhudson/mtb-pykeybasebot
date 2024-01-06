@@ -844,19 +844,12 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         tldr = await get_gpt_summary(urls[0])
-        await bot.chat.reply(conversation_id, event.msg.id, tldr)
+        if tldr:
+            await bot.chat.reply(conversation_id, event.msg.id, tldr)
+        else:
+            await bot.chat.react(conversation_id, event.msg.id, ":no_entry:")
 
-        # ytv_payload = get_mp4(urls[0])
-        # if ytv_payload['file']:
-        #     await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
-    # if str(event.msg.content.text.body).startswith('!vac'):
-    #     channel = event.msg.channel
-    #     msg_id = event.msg.id
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     vac_data = get_vaccine_data()
-    #     await bot.chat.send(conversation_id, vac_data)
 
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
@@ -866,13 +859,6 @@ async def handler(bot, event):
         await bot.chat.attach(channel=conversation_id,
                               filename=meh_img,
                               title=msg)
-
-    # if str(event.msg.content.text.body).startswith('!meet'):
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     room = str(event.msg.content.text.body)[6:]
-    #     msg = get_jitsi_link(room)
-    #     await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
