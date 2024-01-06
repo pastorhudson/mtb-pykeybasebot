@@ -20,7 +20,7 @@ async def run_db_events(bot):
     try:
         teams = s.query(Team).all()
         for team in teams:
-            if team.name == ron_marvn:
+            if team.name == "pastorhudson,marvn":
                 logging.info("RON AND MARVN ACTION")
                 logging.info(f"Right Now: {now_time}")
                 if now_time >= top_of_the_morning:
@@ -44,7 +44,7 @@ async def run_db_events(bot):
                     logging.info("No, it's not 1:35pm America/New_York time.")
                 pass
             elif "," in team.name:
-                # logging.info(f"Comma Team:{team.name}")
+                logging.info(f"Comma Team:{team.name}")
                 pass
             elif team.name == 'morethanbits':
                 logging.info(f"Real Team: {team.name}")
