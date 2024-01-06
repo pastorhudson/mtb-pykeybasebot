@@ -76,15 +76,14 @@ async def tldr_react(event, bot, tldr_length):
         else:
             urls = re.findall(r'(https?://[^\s]+)', original_body)
             if urls:
-                # tldr_payload = get_tldr(urls[0], tldr_length)
                 tldr_payload = await get_gpt_summary(urls[0])
-
-            # else:
-                # tldr_payload = get_tldr(length=2, text=original_body, sender=original_sender)
 
                 await bot.chat.react(conversation_id, original_msg_id, ":notebook:")
                 try:
-                    await bot.chat.send(conversation_id, tldr_payload)
+                    if tldr_payload:
+                        await bot.chat.send(conversation_id, tldr_payload)
+                    else:
+                        await bot.chat.react(conversation_id, event.msg.id, ":no_entry:")
 
                 except IndexError as e:
 
@@ -111,7 +110,9 @@ async def get_gpt_summary(url):
             content_type = 'video'
 
         else:
-            article_text = await get_text(url)
+            article_text = scrape_article(url)
+            if not article_text:
+                return None
             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
             content_type = 'article'
     except Exception as e:
