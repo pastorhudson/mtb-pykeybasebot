@@ -25,7 +25,7 @@ async def run_db_events(bot):
                 logging.info(f"Right Now: {now_time}")
                 if now_time >= top_of_the_morning:
                     logging.info("Yes, it's Time to post! America/New_York time.")
-                    completed = True
+                    completed = False
                     # completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
                     # .filter(
                     #     func.date(CompletedTasks.task_name) == 'morning_report')) \
@@ -40,7 +40,6 @@ async def run_db_events(bot):
                         await bot.chat.send(ron_marvn, morning_report[2])
                         # mst = await bot.chat.send(ron_marvn, morning_report)
 
-                    print(completed)
                 else:
                     logging.info("No, it's not 1:35pm America/New_York time.")
                 pass
