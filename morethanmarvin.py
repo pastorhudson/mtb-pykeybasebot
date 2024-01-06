@@ -40,7 +40,7 @@ from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import run_db_events
-from botcommands.stable_diffusion import generate_image
+# from botcommands.stable_diffusion import generate_image
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 
@@ -609,19 +609,19 @@ async def handler(bot, event):
         else:
             await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
 
-    if str(event.msg.content.text.body).startswith('!stabledraw'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        prompt = event.msg.content.text.body[6:]
-        draw_payload = generate_image(prompt)
-        if draw_payload['file']:
-            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-
-            await bot.chat.attach(channel=conversation_id,
-                                  filename=draw_payload['file'],
-                                  title=draw_payload['msg'])
-        else:
-            await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
+    # if str(event.msg.content.text.body).startswith('!stabledraw'):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     prompt = event.msg.content.text.body[6:]
+    #     draw_payload = generate_image(prompt)
+    #     if draw_payload['file']:
+    #         await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+    #
+    #         await bot.chat.attach(channel=conversation_id,
+    #                               filename=draw_payload['file'],
+    #                               title=draw_payload['msg'])
+    #     else:
+    #         await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
 
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
