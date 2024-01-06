@@ -46,6 +46,7 @@ def scrape_wordle(date_to_query=None):
     try:
         element = driver.find_element(By.CSS_SELECTOR,
                                       "div.css-s99gbd:nth-child(8) > div:nth-child(1) > p:nth-child(2)")
+        msg = element.text
         logging.info(element.text)
     except Exception as e:
         print("Error:", e)
@@ -53,6 +54,8 @@ def scrape_wordle(date_to_query=None):
     # Close the browser
     logging.info(driver.page_source)
     driver.quit()
+
+    return msg
 
 
 def get_wordle(date_to_query=None):
