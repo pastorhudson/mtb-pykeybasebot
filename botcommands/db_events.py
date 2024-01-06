@@ -9,6 +9,8 @@ from models import Team, Point, User, CompletedTasks
 async def run_db_events(bot):
     today = datetime.now().date()
     now_time = datetime.now(ZoneInfo('America/New_York'))
+    top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
+                                  tzinfo=ZoneInfo('America/New_York'))
     tomorrow = today + timedelta(days=1)
 
     ron_marvn = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
@@ -36,7 +38,7 @@ async def run_db_events(bot):
                     logging.info(f"No early bird for {team.name} yet")
 
                 logging.info(f"Right Now: {now_time}")
-                if now_time.hour >= 13 and now_time.minute >= 35:
+                if now_time >= top_of_the_morning:
                     logging.info("Yes, it's Time to post! America/New_York time.")
                     completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
                         .filter(func.date(CompletedTasks.task_name) == 'morning_report')) \
