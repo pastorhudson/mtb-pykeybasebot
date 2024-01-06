@@ -25,14 +25,12 @@ async def run_db_events(bot):
                 logging.info(f"Right Now: {now_time}")
                 if now_time >= top_of_the_morning:
                     logging.info("Yes, it's Time to post! America/New_York time.")
-                    completed = False
 
-                    morning_report_task = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
-                    .filter(
-                        func.date(CompletedTasks.task_name) == 'morning_report')) \
-                        .order_by(Point.created_at.asc()).first()
-                    task = s.query(CompletedTasks).all()
-                    logging.info(task)
+                    morning_report_task = s.query(CompletedTasks) \
+                        .filter(func.date(CompletedTasks.completed_at) == today,
+                                CompletedTasks.task_name == 'morning_report') \
+                        .order_by(CompletedTasks.completed_at.asc()) \
+                        .first()
                     if not morning_report_task:
                         morning_report = await get_morningreport(channel=team.name)
                         await bot.chat.send(ron_marvn, morning_report[0])
@@ -43,7 +41,7 @@ async def run_db_events(bot):
                         await bot.chat.send(ron_marvn, morning_report[2])
                         mst = await bot.chat.send(ron_marvn, morning_report)
                     else:
-                        logging.info("No, it's not 1:35pm America/New_York time.")
+                        logging.info("No, it's not Time to send the morning report")
 
             elif "," in team.name:
                 logging.info(f"Comma Team:{team.name}")
