@@ -267,6 +267,7 @@ class CompletedTasks(Base):
     __tablename__ = 'completed_tasks'
     id = Column(Integer, primary_key=True)
     task_name = Column(String)
+    team_id = Column(Integer, ForeignKey('team.id'), nullable=False)
     completed_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
