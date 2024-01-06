@@ -5,7 +5,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from dateutil import parser
 import random
+import logging
 
+logging.basicConfig(level=logging.DEBUG)
 
 def scrape_wordle(date_to_query=None):
 
@@ -33,19 +35,19 @@ def scrape_wordle(date_to_query=None):
     driver.get(url)
 
     # Wait for JavaScript to load (if necessary)
-    driver.implicitly_wait(10)  # Adjust the time according to your needs
+    driver.implicitly_wait(15)  # Adjust the time according to your needs
 
     # Find the element containing "Today's word"
     # You might need to adjust the selector according to the webpage structure
     try:
         element = driver.find_element(By.CSS_SELECTOR,
                                       "div.css-s99gbd:nth-child(8) > div:nth-child(1) > p:nth-child(2)")
-        # todays_word = element.text.split("Today's word is ")[1].strip()
-        print(element.text)
+        logging.info(element.text)
     except Exception as e:
         print("Error:", e)
 
     # Close the browser
+    logging.info(driver.page_source)
     driver.quit()
 
 
