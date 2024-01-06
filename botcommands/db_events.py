@@ -33,14 +33,14 @@ async def run_db_events(bot):
                     #     .order_by(Point.created_at.asc()).first()
                     task = s.query(CompletedTasks).all()
                     logging.info(task)
-                    if not completed:
-                        morning_report = await get_morningreport(channel=team.name)
-                        await bot.chat.send(ron_marvn, morning_report[0])
-                        meh_img = str(Path('./storage/meh.png').absolute())
-                        await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
-                                              filename=meh_img,
-                                              title=morning_report[1])
-                        await bot.chat.send(ron_marvn, morning_report[2])
+                    # if not completed:
+                    #     morning_report = await get_morningreport(channel=team.name)
+                    #     await bot.chat.send(ron_marvn, morning_report[0])
+                    #     meh_img = str(Path('./storage/meh.png').absolute())
+                    #     await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
+                    #                           filename=meh_img,
+                    #                           title=morning_report[1])
+                    #     await bot.chat.send(ron_marvn, morning_report[2])
                         # mst = await bot.chat.send(ron_marvn, morning_report)
 
                 else:
