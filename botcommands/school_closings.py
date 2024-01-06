@@ -50,7 +50,7 @@ def search_closings(specific_words=None):
     return table
 
 
-def get_school_closings(search=None):
+def get_school_closings(search=None, observation=True):
     if search:
         table = search_closings(search)
     else:
@@ -62,9 +62,13 @@ def get_school_closings(search=None):
         "No Sleep for you."
     ]
 
-    payload = {'msg': f"{random.choice(observation)}\n"
-                      f"```{table}"
-                      f"```",}
+    if observation:
+        payload = {'msg': f"{random.choice(observation)}\n"
+                          f"```{table}"
+                          f"```",}
+    else:
+        payload = {'msg': f"```{table}"
+                          f"```",}
     return payload
 
 

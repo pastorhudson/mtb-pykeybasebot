@@ -1,6 +1,7 @@
 from botcommands.meh import get_meh
 from botcommands.stardate import get_stardate
 from botcommands.till import get_till
+from botcommands.school_closings import get_school_closings
 import random
 from botcommands.scorekeeper import write_score, get_score
 # from pyjokes import pyjokes
@@ -23,41 +24,27 @@ def get_obaservation():
     return random.choice(observations)
 
 
-def get_morningreport(channel):
+async def get_morningreport(channel):
+    schools = ["Albert Gallatin", "Uniontown", "North Hills"]
+    closings = get_school_closings(schools)
     team = s.query(Team).filter_by(name=channel).first()
 
     msg = ["", "", "", ""]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
+
     # msg[0] += get_poll_result(channel)
     # for place in team.location.all():
     #     msg[0] += get_covid(state=place.state, county=place.county, observation=False) + "\n"
-
-    # msg[0] += get_vaccine_data()
-    msg[1] += "\nMeh:" + get_meh(observation=False)
+    meh = await get_meh(observation=False)
+    msg[1] += "\nMeh:" + meh
     msg[2] += f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
-    msg[3] += f"Today's Joke:```{get_joke(False)}```"
+    msg[3] += f"Today's Joke:```{get_joke(False)}"
+    msg[4] += f"```"
     s.close()
     return msg
-
-
-# async def send_report(event):
-#
-#
-#     if event.msg.content.type_name == "text":
-#         team_name = event.msg.channel.name
-#         if str(event.msg.content.text.body).startswith("!"):
-#             score = write_score('@marvn', event.msg.sender.username, team_name, 3, description='sent msg')
-#         else:
-#             logging.info(f'Giving {event.msg.sender.username} {len(str(event.msg.content.text.body))}pts')
-#             score = write_score('@marvn', event.msg.sender.username, team_name, len(str(event.msg.content.text.body)), description='msg')
-#     if event.msg.content.type_name == 'reaction' and event.msg.sender.username != '@marvn':
-#         team_name = event.msg.channel.name
-#         logging.info(f'Giving {event.msg.sender.username} 4 pts')
-#         score = write_score('@marvn', event.msg.sender.username, team_name, 4, description='react')
-#     pass
 
 
 if __name__ == "__main__":
