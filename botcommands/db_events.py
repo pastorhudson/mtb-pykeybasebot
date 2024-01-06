@@ -25,10 +25,11 @@ async def run_db_events(bot):
                 logging.info(f"Right Now: {now_time}")
                 if now_time >= top_of_the_morning:
                     logging.info("Yes, it's Time to post! America/New_York time.")
-                    completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
-                                                               .filter(
-                        func.date(CompletedTasks.task_name) == 'morning_report')) \
-                        .order_by(Point.created_at.asc()).first()
+                    completed = True
+                    # completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
+                    # .filter(
+                    #     func.date(CompletedTasks.task_name) == 'morning_report')) \
+                    #     .order_by(Point.created_at.asc()).first()
                     if not completed:
                         morning_report = await get_morningreport(channel=team.name)
                         await bot.chat.send(ron_marvn, morning_report[0])
