@@ -701,8 +701,7 @@ async def handler(bot, event):
                               filename=meh_img,
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
-        await bot.chat.send(conversation_id, msg[3])
-        await bot.chat.send(conversation_id, msg[4])
+        # await bot.chat.send(conversation_id, msg[3])
 
 
     if str(event.msg.content.text.body).startswith("!payout"):

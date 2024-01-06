@@ -102,12 +102,13 @@ def search_closings(specific_words=None):
     if no_school:
         table.add_row(["Your Mom", get_mom()])
 
-    return table
+    return table, no_school
 
 
 def get_school_closings(search=None, observations=True):
+    no_school = False
     if search:
-        table = search_closings(search)
+        table, no_school = search_closings(search)
     else:
         table = get_closings_list()
 
@@ -118,13 +119,13 @@ def get_school_closings(search=None, observations=True):
     ]
 
     if observations:
-        payload = {'msg': f"{random.choice(observation)}\n"
+        payload = {'msg': f"{random.choice(observation)}\nSchool Closings:"
                           f"```{table}"
                           f"```",}
     else:
         payload = {'msg': f"School Closings:```{table}"
                           f"```",}
-    return payload
+    return payload, no_school
 
 
 if __name__ == "__main__":
