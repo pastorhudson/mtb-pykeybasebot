@@ -49,6 +49,7 @@ def scrape_wordle(date_to_query=None):
         msg = element.text
         logging.info(element.text)
     except Exception as e:
+        msg = None
         print("Error:", e)
 
     # Close the browser
@@ -67,6 +68,8 @@ def get_wordle(date_to_query=None):
     ]
 
     text = scrape_wordle(date_to_query)
+    if text is None:
+        msg = """The word is escaping me."""
     msg = (f"{random.choice(observation)}"
            f"```"
            f"{text}"
