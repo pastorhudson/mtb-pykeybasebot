@@ -27,25 +27,24 @@ async def run_db_events(bot):
                     logging.info("Yes, it's Time to post! America/New_York time.")
                     completed = False
 
-                    # completed = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
-                    # .filter(
-                    #     func.date(CompletedTasks.task_name) == 'morning_report')) \
-                    #     .order_by(Point.created_at.asc()).first()
+                    morning_report_task = s.query(CompletedTasks).filter(func.date(CompletedTasks.completed_at == today) \
+                    .filter(
+                        func.date(CompletedTasks.task_name) == 'morning_report')) \
+                        .order_by(Point.created_at.asc()).first()
                     task = s.query(CompletedTasks).all()
                     logging.info(task)
-                    # if not completed:
-                    #     morning_report = await get_morningreport(channel=team.name)
-                    #     await bot.chat.send(ron_marvn, morning_report[0])
-                    #     meh_img = str(Path('./storage/meh.png').absolute())
-                    #     await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
-                    #                           filename=meh_img,
-                    #                           title=morning_report[1])
-                    #     await bot.chat.send(ron_marvn, morning_report[2])
-                        # mst = await bot.chat.send(ron_marvn, morning_report)
+                    if not morning_report_task:
+                        morning_report = await get_morningreport(channel=team.name)
+                        await bot.chat.send(ron_marvn, morning_report[0])
+                        meh_img = str(Path('./storage/meh.png').absolute())
+                        await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
+                                              filename=meh_img,
+                                              title=morning_report[1])
+                        await bot.chat.send(ron_marvn, morning_report[2])
+                        mst = await bot.chat.send(ron_marvn, morning_report)
+                    else:
+                        logging.info("No, it's not 1:35pm America/New_York time.")
 
-                else:
-                    logging.info("No, it's not 1:35pm America/New_York time.")
-                pass
             elif "," in team.name:
                 logging.info(f"Comma Team:{team.name}")
                 pass
