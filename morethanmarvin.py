@@ -42,7 +42,7 @@ from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import run_db_events
 from botcommands.stable_diffusion import generate_image
 from botcommands.school_closings import get_school_closings
-# import webhooks
+from botcommands.wordle import get_wordle
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -202,6 +202,9 @@ async def handler(bot, event):
         {"name": "ytv",
          "description": "Forces me to get metadata and download the stupid thing.",
          "usage": "<url>"},
+        {"name": "wordle",
+         "description": "Retrieve today's wordle to ensure you always win.",
+         "usage": "optional <date>"},
     ]
 
     #award points based on activity
@@ -1140,6 +1143,24 @@ async def handler(bot, event):
         write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5, team_name)
         await bot.chat.send(conversation_id, msg)
 
+
+    if str(event.msg.content.text.body).startswith('!wordle'):
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        try:
+            date_to_query = str(event.msg.content.text.body)[8:]
+        except Exception as e:
+            date_to_query = None
+
+        try:
+
+            msg = get_wordle(date_to_query)
+
+        except Exception as e:
+            msg = "Today's word is GAINS"
+        finally:
+            my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
 listen_options = {
     "local": False,
