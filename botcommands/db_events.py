@@ -70,6 +70,7 @@ from models import Team, Point, CompletedTasks
 async def is_morning_report():
     logging.info("Checking if we have morning report")
     today = datetime.now(timezone.utc).date()
+    logging.info(f"Today: {today}")
     now_time = datetime.now(ZoneInfo('America/New_York'))
     top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
                                   tzinfo=ZoneInfo('America/New_York'))
@@ -87,6 +88,7 @@ async def is_morning_report():
                                 CompletedTasks.task_name == 'morning_report') \
                         .order_by(CompletedTasks.completed_at.asc()) \
                         .first()
+                    logging.info(f"{morning_report_task}")
                     if morning_report_task:
                         logging.info("Already Sent Morning Report")
                         return True
