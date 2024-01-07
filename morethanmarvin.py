@@ -1172,11 +1172,11 @@ async def periodic_task():
             test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
             meh_img = str(Path('./storage/meh.png').absolute())
             msg = await get_morningreport(channel="morethanbits")
-            await bot.chat.send(test_conversation_id, msg[0])
-            await bot.chat.attach(channel=test_conversation_id,
+            await bot.chat.send(mtb_conversation_id, msg[0])
+            await bot.chat.attach(channel=mtb_conversation_id,
                                   filename=meh_img,
                                   title=msg[1])
-            await bot.chat.send(test_conversation_id, msg[2])
+            await bot.chat.send(mtb_conversation_id, msg[2])
             await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
