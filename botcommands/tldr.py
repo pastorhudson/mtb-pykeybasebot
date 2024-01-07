@@ -102,6 +102,9 @@ async def get_gpt_summary(url):
                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
 
     try:
+        system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
+        content_type = 'article'
+
         logging.info(url)
         if url.startswith('https://youtu') or url.startswith('https://www.youtu'):
             logging.info("This is a youtube video")
@@ -113,8 +116,7 @@ async def get_gpt_summary(url):
             article_text = scrape_article(url)
             if not article_text:
                 return None
-            system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
-            content_type = 'article'
+
     except Exception as e:
         article_text = await fetch_article_content(url)
 
