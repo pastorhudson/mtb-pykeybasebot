@@ -4,7 +4,6 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from sqlalchemy import func
 
-from botcommands.morningreport import get_morningreport
 from crud import s
 from models import Team, Point, CompletedTasks
 
@@ -32,6 +31,8 @@ async def run_db_events(bot):
                         .order_by(CompletedTasks.completed_at.asc()) \
                         .first()
                     if not morning_report_task:
+                        from botcommands.morningreport import get_morningreport
+
                         logging.info("Sending morning report")
                         morning_report = await get_morningreport(channel=team.name)
                         logging.info(morning_report)
