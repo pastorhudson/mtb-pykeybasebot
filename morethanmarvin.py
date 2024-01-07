@@ -1166,7 +1166,7 @@ bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.g
 async def periodic_task(bot):
     while True:
         # Here's where you put your db call.
-        await run_db_events(bot)
+        # await run_db_events(bot)
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
 
