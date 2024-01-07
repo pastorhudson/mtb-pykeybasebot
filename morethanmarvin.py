@@ -13,7 +13,7 @@ import re
 import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
-from botcommands.youtube import  get_mp3, get_domain
+from botcommands.youtube import get_mp3, get_domain
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
@@ -1171,17 +1171,18 @@ bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.g
 #         await asyncio.sleep(9000)  # sleep for 600 seconds (10 minutes)
 
 
-async def main():
-    # schedule the periodic task and bot.start to run in parallel
-    await asyncio.gather(
-        bot.start(listen_options=listen_options),
-        # periodic_task(bot),
-    )
-
-asyncio.run(main())
 # async def main():
-#     await bot.start(listen_options=listen_options)
+#     # schedule the periodic task and bot.start to run in parallel
+#     await asyncio.gather(:
+
+#         bot.start(listen_options=listen_options),
+#         # periodic_task(bot),
+#     )
+#
+# asyncio.run(main())
+async def main():
+    await bot.start(listen_options=listen_options)
 
 
-# asyncio.run(bot.start(listen_options=listen_options))
+asyncio.run(bot.start(listen_options=listen_options))
 
