@@ -112,23 +112,7 @@ async def is_morning_report():
                 else:
                     logging.info("No, it's not Time to send the morning report")
 
-            # elif "," in team.name:
-            #     logging.info(f"Comma Team:{team.name}")
-            #     pass
-            # elif team.name == 'morethanbits':
-            #     logging.info(f"Real Team: {team.name}")
-            #
-            #     # Query to get the first user who has points for today
-            #     point = s.query(Point).filter(func.date(Point.created_at) == today) \
-            #         .order_by(Point.created_at.desc()).first()
-            #     logging.info(point)
-            #     if point:
-            #         early_bird = point.point_receiver
-            #         logging.info(f"Early Bird:{early_bird}")
-
-            else:
-                return False
-                # logging.info(f"No early bird for {team.name} yet")
+        return True
 
     except Exception as e:
         logging.info(e)
