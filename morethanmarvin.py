@@ -25,7 +25,7 @@ from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
-from botcommands.morningreport import get_morningreport, run_db_events
+from botcommands.morningreport import get_morningreport
 from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
@@ -39,7 +39,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
-# from botcommands.db_events import run_db_events
+from botcommands.db_events import is_morning_report
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 
@@ -1165,7 +1165,17 @@ bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.g
 async def periodic_task(bot):
     while True:
         # Here's where you put your db call.
-        await run_db_events(bot)
+        mr = await is_morning_report(bot)
+        if mr:
+            mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
+            test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
+            meh_img = str(Path('./storage/meh.png').absolute())
+            msg = await get_morningreport(channel="morethanbits")
+            await bot.chat.send(test_conversation_id, msg[0])
+            await bot.chat.attach(channel=test_conversation_id,
+                                  filename=meh_img,
+                                  title=msg[1])
+            await bot.chat.send(test_conversation_id, msg[2])
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
 
