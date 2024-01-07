@@ -67,7 +67,7 @@ from models import Team, Point, CompletedTasks
 #         logging.info(e)
 #     logging.info("Running db_events")
 #
-async def is_morning_report(bot):
+async def is_morning_report():
     logging.info("Checking if we have morning report")
     today = datetime.now().date()
     now_time = datetime.now(ZoneInfo('America/New_York'))
