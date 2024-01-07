@@ -34,7 +34,7 @@ async def run_db_events(bot):
                         from botcommands.morningreport import get_morningreport
 
                         logging.info("Sending morning report")
-                        morning_report = await get_morningreport(channel=team.name)
+                        morning_report = get_morningreport(channel=team.name)
                         logging.info(morning_report)
                         # await bot.chat.send(ron_marvn, morning_report[0])
                         # meh_img = str(Path('./storage/meh.png').absolute())
