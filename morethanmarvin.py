@@ -25,7 +25,7 @@ from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
-from botcommands.morningreport import get_morningreport
+from botcommands.morningreport import get_morningreport, run_db_events
 from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
@@ -39,7 +39,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
-from botcommands.db_events import run_db_events
+# from botcommands.db_events import run_db_events
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 
