@@ -68,6 +68,7 @@ from models import Team, Point, CompletedTasks
 #     logging.info("Running db_events")
 #
 async def is_morning_report(bot):
+    logging.info("Checking if we have morning report")
     today = datetime.now().date()
     now_time = datetime.now(ZoneInfo('America/New_York'))
     top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
@@ -86,12 +87,15 @@ async def is_morning_report(bot):
                                 CompletedTasks.task_name == 'morning_report') \
                         .order_by(CompletedTasks.completed_at.asc()) \
                         .first()
-                    if not morning_report_task:
-                        logging.info("Sending morning report")
+                    if morning_report_task:
+                        logging.info("Already Sent Morning Report")
                         return True
-
                     else:
-                        logging.info("No, it's not Time to send the morning report")
+                        logging.info("Need TO send Morning Report")
+                        return False
+
+                else:
+                    logging.info("No, it's not Time to send the morning report")
 
             # elif "," in team.name:
             #     logging.info(f"Comma Team:{team.name}")

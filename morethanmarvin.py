@@ -1166,7 +1166,7 @@ async def periodic_task(bot):
     while True:
         # Here's where you put your db call.
         mr = await is_morning_report(bot)
-        if mr:
+        if not mr:
             mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
             test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
             meh_img = str(Path('./storage/meh.png').absolute())
