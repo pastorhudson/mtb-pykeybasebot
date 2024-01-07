@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from sqlalchemy import func
@@ -69,7 +69,7 @@ from models import Team, Point, CompletedTasks
 #
 async def is_morning_report():
     logging.info("Checking if we have morning report")
-    today = datetime.now().date()
+    today = datetime.now(timezone.utc).date()
     now_time = datetime.now(ZoneInfo('America/New_York'))
     top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
                                   tzinfo=ZoneInfo('America/New_York'))
