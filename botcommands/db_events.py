@@ -16,8 +16,10 @@ async def is_morning_report():
 
     logging.info(f"Today: {now_utc}")
     now_time = datetime.now(ZoneInfo('America/New_York'))
+    logging.info(f"TZ Time: {now_time}")
     top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
                                   tzinfo=ZoneInfo('America/New_York'))
+    logging.info(f"Top Of The Morning: {top_of_the_morning}")
 
     try:
         teams = s.query(Team).all()
