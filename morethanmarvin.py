@@ -39,8 +39,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
-# from botcommands.db_events import run_db_events
-
+from botcommands.db_events import run_db_events
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 
@@ -1163,26 +1162,26 @@ bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.g
           home_path=f'./{os.environ.get("KEYBASE_BOTNAME")}')
 
 
-# async def periodic_task(bot):
-#     while True:
-#         # Here's where you put your db call.
-#         await asyncio.sleep(9000)
-#         await run_db_events(bot)
-#         await asyncio.sleep(9000)  # sleep for 600 seconds (10 minutes)
+async def periodic_task(bot):
+    while True:
+        # Here's where you put your db call.
+        await run_db_events(bot)
+        await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
+
+async def main():
+    # schedule the periodic task and bot.start to run in parallel
+    await asyncio.gather(
+        bot.start(listen_options=listen_options),
+        periodic_task(bot),
+        return_exceptions=True
+    )
+
+asyncio.run(main())
 
 # async def main():
-#     # schedule the periodic task and bot.start to run in parallel
-#     await asyncio.gather(:
-
-#         bot.start(listen_options=listen_options),
-#         # periodic_task(bot),
-#     )
+#     await bot.start(listen_options=listen_options)
 #
-# asyncio.run(main())
-async def main():
-    await bot.start(listen_options=listen_options)
-
-
-asyncio.run(bot.start(listen_options=listen_options))
+#
+# asyncio.run(bot.start(listen_options=listen_options))
 
