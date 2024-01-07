@@ -1163,6 +1163,7 @@ bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.g
 
 
 async def periodic_task():
+    await asyncio.sleep(90)
     while True:
         # Here's where you put your db call.
         mr = await is_morning_report()
