@@ -13,8 +13,8 @@ import re
 import random
 import pykeybasebot.types.chat1 as chat1
 from pykeybasebot import Bot
-from botcommands.youtube import get_video, get_mp3, get_domain
-from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta, is_supported
+from botcommands.youtube import  get_mp3, get_domain
+from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import get_cow
@@ -30,7 +30,7 @@ from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
 from botcommands.bible import get_esv_text
-from botcommands.wager import get_wagers, make_wager, make_bet, get_bets, payout_wager
+from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
 from crud import s
@@ -39,8 +39,8 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
-from botcommands.db_events import run_db_events
-# from botcommands.stable_diffusion import generate_image
+# from botcommands.db_events import run_db_events
+
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 
