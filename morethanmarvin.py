@@ -1183,7 +1183,7 @@ async def main():
     # schedule the periodic task and bot.start to run in parallel
     await asyncio.gather(
         bot.start(listen_options=listen_options),
-        periodic_task(bot),
+        periodic_task(),
         return_exceptions=True
     )
 
