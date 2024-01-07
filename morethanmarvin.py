@@ -39,7 +39,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
-from botcommands.db_events import is_morning_report
+from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 
@@ -1177,6 +1177,7 @@ async def periodic_task():
                                   filename=meh_img,
                                   title=msg[1])
             await bot.chat.send(test_conversation_id, msg[2])
+            await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
 
