@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
@@ -273,3 +275,12 @@ class CompletedTasks(Base):
 
     def __repr__(self):
         return f"Task Name: {self.task_name} Completed At: {self.completed_at}"
+
+    def completed_at_in_ny(self):
+        """
+        Returns the completed_at time in 'America/New_York' timezone
+        """
+        if self.completed_at:
+            ny_tz = ZoneInfo("America/New_York")
+            return self.completed_at.astimezone(ny_tz)
+        return None

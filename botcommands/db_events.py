@@ -6,52 +6,44 @@ from models import Team, CompletedTasks
 
 
 async def is_morning_report():
-    logging.info("Checking if we have morning report")
-    now_utc = datetime.now(timezone.utc)
-    # Set to start of the current day (00:00:00)
-    start_of_day = datetime(now_utc.year, now_utc.month, now_utc.day, tzinfo=timezone.utc)
+    logging.info("Checking if we have a morning report")
 
-    # Set end of day (start of the next day)
-    end_of_day = start_of_day + timedelta(days=1)
+    # Get current date in 'America/New_York' timezone
+    now_time_ny = datetime.now(ZoneInfo('America/New_York'))
+    logging.info(f"Local Time (America/New_York): {now_time_ny}")
 
-    logging.info(f"Today: {now_utc}")
-    now_time = datetime.now(ZoneInfo('America/New_York'))
-    logging.info(f"TZ Time: {now_time}")
-    top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
-                                  tzinfo=ZoneInfo('America/New_York'))
-    logging.info(f"Top Of The Morning: {top_of_the_morning}")
+    # Define start and end of the current day in 'America/New_York'
+    start_of_day_ny = datetime(now_time_ny.year, now_time_ny.month, now_time_ny.day, tzinfo=ZoneInfo('America/New_York'))
+    end_of_day_ny = start_of_day_ny + timedelta(days=1)
+
+    # Convert start and end times to UTC
+    start_of_day_utc = start_of_day_ny.astimezone(timezone.utc)
+    end_of_day_utc = end_of_day_ny.astimezone(timezone.utc)
 
     try:
         teams = s.query(Team).all()
         for team in teams:
             if team.name == "morethanbits":
-                logging.info(f"Right Now: {now_time}")
-                if now_time >= top_of_the_morning:
-                    logging.info("Yes, it's Time to post! America/New_York time.")
+                logging.info(f"Checking tasks for today in America/New_York timezone")
 
-                    # SQLAlchemy query
-                    morning_report_task = s.query(CompletedTasks) \
-                        .filter(CompletedTasks.completed_at >= start_of_day,
-                                CompletedTasks.completed_at < end_of_day,
+                # SQLAlchemy query to find morning report tasks completed today in NY time
+                morning_report_task = s.query(CompletedTasks) \
+                        .filter(CompletedTasks.completed_at >= start_of_day_utc,
+                                CompletedTasks.completed_at < end_of_day_utc,
                                 CompletedTasks.task_name == 'morning_report') \
                         .order_by(CompletedTasks.completed_at.asc()) \
                         .first()
 
-                    logging.info(f"{morning_report_task}")
-                    if morning_report_task:
-                        logging.info("Already Sent Morning Report")
-                        return True
-                    else:
-                        logging.info("Need TO send Morning Report")
-                        return False
-
+                if morning_report_task:
+                    logging.info(f"Morning Report already sent today at {morning_report_task.completed_at_in_ny()}")
+                    return True
                 else:
-                    logging.info("No, it's not Time to send the morning report")
-
-        return True
+                    logging.info("No Morning Report sent today yet")
+                    return False
+        return False
 
     except Exception as e:
-        logging.info(e)
+        logging.info(f"Error: {e}")
     logging.info("Running db_events")
 
 
