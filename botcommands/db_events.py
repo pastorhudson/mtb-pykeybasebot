@@ -10,6 +10,7 @@ async def is_morning_report():
 
     # Get current date in 'America/New_York' timezone
     now_time_ny = datetime.now(ZoneInfo('America/New_York'))
+    time_523_am = datetime(now_time_ny.year, now_time_ny.month, now_time_ny.day, 5, 23, tzinfo=ZoneInfo('America/New_York'))
     logging.info(f"Local Time (America/New_York): {now_time_ny}")
 
     # Define start and end of the current day in 'America/New_York'
@@ -37,10 +38,11 @@ async def is_morning_report():
                 if morning_report_task:
                     logging.info(f"Morning Report already sent today at {morning_report_task.completed_at_in_ny()}")
                     return True
-                else:
+                elif now_time_ny >= time_523_am:
+
                     logging.info("No Morning Report sent today yet")
                     return False
-        return False
+        return True
 
     except Exception as e:
         logging.info(f"Error: {e}")
