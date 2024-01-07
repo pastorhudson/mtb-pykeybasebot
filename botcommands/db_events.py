@@ -1,7 +1,10 @@
 import logging
 from datetime import datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 from sqlalchemy import func
+
+from botcommands.morningreport import get_morningreport
 # from botcommands.morningreport import get_morningreport
 from crud import s
 from models import Team, Point, CompletedTasks
@@ -14,7 +17,7 @@ async def run_db_events(bot):
                                   tzinfo=ZoneInfo('America/New_York'))
     # tomorrow = today + timedelta(days=1)
 
-    # ron_marvn = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
+    ron_marvn = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
     try:
         teams = s.query(Team).all()
         for team in teams:
@@ -31,14 +34,14 @@ async def run_db_events(bot):
                         .first()
                     if not morning_report_task:
                         logging.info("Sending morning report")
-                        # morning_report = await get_morningreport(channel=team.name)
-                        # await bot.chat.send(ron_marvn, morning_report[0])
-                        # meh_img = str(Path('./storage/meh.png').absolute())
-                        # await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
-                        #                       filename=meh_img,
-                        #                       title=morning_report[1])
-                        # await bot.chat.send(ron_marvn, morning_report[2])
-                        # mst = await bot.chat.send(ron_marvn, morning_report)
+                        morning_report = await get_morningreport(channel=team.name)
+                        await bot.chat.send(ron_marvn, morning_report[0])
+                        meh_img = str(Path('./storage/meh.png').absolute())
+                        await bot.chat.attach(channel=ron_marvn, attachment_filename=morning_report,
+                                              filename=meh_img,
+                                              title=morning_report[1])
+                        await bot.chat.send(ron_marvn, morning_report[2])
+                        mst = await bot.chat.send(ron_marvn, morning_report)
                     else:
                         logging.info("No, it's not Time to send the morning report")
 
