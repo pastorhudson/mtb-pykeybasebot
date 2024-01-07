@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from sqlalchemy import func
@@ -69,8 +69,14 @@ from models import Team, Point, CompletedTasks
 #
 async def is_morning_report():
     logging.info("Checking if we have morning report")
-    today = datetime.now(timezone.utc).date()
-    logging.info(f"Today: {today}")
+    now_utc = datetime.now(timezone.utc)
+    # Set to start of the current day (00:00:00)
+    start_of_day = datetime(now_utc.year, now_utc.month, now_utc.day, tzinfo=timezone.utc)
+
+    # Set end of day (start of the next day)
+    end_of_day = start_of_day + timedelta(days=1)
+
+    logging.info(f"Today: {now_utc}")
     now_time = datetime.now(ZoneInfo('America/New_York'))
     top_of_the_morning = datetime(now_time.year, now_time.month, now_time.day, 5, 23,
                                   tzinfo=ZoneInfo('America/New_York'))
@@ -83,11 +89,18 @@ async def is_morning_report():
                 if now_time >= top_of_the_morning:
                     logging.info("Yes, it's Time to post! America/New_York time.")
 
+                    # SQLAlchemy query
                     morning_report_task = s.query(CompletedTasks) \
-                        .filter(func.date(CompletedTasks.completed_at) == today,
+                        .filter(CompletedTasks.completed_at >= start_of_day,
+                                CompletedTasks.completed_at < end_of_day,
                                 CompletedTasks.task_name == 'morning_report') \
                         .order_by(CompletedTasks.completed_at.asc()) \
                         .first()
+                    # morning_report_task = s.query(CompletedTasks) \
+                    #     .filter(func.date(CompletedTasks.completed_at) == today,
+                    #             CompletedTasks.task_name == 'morning_report') \
+                    #     .order_by(CompletedTasks.completed_at.asc()) \
+                    #     .first()
                     logging.info(f"{morning_report_task}")
                     if morning_report_task:
                         logging.info("Already Sent Morning Report")

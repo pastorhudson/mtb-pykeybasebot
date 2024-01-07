@@ -7,7 +7,7 @@ storage = Path('./storage/jokes.txt')
 
 def get_joke(observation=True):
     try:
-        dadjokes.joke(storage)
+        dadjokes.joke(file=storage)
 
     except FileNotFoundError:
         dadjokes.save_jokes(storage)
@@ -23,10 +23,10 @@ def get_joke(observation=True):
         joke = ""
         if observation:
             joke += "I hope this cheers you up.```"
-            joke += dadjokes.joke(storage)
+            joke += dadjokes.joke(file=storage)
             joke += f"```{random.choice(observations)}"
         else:
-            joke += dadjokes.joke(storage)
+            joke += dadjokes.joke(file=storage)
 
     return joke
 
