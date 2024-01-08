@@ -61,7 +61,7 @@ class Team(Base):
                                                               day=31,
                                                               hour=23,
                                                               minute=59),
-                Point.giver_id != 2  # Exclude points given by user with giver_id 2
+                # Point.receiver_id != 2  # Exclude points received by user with giver_id 2
 
         ):
             try:
@@ -87,13 +87,13 @@ class Team(Base):
                                                               hour=23,
                                                               minute=59),
                 Point.description.notin_(["sent msg", "msg", "react"]),
-                Point.giver_id != 2  # Exclude points given by user with giver_id 2
+                # Point.giver_id != 2  # Exclude points given by user with giver_id 2
         ):
             try:
                 user_generosity[p.point_giver] += p.points
             except KeyError:
                 user_generosity[p.point_giver] = p.points
-
+        user_generosity.pop()
         return user_generosity
 
     def get_leading_person(self, year):
@@ -101,6 +101,11 @@ class Team(Base):
 
         generosity = self.get_most_generous(year)
         score = self.get_score(year)
+
+        # Exclude user with giver_id 2
+        generosity.pop(2, None)
+        score.pop(2, None)
+
         for p in generosity:
             leading_person[p] = 0
         for p in score:
