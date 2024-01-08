@@ -40,7 +40,7 @@ def scrape_wordle(date_to_query=None):
     driver.get(url)
 
     # Wait for JavaScript to load (if necessary)
-    driver.implicitly_wait(15)  # Adjust the time according to your needs
+    driver.implicitly_wait(10)  # Adjust the time according to your needs
 
     # Find the element containing "Today's word"
     # You might need to adjust the selector according to the webpage structure
