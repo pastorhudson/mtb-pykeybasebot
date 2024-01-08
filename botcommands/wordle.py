@@ -1,4 +1,6 @@
+import asyncio
 import os
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -77,5 +79,18 @@ def get_wordle(date_to_query=None):
     return msg
 
 
+async def async_get_wordle(date_to_query=None):
+    # Optionally, create a ThreadPoolExecutor
+    executor = ThreadPoolExecutor(max_workers=2)
+
+    # Run the get_wordle function in the executor
+    result = await asyncio.run_in_executor(executor, get_wordle, date_to_query)
+
+    # Close the executor
+    executor.shutdown()
+
+    return result
+
 if __name__ == "__main__":
-    get_wordle(date_to_query="jan 5 2024")
+    result = asyncio.run(async_get_wordle(date_to_query="jan 5 2024"))
+    print(result)
