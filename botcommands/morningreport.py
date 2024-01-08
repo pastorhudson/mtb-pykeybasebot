@@ -31,7 +31,7 @@ async def get_morningreport(channel):
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
 
-    meh = await get_meh(observation=True)
+    meh = await get_meh(observation=False)
     msg[1] = "\nMeh:" + meh
     msg[2] = f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
