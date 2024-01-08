@@ -10,7 +10,6 @@ from datetime import datetime
 
 Base = declarative_base()
 
-
 association_table = Table('association', Base.metadata,
                           Column('team_id', Integer, ForeignKey('team.id')),
                           Column('user_id', Integer, ForeignKey('user.id'))
@@ -52,7 +51,7 @@ class Team(Base):
         for user in self.users:
             user_score[user] = 0
         for p in self.points.filter(and_(
-                Point.created_at >= datetime.utcnow().replace(year=year -1,
+                Point.created_at >= datetime.utcnow().replace(year=year - 1,
                                                               month=12,
                                                               day=31,
                                                               hour=23,
@@ -62,7 +61,9 @@ class Team(Base):
                                                               day=31,
                                                               hour=23,
                                                               minute=59),
-            ):
+                Point.giver_id != 2  # Exclude points given by user with giver_id 2
+
+        ):
             try:
                 user_score[p.point_receiver] += p.points
             except KeyError:
@@ -75,7 +76,7 @@ class Team(Base):
         for user in self.users:
             user_generosity[user] = 0
         for p in self.points.filter(and_(
-                Point.created_at >= datetime.utcnow().replace(year=year -1,
+                Point.created_at >= datetime.utcnow().replace(year=year - 1,
                                                               month=12,
                                                               day=31,
                                                               hour=23,
@@ -85,8 +86,8 @@ class Team(Base):
                                                               day=31,
                                                               hour=23,
                                                               minute=59),
-                Point.description not in ["sent msg", "msg", "react"]
-
+                Point.description.notin_(["sent msg", "msg", "react"]),
+                Point.giver_id != 2  # Exclude points given by user with giver_id 2
         ):
             try:
                 user_generosity[p.point_giver] += p.points
@@ -95,7 +96,7 @@ class Team(Base):
 
         return user_generosity
 
-    def get_leading_person(self,year):
+    def get_leading_person(self, year):
         leading_person = {}
 
         generosity = self.get_most_generous(year)
@@ -112,9 +113,8 @@ class Team(Base):
                 print(e)
         return leading_person
 
-
     def get_wagers(self):
-        return s.query(Wager).filter(Team.wagers.any(Wager.is_closed==False)).all()
+        return s.query(Wager).filter(Team.wagers.any(Wager.is_closed == False)).all()
 
     def wager_exists(self, description):
         return s.query(Wager).filter(and_(Team.wagers.any(Wager.is_closed == 'false'),
@@ -193,7 +193,6 @@ class Message(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-
     def __repr__(self):
         return f"{self.msg_id},{self.wager_id}"
 
@@ -226,15 +225,15 @@ class Wager(Base):
     # def min_left(self):
     #     td = self.end_time - datetime.now()
 
-        # return td.min
+    # return td.min
 
     def st(self):
         return self.start_time.strftime('%d-%m %I:%M %p')
 
     def __repr__(self):
         return f'#{self.id} "{self.description}"'
-               # f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
-               # f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'
+        # f'Start Time: {self.start_time.strftime("%m-%d %I:%M %p")}\n' \
+        # f'End Time: {self.end_time.strftime("%m-%d %I:%M %p")}'
 
 
 class Till(Base):
