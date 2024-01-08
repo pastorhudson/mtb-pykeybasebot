@@ -23,4 +23,4 @@ def get_top_hacker_news(rss_url="https://news.ycombinator.com/rss", num_articles
 
 if __name__ == '__main__':
     # Get and print the top 5 articles
-    print(get_top_hacker_news())
+    print(get_top_hacker_news(num_articles=10))

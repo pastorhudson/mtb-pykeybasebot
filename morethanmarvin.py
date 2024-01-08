@@ -713,7 +713,7 @@ async def handler(bot, event):
 
         try:
             news_level = str(event.msg.content.text.body).split(" ")[1]
-            msg = get_top_hacker_news(int(news_level))
+            msg = get_top_hacker_news(num_articles=int(news_level))
 
         except TypeError:
             msg = get_top_hacker_news()
