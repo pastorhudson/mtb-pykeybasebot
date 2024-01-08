@@ -8,6 +8,7 @@ from botcommands.jokes import get_joke
 import logging
 from crud import s
 from models import Team
+from botcommands.news import get_top_hacker_news
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -35,10 +36,12 @@ async def get_morningreport(channel):
     msg[1] = "\nMeh:" + meh
     msg[2] = f"\n\n{get_score(channel)}"
     msg[2] += get_till(team_name=team.name, observation=False)
+    msg[2] += get_top_hacker_news()
     msg[2] += f"Today's Joke:```{get_joke(False)}```"
+
     closings, no_school = get_school_closings(schools, observations=False)
     if no_school:
-        msg[3] += closings['msg']
+        msg[2] += closings['msg']
     s.close()
     return msg
 
