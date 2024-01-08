@@ -7,6 +7,7 @@ from pprint import pprint
 from string import punctuation
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
+from botcommands.news import get_top_hacker_news
 from botcommands.poll_results import get_poll_result
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
@@ -144,6 +145,9 @@ async def handler(bot, event):
         {"name": "morningreport",
          "description": "Gets today's morning report.",
          "usage": ""},
+        {"name": "news",
+         "description": "Gets the top x articles from hackernews.",
+         "usage": "optional num of articles"},
         {"name": "poll",
          "description": "Start a poll",
          "usage": '"Should we deactivate our neural engines?" "Yes" "No"'},
@@ -701,6 +705,24 @@ async def handler(bot, event):
                               title=msg[1])
         await bot.chat.send(conversation_id, msg[2])
         # await bot.chat.send(conversation_id, msg[3])
+
+    if str(event.msg.content.text.body).startswith("!news"):
+        await set_unfurl(False)
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        try:
+            news_level = str(event.msg.content.text.body).split(" ")[1]
+            msg = get_top_hacker_news(int(news_level))
+
+        except TypeError:
+            msg = get_top_hacker_news()
+            await bot.chat.send(conversation_id, msg)
+
+        except ValueError:
+            msg = get_top_hacker_news()
+
+        await bot.chat.send(conversation_id, msg)
 
 
     if str(event.msg.content.text.body).startswith("!payout"):
