@@ -93,7 +93,6 @@ class Team(Base):
                 user_generosity[p.point_giver] += p.points
             except KeyError:
                 user_generosity[p.point_giver] = p.points
-        user_generosity.pop()
         return user_generosity
 
     def get_leading_person(self, year):
