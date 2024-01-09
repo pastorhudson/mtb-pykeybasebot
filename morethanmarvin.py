@@ -681,15 +681,20 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!joke"):
         joke = get_joke()
+        prompt = joke
+        draw_payload = await generate_dalle_image(prompt)
+        if draw_payload['file']:
+            await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
 
-        conversation_id = event.msg.conv_id
-        await bot.chat.send(conversation_id, joke)
+            await bot.chat.attach(channel=conversation_id,
+                                  filename=draw_payload['file'],
+                                  title=joke)
+        else:
+            await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
+        # conversation_id = event.msg.conv_id
+        # await bot.chat.send(conversation_id, joke)
 
-    # if str(event.msg.content.text.body).startswith("!morbidity"):
-    #     conversation_id = event.msg.conv_id
-    #     msg = get_morbid()
-    #     members = await get_channel_members(conversation_id)
-    #     morbid_msg = await bot.chat.send(conversation_id, msg)
+
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
         await sync(event=event, bot=bot)
