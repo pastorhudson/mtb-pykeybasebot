@@ -107,7 +107,7 @@ def search_closings(specific_words=None):
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
 
-    if not no_school:
+    if no_school:
         table.add_row(["Your Mom", get_mom()])
 
     return table, no_school
@@ -147,12 +147,14 @@ def get_school_closings(search=None, observations=True):
 
 
 if __name__ == "__main__":
-    # schools = "!school uniontown, Albert"
+    # schools = "!school uniontown, Albert, North Hills"
     # schools = schools[7:].lower().strip().split(",")
     # schools = [school.strip() for school in schools]
-    # print(schools)
+    schools = ['uniontown', 'albert', 'north hills']
+
+    print(schools)
     # specific_words = ["Albert Gallatin", "uniontown", "North Hills"]
-    pprint(get_school_closings()[0]['msg'])
+    pprint(get_school_closings(schools)[0]['msg'])
 
 # schools = "!school Uniontown, Albert Gallatin"
 # schools = schools[7:].strip().split(",")
