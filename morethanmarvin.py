@@ -699,6 +699,8 @@ async def handler(bot, event):
         meh_img = str(Path('./storage/meh.png').absolute())
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = await get_morningreport(channel=channel_name)
+        await set_unfurl(False)
+
         await bot.chat.send(conversation_id, msg[0])
         # file = str(meh_img.absolute())
         await bot.chat.attach(channel=conversation_id,
@@ -1198,6 +1200,8 @@ async def periodic_task():
             test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
             meh_img = str(Path('./storage/meh.png').absolute())
             msg = await get_morningreport(channel="morethanbits")
+            await set_unfurl(False)
+
             await bot.chat.send(mtb_conversation_id, msg[0])
             await bot.chat.attach(channel=mtb_conversation_id,
                                   filename=meh_img,
