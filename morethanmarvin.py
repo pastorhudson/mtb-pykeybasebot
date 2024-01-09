@@ -1073,6 +1073,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!closings'):
         conversation_id = event.msg.conv_id
+        schools = ['uniontown', 'albert', 'north hills']
 
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
@@ -1083,7 +1084,7 @@ async def handler(bot, event):
             my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
         except Exception as e:
-            schools = ["Albert Gallatin", "Uniontown", "North Hills"]
+            schools = ['uniontown', 'albert', 'north hills']
             school_closings, no_school = get_school_closings(schools)
             my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
