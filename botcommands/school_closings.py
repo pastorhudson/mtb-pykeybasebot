@@ -147,17 +147,8 @@ def get_school_closings(search=None, observations=True):
 
 
 if __name__ == "__main__":
-    # schools = "!school uniontown, Albert, North Hills"
-    # schools = schools[7:].lower().strip().split(",")
-    # schools = [school.strip() for school in schools]
     schools = ['uniontown', 'albert', 'north hills']
 
-    print(schools)
-    # specific_words = ["Albert Gallatin", "uniontown", "North Hills"]
-    pprint(get_school_closings(schools)[0]['msg'])
+    closings, no_school = get_school_closings(schools, observations=False)
+    print(closings['msg'])
 
-# schools = "!school Uniontown, Albert Gallatin"
-# schools = schools[7:].strip().split(",")
-# print(schools)
-# specific_words = ["Albert Gallatin", "Uniontown", "North Hills"]
-# print(get_school_closings([school.strip() for school in schools]))

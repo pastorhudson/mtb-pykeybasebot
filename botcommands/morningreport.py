@@ -42,7 +42,7 @@ async def get_morningreport(channel):
 
     closings, no_school = get_school_closings(schools, observations=False)
     if no_school:
-        msg[2] += closings['msg']
+        msg[4] += closings['msg']
     s.close()
     return msg
 
@@ -50,4 +50,5 @@ async def get_morningreport(channel):
 if __name__ == "__main__":
     # channel_members = {'owners': [{'uid': 'f4089cdf5fc8ebe433d5b9f49b66d619', 'username': 'pastorhudson', 'fullName': 'Ron Hudson'}, {'uid': 'a5465087aede61be961a6bb3bf964f19', 'username': 'morethanmarvin', 'fullName': ''}], 'admins': [], 'writers': [], 'readers': [], 'bots': [], 'restrictedBots': []}
     get_morningreport('morethanmarvin,pastorhudson')
+
     # print(get_score(channel_members))

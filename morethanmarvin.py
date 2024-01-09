@@ -696,8 +696,8 @@ async def handler(bot, event):
         # await bot.chat.send(conversation_id, joke)
 
 
-
     if str(event.msg.content.text.body).startswith("!morningreport"):
+        await set_unfurl(False)
         await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
         channel_members = await get_channel_members(conversation_id)
@@ -705,7 +705,6 @@ async def handler(bot, event):
         meh_img = str(Path('./storage/meh.png').absolute())
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = await get_morningreport(channel=channel_name)
-        await set_unfurl(False)
 
         await bot.chat.send(conversation_id, msg[0])
         # file = str(meh_img.absolute())
@@ -724,7 +723,7 @@ async def handler(bot, event):
         else:
             await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
         await bot.chat.send(conversation_id, msg[2])
-        # await bot.chat.send(conversation_id, msg[3])
+        await bot.chat.send(conversation_id, msg[4])
 
     if str(event.msg.content.text.body).startswith("!news"):
         await set_unfurl(False)
@@ -1235,6 +1234,8 @@ async def periodic_task():
             else:
                 await bot.chat.send(mtb_conversation_id, draw_payload['msg'])
             await bot.chat.send(mtb_conversation_id, msg[2])
+            await bot.chat.send(mtb_conversation_id, msg[4])
+
             await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
