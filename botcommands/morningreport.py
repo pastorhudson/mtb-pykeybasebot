@@ -23,8 +23,8 @@ def get_obaservation():
 
 
 async def get_morningreport(channel):
-    schools = ["Albert Gallatin", "Uniontown", "North Hills"]
-    closings = get_school_closings(schools)
+    schools = ['uniontown', 'albert', 'north hills']
+
     team = s.query(Team).filter_by(name=channel).first()
 
     msg = ["", "", "", "", ""]
