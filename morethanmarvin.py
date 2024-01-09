@@ -680,6 +680,8 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, help)
 
     if str(event.msg.content.text.body).startswith("!joke"):
+        conversation_id = event.msg.conv_id
+
         joke = get_joke()
         prompt = joke
         draw_payload = await generate_dalle_image(prompt)
@@ -691,7 +693,6 @@ async def handler(bot, event):
                                   title=joke)
         else:
             await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
-        # conversation_id = event.msg.conv_id
         # await bot.chat.send(conversation_id, joke)
 
 
