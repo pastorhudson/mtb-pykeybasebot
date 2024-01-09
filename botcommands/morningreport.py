@@ -42,7 +42,7 @@ async def get_morningreport(channel):
 
     closings, no_school = get_school_closings(search=schools, observations=False)
     if no_school:
-        msg[4] += closings['msg']
+        msg[4] = closings['msg']
     s.close()
     return msg
 
