@@ -636,7 +636,10 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!eyebleach"):
-        await set_unfurl(unfurl=True)
+        try:
+            await set_unfurl(unfurl=False)
+        except Exception as e:
+            logging.info(e)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
@@ -698,7 +701,10 @@ async def handler(bot, event):
 
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
-        await set_unfurl(unfurl=False)
+        try:
+            await set_unfurl(unfurl=False)
+        except Exception as e:
+            logging.info(e)
         await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
         channel_name = str(event.msg.channel.name)
@@ -727,7 +733,10 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg[4])
 
     if str(event.msg.content.text.body).startswith("!news"):
-        await set_unfurl(unfurl=False)
+        try:
+            await set_unfurl(unfurl=False)
+        except Exception as e:
+            logging.info(e)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
@@ -987,7 +996,10 @@ async def handler(bot, event):
             pass
 
     if str(event.msg.content.text.body).startswith('!ytm'):
-        await set_unfurl(unfurl=False)
+        try:
+            await set_unfurl(unfurl=False)
+        except Exception as e:
+            logging.info(e)
         conversation_id = event.msg.conv_id
 
         # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -1044,7 +1056,10 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
 
         if 'youtube' in yt_urls[0] or 'youtu.be' in yt_urls[0]:
-            await set_unfurl(unfurl=False)
+            try:
+                await set_unfurl(unfurl=False)
+            except Exception as e:
+                logging.info(e)
 
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
@@ -1062,7 +1077,10 @@ async def handler(bot, event):
                 await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
     if str(event.msg.content.text.body).startswith('!ytv'):
-        await set_unfurl(unfurl=False)
+        try:
+            await set_unfurl(unfurl=False)
+        except Exception as e:
+            logging.info(e)
         conversation_id = event.msg.conv_id
 
         # await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -1217,8 +1235,10 @@ async def periodic_task():
             test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
             meh_img = str(Path('./storage/meh.png').absolute())
             msg = await get_morningreport(channel="morethanbits")
-            await set_unfurl(False)
-
+            try:
+                await set_unfurl(unfurl=False)
+            except Exception as e:
+                logging.info(e)
             await bot.chat.send(mtb_conversation_id, msg[0])
             await bot.chat.attach(channel=mtb_conversation_id,
                                   filename=meh_img,
