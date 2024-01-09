@@ -71,6 +71,7 @@ async def set_unfurl(unfurl):
         furl = await bot.chat.execute(
             {"method": "setunfurlsettings",
              "params": {"options": {"mode": "never"}}})
+    return
 
 
 def RepresentsInt(s):
@@ -635,7 +636,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!eyebleach"):
-        await set_unfurl(True)
+        await set_unfurl(unfurl=True)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
@@ -697,11 +698,11 @@ async def handler(bot, event):
 
 
     if str(event.msg.content.text.body).startswith("!morningreport"):
-        await set_unfurl(False)
+        await set_unfurl(unfurl=False)
         await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
-        channel_members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name)
+        channel_members = await get_channel_members(conversation_id)
         meh_img = str(Path('./storage/meh.png').absolute())
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         msg = await get_morningreport(channel=channel_name)
@@ -726,7 +727,7 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg[4])
 
     if str(event.msg.content.text.body).startswith("!news"):
-        await set_unfurl(False)
+        await set_unfurl(unfurl=False)
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
