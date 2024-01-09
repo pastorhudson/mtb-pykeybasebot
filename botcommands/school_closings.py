@@ -107,7 +107,7 @@ def search_closings(specific_words=None):
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
 
-    if no_school:
+    if not no_school:
         table.add_row(["Your Mom", get_mom()])
 
     return table, no_school
