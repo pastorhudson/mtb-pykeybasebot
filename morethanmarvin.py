@@ -1078,12 +1078,12 @@ async def handler(bot, event):
         try:
             schools = str(event.msg.content.text.body)[9:].lower().strip().split(",")
             schools = [school.strip() for school in schools]
-            school_closings = get_school_closings(schools)
-            my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings[0]['msg'])
+            school_closings, no_school = get_school_closings(schools)
+            my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
         except Exception as e:
             school_closings, no_school = get_school_closings()
-            my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings[0]['msg'])
+            my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
         conversation_id = event.msg.conv_id

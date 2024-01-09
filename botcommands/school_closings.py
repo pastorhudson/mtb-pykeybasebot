@@ -1,4 +1,6 @@
 import random
+from pprint import pprint
+
 import requests
 from bs4 import BeautifulSoup
 from prettytable import PrettyTable
@@ -150,7 +152,7 @@ if __name__ == "__main__":
     # schools = [school.strip() for school in schools]
     # print(schools)
     # specific_words = ["Albert Gallatin", "uniontown", "North Hills"]
-    print(get_school_closings())
+    pprint(get_school_closings()[0]['msg'])
 
 # schools = "!school Uniontown, Albert Gallatin"
 # schools = schools[7:].strip().split(",")
