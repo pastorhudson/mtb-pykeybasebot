@@ -27,7 +27,7 @@ async def get_morningreport(channel):
 
     team = s.query(Team).filter_by(name=channel).first()
 
-    msg = ["", "", "", "", ""]
+    msg = ["", "", "", "", "Normal Schedule"]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
@@ -40,7 +40,7 @@ async def get_morningreport(channel):
     msg[2] += get_top_hacker_news()
     msg[3] += f"\nToday's Joke:```{get_joke(False)}```"
 
-    closings, no_school = get_school_closings(schools, observations=False)
+    closings, no_school = get_school_closings(search=schools, observations=False)
     if no_school:
         msg[4] += closings['msg']
     s.close()

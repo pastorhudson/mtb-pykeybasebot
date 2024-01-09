@@ -103,7 +103,7 @@ def search_closings(specific_words=None):
     for closing in closings:
         name = closing.find('FORCED_ORGANIZATION_NAME').text
         if any(word in name.lower() for word in specific_words):
-            no_school = False
+            no_school = True
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
 
