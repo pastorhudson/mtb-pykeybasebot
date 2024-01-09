@@ -1073,6 +1073,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!closings'):
         conversation_id = event.msg.conv_id
+
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         try:
@@ -1082,7 +1083,8 @@ async def handler(bot, event):
             my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
         except Exception as e:
-            school_closings, no_school = get_school_closings()
+            schools = ["Albert Gallatin", "Uniontown", "North Hills"]
+            school_closings, no_school = get_school_closings(schools)
             my_msg = await bot.chat.reply(conversation_id, event.msg.id, school_closings['msg'])
 
     if str(event.msg.content.text.body).startswith('!screenshot'):
