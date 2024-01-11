@@ -9,7 +9,7 @@ from flask import Flask, request
 from crud import s
 from models import MessageQueue
 
-app = Flask(__name__, template_folder='/www')
+app = Flask(__name__, template_folder='/app/www')
 
 
 @app.route('/')
