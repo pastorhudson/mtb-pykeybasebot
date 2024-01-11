@@ -17,11 +17,9 @@ async def process_message_queue(bot):
             logging.info("Iterating messages")
             logging.info(f"{message.id}: {message.status}")
             logging.info(f"Message status: {message.status}")
-            message.mark_as_processing()
-            s.commit()
+            message.mark_as_processing(s)
             await bot.chat.send(message.destination, message.message)
-            message.mark_as_done()
-            s.commit()
+            message.mark_as_done(s)
         logging.info("All messages processed")
         return
 
