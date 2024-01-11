@@ -211,6 +211,9 @@ async def handler(bot, event):
         {"name": "wordle",
          "description": "Retrieve today's wordle to ensure you always win.",
          "usage": "optional <date>"},
+        {"name": "msg",
+         "description": "Get curl command to send myself a message to the current chat conversation.",
+         "usage": ""}
     ]
 
     #award points based on activity
@@ -911,6 +914,18 @@ async def handler(bot, event):
         await bot.chat.attach(channel=conversation_id,
                               filename=meh_img,
                               title=msg)
+
+    if str(event.msg.content.text.body).startswith("!msg"):
+        logging.info("Running msg")
+        conversation_id = event.msg.conv_id
+        msg = f"""
+        curl -X POST --location "http://marvn.app/add_message" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "message": "This is a new message.",
+            "destination": "{conversation_id}"
+        }'"""
+        test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
