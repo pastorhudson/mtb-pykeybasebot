@@ -1289,7 +1289,7 @@ async def main():
     await asyncio.gather(
         bot.start(listen_options=listen_options),
         periodic_task(),
-        process_message_queue(bot),
+        msg_queue(bot),
         return_exceptions=True
     )
 
