@@ -43,6 +43,7 @@ from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
+from botcommands.send_queue import process_message_queue
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -1260,6 +1261,13 @@ async def periodic_task():
             await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
+async def msg_queue(bot):
+    await asyncio.sleep(90)
+    while True:
+        mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
+        test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
+        await process_message_queue(bot)
+        await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
 async def main():
     # schedule the periodic task and bot.start to run in parallel
