@@ -915,10 +915,10 @@ async def handler(bot, event):
                               filename=meh_img,
                               title=msg)
 
-    if str(event.msg.content.text.body).startswith("!msg"):
+    if str(event.msg.content.text.body).startswith("!notify"):
         logging.info("Running msg")
         try:
-            send_msg = event.msg.content.text.body[len("!msg "):]
+            send_msg = event.msg.content.text.body[len("!notify "):]
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
