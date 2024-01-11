@@ -22,12 +22,23 @@ def get_powershell(conversation_id, message):
     $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
     """
 
+def get_json(conversation_id, message):
+    return f"""POST https://marvn.app/add_message
+Content-Type: application/json
+
+{{
+  "message": "{message}",
+  "destination": "{conversation_id}"
+}}"""
 
 def get_curl(conversation_id, message):
     win_curl = get_powershell(conversation_id, message)
     posix_curl = posix(conversation_id, message)
-    msg = f"""Windoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```"""
+    json_curl = get_json(conversation_id, message)
+    msg = f"""Windoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\n```\n{json_curl}\n```"""
     return msg
+
+
 
 
 if __name__ == "__main__":
