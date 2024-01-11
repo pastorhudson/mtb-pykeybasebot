@@ -211,8 +211,8 @@ async def handler(bot, event):
         {"name": "wordle",
          "description": "Retrieve today's wordle to ensure you always win.",
          "usage": "optional <date>"},
-        {"name": "msg",
-         "description": "Get curl command to send myself a message to the current chat conversation.",
+        {"name": "notify",
+         "description": "Get curl command to send a message to the current chat conversation.",
          "usage": "<message>"}
     ]
 
