@@ -44,16 +44,17 @@ def add_message():
     data = request.get_json()
     message = data.get('message')
     destination = data.get('destination')
+    sender = data.get('sender')
     client_ip = request.remote_addr
+    #
+    # try:
+    #     sender = socket.getfqdn(client_ip)
+    #     logging.info(f'The FQDN for your IP ({client_ip}) is: {sender}')
+    # except Exception as e:
+    #     sender = client_ip
+    #     logging.info('Error obtaining FQDN: {str(e)}')
 
-    try:
-        sender = socket.getfqdn(client_ip)
-        logging.info(f'The FQDN for your IP ({client_ip}) is: {sender}')
-    except Exception as e:
-        sender = client_ip
-        logging.info('Error obtaining FQDN: {str(e)}')
-
-    new_message = MessageQueue(message=message, destination=destination, sender=sender)
+    new_message = MessageQueue(message=message, destination=destination, sender=sender, ip=client_ip)
     session.add(new_message)
     session.commit()
     return {"message": "Message added successfully."}, 201

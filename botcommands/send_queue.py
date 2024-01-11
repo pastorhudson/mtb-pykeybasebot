@@ -1,6 +1,9 @@
 import logging
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
+
+from tqdm.contrib import discord
+
 from crud import s
 from models import MessageQueue
 
@@ -18,7 +21,11 @@ async def process_message_queue(bot):
             logging.info(f"{message.id}: {message.status}")
             logging.info(f"Message status: {message.status}")
             message.mark_as_processing(s)
-            msg = f"Incoming Transmission:```{message.text}```"
+            if message.sender:
+                msg = f"Incoming Transmission from {message.sender}:```{message.text}```"
+            else:
+                msg = f"Incoming Transmission:```{message.text}```"
+
             await bot.chat.send(message.destination, msg)
             message.mark_as_done(s)
         logging.info("All messages processed")
