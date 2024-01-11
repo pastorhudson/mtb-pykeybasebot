@@ -1282,7 +1282,7 @@ async def msg_queue(bot):
         mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
         test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
         await process_message_queue(bot)
-        await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
+        await asyncio.sleep(10)  # sleep
 
 async def main():
     # schedule the periodic task and bot.start to run in parallel

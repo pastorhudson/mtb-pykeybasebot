@@ -7,7 +7,7 @@ from models import MessageQueue
 
 async def process_message_queue(bot):
     logging.info("Checking if we have messages")
-    await bot.chat.send('0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d', "Hello World!")
+    # await bot.chat.send('0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d', "Hello World!")
 
     try:
         logging.info("Trying to look for messages")
