@@ -16,20 +16,16 @@
             50% { fill: black; }
         }
 
-        .robot-head {
+        .robot {
             animation: float 3s ease-in-out infinite;
+            width: 80vw;
+            height: 80vh;
+            max-width: 1000px;
+            max-height: 1000px;
         }
 
         .robot-eye {
             animation: blink 3s infinite;
-        }
-
-        .robot-antenna {
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .robot-body {
-            animation: float 3s ease-in-out infinite;
         }
 
         .sad-eyebrows {
@@ -41,33 +37,31 @@
     </style>
 </head>
 <body class="bg-blue-100 text-gray-900">
-    <div class="container mx-auto p-8">
-        <div class="flex justify-center">
-            <!-- SVG of the colorful sad robot -->
-            <svg class="robot-head" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-                <!-- Robot Head -->
-                <rect x="50" y="30" width="100" height="100" fill="#A0AEC0" />
-                <!-- Eyes -->
-                <circle class="robot-eye" cx="75" cy="60" r="10" fill="white" />
-                <circle class="robot-eye" cx="125" cy="60" r="10" fill="white" />
-                <!-- Sad Anime Eyebrows -->
-                <path class="sad-eyebrows" d="M 65 50 Q 75 45 85 50" />
-                <path class="sad-eyebrows" d="M 115 50 Q 125 45 135 50" />
-                <!-- Sad Mouth -->
-                <path d="M 75 100 Q 100 120 125 100" stroke="black" stroke-width="3" fill="transparent" />
-                <!-- Body -->
-                <rect class="robot-body" x="60" y="130" width="80" height="50" fill="#CBD5E0" />
-                <!-- Arms -->
-                <rect x="40" y="130" width="20" height="40" fill="#CBD5E0" />
-                <rect x="140" y="130" width="20" height="40" fill="#CBD5E0" />
-                <!-- Antenna -->
-                <line class="robot-antenna" x1="100" y1="10" x2="100" y2="30" stroke="#718096" stroke-width="4" />
-                <circle class="robot-antenna" cx="100" cy="8" r="5" fill="#718096" />
-            </svg>
-        </div>
-        <div class="text-center mt-4">
-            <p class="text-lg">Here to serve, though not thrilled about it.</p>
-        </div>
+    <div class="flex justify-center items-center h-screen">
+        <!-- SVG of the colorful sad robot -->
+        <svg class="robot" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Robot Head -->
+            <rect x="50" y="30" width="100" height="100" fill="#A0AEC0" />
+            <!-- Eyes -->
+            <circle class="robot-eye" cx="75" cy="60" r="10" fill="white" />
+            <circle class="robot-eye" cx="125" cy="60" r="10" fill="white" />
+            <!-- Sad Anime Eyebrows -->
+            <path class="sad-eyebrows" d="M 65 50 Q 75 45 85 50" />
+            <path class="sad-eyebrows" d="M 115 50 Q 125 45 135 50" />
+            <!-- Sad Mouth -->
+            <path d="M 75 100 Q 100 120 125 100" stroke="black" stroke-width="3" fill="transparent" />
+            <!-- Body -->
+            <rect x="60" y="130" width="80" height="50" fill="#CBD5E0" />
+            <!-- Arms -->
+            <rect x="40" y="130" width="20" height="40" fill="#CBD5E0" />
+            <rect x="140" y="130" width="20" height="40" fill="#CBD5E0" />
+            <!-- Antenna -->
+            <line x1="100" y1="10" x2="100" y2="30" stroke="#718096" stroke-width="4" />
+            <circle cx="100" cy="8" r="5" fill="#718096" />
+        </svg>
+    </div>
+    <div class="text-center mt-4">
+        <p class="text-lg">Here to serve, though not thrilled about it.</p>
     </div>
 </body>
 </html>
