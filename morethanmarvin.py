@@ -44,7 +44,7 @@ from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 from botcommands.send_queue import process_message_queue
-
+from botcommands.curl_commands import get_curl
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -213,7 +213,7 @@ async def handler(bot, event):
          "usage": "optional <date>"},
         {"name": "msg",
          "description": "Get curl command to send myself a message to the current chat conversation.",
-         "usage": ""}
+         "usage": "<message>"}
     ]
 
     #award points based on activity
@@ -917,10 +917,12 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!msg"):
         logging.info("Running msg")
+        try:
+            send_msg = event.msg.content.text.body[len("!msg "):]
+        except Exception as e:
+            send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
-        msg = "```\n"
-        msg += f"""curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{{"message": "This is a new message.", "destination": "{conversation_id}"}}'"""
-        msg += "\n```"
+        msg = get_curl(conversation_id, send_msg)
         test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
