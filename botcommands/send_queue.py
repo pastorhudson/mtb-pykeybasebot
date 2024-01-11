@@ -11,17 +11,17 @@ async def process_message_queue(bot):
 
     try:
         logging.info("Trying to look for messages")
-        messages = s.query(MessageQueue).all()
+        messages = s.query(MessageQueue).filter(MessageQueue.status == 'PENDING').all()
         logging.info(f"{len(messages)}")
         for message in messages:
             logging.info("Iterating messages")
-            logging.info(f"{message.message_id}: {message.status}")
-            if message.status == 'PENDING':
-                logging.info(f"Message status: {message.status}")
-                message.mark_as_processing()
-                await bot.chat.send(message.destination, message.message)
-                message.mark_as_processing()
-                s.commit()
+            logging.info(f"{message.id}: {message.status}")
+            logging.info(f"Message status: {message.status}")
+            message.mark_as_processing()
+            s.commit()
+            await bot.chat.send(message.destination, message.message)
+            message.mark_as_done()
+            s.commit()
         logging.info("All messages processed")
         return
 
