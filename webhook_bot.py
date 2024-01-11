@@ -1,8 +1,5 @@
-import json
-import logging
 
 from flask import jsonify, render_template
-import subprocess
 import os
 from botcommands.youtube_dlp import get_mp4
 from flask import send_file
@@ -10,9 +7,10 @@ from yt_dlp.utils import DownloadError
 from flask import Flask, request
 from crud import s
 from models import MessageQueue
-import socket
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__, template_folder='/app/www')
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
 
 @app.route('/')
