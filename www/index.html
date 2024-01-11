@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>marvn.app</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="container mx-auto p-8">
+        <div class="flex justify-center">
+            <!-- SVG of the sad robot -->
+            <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Robot Head -->
+                <rect x="50" y="30" width="100" height="100" fill="grey" />
+                <!-- Eyes -->
+                <circle cx="75" cy="60" r="10" fill="white" />
+                <circle cx="125" cy="60" r="10" fill="white" />
+                <!-- Sad Eyebrows -->
+                <line x1="65" y1="50" x2="85" y2="55" stroke="black" stroke-width="3" />
+                <line x1="115" y1="55" x2="135" y2="50" stroke="black" stroke-width="3" />
+                <!-- Sad Mouth -->
+                <path d="M 75 100 Q 100 120 125 100" stroke="black" stroke-width="3" fill="transparent" />
+                <!-- Body -->
+                <rect x="60" y="130" width="80" height="50" fill="lightgrey" />
+                <!-- Arms -->
+                <rect x="40" y="130" width="20" height="40" fill="lightgrey" />
+                <rect x="140" y="130" width="20" height="40" fill="lightgrey" />
+                <!-- Antenna -->
+                <line x1="100" y1="10" x2="100" y2="30" stroke="grey" stroke-width="4" />
+                <circle cx="100" cy="8" r="5" fill="grey" />
+            </svg>
+        </div>
+        <div class="text-center mt-4">
+            <p class="text-lg">Here to serve, though not thrilled about it.</p>
+        </div>
+    </div>
+</body>
+</html>

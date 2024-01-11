@@ -1,5 +1,5 @@
 import json
-from flask import jsonify
+from flask import jsonify, render_template
 import subprocess
 import os
 from botcommands.youtube_dlp import get_mp4
@@ -9,16 +9,12 @@ from flask import Flask, request
 from crud import s
 from models import MessageQueue
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='/www')
 
 
-@app.route("/")
-def hello_world():
-    try:
-        send_msg("Hello worldddd")
-    except Exception as e:
-        pass
-    return "<p>Hello, World!</p>"
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 @app.route('/ytv')
 def ytv():

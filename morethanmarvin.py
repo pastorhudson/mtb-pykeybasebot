@@ -918,13 +918,14 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!msg"):
         logging.info("Running msg")
         conversation_id = event.msg.conv_id
-        msg = f"""
-            curl -X POST --location "http://marvn.app/add_message" \
-        -H "Content-Type: application/json" \
-        -d '{{
+        msg = "```\n"
+        msg += f"""
+            curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" 
+            -d '{{
                 "message": "This is a new message.",
                 "destination": "{conversation_id}"
             }}'"""  # Replace the single quotes with double quotes
+        msg += "\n```"
         test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
