@@ -43,5 +43,27 @@ def get_curl(conversation_id, message, sender):
     return msg
 
 
+def extract_message_sender(command, event_body, username):
+    body = event_body.replace(command, '', 1).strip()
+
+    if ' -sender ' in body:
+        message, sender = map(str.strip, body.split(' -sender ', 1))
+    else:
+        message = body
+        sender = username
+
+    return message, sender
+
+
 if __name__ == "__main__":
-    print(get_curl("123", "Hello World", "github.com"))
+    s = "!notify The server is going down -sender github.com"
+    message, sender = extract_message_sender("!notify", s)
+    print("Message:", message)
+    print("Sender:", sender)
+
+    s = "!notify The server is going down"
+    message, sender = extract_message_sender("!notify", s)
+    print("Message:", message)
+    print("Sender:", sender)
+
+    # print(get_curl("123", "Hello World", "github.com"))

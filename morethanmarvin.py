@@ -44,7 +44,7 @@ from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 from botcommands.send_queue import process_message_queue
-from botcommands.curl_commands import get_curl
+from botcommands.curl_commands import get_curl, extract_message_sender
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -918,10 +918,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!notify"):
         logging.info("Running msg")
         try:
-            if s[len("!msg "):]:
-                send_msg = s[len("!msg "):]
-            else:
-                send_msg = f"Testing 123"
+            send_msg, sender = extract_message_sender("!notify", str(event.msg.content.text.body), event.msg.sender.username)
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id

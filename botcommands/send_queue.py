@@ -1,9 +1,4 @@
 import logging
-from datetime import datetime, timezone, timedelta
-from zoneinfo import ZoneInfo
-
-from tqdm.contrib import discord
-
 from crud import s
 from models import MessageQueue
 
