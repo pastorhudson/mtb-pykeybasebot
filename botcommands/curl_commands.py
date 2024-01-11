@@ -20,5 +20,9 @@ def windows(conversation_id, message):
 def get_curl(conversation_id, message):
     win_curl = windows(conversation_id, message)
     posix_curl = posix(conversation_id, message)
+    msg = f"""Widnows:```\n{win_curl}```\n```{posix_curl}```"""
+    return msg
 
-    return win_curl, posix_curl
+
+if __name__ == "__main__":
+    print(get_curl("123", "Hello World"))
