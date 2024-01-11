@@ -918,7 +918,10 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!notify"):
         logging.info("Running msg")
         try:
-            send_msg = event.msg.content.text.body[len("!notify "):]
+            if s[len("!msg "):]:
+                send_msg = s[len("!msg "):]
+            else:
+                send_msg = f"Testing 123"
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
