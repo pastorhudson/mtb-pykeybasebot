@@ -8,20 +8,19 @@ from models import MessageQueue
 async def process_message_queue(bot):
     logging.info("Checking if we have messages")
 
-    # Get current date in 'America/New_York' timezone
-    now_time_ny = datetime.now(ZoneInfo('America/New_York'))
-
-    logging.info(f"Local Time (America/New_York): {now_time_ny}")
-
     try:
+        logging.info("Trying to look for messages")
         messages = s.query(MessageQueue).all()
+        logging.info(f"{len(messages)}")
         for message in messages:
+            logging.info("Iterating messages")
             if message.status == 'PENDING':
                 logging.info(f"Message status: {message.status}")
                 message.mark_as_processing()
                 await bot.chat.send(message.destination, messages.message)
                 message.mark_as_processing()
                 s.commit()
+        logging.info("All messages processed")
         return
 
     except Exception as e:
