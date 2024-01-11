@@ -8,19 +8,25 @@ def posix(conversation_id, message):
         }}'"""
 
 
-def windows(conversation_id, message):
-    curl = """curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{\"message\": \""""
-    curl += message
-    curl += """\", \"destination\": \""""
-    curl += conversation_id
-    curl += """\"}"""
-    return curl
+def get_powershell(conversation_id, message):
+    return f"""
+    $url = 'https://marvn.app/add_message'
+    $headers = @{{
+        'Content-Type' = 'application/json'
+    }}
+    $body = @{{
+        'message' = '{message}'
+        'destination' = '{conversation_id}'
+    }} | ConvertTo-Json
+
+    $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
+    """
 
 
 def get_curl(conversation_id, message):
-    win_curl = windows(conversation_id, message)
+    win_curl = get_powershell(conversation_id, message)
     posix_curl = posix(conversation_id, message)
-    msg = f"""Windoze:```\n{win_curl}```\nPosix:\n```{posix_curl}```"""
+    msg = f"""Windoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```"""
     return msg
 
 
