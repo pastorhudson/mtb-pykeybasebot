@@ -919,12 +919,7 @@ async def handler(bot, event):
         logging.info("Running msg")
         conversation_id = event.msg.conv_id
         msg = "```\n"
-        msg += f"""
-            curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" 
-            -d '{{
-                "message": "This is a new message.",
-                "destination": "{conversation_id}"
-            }}'"""  # Replace the single quotes with double quotes
+        msg += f"""curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{{"message": "This is a new message.", "destination": "{conversation_id}"}}'"""
         msg += "\n```"
         test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
