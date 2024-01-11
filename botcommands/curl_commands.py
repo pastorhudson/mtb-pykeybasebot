@@ -20,7 +20,7 @@ def windows(conversation_id, message):
 def get_curl(conversation_id, message):
     win_curl = windows(conversation_id, message)
     posix_curl = posix(conversation_id, message)
-    msg = f"""Widnows:```\n{win_curl}```\n```{posix_curl}```"""
+    msg = f"""Windoze:```\n{win_curl}```\nPosix:\n```{posix_curl}```"""
     return msg
 
 
