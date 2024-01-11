@@ -213,7 +213,7 @@ async def handler(bot, event):
          "usage": "optional <date>"},
         {"name": "notify",
          "description": "Get curl command to send a message to the current chat conversation.",
-         "usage": "<message>"}
+         "usage": "<message> <optional> -sender <sender>"}
     ]
 
     #award points based on activity
