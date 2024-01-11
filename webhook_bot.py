@@ -1,4 +1,6 @@
 import json
+import logging
+
 from flask import jsonify, render_template
 import subprocess
 import os
@@ -8,6 +10,7 @@ from yt_dlp.utils import DownloadError
 from flask import Flask, request
 from crud import s
 from models import MessageQueue
+import socket
 
 app = Flask(__name__, template_folder='/app/www')
 
@@ -41,20 +44,19 @@ def add_message():
     data = request.get_json()
     message = data.get('message')
     destination = data.get('destination')
-    new_message = MessageQueue(message=message, destination=destination)
+    client_ip = request.remote_addr
+
+    try:
+        sender = socket.getfqdn(client_ip)
+        logging.info(f'The FQDN for your IP ({client_ip}) is: {sender}')
+    except Exception as e:
+        sender = client_ip
+        logging.info('Error obtaining FQDN: {str(e)}')
+
+    new_message = MessageQueue(message=message, destination=destination, sender=sender)
     session.add(new_message)
     session.commit()
     return {"message": "Message added successfully."}, 201
-
-
-def send_msg(msg):
-    you = 'pastorhudson'
-    them = os.environ.get('KEYBASE_BOTNAME')
-    payload = {"method": "send", "params": {
-        "options": {"channel": {"name": f"{you},{them}"}, "message": {"body": msg}}}}
-    print(payload)
-    print(['keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
-    subprocess.run(args=['env KEYBASE_ALLOW_ROOT=1 & ','./keybase', '--home', './webhookbot', 'chat', 'api', '-m', json.dumps(payload)])
 
 
 if __name__ == '__main__':

@@ -303,6 +303,7 @@ class MessageQueue(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     message = Column(String, nullable=False)
+    sender = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
     status = Column(Enum(StatusEnum), default=StatusEnum.PENDING, nullable=False)

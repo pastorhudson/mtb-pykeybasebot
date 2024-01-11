@@ -35,7 +35,7 @@ def get_curl(conversation_id, message):
     win_curl = get_powershell(conversation_id, message)
     posix_curl = posix(conversation_id, message)
     json_curl = get_json(conversation_id, message)
-    msg = f"""Windoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\n```\n{json_curl}\n```"""
+    msg = f"""Windoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```"""
     return msg
 
 
