@@ -1,10 +1,13 @@
 from zoneinfo import ZoneInfo
 
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey, DateTime, func, Text, and_
 from sqlalchemy.orm import relationship
 from crud import s
 import pytz
+from sqlalchemy import Column, DateTime, String, Enum
+from sqlalchemy.sql import func
+from sqlalchemy.ext.declarative import declarative_base
+from enum import Enum as PyEnum
 
 from datetime import datetime
 
@@ -287,3 +290,28 @@ class CompletedTasks(Base):
             ny_tz = ZoneInfo("America/New_York")
             return self.completed_at.astimezone(ny_tz)
         return None
+
+
+class StatusEnum(PyEnum):
+    PENDING = "PENDING"
+    PROCESSING = "PROCESSING"
+    DONE = "DONE"
+
+
+class MessageQueue(Base):
+    __tablename__ = "message_queue"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    message = Column(String, nullable=False)
+    created_at = Column(DateTime, default=func.now(), nullable=False)
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+    status = Column(Enum(StatusEnum), default=StatusEnum.PENDING, nullable=False)
+    destination = Column(Text, nullable=True)
+
+    def mark_as_processing(self, session):
+        self.status = StatusEnum.PROCESSING
+        session.commit()
+
+    def mark_as_done(self, session):
+        self.status = StatusEnum.DONE
+        session.commit()
