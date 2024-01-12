@@ -79,7 +79,8 @@ class TokenSchema(BaseModel):
 
 
 class TokenPayload(BaseModel):
-    sub: str = None
+    user: str = None
+    conversation_id: str = None
     exp: int = None
 
 
