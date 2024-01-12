@@ -1,14 +1,22 @@
+import asyncio
+import logging
+from datetime import datetime
 
 from flask import jsonify, render_template
 import os
+from werkzeug.exceptions import BadRequest, HTTPException
 from botcommands.youtube_dlp import get_mp4
 from flask import send_file
 from yt_dlp.utils import DownloadError
 from flask import Flask, request
 from crud import s
-from models import MessageQueue
+from models import MessageQueue, ALGORITHM, JWT_SECRET_KEY, User
+from jose import jwt
+from pydantic import ValidationError
+from pydantic import BaseModel
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import escape
+
 
 app = Flask(__name__, template_folder='/app/www')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -37,26 +45,61 @@ def ytv():
     else:
         return '<p>Wat?</p>'
 
+
 @app.route('/add_message', methods=['POST'])
 def add_message():
-    session = s
-    data = request.get_json()
+    try:
+        data = request.get_json()
+    except BadRequest:
+        return jsonify({"error": "Invalid JSON data"}), 400
     message = escape(data.get('message'))
     destination = escape(data.get('destination'))
     sender = escape(data.get('sender'))
     client_ip = escape(request.remote_addr)
-    #
-    # try:
-    #     sender = socket.getfqdn(client_ip)
-    #     logging.info(f'The FQDN for your IP ({client_ip}) is: {sender}')
-    # except Exception as e:
-    #     sender = client_ip
-    #     logging.info('Error obtaining FQDN: {str(e)}')
+    try:
+        user = asyncio.run(get_user(escape(data.get("token"))))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
 
-    new_message = MessageQueue(message=message, destination=destination, sender=sender, ip=client_ip)
+    if not message or not destination:
+        return jsonify({"error": "Missing data"}), 400
+
+    session = s
+    new_message = MessageQueue(message=message, destination=destination, sender=sender, ip=client_ip, user=user)
     session.add(new_message)
     session.commit()
     return {"message": "Message added successfully."}, 201
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
+class TokenPayload(BaseModel):
+    sub: str = None
+    exp: int = None
+
+
+async def get_user(token: str):
+    try:
+        payload = jwt.decode(
+            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+
+        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+
+            raise HTTPException("Token Expired")
+
+    except(jwt.JWTError, ValidationError):
+        raise HTTPException("Could not validate credentials")
+
+    user = s.query(User).filter(User.username == token_data.user).first()
+
+    if user is None:
+        raise HTTPException("Could not find user")
 
 
 if __name__ == '__main__':

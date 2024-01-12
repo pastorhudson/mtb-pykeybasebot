@@ -923,7 +923,7 @@ async def handler(bot, event):
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
-        msg = get_curl(conversation_id, send_msg, sender)
+        msg = get_curl(conversation_id, send_msg, sender, event.msg.sender.username)
         test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):

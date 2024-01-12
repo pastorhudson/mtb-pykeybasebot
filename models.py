@@ -8,10 +8,21 @@ from sqlalchemy import Column, DateTime, String, Enum
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum as PyEnum
+import os
+from datetime import datetime, timedelta
+from typing import Union, Any
+from jose import jwt
 
 from datetime import datetime
 
 Base = declarative_base()
+
+ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes
+REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
+ALGORITHM = "HS256"
+JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']   # should be kept secret
+JWT_REFRESH_SECRET_KEY = os.environ['JWT_REFRESH_SECRET_KEY']    # should be kept secret
+
 
 association_table = Table('association', Base.metadata,
                           Column('team_id', Integer, ForeignKey('team.id')),
@@ -160,7 +171,7 @@ class User(Base):
         secondary=association_table,
         back_populates="users")
     bets = relationship("Bet", back_populates="user")
-
+    messages = relationship("MessageQueue", back_populates="user")  # New Line: Relationship with MessageQueue
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -169,6 +180,28 @@ class User(Base):
 
     def get_bets(self):
         return s.query(Bet).filter(User.bets).all()
+
+    def create_access_token(self, expires_delta: int = None) -> str:
+
+        if expires_delta is not None:
+            expires_delta = datetime.utcnow() + expires_delta
+        else:
+            expires_delta = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+
+        to_encode = {"exp": expires_delta, "user": self.username}
+        encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, ALGORITHM)
+        return encoded_jwt
+
+    def create_refresh_token(self, expires_delta: int = None) -> str:
+
+        if expires_delta is not None:
+            expires_delta = datetime.utcnow() + expires_delta
+        else:
+            expires_delta = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
+
+        to_encode = {"exp": expires_delta, "user": self.username}
+        encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, ALGORITHM)
+        return encoded_jwt
 
 
 class Point(Base):
@@ -304,6 +337,8 @@ class MessageQueue(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     message = Column(String, nullable=False)
     sender = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey('user.id'))  # New Line: Foreign Key to User table
+    user = relationship("User", back_populates="messages")  # New Line: Relationship with User
     ip = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
