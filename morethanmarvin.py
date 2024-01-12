@@ -919,7 +919,7 @@ async def handler(bot, event):
         logging.info("Running msg")
         sender = None
         try:
-            send_msg, sender = extract_message_sender("!notify", str(event.msg.content.text.body), event.msg.sender.username)
+            send_msg, sender = extract_message_sender("!notify", str(event.msg.content.text.body))
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id

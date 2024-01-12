@@ -4,63 +4,60 @@ from models import User
 
 def posix(message, token, sender=None):
     if sender:
-        return f"""curl -X POST --location "https://marvn.app/add_message" \
-        -H "Content-Type: application/json" \
-        -d '{{"sender": "{sender}", "message": "{message}", "token": "{token}"}}'"""
+        return f"""curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{{"sender": "{sender}", "message": "{message}", "token": "{token}"}}'"""
     else:
-        return f"""curl -X POST --location "https://marvn.app/add_message" \
-                -H "Content-Type: application/json" \
-                -d '{{"message": "{message}", "token": "{token}"}}'"""
+        return f"""curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{{"message": "{message}", "token": "{token}"}}'"""
 
 
 def get_powershell(message, token, sender=None):
     if sender:
         return f"""
-        $url = 'https://marvn.app/add_message'
-        $headers = @{{
-            'Content-Type' = 'application/json'
-        }}
-        $body = @{{
-            'sender' = '{sender}'
-            'message' = '{message}'
-            'token' = '{token}'
-        }} | ConvertTo-Json
-    
-        $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
-        """
+$url = 'https://marvn.app/add_message'
+$headers = @{{
+    'Content-Type' = 'application/json'
+}}
+$body = @{{
+    'sender' = '{sender}'
+    'message' = '{message}'
+    'token' = '{token}'
+}} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
+"""
     else:
         return f"""
-                $url = 'https://marvn.app/add_message'
-                $headers = @{{
-                    'Content-Type' = 'application/json'
-                }}
-                $body = @{{
-                    'message' = '{message}'
-                    'token' = '{token}'
-                }} | ConvertTo-Json
+$url = 'https://marvn.app/add_message'
+$headers = @{{
+    'Content-Type' = 'application/json'
+}}
+$body = @{{
+    'message' = '{message}'
+    'token' = '{token}'
+}} | ConvertTo-Json
 
-                $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
-                """
+$response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
+"""
 
 
 def get_json(message, token, sender=None):
     if sender:
-        return f"""POST https://marvn.app/add_message
-    Content-Type: application/json
+        return \
+            f"""POST https://marvn.app/add_message
+Content-Type: application/json
     
-    {{
-      "sender" = "{sender}"
-      "message": "{message}",
-      "token": "{token}"
-    }}"""
+{{
+  "sender" = "{sender}"
+  "message": "{message}",
+  "token": "{token}"
+}}"""
     else:
         return f"""POST https://marvn.app/add_message
-            Content-Type: application/json
+Content-Type: application/json
 
-            {{
-              "message": "{message}",
-              "token": "{token}"
-            }}"""
+{{
+  "message": "{message}",
+  "token": "{token}"
+}}"""
 
 
 def get_curl(conversation_id, message, sender, username):
