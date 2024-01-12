@@ -918,13 +918,14 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!notify"):
         logging.info("Running msg")
         sender = None
+        dm_channel = f'marvn,{event.msg.sender.username}'
         try:
             send_msg, sender = extract_message_sender("!notify", str(event.msg.content.text.body))
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
         msg = get_curl(conversation_id, send_msg, sender, event.msg.sender.username)
-        test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
+        test_msg = await bot.chat.send(dm_channel, event.msg.id, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
