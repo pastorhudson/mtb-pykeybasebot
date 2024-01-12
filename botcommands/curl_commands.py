@@ -42,7 +42,7 @@ Content-Type: application/json
 
 def get_curl(conversation_id, message, sender, username):
     user = s.query(User).filter(User.username == username).first()
-    token = user.create_token()
+    token = user.create_access_token(conversation_id)
     win_curl = get_powershell(conversation_id, message, sender, token)
     posix_curl = posix(conversation_id, message, sender, token)
     json_curl = get_json(conversation_id, message, sender, token)

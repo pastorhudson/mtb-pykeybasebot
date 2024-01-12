@@ -53,20 +53,21 @@ def add_message():
     except BadRequest:
         return jsonify({"error": "Invalid JSON data"}), 400
     message = escape(data.get('message'))
-    destination = escape(data.get('destination'))
+    # destination = escape(data.get('destination'))
     sender = escape(data.get('sender'))
+    token = escape(data.get("token"))
     client_ip = escape(request.remote_addr)
     try:
-        user = asyncio.run(get_user(escape(data.get("token"))))
+        user, conversation_id = asyncio.run(get_user(token))
     except HTTPException as e:
         logging.info(e)
         return jsonify({"error": "Could Not Validate Credentials"}), 403
 
-    if not message or not destination:
+    if not message or not token:
         return jsonify({"error": "Missing data"}), 400
 
     session = s
-    new_message = MessageQueue(message=message, destination=destination, sender=sender, ip=client_ip, user=user)
+    new_message = MessageQueue(message=message, destination=conversation_id, sender=sender, ip=client_ip, user=user)
     session.add(new_message)
     session.commit()
     return {"message": "Message added successfully."}, 201
@@ -97,9 +98,12 @@ async def get_user(token: str):
         raise HTTPException("Could not validate credentials")
 
     user = s.query(User).filter(User.username == token_data.user).first()
+    conversation_id = token_data.conversation_id
 
     if user is None:
         raise HTTPException("Could not find user")
+
+    return user, conversation_id
 
 
 if __name__ == '__main__':
