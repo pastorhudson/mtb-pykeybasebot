@@ -925,7 +925,7 @@ async def handler(bot, event):
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
         msg = get_curl(conversation_id, send_msg, sender, event.msg.sender.username)
-        test_msg = await bot.chat.send(channel_name=dm_channel, message=msg)
+        test_msg = await bot.chat.send(channel=dm_channel, message=msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
