@@ -8,6 +8,7 @@ from flask import Flask, request
 from crud import s
 from models import MessageQueue
 from werkzeug.middleware.proxy_fix import ProxyFix
+from flask import escape
 
 app = Flask(__name__, template_folder='/app/www')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -40,10 +41,10 @@ def ytv():
 def add_message():
     session = s
     data = request.get_json()
-    message = data.get('message')
-    destination = data.get('destination')
-    sender = data.get('sender')
-    client_ip = request.remote_addr
+    message = escape(data.get('message'))
+    destination = escape(data.get('destination'))
+    sender = escape(data.get('sender'))
+    client_ip = escape(request.remote_addr)
     #
     # try:
     #     sender = socket.getfqdn(client_ip)
