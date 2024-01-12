@@ -178,9 +178,6 @@ class User(Base):
     def __repr__(self):
         return self.username
 
-    def get_bets(self):
-        return s.query(Bet).filter(User.bets).all()
-
     def create_access_token(self, expires_delta: int = None) -> str:
 
         if expires_delta is not None:
@@ -202,6 +199,9 @@ class User(Base):
         to_encode = {"exp": expires_delta, "user": self.username}
         encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, ALGORITHM)
         return encoded_jwt
+
+    def get_bets(self):
+        return s.query(Bet).filter(User.bets).all()
 
 
 class Point(Base):
