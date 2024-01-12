@@ -16,7 +16,7 @@ async def process_message_queue(bot):
             logging.info(f"{message.id}: {message.status}")
             logging.info(f"Message status: {message.status}")
             message.mark_as_processing(s)
-            if message.sender:
+            if message.sender != "None":
                 msg = f"Incoming Transmission from {message.user.username} via {message.sender}:```{message.message}```"
             else:
                 msg = f"Incoming Transmission from {message.user.username}:```{message.message}```"
