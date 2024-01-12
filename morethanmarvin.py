@@ -45,6 +45,8 @@ from botcommands.school_closings import get_school_closings
 from botcommands.wordle import get_wordle
 from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
+from pykeybasebot.types import chat1
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -919,13 +921,14 @@ async def handler(bot, event):
         logging.info("Running msg")
         sender = None
         dm_channel = f'marvn,{event.msg.sender.username}'
+        channel = chat1.ChatChannel(name=dm_channel)
         try:
             send_msg, sender = extract_message_sender("!notify", str(event.msg.content.text.body))
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
         msg = get_curl(conversation_id, send_msg, sender, event.msg.sender.username)
-        test_msg = await bot.chat.send(channel=dm_channel, message=msg)
+        test_msg = await bot.chat.send(channel, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
