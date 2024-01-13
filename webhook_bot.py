@@ -76,28 +76,29 @@ def add_message():
 @app.route('/refresh', methods=['POST'])
 def auth_refresh():
     logging.info("refresh token")
-    try:
-        data = request.get_json()
-    except BadRequest:
-        return jsonify({"error": "Invalid JSON data"}), 400
-    token = escape(data.get("token"))
-    logging.info("made it")
-
-    client_ip = escape(request.remote_addr)
-    try:
-        user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
-    except HTTPException as e:
-        logging.info(e)
-        return jsonify({"error": str(e)}), 403
-
-    if not token:
-        return jsonify({"error": "Missing data"}), 400
-
-    if not is_refresh:
-        return jsonify({"error": "Not Refresh Token"}), 403
-
-    return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
-                    "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
+    return jsonify({"message": "Refresh"})
+    # try:
+    #     data = request.get_json()
+    # except BadRequest:
+    #     return jsonify({"error": "Invalid JSON data"}), 400
+    # token = escape(data.get("token"))
+    # logging.info("made it")
+    #
+    # client_ip = escape(request.remote_addr)
+    # try:
+    #     user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
+    # except HTTPException as e:
+    #     logging.info(e)
+    #     return jsonify({"error": str(e)}), 403
+    #
+    # if not token:
+    #     return jsonify({"error": "Missing data"}), 400
+    #
+    # if not is_refresh:
+    #     return jsonify({"error": "Not Refresh Token"}), 403
+    #
+    # return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
+    #                 "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
 
 
 class TokenSchema(BaseModel):

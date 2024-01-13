@@ -38,6 +38,18 @@ $body = @{{
 $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
 """
 
+def get_powershell_refresh(refresh_token):
+        return f"""
+$url = 'https://marvn.app/refresh'
+$headers = @{{
+    'Content-Type' = 'application/json'
+}}
+$body = @{{
+    'token' = '{refresh_token}'
+}} | ConvertTo-Json
+
+$response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
+"""
 
 def get_json(message, token, sender=None):
     if sender:
@@ -67,7 +79,8 @@ def get_curl(conversation_id, message, sender, username, channel_name):
     win_curl = get_powershell(message, token, sender)
     posix_curl = posix(message, token, sender)
     json_curl = get_json(message, token, sender)
-    msg = f"""Send Transmission to: {channel_name}\n\nWindoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```\nRefresh Token:```\n{refresh_token}\n```"""
+    posix_refresh = get_powershell_refresh(refresh_token)
+    msg = f"""Send Transmission to: {channel_name}\n\nWindoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```\nRefresh Token:```\n{posix_refresh}\n```"""
     return msg
 
 
