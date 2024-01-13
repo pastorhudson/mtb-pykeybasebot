@@ -87,7 +87,7 @@ def auth_refresh():
 
     client_ip = escape(request.remote_addr)
     try:
-        user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
+        user, conversation_id = asyncio.run(check_refresh(token))
     except HTTPException as e:
         logging.info(e)
         return jsonify({"error": str(e)}), 403
@@ -95,8 +95,8 @@ def auth_refresh():
     if not token:
         return jsonify({"error": "Missing data"}), 400
 
-    if not is_refresh:
-        return jsonify({"error": "Not Refresh Token"}), 403
+    # if not is_refresh:
+    #     return jsonify({"error": "Not Refresh Token"}), 403
 
     return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
                     "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
@@ -164,7 +164,7 @@ async def check_refresh(token: str):
     if user is None:
         raise HTTPException("Could not find user")
 
-    return user, conversation_id, token_data.refresh_token
+    return user, conversation_id
 
 
 if __name__ == '__main__':
