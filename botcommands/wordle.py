@@ -20,6 +20,7 @@ def scrape_wordle(date_to_query=None):
     else:
         today = datetime.today().strftime("%Y/%m/%d")
         url = f"https://www.nytimes.com/{today}/crosswords/wordle-review.html"
+        print(url)
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
     options.headless = True
@@ -30,32 +31,28 @@ def scrape_wordle(date_to_query=None):
     options.add_argument(
         'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
-    # Path to your WebDriver (e.g., chromedriver)
-
-    driver_path = os.environ.get('CHROMEDRIVER_PATH')
-
-    # Initialize the WebDriver with the specified options
-    driver = webdriver.Chrome(options=options, executable_path=driver_path)
-
     # Open the URL
     driver.get(url)
 
     # Wait for JavaScript to load (if necessary)
-    driver.implicitly_wait(12)  # Adjust the time according to your needs
+    driver.implicitly_wait(5)  # Adjust the time according to your needs
 
     # Find the element containing "Today's word"
     # You might need to adjust the selector according to the webpage structure
     try:
+        difficulty = driver.find_element(By.CSS_SELECTOR, "p.css-at9mc1:nth-child(6) > strong:nth-child(1)")
         element = driver.find_element(By.CSS_SELECTOR,
                                       "div.css-s99gbd:nth-child(8) > div:nth-child(1) > p:nth-child(2)")
-        msg = element.text
+        msg = difficulty.text
+        msg += f"\n{element.text}"
+
         logging.info(element.text)
     except Exception as e:
         msg = None
         print("Error:", e)
 
     # Close the browser
-    logging.info(driver.page_source)
+    # logging.info(driver.page_source)
     driver.quit()
 
     return msg
@@ -83,7 +80,7 @@ def get_wordle(date_to_query=None):
 async def async_get_wordle(date_to_query=None):
     # Optionally, create a ThreadPoolExecutor
     executor = ThreadPoolExecutor(max_workers=2)
-
+    date_to_query = "jan 13 2024"
     # Run the get_wordle function in the executor
     result = await asyncio.run_in_executor(executor, get_wordle, date_to_query)
 
@@ -93,5 +90,7 @@ async def async_get_wordle(date_to_query=None):
     return result
 
 if __name__ == "__main__":
-    result = asyncio.run(async_get_wordle(date_to_query="jan 5 2024"))
+    result = get_wordle()
+
+    # result = asyncio.run(async_get_wordle(date_to_query="jan 5 2024"))
     print(result)
