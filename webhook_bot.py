@@ -20,6 +20,7 @@ from flask import escape
 
 app = Flask(__name__, template_folder='/app/www')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+logging.basicConfig(level=logging.DEBUG)
 
 
 @app.route('/')
