@@ -213,7 +213,7 @@ async def handler(bot, event):
         {"name": "wordle",
          "description": "Retrieve today's wordle to ensure you always win.",
          "usage": "optional <date>"},
-        {"name": "notify",
+        {"name": "transmit",
          "description": "Get curl command to send a message to the current chat conversation.",
          "usage": "<message> <optional> -sender <sender>"}
     ]
@@ -917,17 +917,17 @@ async def handler(bot, event):
                               filename=meh_img,
                               title=msg)
 
-    if str(event.msg.content.text.body).startswith("!notify"):
+    if str(event.msg.content.text.body).startswith("!transmit"):
         logging.info("Running msg")
         sender = None
         dm_channel = f'marvn,{event.msg.sender.username}'
         channel = chat1.ChatChannel(name=dm_channel)
         try:
-            send_msg, sender = extract_message_sender("!notify", str(event.msg.content.text.body))
+            send_msg, sender = extract_message_sender("!transmit", str(event.msg.content.text.body))
         except Exception as e:
             send_msg = "This is a test message."
         conversation_id = event.msg.conv_id
-        msg = get_curl(conversation_id, send_msg, sender, event.msg.sender.username)
+        msg = get_curl(conversation_id, send_msg, sender, event.msg.sender.username, event.msg.channel.name)
         test_msg = await bot.chat.send(channel, msg)
 
     if str(event.msg.content.text.body).startswith("!test"):

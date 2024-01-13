@@ -60,13 +60,13 @@ Content-Type: application/json
 }}"""
 
 
-def get_curl(conversation_id, message, sender, username):
+def get_curl(conversation_id, message, sender, username, channel_name):
     user = s.query(User).filter(User.username == username).first()
     token = user.create_access_token(conversation_id)
     win_curl = get_powershell(message, token, sender)
     posix_curl = posix(message, token, sender)
     json_curl = get_json(message, token, sender)
-    msg = f"""Windoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```"""
+    msg = f"""Send Transmission to: {channel_name}\n\nWindoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```"""
     return msg
 
 
