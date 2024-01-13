@@ -196,7 +196,7 @@ class User(Base):
         else:
             expires_delta = datetime.utcnow() + timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES)
 
-        to_encode = {"exp": expires_delta, "user": self.username, "conversation_id": conversation_id}
+        to_encode = {"exp": expires_delta, "user": self.username, "conversation_id": conversation_id, "refresh_token": True}
         encoded_jwt = jwt.encode(to_encode, JWT_REFRESH_SECRET_KEY, ALGORITHM)
         return encoded_jwt
 

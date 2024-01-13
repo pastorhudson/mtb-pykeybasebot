@@ -73,6 +73,31 @@ def add_message():
     return {"message": "Message added successfully."}, 201
 
 
+@app.route('/auth/refresh', methods=['POST'])
+def add_message():
+    try:
+        data = request.get_json()
+    except BadRequest:
+        return jsonify({"error": "Invalid JSON data"}), 400
+    token = escape(data.get("token"))
+
+    client_ip = escape(request.remote_addr)
+    try:
+        user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
+
+    if not token:
+        return jsonify({"error": "Missing data"}), 400
+
+    if not is_refresh:
+        return jsonify({"error": "Not Refresh Token"}), 403
+
+    return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
+            "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
+
+
 class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
@@ -82,6 +107,13 @@ class TokenPayload(BaseModel):
     user: str = None
     conversation_id: str = None
     exp: int = None
+
+
+class RefreshTokenPayload(BaseModel):
+    user: str = None
+    conversation_id: str = None
+    exp: int = None
+    refresh_token: bool = False
 
 
 async def get_user(token: str):
@@ -105,6 +137,30 @@ async def get_user(token: str):
         raise HTTPException("Could not find user")
 
     return user, conversation_id
+
+
+async def check_refresh(token: str):
+    try:
+        payload = jwt.decode(
+            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+        )
+        token_data = RefreshTokenPayload(**payload)
+
+        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+
+            raise HTTPException("Token Expired")
+
+    except(jwt.JWTError, ValidationError):
+        raise HTTPException("Could not validate credentials")
+
+    user = s.query(User).filter(User.username == token_data.user).first()
+    conversation_id = token_data.conversation_id
+
+    if user is None:
+        raise HTTPException("Could not find user")
+
+    return user, conversation_id, token_data.refresh_token
+
 
 
 if __name__ == '__main__':
