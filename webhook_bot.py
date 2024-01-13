@@ -73,7 +73,7 @@ def add_message():
     return {"message": "Message added successfully."}, 201
 
 
-@app.route('/auth/refresh', methods=['POST'])
+@app.route('/refresh', methods=['POST'])
 def auth_refresh():
     logging.info("refresh token")
     try:
