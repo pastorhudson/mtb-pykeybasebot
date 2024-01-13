@@ -77,21 +77,22 @@ def add_message():
 @app.route('/refresh', methods=['POST'])
 def auth_refresh():
     logging.info("refresh token")
-    return jsonify({"message": "Refresh"})
-    # try:
-    #     data = request.get_json()
-    # except BadRequest:
-    #     return jsonify({"error": "Invalid JSON data"}), 400
-    # token = escape(data.get("token"))
-    # logging.info("made it")
-    #
-    # client_ip = escape(request.remote_addr)
-    # try:
-    #     user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
-    # except HTTPException as e:
-    #     logging.info(e)
-    #     return jsonify({"error": str(e)}), 403
-    #
+    try:
+        data = request.get_json()
+    except BadRequest:
+        return jsonify({"error": "Invalid JSON data"}), 400
+    token = escape(data.get("token"))
+    logging.info("made it")
+    logging.info(token)
+
+    client_ip = escape(request.remote_addr)
+    try:
+        user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": str(e)}), 403
+    logging.info("got user")
+    return jsonify({"user": user})
     # if not token:
     #     return jsonify({"error": "Missing data"}), 400
     #
