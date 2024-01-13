@@ -75,12 +75,13 @@ def add_message():
 
 @app.route('/auth/refresh', methods=['POST'])
 def auth_refresh():
+    logging.info("refresh token")
     try:
         data = request.get_json()
     except BadRequest:
         return jsonify({"error": "Invalid JSON data"}), 400
     token = escape(data.get("token"))
-    logging.info(token)
+    logging.info("made it")
 
     client_ip = escape(request.remote_addr)
     try:
@@ -96,7 +97,7 @@ def auth_refresh():
         return jsonify({"error": "Not Refresh Token"}), 403
 
     return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
-            "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
+                    "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
 
 
 class TokenSchema(BaseModel):
