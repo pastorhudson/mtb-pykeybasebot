@@ -74,7 +74,7 @@ def add_message():
 
 
 @app.route('/auth/refresh', methods=['POST'])
-def add_message():
+def auth_refresh():
     try:
         data = request.get_json()
     except BadRequest:
