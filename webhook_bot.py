@@ -149,18 +149,19 @@ async def check_refresh(token: str):
         payload = jwt.decode(
             token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
         )
+        logging.info(payload)
         token_data = RefreshTokenPayload(**payload)
-
+        logging.info(datetime.fromtimestamp(token_data.exp))
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
 
             raise HTTPException("Token Expired")
 
     except (jwt.JWTError, ValidationError):
         raise HTTPException("Could not validate credentials")
-
+    logging.info("processed token")
     user = s.query(User).filter(User.username == token_data.user).first()
     conversation_id = token_data.conversation_id
-
+    logging.info("got user and convo")
     if user is None:
         raise HTTPException("Could not find user")
 
