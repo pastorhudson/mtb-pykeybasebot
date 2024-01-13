@@ -10,7 +10,7 @@ from flask import send_file
 from yt_dlp.utils import DownloadError
 from flask import Flask, request
 from crud import s
-from models import MessageQueue, ALGORITHM, JWT_SECRET_KEY, User
+from models import MessageQueue, ALGORITHM, JWT_SECRET_KEY, User, JWT_REFRESH_SECRET_KEY
 from jose import jwt
 from pydantic import ValidationError
 from pydantic import BaseModel
@@ -92,15 +92,14 @@ def auth_refresh():
         logging.info(e)
         return jsonify({"error": str(e)}), 403
     logging.info("got user")
-    return jsonify({"user": user})
-    # if not token:
-    #     return jsonify({"error": "Missing data"}), 400
-    #
-    # if not is_refresh:
-    #     return jsonify({"error": "Not Refresh Token"}), 403
-    #
-    # return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
-    #                 "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
+    if not token:
+        return jsonify({"error": "Missing data"}), 400
+
+    if not is_refresh:
+        return jsonify({"error": "Not Refresh Token"}), 403
+
+    return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
+                    "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
 
 
 class TokenSchema(BaseModel):
@@ -147,7 +146,7 @@ async def get_user(token: str):
 async def check_refresh(token: str):
     try:
         payload = jwt.decode(
-            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+            token, JWT_REFRESH_SECRET_KEY, algorithms=[ALGORITHM]
         )
         logging.info(payload)
         token_data = RefreshTokenPayload(**payload)
