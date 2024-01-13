@@ -87,7 +87,7 @@ def auth_refresh():
         user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
     except HTTPException as e:
         logging.info(e)
-        return jsonify({"error": e}), 403
+        return jsonify({"error": str(e)}), 403
 
     if not token:
         return jsonify({"error": "Missing data"}), 400
