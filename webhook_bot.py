@@ -82,21 +82,16 @@ def auth_refresh():
     except BadRequest:
         return jsonify({"error": "Invalid JSON data"}), 400
     token = escape(data.get("token"))
-    logging.info("made it")
-    logging.info(token)
 
     client_ip = escape(request.remote_addr)
+    logging.info(f"Client IP: {client_ip} attempting to refresh token")
     try:
         user, conversation_id = asyncio.run(check_refresh(token))
     except HTTPException as e:
         logging.info(e)
         return jsonify({"error": str(e)}), 403
-    logging.info("got user")
     if not token:
         return jsonify({"error": "Missing data"}), 400
-
-    # if not is_refresh:
-    #     return jsonify({"error": "Not Refresh Token"}), 403
 
     return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
                     "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200

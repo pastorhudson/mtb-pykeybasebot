@@ -9,6 +9,10 @@ def posix(message, token, sender=None):
         return f"""curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{{"message": "{message}", "token": "{token}"}}'"""
 
 
+def get_posix_refresh(refresh_token):
+        return f"""curl -X POST --location "https://marvn.app/refresh" -H "Content-Type: application/json" -d '{{"token": "{refresh_token}"}}'"""
+
+
 def get_powershell(message, token, sender=None):
     if sender:
         return f"""
@@ -38,6 +42,7 @@ $body = @{{
 $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
 """
 
+
 def get_powershell_refresh(refresh_token):
         return f"""
 $url = 'https://marvn.app/refresh'
@@ -50,6 +55,7 @@ $body = @{{
 
 $response = Invoke-RestMethod -Method Post -Uri $url -Headers $headers -Body $body
 """
+
 
 def get_json(message, token, sender=None):
     if sender:
@@ -79,8 +85,9 @@ def get_curl(conversation_id, message, sender, username, channel_name):
     win_curl = get_powershell(message, token, sender)
     posix_curl = posix(message, token, sender)
     json_curl = get_json(message, token, sender)
-    posix_refresh = get_powershell_refresh(refresh_token)
-    msg = f"""Send Transmission to: {channel_name}\n\nWindoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```\nRefresh Token:```\n{posix_refresh}\n```"""
+    poweshell_refresh = get_powershell_refresh(refresh_token)
+    posix_refresh = get_posix_refresh(refresh_token)
+    msg = f"""Send Transmission to: {channel_name}\n\nWindoze:```\n{win_curl}\n```\nPosix:\n```\n{posix_curl}\n```\nHTTP POST:```\n{json_curl}\n```\nWindows Refresh Token:```\n{poweshell_refresh}\n```\nPosix Refresh Token:```\n{posix_refresh}\n```"""
     return msg
 
 
