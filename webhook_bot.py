@@ -80,13 +80,14 @@ def auth_refresh():
     except BadRequest:
         return jsonify({"error": "Invalid JSON data"}), 400
     token = escape(data.get("token"))
+    logging.info(token)
 
     client_ip = escape(request.remote_addr)
     try:
         user, conversation_id, is_refresh = asyncio.run(check_refresh(token))
     except HTTPException as e:
         logging.info(e)
-        return jsonify({"error": "Could Not Validate Credentials"}), 403
+        return jsonify({"error": e}), 403
 
     if not token:
         return jsonify({"error": "Missing data"}), 400
@@ -150,7 +151,7 @@ async def check_refresh(token: str):
 
             raise HTTPException("Token Expired")
 
-    except(jwt.JWTError, ValidationError):
+    except (jwt.JWTError, ValidationError):
         raise HTTPException("Could not validate credentials")
 
     user = s.query(User).filter(User.username == token_data.user).first()
@@ -160,7 +161,6 @@ async def check_refresh(token: str):
         raise HTTPException("Could not find user")
 
     return user, conversation_id, token_data.refresh_token
-
 
 
 if __name__ == '__main__':
