@@ -39,7 +39,6 @@ async def is_morning_report():
                     logging.info(f"Morning Report already sent today at {morning_report_task.completed_at_in_ny()}")
                     return True
                 elif now_time_ny >= time_523_am:
-
                     logging.info("No Morning Report sent today yet")
                     return False
         return True
