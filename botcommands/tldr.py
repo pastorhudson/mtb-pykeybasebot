@@ -14,6 +14,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import random
+import time
 load_dotenv('../secret.env')
 
 
@@ -143,31 +144,29 @@ async def get_gpt_summary(url):
 def scrape_article(url):
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
-    options.headless = True
+    options.headless = False
     options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    # driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=options)
     options.add_argument(
         'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+    driver = webdriver.Chrome(executable_path=os.environ.get('CHROMEDRIVER_PATH'), chrome_options=options)
 
-    # Path to your WebDriver (e.g., chromedriver)
-
-    driver_path = os.environ.get('CHROMEDRIVER_PATH')
-
-    # Initialize the WebDriver with the specified options
-    driver = webdriver.Chrome(options=options, executable_path=driver_path)
 
     # Open the URL
     driver.get(url)
 
     # Wait for JavaScript to load (if necessary)
-    driver.implicitly_wait(12)  # Adjust the time according to your needs
+    time.sleep(5)
+    driver.implicitly_wait(10)  # Adjust the time according to your needs
 
     # Find the element containing "Today's word"
     # You might need to adjust the selector according to the webpage structure
     try:
-        page_text = driver.find_element_by_tag_name('body').text
+        foot_text = driver.find_element(By.TAG_NAME, 'footer').text
+        pprint(foot_text)
+        page_text = driver.find_element(By.TAG_NAME, 'body').text
+        pprint(page_text)
     except Exception as e:
         print("Error:", e)
         page_text = None
@@ -180,7 +179,7 @@ def scrape_article(url):
 
 if __name__ == "__main__":
     # loop = asyncio.get_event_loop()
-    pprint(scrape_article('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
+    pprint(scrape_article('https://mfkl.github.io/2024/01/10/unity-double-oss-standards.html'))
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
 
