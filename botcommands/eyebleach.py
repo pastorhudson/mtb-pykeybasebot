@@ -1,9 +1,11 @@
+from pprint import pprint
+
 import requests
 import random
 
 
 def _fetch_bleach():
-    url = "https://api.reddit.com/r/eyebleach/random/.json?is_gallery=False"
+    url = "https://api.reddit.com/r/eyebleach/random/"
     response = requests.get(url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0'})
     try:
         print(response.json()[0]["data"]["children"][0]["data"]["is_gallery"])
@@ -51,5 +53,6 @@ def get_eyebleach(bleach_level=3):
 
 
 if __name__ == "__main__":
+    # pprint(_fetch_bleach()[1].json())
     print(get_eyebleach())
     pass
