@@ -18,7 +18,7 @@ from datetime import datetime
 Base = declarative_base()
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ['ACCESS_TOKEN_EXPIRE_MINUTES'])
-REFRESH_TOKEN_EXPIRE_MINUTES = (os.environ['REFRESH_TOKEN_EXPIRE_MINUTES'])
+REFRESH_TOKEN_EXPIRE_MINUTES = int(os.environ['REFRESH_TOKEN_EXPIRE_MINUTES'])
 ALGORITHM = "HS256"
 JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']   # should be kept secret
 JWT_REFRESH_SECRET_KEY = os.environ['JWT_REFRESH_SECRET_KEY']    # should be kept secret
