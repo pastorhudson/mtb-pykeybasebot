@@ -17,8 +17,8 @@ from datetime import datetime
 
 Base = declarative_base()
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes
-REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7 # 7 days
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ['ACCESS_TOKEN_EXPIRE_MINUTES']
+REFRESH_TOKEN_EXPIRE_MINUTES = os.environ['REFRESH_TOKEN_EXPIRE_MINUTES']
 ALGORITHM = "HS256"
 JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']   # should be kept secret
 JWT_REFRESH_SECRET_KEY = os.environ['JWT_REFRESH_SECRET_KEY']    # should be kept secret
@@ -178,7 +178,7 @@ class User(Base):
     def __repr__(self):
         return self.username
 
-    def create_access_token(self, conversation_id: str, expires_delta: int = None) -> str:
+    def create_access_token(self, conversation_id: str, expires_delta: timedelta = None) -> str:
 
         if expires_delta is not None:
             expires_delta = datetime.utcnow() + expires_delta
@@ -189,7 +189,7 @@ class User(Base):
         encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, ALGORITHM)
         return encoded_jwt
 
-    def create_refresh_token(self, conversation_id: str, expires_delta: int = None) -> str:
+    def create_refresh_token(self, conversation_id: str, expires_delta: timedelta = None) -> str:
 
         if expires_delta is not None:
             expires_delta = datetime.utcnow() + expires_delta
