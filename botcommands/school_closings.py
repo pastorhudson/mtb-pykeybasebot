@@ -90,6 +90,8 @@ def get_closings_list():
         table.add_row([name, status])
     if not no_school:
         table.add_row(["Your Mom", get_mom()])
+        # set max width
+    table.max_width = 25
     return table, no_school
 
 
@@ -109,7 +111,8 @@ def search_closings(specific_words=None):
 
     if not no_school:
         table.add_row(["Your Mom", get_mom()])
-
+    # set max width
+    table.max_width = 25
     return table, no_school
 
 
