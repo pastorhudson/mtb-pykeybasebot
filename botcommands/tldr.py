@@ -165,6 +165,10 @@ def scrape_article(url):
     try:
         foot_text = driver.find_element(By.TAG_NAME, 'footer').text
         pprint(foot_text)
+    except Exception as e:
+        print("Error:", e)
+
+    try:
         page_text = driver.find_element(By.TAG_NAME, 'body').text
         pprint(page_text)
     except Exception as e:
@@ -179,7 +183,7 @@ def scrape_article(url):
 
 if __name__ == "__main__":
     # loop = asyncio.get_event_loop()
-    pprint(scrape_article('https://mfkl.github.io/2024/01/10/unity-double-oss-standards.html'))
+    pprint(scrape_article('https://www.reuters.com/world/china/taiwan-president-elect-lai-face-chinas-ire-after-victory-2024-01-13/'))
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
 
