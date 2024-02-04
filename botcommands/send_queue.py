@@ -17,9 +17,9 @@ async def process_message_queue(bot):
             logging.info(f"Message status: {message.status}")
             message.mark_as_processing(s)
             if message.sender != "None":
-                msg = f"Incoming Transmission from {message.user.username} via {message.sender}:```{message.message}```"
+                msg = f"Incoming Transmission from {message.user.username} via {message.sender}: {message.message}"
             else:
-                msg = f"Incoming Transmission from {message.user.username}:```{message.message}```"
+                msg = f"Incoming Transmission from {message.user.username}: {message.message}"
 
             await bot.chat.send(message.destination, msg)
             message.mark_as_done(s)
