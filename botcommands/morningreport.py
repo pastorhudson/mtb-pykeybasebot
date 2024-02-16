@@ -34,7 +34,7 @@ async def get_morningreport(channel):
 
     meh = await get_meh(observation=False)
     msg[1] = "\nMeh:" + meh
-    msg[2] = f"\n\nEverything is made up and the points don't matter."
+    msg[2] = f"\n\nEverything is made up and the points don't matter.\n\n"
     msg[2] += get_till(team_name=team.name, observation=False)
     msg[2] += "\nToday's Top Hacker News:\n"
     msg[2] += get_top_hacker_news()

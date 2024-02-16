@@ -1246,8 +1246,11 @@ bot = Bot(username=f"{os.environ.get('KEYBASE_BOTNAME')}", paperkey=os.environ.g
 
 async def periodic_task():
     await asyncio.sleep(90)
+
     while True:
         # Here's where you put your db call.
+        logging.info("Triggering Morning Report Check")
+
         mr = await is_morning_report()
         if not mr:
             mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
