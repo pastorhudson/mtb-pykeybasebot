@@ -9,7 +9,7 @@ async def award_activity_points(event):
         team_name = event.msg.channel.name
 
         if str(event.msg.content.text.body).startswith("!") or str(event.msg.content.text.body).startswith("http"):
-            score = write_score(event.msg.sender.username, 'marvn', team_name, 3, description='sent msg')
+            # score = write_score(event.msg.sender.username, 'marvn', team_name, 3, description='sent msg')
             pass
         elif event.msg.sender.username != 'marvn':
             logging.info(f'Giving {event.msg.sender.username} {len(str(event.msg.content.text.body))}pts')

@@ -907,7 +907,6 @@ async def handler(bot, event):
             await bot.chat.react(conversation_id, event.msg.id, ":no_entry:")
 
 
-
     if str(event.msg.content.text.body).startswith('!meh'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -933,6 +932,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith("!test"):
         logging.info("Yes I'm still here.")
         logging.info(pprint(event))
+        await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
         msg = f"Sigh. . . yes I'm still here."
         members = await get_channel_members(conversation_id)
