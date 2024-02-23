@@ -27,7 +27,7 @@ async def get_morningreport(channel):
 
     team = s.query(Team).filter_by(name=channel).first()
 
-    msg = ["", "", "", "", "\n\nToday's Closings: ```Normal Schedule```\n"]
+    msg = ["", "", "", "", "\n\n\nToday's Closings: ```Normal Schedule```\n"]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
@@ -36,7 +36,7 @@ async def get_morningreport(channel):
     msg[1] = "\nMeh:" + meh
     msg[2] = f"\n\nEverything is made up and the points don't matter.\n\n"
     msg[2] += get_till(team_name=team.name, observation=False)
-    msg[2] += "\nToday's Top Hacker News:\n"
+    msg[2] += "\n\nToday's Top Hacker News:\n"
     msg[2] += get_top_hacker_news()
     msg[3] += f"\nToday's Joke:```{get_joke(False)}```"
 
