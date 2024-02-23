@@ -13,7 +13,7 @@ def get_top_hacker_news(rss_url="https://news.ycombinator.com/rss", num_articles
         for num, item in enumerate(root.findall('.//item')[:num_articles]):
             title = item.find('title').text
             link = item.find('link').text
-            msg += f"{num}. {title}\n{link}\n\n"
+            msg += f"{num + 1}. {title}\n{link}\n\n"
 
     except Exception as e:
         print(f"An error occurred: {e}")
