@@ -27,10 +27,10 @@ async def get_morningreport(channel):
 
     team = s.query(Team).filter_by(name=channel).first()
 
-    msg = ["", "", "", "", "\n\n\nToday's Closings: ```Normal Schedule```\n"]
+    msg = ["", "", "", "", "\n\n\n\nToday's Closings: ```Normal Schedule```\n"]
 
     msg[0] = get_obaservation() + "\n"
-    msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n"
+    msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n\n"
 
     meh = await get_meh(observation=False)
     msg[1] = "\nMeh:" + meh
