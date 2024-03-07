@@ -767,7 +767,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!morse'):
         conversation_id = event.msg.conv_id
 
-        morse_code = get_morse_code(event.msg.content.text.body[6:])
+        morse_code = get_morse_code(event.msg.content.text.body[7:])
 
         await bot.chat.send(conversation_id, morse_code)
 
