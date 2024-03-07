@@ -551,8 +551,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         passage = str(event.msg.content.text.body)[7:]
-        msg = get_esv_text(passage)
-        msg = get_morse_code(event.msg.content.text.body[7:])
+        msg = get_morse_code(get_esv_text(passage))
         await bot.chat.send(conversation_id, msg)
 
     # if str(event.msg.content.text.body).startswith("!aoc"):
