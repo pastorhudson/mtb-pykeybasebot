@@ -9,7 +9,8 @@ observations = [
     "This isn't in the ESV version of the Bible.",
 ]
 
-def get_esv_text(passage):
+
+def get_esv_text(passage, plain_txt=False):
     API_KEY = os.environ.get('ESV_KEY')
     API_URL = 'https://api.esv.org/v3/passage/text/'
     params = {
@@ -39,17 +40,23 @@ def get_esv_text(passage):
         API_URL = 'https://api.esv.org/v3/passage/search/'
         response = requests.get(API_URL, params=params, headers=headers)
         if response.json()['results']:
-            msg = ""
-            for result in response.json()['results']:
-                msg += "```" + result['reference'] + "\n" + result['content'] + "```\n"
+            if not plain_txt:
+                msg = ""
+                for result in response.json()['results']:
+                    msg += "```" + result['reference'] + "\n" + result['content'] + "```\n"
 
-            msg += "\n(ESV)"
+                msg += "\n(ESV)"
+            else:
+                msg = ""
+                for result in response.json()['results']:
+                    msg += result['reference'] + " " + result['content']
+
             return msg
         else:
             return f'"{passage}" is not found in the ESV Bible.'
 
 
 if __name__ == '__main__':
-    passage = 'penis'
+    passage = 'john 3:16'
     if passage:
         print(get_esv_text(passage))
