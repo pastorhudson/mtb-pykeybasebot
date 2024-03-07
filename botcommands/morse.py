@@ -1,52 +1,112 @@
 import argparse
 import re
 
+# morse_code = {
+#     'A': '·—',
+#     'B': '—·',
+#     'C': '·——·',
+#     'D': '—··',
+#     'E': '·',
+#     'F': '··—·',
+#     'G': '·——·—·',
+#     'H': '····',
+#     'I': '··',
+#     'J': '·———',
+#     'K': '—·—',
+#     'L': '·—··',
+#     'M': '·——',
+#     'N': '—·',
+#     'O': '———',
+#     'P': '·——·',
+#     'Q': '·—·—',
+#     'R': '·—·',
+#     'S': '···',
+#     'T': '—',
+#     'U': '··—',
+#     'V': '···—',
+#     'W': '·——',
+#     'X': '—··—',
+#     'Y': '—·——',
+#     'Z': '——··',
+#     ' ': ' / ',
+#     '0': '—————',
+#     '1': '·————',
+#     '2': '··———',
+#     '3': '···——',
+#     '4': '····—',
+#     '5': '·····',
+#     '6': '—····',
+#     '7': '——···',
+#     '8': '———··',
+#     '9': '————·',
+#     '.': '·—·—·—',
+#     ',': '——··——',
+#     '?': '··——··',
+#     '!': '—·—·——',
+#     '"': '·—··—·'
+# }
+
 morse_code = {
-    'A': '·—',
-    'B': '—·',
-    'C': '·——·',
-    'D': '—··',
-    'E': '·',
-    'F': '··—·',
-    'G': '·——·—·',
-    'H': '····',
-    'I': '··',
-    'J': '·———',
-    'K': '—·—',
-    'L': '·—··',
-    'M': '·——',
-    'N': '—·',
-    'O': '———',
-    'P': '·——·',
-    'Q': '·—·—',
-    'R': '·—·',
-    'S': '···',
-    'T': '—··—',
-    'U': '··—',
-    'V': '···—',
-    'W': '·——',
-    'X': '—··—',
-    'Y': '—·——',
-    'Z': '——··',
+    'A': '.-',
+    'B': '-...',
+    'C': '-.-.',
+    'D': '-..',
+    'E': '.',
+    'F': '..-.',
+    'G': '--.',
+    'H': '....',
+    'I': '..',
+    'J': '.---',
+    'K': '-.-',
+    'L': '.-..',
+    'M': '--',
+    'N': '-.',
+    'O': '---',
+    'P': '.--.',
+    'Q': '--.-',
+    'R': '.-.',
+    'S': '...',
+    'T': '-',
+    'U': '..-',
+    'V': '...-',
+    'W': '.--',
+    'X': '-..-',
+    'Y': '-.--',
+    'Z': '--..',
     ' ': ' / ',
-    '0': '—————',
-    '1': '·————',
-    '2': '··———',
-    '3': '···——',
-    '4': '····—',
-    '5': '·····',
-    '6': '—····',
-    '7': '——···',
-    '8': '———··',
-    '9': '————·',
-    '.': '·—·—·—',
-    ',': '——··——',
-    '?': '··——··',
-    '!': '—·—·——',
-    '"': '·—··—·'
+    '0': '-----',
+    '1': '.----',
+    '2': '..---',
+    '3': '...--',
+    '4': '....-',
+    '5': '.....',
+    '6': '-....',
+    '7': '--...',
+    '8': '---..',
+    '9': '----.',
+    '.': '.-.-.-',
+    ',': '--..--',
+    '?': '..--..',
+    '!': '-.-.--',
+    '"': '.-..-.',
+    "'": '.----.',
+    "(": '-.--.',
+    ")": '-.--.-',
+    '&': '.-...',
+    ':': "---...",
+    ';': "-.-.-.",
+    '=': '=...-',
+    '+': '.-.-.',
+    '-': '-....-',
+    '$': '...-..-',
+    '@': '.--.-.',
 }
 
 morse_code_dict = {v: k for k, v in morse_code.items()}
+
+
+def is_morse_code(s):
+    return all(char in ['.', '-', ' ', '/'] for char in s)
 
 
 class NotMorse(BaseException):
@@ -63,7 +123,7 @@ def text_to_morse(text):
             else:
                 morse_string += morse_code[char] + ' '
         except KeyError as e:
-            raise NotMorse
+            print(char, e)
     return morse_string.strip()
 
 
@@ -84,6 +144,28 @@ def check_morse(morse_string):
         morse_string = re.sub(r'[\-_]', '—', morse_string)
         print(morse_string)
     return morse_string
+
+
+def morse_to_phonetic(morse_code):
+    # Mapping Morse code symbols to phonetic equivalents
+    morse_to_dit_dah = {
+        '.': 'dit',
+        '-': 'dah',
+        '/': ' ',  # Preserving spaces
+        ' ': ' '
+    }
+
+    # Translate each Morse code symbol to its phonetic equivalent
+    phonetic_list = [morse_to_dit_dah[symbol] for symbol in morse_code]
+
+    # Join the phonetic equivalents into a string with spaces
+    phonetic_string = ' '.join(phonetic_list)
+
+    # Replace multiple consecutive spaces (which represent spaces between Morse characters) with a single space
+    # This step ensures the output is neatly formatted
+    phonetic_string = ' '.join(phonetic_string.split())
+
+    return phonetic_string
 
 
 def output():
@@ -112,14 +194,18 @@ def output():
 
 
 def get_morse_code(text):
-    observation = ["beep beep dah dah something like that. . . "]
-    try:
-        msg = f"{observation}\n```{text_to_morse(text)}```"
-    except NotMorse:
-        msg = f"{observation}\n```{morse_to_text(text)}```"
+    if is_morse_code(text):
+        print(text)
+        msg = f"{morse_to_phonetic(text)}\n```{morse_to_text(text)}```"
+    else:
+        print('Not a valid morse code')
+        morse = text_to_morse(text)
+        msg = f"{morse_to_phonetic(morse)}\n```{text_to_morse(text)}```"
 
     return msg
 
 
 if __name__ == "__main__":
-    print(get_morse_code("··· ——— ···"))
+    text = '... --- ...  / - ... -. .-'
+    print(is_morse_code(text))
+    print(get_morse_code(text))
