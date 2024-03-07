@@ -5,6 +5,8 @@ import os
 import sys
 from pprint import pprint
 from string import punctuation
+
+from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
@@ -759,6 +761,12 @@ async def handler(bot, event):
 
         await bot.chat.send(conversation_id, msg)
 
+    if str(event.msg.content.text.body).startswith('!morse'):
+        conversation_id = event.msg.conv_id
+
+        morse_code = get_morse_code(event.msg.content.text.body)
+
+        await bot.chat.send(conversation_id, morse_code)
 
     if str(event.msg.content.text.body).startswith("!payout"):
         await sync(event=event, bot=bot)
@@ -1094,6 +1102,8 @@ async def handler(bot, event):
             # if is_supported(yt_urls[0]):
             if "That video url didn't work." not in yt_msg:
                 await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
+
+
 
     if str(event.msg.content.text.body).startswith('!ytv'):
         try:
