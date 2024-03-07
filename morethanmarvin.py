@@ -149,6 +149,9 @@ async def handler(bot, event):
         # {"name": "morbidity",
         #  "description": "Return data about current mass shootings in the US.",
         #  "usage": ""},
+        {"name": "morse",
+         "description": "Translate morsecode to english.",
+         "usage": ""},
         {"name": "morningreport",
          "description": "Gets today's morning report.",
          "usage": ""},
@@ -764,7 +767,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).startswith('!morse'):
         conversation_id = event.msg.conv_id
 
-        morse_code = get_morse_code(event.msg.content.text.body)
+        morse_code = get_morse_code(event.msg.content.text.body[8:])
 
         await bot.chat.send(conversation_id, morse_code)
 

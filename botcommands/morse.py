@@ -49,6 +49,10 @@ morse_code = {
 morse_code_dict = {v: k for k, v in morse_code.items()}
 
 
+class NotMorse(BaseException):
+    pass
+
+
 def text_to_morse(text):
     morse_string = ''
     text = text.upper()
@@ -59,7 +63,7 @@ def text_to_morse(text):
             else:
                 morse_string += morse_code[char] + ' '
         except KeyError as e:
-            return f"Sorry! We found the following key wasn't recognized: {e}"
+            raise NotMorse
     return morse_string.strip()
 
 
@@ -109,9 +113,13 @@ def output():
 
 def get_morse_code(text):
     observation = ["beep beep dah dah something like that. . . "]
-    msg = f"{observation}\n```{text_to_morse(text)}```"
+    try:
+        msg = f"{observation}\n```{text_to_morse(text)}```"
+    except NotMorse:
+        msg = f"{observation}\n```{morse_to_text(text)}```"
+
     return msg
 
 
 if __name__ == "__main__":
-    print(text_to_morse("SOS"))
+    print(get_morse_code("··· ——— ···"))
