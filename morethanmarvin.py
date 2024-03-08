@@ -749,6 +749,8 @@ async def handler(bot, event):
             await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
         await bot.chat.send(conversation_id, msg[2])
         await bot.chat.send(conversation_id, msg[4])
+        await bot.chat.send(conversation_id, msg[5])
+
 
     if str(event.msg.content.text.body).startswith("!news"):
         try:
