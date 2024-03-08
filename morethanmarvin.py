@@ -221,7 +221,10 @@ async def handler(bot, event):
          "usage": "optional <date>"},
         {"name": "transmit",
          "description": "Get curl command to send a message to the current chat conversation.",
-         "usage": "<message> <optional> -sender <sender>"}
+         "usage": "<message> <optional> -sender <sender>"},
+        {"name": "weather",
+         "description": "Get Uniontown Weather.",
+         "usage": ""}
     ]
 
     #award points based on activity
@@ -1232,7 +1235,7 @@ async def handler(bot, event):
 
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
-        write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5, team_name)
+        # write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5, team_name)
         LATLONG = 39.90008, -79.71643
         msg = get_weather('Uniontown', LATLONG)
         await bot.chat.send(conversation_id, msg)
