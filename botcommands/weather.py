@@ -7,7 +7,9 @@ def get_weather(name, LATLONG):
     msg = ""
     weekday = date.today()
     with forecast(os.environ.get('PIRATE_WEATHER'), *LATLONG) as place:
-        msg += f"{name}n: {place.daily.summary}\n---\n"
+        msg += f"{name}n: {place.daily.summary}\n"
+        msg += "```\n"
+
         for day in place.daily:
             day = dict(day=date.strftime(weekday, '%a'),
                        sum=day.summary,
@@ -16,6 +18,8 @@ def get_weather(name, LATLONG):
                        )
             msg +='{day}: {sum} Temp range: {tempMin} - {tempMax}\n'.format(**day)
             weekday += timedelta(days=1)
+    msg += "```"
+
     return msg
 
 

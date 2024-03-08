@@ -15,6 +15,7 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
+from botcommands.weather import get_weather
 from pykeybasebot import Bot
 from botcommands.youtube import get_mp3, get_domain
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
@@ -1226,11 +1227,14 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id
-        msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather.\n" \
-              f"https://mars.nasa.gov/layout/embed/image/insightweather/"
+        # msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather.\n" \
+        #       f"https://mars.nasa.gov/layout/embed/image/insightweather/"
+
         members = await get_channel_members(conversation_id)
         channel_name = str(event.msg.channel.name).replace(",", "")
         write_score(event.msg.sender.username, members, event.msg.sender.username, channel_name, -5, team_name)
+        LATLONG = 39.90008, -79.71643
+        msg = get_weather('Uniontown', LATLONG)
         await bot.chat.send(conversation_id, msg)
 
 
