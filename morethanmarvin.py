@@ -1298,6 +1298,8 @@ async def periodic_task():
                 await bot.chat.send(mtb_conversation_id, draw_payload['msg'])
             await bot.chat.send(mtb_conversation_id, msg[2])
             await bot.chat.send(mtb_conversation_id, msg[4])
+            await bot.chat.send(mtb_conversation_id, msg[5])
+
 
             await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)

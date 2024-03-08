@@ -3,12 +3,13 @@ from botcommands.stardate import get_stardate
 from botcommands.till import get_till
 from botcommands.school_closings import get_school_closings
 import random
-from botcommands.scorekeeper import get_score
+# from botcommands.scorekeeper import get_score
 from botcommands.jokes import get_joke
 import logging
 from crud import s
 from models import Team
 from botcommands.news import get_top_hacker_news
+from botcommands.weather import get_weather
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -27,7 +28,7 @@ async def get_morningreport(channel):
 
     team = s.query(Team).filter_by(name=channel).first()
 
-    msg = ["", "", "", "", "\n\n\n\nToday's Closings: ```Normal Schedule```\n"]
+    msg = ["", "", "", "", "\n\n\n\nToday's Closings: ```Normal Schedule```\n", ""]
 
     msg[0] = get_obaservation() + "\n"
     msg[0] += "`" + get_stardate(observation=False).strip("`") + "`\n\n"
@@ -43,6 +44,7 @@ async def get_morningreport(channel):
     closings, no_school = get_school_closings(search=schools, observations=False)
     if no_school:
         msg[4] = closings['msg']
+    msg[5] = get_weather("Uniontown", (39.90008, -79.71643))
     s.close()
     return msg
 
