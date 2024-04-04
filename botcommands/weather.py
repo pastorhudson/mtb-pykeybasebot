@@ -7,7 +7,7 @@ def get_weather(name, LATLONG):
     msg = ""
     weekday = date.today()
     with forecast(os.environ.get('PIRATE_WEATHER'), *LATLONG) as place:
-        msg += f"{name}n: {place.daily.summary}\n"
+        msg += f"{name}: {place.daily.summary}\n"
         msg += "```\n"
 
         for day in place.daily:
