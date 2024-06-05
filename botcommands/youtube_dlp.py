@@ -375,8 +375,8 @@ def extract_transcript_from_vtt(vtt_file):
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
-    meta = get_meta('https://youtu.be/w0ZHlp6atUQ?si=qhGgjVxVrl0olCyZ')
-    pprint(meta)
+    # meta = get_meta('https://youtu.be/w0ZHlp6atUQ?si=qhGgjVxVrl0olCyZ')
+    # pprint(meta)
     # vtt_file = meta['title'].replace(' ', '_') + ".en.vtt"
     # print(vtt_file)
     # vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
