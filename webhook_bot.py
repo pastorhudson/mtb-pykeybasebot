@@ -16,7 +16,6 @@ from pydantic import BaseModel
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import escape
 
-
 app = Flask(__name__, template_folder='/app/www')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 logging.basicConfig(level=logging.DEBUG)
@@ -25,6 +24,7 @@ logging.basicConfig(level=logging.DEBUG)
 @app.route('/')
 def home():
     return render_template('index.html')
+
 
 @app.route('/ytv')
 def ytv():
@@ -122,7 +122,6 @@ async def get_user(token: str):
         token_data = TokenPayload(**payload)
 
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
-
             raise HTTPException("Token Expired")
 
     except(jwt.JWTError, ValidationError):
@@ -146,7 +145,6 @@ async def check_refresh(token: str):
         token_data = RefreshTokenPayload(**payload)
         logging.info(datetime.fromtimestamp(token_data.exp))
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
-
             raise HTTPException("Token Expired")
 
     except (jwt.JWTError, ValidationError):
@@ -159,7 +157,6 @@ async def check_refresh(token: str):
         raise HTTPException("Could not find user")
 
     return user, conversation_id
-
 
 # if __name__ == '__main__':
 #     # Bind to PORT if defined, otherwise default to 5000.
