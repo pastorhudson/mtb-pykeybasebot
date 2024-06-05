@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 
 from flask import jsonify, render_template
-import os
 from werkzeug.exceptions import BadRequest, HTTPException
 from botcommands.youtube_dlp import get_mp4
 from flask import send_file
