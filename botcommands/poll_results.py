@@ -20,7 +20,7 @@ def get_poll_result(team_name, national=True):
 
     if national:
         td = get_poll_data(
-            "https://www.realclearpolitics.com/epolls/2020/president/us/general_election_trump_vs_biden-6247.html"
+            "https://www.realclearpolitics.com/epolls/2024/president/us/general_election_trump_vs_biden-6247.html"
         )
         # pa = get_poll_data("https://www.realclearpolitics.com/epolls/2020/president/pa/pennsylvania_trump_vs_biden-6861.html")
         # ky = get_poll_data("https://www.realclearpolitics.com/epolls/2020/president/ky/kentucky_trump_vs_biden-6915.html")
