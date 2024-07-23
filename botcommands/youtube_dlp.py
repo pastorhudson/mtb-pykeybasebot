@@ -158,6 +158,7 @@ def get_mp3(url):
 
     ydl_opts = {
         'format': 'bestaudio/best',
+        'cookies': '/app/botcommands/cookies.txt',
         'restrictfilenames': True,
         'writeautomaticsub': True,  # Download auto-generated subtitles
         'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
@@ -194,6 +195,7 @@ def get_mp4(url):
 
     ydl_opts = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'cookies': '/app/botcommands/cookies.txt',
         'postprocessors': [
             {'key': 'SponsorBlock'},
             {'key': 'ModifyChapters',
