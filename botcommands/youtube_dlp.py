@@ -231,6 +231,7 @@ def get_meta(url):
                 }
     ydl_opts = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'cookies': '/app/botcommands/cookies.txt',
         'postprocessors': [
             {'key': 'SponsorBlock'},
             {'key': 'ModifyChapters',
@@ -251,6 +252,7 @@ def get_meta(url):
     }
     ydl_opts_no_subs = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'cookies': '/app/botcommands/cookies.txt',
         'postprocessors': [
             {'key': 'SponsorBlock'},
             {'key': 'ModifyChapters',
