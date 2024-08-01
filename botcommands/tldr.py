@@ -143,7 +143,7 @@ async def get_gpt_summary(url):
 
 
 def scrape_article(url):
-    proxy = " proxy-nl.privateinternetaccess.com:1080"
+    proxy = "proxy-nl.privateinternetaccess.com:1080"
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
     options.headless = True
