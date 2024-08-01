@@ -145,6 +145,7 @@ async def get_gpt_summary(url):
 
 
 def scrape_article(url):
+    """Depreciated 8-1-2024 using playwright"""
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
     options.headless = True
@@ -183,34 +184,37 @@ def scrape_article(url):
     return page_text
 
 
-def scrape_article_playwright(url):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context()
-            # user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-        page = context.new_page()
+from playwright.async_api import async_playwright
+
+
+async def scrape_article_playwright(url):
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        context = await browser.new_context(
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+        page = await context.new_page()
 
         # Open the URL
-        page.goto(url)
+        await page.goto(url)
 
         # Wait for JavaScript to load (if necessary)
-        page.wait_for_timeout(5000)
+        await page.wait_for_timeout(5000)
 
         try:
-            foot_text = page.query_selector('footer').inner_text()
+            foot_text = await page.query_selector('footer').inner_text()
             print(foot_text)
         except Exception as e:
             print("Error:", e)
 
         try:
-            page_text = page.query_selector('body').inner_text()
+            page_text = await page.query_selector('body').inner_text()
             print(page_text)
         except Exception as e:
             print("Error:", e)
             page_text = None
 
         # Close the browser
-        browser.close()
+        await browser.close()
 
         return page_text
 
