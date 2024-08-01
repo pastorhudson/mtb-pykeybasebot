@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "./install_dependencies.sh && playwright install"
+      "predeploy": "apt-get install -y libx11-xcb1 libxcursor1 libgtk-3-0 && playwright install"
     }
   },
   "formation": {
