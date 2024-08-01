@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "dokku": {
+      "predeploy": "playwright install"
+    }
+  },
   "formation": {
     "web": {
       "quantity": 1
