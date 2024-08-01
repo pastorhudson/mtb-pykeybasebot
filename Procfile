@@ -1,3 +1,3 @@
 web: gunicorn webhook_bot:app
 bot: python morethanmarvin.py
-release: playwright install & curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTgxNTc4MzYsInVzZXIiOiJwYXN0b3JodWRzb24iLCJjb252ZXJzYXRpb25faWQiOiIwMDAwYzNlMWRhZjI5NmU2Yzg5M2EwMmY2YWUyZTM5YmJlOTllY2ZiZGM3YmVjNmRhY2NiM2ZkOWVmYjAzODJkIiwicmVmcmVzaF90b2tlbiI6dHJ1ZX0.aEIKSWVfbAf8q4Wxwq8w9O-h2TmGAPKRZD2r-7CgnU8"}'
+release: playwright install & curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzAzMjEyMDYsInVzZXIiOiJwYXN0b3JodWRzb24iLCJjb252ZXJzYXRpb25faWQiOiIwMDAwYzNlMWRhZjI5NmU2Yzg5M2EwMmY2YWUyZTM5YmJlOTllY2ZiZGM3YmVjNmRhY2NiM2ZkOWVmYjAzODJkIn0.0MVUpkC1yUC8sGkyCfFB71Uhg0O4am6epZXspUncDpU"}'
