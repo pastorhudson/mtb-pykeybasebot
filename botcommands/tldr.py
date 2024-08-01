@@ -15,6 +15,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import random
 import time
+from playwright.sync_api import sync_playwright
+
 load_dotenv('../secret.env')
 
 
@@ -115,7 +117,7 @@ async def get_gpt_summary(url):
             content_type = 'video'
 
         else:
-            article_text = scrape_article(url)
+            article_text = scrape_article_playwright(url)
             if not article_text:
                 return None
 
@@ -143,7 +145,6 @@ async def get_gpt_summary(url):
 
 
 def scrape_article(url):
-    proxy = "proxy-nl.privateinternetaccess.com:1080"
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
     options.headless = True
@@ -151,7 +152,6 @@ def scrape_article(url):
     options.add_argument("--no-sandbox")
     options.add_argument(
         'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-    options.add_argument(f"--proxy-server={proxy}")
     driver = webdriver.Chrome(chrome_options=options)
 
 
@@ -183,9 +183,41 @@ def scrape_article(url):
     return page_text
 
 
+def scrape_article_playwright(url):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context()
+            # user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+        page = context.new_page()
+
+        # Open the URL
+        page.goto(url)
+
+        # Wait for JavaScript to load (if necessary)
+        page.wait_for_timeout(5000)
+
+        try:
+            foot_text = page.query_selector('footer').inner_text()
+            print(foot_text)
+        except Exception as e:
+            print("Error:", e)
+
+        try:
+            page_text = page.query_selector('body').inner_text()
+            print(page_text)
+        except Exception as e:
+            print("Error:", e)
+            page_text = None
+
+        # Close the browser
+        browser.close()
+
+        return page_text
+
+
 if __name__ == "__main__":
     # loop = asyncio.get_event_loop()
-    pprint(scrape_article('https://www.reuters.com/world/china/taiwan-president-elect-lai-face-chinas-ire-after-victory-2024-01-13/'))
+    pprint(scrape_article_playwright('https://nypost.com/2024/08/01/sports/why-italys-angela-carini-abandoned-brief-olympics-fight/'))
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
 
