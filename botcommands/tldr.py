@@ -90,6 +90,7 @@ async def tldr_react(event, bot, tldr_length):
 
                     pass
 
+
 async def fetch_youtube_transcript(url):
     meta = get_meta(url)
     logging.info(meta)
@@ -142,6 +143,7 @@ async def get_gpt_summary(url):
 
 
 def scrape_article(url):
+    proxy = " proxy-nl.privateinternetaccess.com:1080"
     # Setting up Chrome options for headless browsing and custom User-Agent
     options = Options()
     options.headless = True
@@ -149,6 +151,7 @@ def scrape_article(url):
     options.add_argument("--no-sandbox")
     options.add_argument(
         'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+    options.add_argument(f"--proxy-server={proxy}")
     driver = webdriver.Chrome(chrome_options=options)
 
 
