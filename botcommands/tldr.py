@@ -117,7 +117,7 @@ async def get_gpt_summary(url):
             content_type = 'video'
 
         else:
-            article_text = scrape_article_playwright(url)
+            article_text = await scrape_article_playwright(url)
             if not article_text:
                 return None
 
