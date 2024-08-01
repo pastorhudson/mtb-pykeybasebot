@@ -15,8 +15,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import random
 import time
-from playwright.sync_api import sync_playwright
-
+from playwright.async_api import async_playwright
 load_dotenv('../secret.env')
 
 
@@ -184,9 +183,6 @@ def scrape_article(url):
     return page_text
 
 
-from playwright.async_api import async_playwright
-
-
 async def scrape_article_playwright(url):
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -201,16 +197,18 @@ async def scrape_article_playwright(url):
         await page.wait_for_timeout(5000)
 
         try:
-            foot_text = await page.query_selector('footer').inner_text()
+            footer_element = await page.query_selector('footer')
+            foot_text = await footer_element.inner_text() if footer_element else 'No footer found'
             print(foot_text)
         except Exception as e:
-            print("Error:", e)
+            print("Error retrieving footer:", e)
 
         try:
-            page_text = await page.query_selector('body').inner_text()
+            body_element = await page.query_selector('body')
+            page_text = await body_element.inner_text() if body_element else 'No body found'
             print(page_text)
         except Exception as e:
-            print("Error:", e)
+            print("Error retrieving body text:", e)
             page_text = None
 
         # Close the browser
@@ -219,9 +217,12 @@ async def scrape_article_playwright(url):
         return page_text
 
 
+
+
 if __name__ == "__main__":
-    # loop = asyncio.get_event_loop()
-    pprint(scrape_article_playwright('https://nypost.com/2024/08/01/sports/why-italys-angela-carini-abandoned-brief-olympics-fight/'))
+    loop = asyncio.get_event_loop()
+    result = loop.run_until_complete(scrape_article_playwright('https://nypost.com/2024/08/01/sports/why-italys-angela-carini-abandoned-brief-olympics-fight/'))
+    pprint(result)
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
 
