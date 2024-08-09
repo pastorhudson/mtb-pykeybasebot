@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytz
 from flask import jsonify, render_template
@@ -113,12 +113,11 @@ def get_till():
         return jsonify({"error": "Could Not Validate Credentials"}), 403
 
     team_tills = defaultdict(list)
-
-    team_tills = defaultdict(list)
+    current_time = datetime.now(timezone.utc)
 
     for team in user.teams:
         print(team)
-        for till in team.tills:
+        for till in team.tills.filter(Till.event > current_time).all():
             days, hours, minutes = calculate_time_difference(till.event)
             till.days = days
             till.hours = hours
