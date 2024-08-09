@@ -168,13 +168,13 @@ def update_till():
     till_event_str = request.form.get('till_event')
 
     # Set the timezone to America/New_York
-    ny_tz = pytz.timezone('America/New_York')
+    # ny_tz = pytz.timezone('America/New_York')
 
     # Parse the datetime from the form input
     till_event_naive = datetime.strptime(till_event_str, '%Y-%m-%dT%H:%M')
     logging.info(f"TILL TIME naive: {till_event_naive}")
     # till_event = till_event_naive.replace(tzinfo=pytz.timezone('America/New_York'))
-    till_event = ny_tz.localize(till_event_naive)
+    till_event = pytz.utc.localize(till_event_naive)
     logging.info(f"TILL TIME event: {till_event}")
 
 
