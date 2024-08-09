@@ -15,9 +15,7 @@
             <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {% for till in tills %}
-                    {% set till = till %}
                         {% include 'tillcard.html' %}
-                    {% endwith %}
                 {% endfor %}
             </div>
         </div>
