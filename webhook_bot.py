@@ -9,7 +9,7 @@ from flask import send_file
 from yt_dlp.utils import DownloadError
 from flask import Flask, request
 from crud import s
-from models import MessageQueue, ALGORITHM, JWT_SECRET_KEY, User, JWT_REFRESH_SECRET_KEY
+from models import MessageQueue, ALGORITHM, JWT_SECRET_KEY, User, JWT_REFRESH_SECRET_KEY, Till
 from jose import jwt
 from pydantic import ValidationError
 from pydantic import BaseModel
@@ -94,6 +94,33 @@ def auth_refresh():
 
     return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
                     "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
+
+@app.route('/till', methods=['GET'])
+def add_message():
+    try:
+        # data = request.get_json()
+        token = escape(request.args.get("token"))
+    except BadRequest:
+        return jsonify({"error": "Invalid JSON data"}), 400
+    # message = escape(data.get('message'))
+    # destination = escape(data.get('destination'))
+    # sender = escape(data.get('sender'))
+    # token = escape(data.get("token"))
+    client_ip = escape(request.remote_addr)
+    try:
+        user, conversation_id = asyncio.run(get_user(token))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
+
+    if not token:
+        return jsonify({"error": "Missing data"}), 400
+
+    tills = user.teams.tills.all()
+    # session = s
+    # session.add(new_message)
+    # session.commit()
+    return {"tills": tills}, 201
 
 
 class TokenSchema(BaseModel):
