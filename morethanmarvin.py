@@ -49,6 +49,8 @@ from botcommands.wordle import get_wordle
 from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
+from datetime import timedelta
+
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -1209,7 +1211,7 @@ async def handler(bot, event):
 
         commands = str(event.msg.content.text.body)[6:].split("-t")
         conversation_id = event.msg.conv_id
-        token = user.create_access_token(conversation_id)
+        token = user.create_access_token(conversation_id, expires_delta=timedelta(minutes=60))
 
         team_name = event.msg.channel.name
         try:
