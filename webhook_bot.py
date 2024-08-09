@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from collections import defaultdict
 from datetime import datetime
 
 from flask import jsonify, render_template
@@ -110,8 +111,12 @@ def get_till():
         logging.info(e)
         return jsonify({"error": "Could Not Validate Credentials"}), 403
 
-    tills = user.get_tills()
-    return render_template('tills.html', tills=tills, user=user)
+    team_tills = defaultdict(list)
+
+    for team in user.teams:
+        for till in team.tills:
+            team_tills[team.name].append(till)
+    return render_template('tills.html', team_tills=team_tills, user=user)
 
 
 class TokenSchema(BaseModel):
