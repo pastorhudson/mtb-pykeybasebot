@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 
 import pytz
-from flask import jsonify, render_template
+from flask import jsonify, render_template, redirect
 from werkzeug.exceptions import BadRequest, HTTPException
 from botcommands.youtube_dlp import get_mp4
 from flask import send_file
@@ -162,19 +162,7 @@ def update_till():
         till.event = till_event
 
         s.commit()
-        days, hours, minutes = calculate_time_difference(till.event)
-        till.days = days
-        till.hours = hours
-        till.minutes = minutes
-
-        # Convert event time to string for display (with timezone)
-        till.event = till.event.astimezone(ny_tz)
-
-        # Render the updated card partial
-        updated_card_html = render_template('tillcard.html', till=till)
-
-        # Return the updated card as an HTMX response
-        return updated_card_html
+        return redirect('/tills')
 
     return jsonify({'error': 'Till not found'}), 404
 
