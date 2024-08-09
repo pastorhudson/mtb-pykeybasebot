@@ -1,13 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Tills for {{ user }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-{{ user }}
-{% for till in tills %}
-{{ till }}
-{% endfor %}}
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="container mx-auto p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for till in tills %}
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold mb-2">{{ till.name }}</h2>
+                <p class="text-gray-600 mb-4">Event: {{ till.event.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <div class="text-lg font-semibold" data-event="{{ till.event.isoformat() }}">
+                    <span class="days">{{ till.days }}</span> Days,
+                    <span class="hours">{{ till.hours }}</span> Hours,
+                    <span class="minutes">{{ till.minutes }}</span> Minutes
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to update countdown timers
+        function updateCountdown() {
+            const eventElements = document.querySelectorAll('[data-event]');
+            eventElements.forEach(element => {
+                const endTime = new Date(element.getAttribute('data-event')).getTime();
+                const now = new Date().getTime();
+                const distance = endTime - now;
+
+                if (distance > 0) {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                    element.querySelector('.days').textContent = days;
+                    element.querySelector('.hours').textContent = hours;
+                    element.querySelector('.minutes').textContent = minutes;
+                }
+            });
+        }
+
+        setInterval(updateCountdown, 1000);
+    </script>
 </body>
+
 </html>
