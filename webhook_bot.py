@@ -147,7 +147,7 @@ def get_till():
             till.hours = hours
             till.minutes = minutes
 
-            till.event = till.event.replace(tz=ny_tz)
+            till.event = till.event.astimezone(ny_tz)
             team_tills[team.name].append(till)
     return render_template('tills.html', team_tills=team_tills, user=user)
 
