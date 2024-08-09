@@ -297,8 +297,7 @@ class Till(Base):
         # m, remainder = divmod(s, 60)
         hours, remainder = divmod(s, 3600)
         minutes, seconds = divmod(remainder, 60)
-        # print(datetime.now(pytz.timezone('America/New_York')))
-        # print(self.event.tzinfo)
+
         print(tspan.days)
         if tspan.days > 0:
             return f"`{tspan.days} Days` till: {self.name}"

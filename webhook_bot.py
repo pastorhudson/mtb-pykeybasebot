@@ -113,11 +113,25 @@ def get_till():
 
     team_tills = defaultdict(list)
 
+    team_tills = defaultdict(list)
+
     for team in user.teams:
         for till in team.tills:
+            days, hours, minutes = calculate_time_difference(till.event)
+            till.days = days
+            till.hours = hours
+            till.minutes = minutes
             team_tills[team.name].append(till)
     return render_template('tills.html', team_tills=team_tills, user=user)
 
+
+def calculate_time_difference(event_time):
+    now = datetime.utcnow()
+    time_difference = event_time - now
+    days = time_difference.days
+    hours, remainder = divmod(time_difference.seconds, 3600)
+    minutes, _ = divmod(remainder, 60)
+    return days, hours, minutes
 
 class TokenSchema(BaseModel):
     access_token: str
