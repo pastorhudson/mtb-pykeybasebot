@@ -1209,6 +1209,8 @@ async def handler(bot, event):
             event_name = commands[0]
             event_time = commands[1]
             msg = set_till(team_name, event_name, event_time)
+            if msg is None:
+                msg = "Knock it off @sakanakami"
             # print(msg)
         except IndexError:
             msg = get_till(team_name=team_name)
