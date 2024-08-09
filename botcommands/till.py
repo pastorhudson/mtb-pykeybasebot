@@ -40,6 +40,8 @@ def set_till(team_name, event_name, event_time):
                                                         'RETURN_AS_TIMEZONE_AWARE': True
                                                         })
     print(till_event)
+    if till_event is None:
+        return None
 
     current_time = datetime.now(pytz.timezone('America/New_York'))
     tills = team.tills.filter(Till.name == event_name).filter(Till.event > current_time).all()
