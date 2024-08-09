@@ -924,6 +924,8 @@ async def handler(bot, event):
             await bot.chat.reply(conversation_id, event.msg.id, tldr)
         else:
             await bot.chat.react(conversation_id, event.msg.id, ":no_entry:")
+        await sync(event=event, bot=bot)
+
 
 
     if str(event.msg.content.text.body).startswith('!meh'):
