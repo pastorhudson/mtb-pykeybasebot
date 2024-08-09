@@ -92,8 +92,6 @@ class Points(object):
     pass
 
 
-
-
 async def handler(bot, event):
     command_list = [
         # {"name": "aoc",

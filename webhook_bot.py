@@ -97,29 +97,18 @@ def auth_refresh():
 
 @app.route('/till', methods=['GET'])
 def get_till():
+    token = request.args.get("token")
+    logging.info(f"token: {token} THIS IS A TILL REQUEST")
+    if not token:
+        return jsonify({"error": "Missing token"}), 400
     try:
-        # data = request.get_json()
-        token = escape(request.args.get("token"))
-    except BadRequest:
-        return jsonify({"error": "Invalid JSON data"}), 400
-    # message = escape(data.get('message'))
-    # destination = escape(data.get('destination'))
-    # sender = escape(data.get('sender'))
-    # token = escape(data.get("token"))
-    client_ip = escape(request.remote_addr)
-    try:
+        client_ip = escape(request.remote_addr)
         user, conversation_id = asyncio.run(get_user(token))
     except HTTPException as e:
         logging.info(e)
         return jsonify({"error": "Could Not Validate Credentials"}), 403
 
-    if not token:
-        return jsonify({"error": "Missing data"}), 400
-
     tills = user.teams.tills.all()
-    # session = s
-    # session.add(new_message)
-    # session.commit()
     return {"tills": tills}, 201
 
 
