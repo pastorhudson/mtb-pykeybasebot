@@ -1212,6 +1212,8 @@ async def handler(bot, event):
             # print(msg)
         except IndexError:
             msg = get_till(team_name=team_name)
+        except TypeError:
+            msg = "Knock it off @sakanakami"
         finally:
             await bot.chat.send(conversation_id, msg)
 
