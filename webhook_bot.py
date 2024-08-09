@@ -135,6 +135,43 @@ def calculate_time_difference(event_time):
     minutes, _ = divmod(remainder, 60)
     return days, hours, minutes
 
+
+@app.route('/update_till', methods=['POST'])
+def update_till():
+    till_id = request.form.get('till_id')
+    till_name = request.form.get('till_name')
+    till_event_str = request.form.get('till_event')
+
+    # Set the timezone to America/New_York
+    ny_tz = pytz.timezone('America/New_York')
+
+    # Parse the datetime from the form input
+    till_event_naive = datetime.strptime(till_event_str, '%Y-%m-%dT%H:%M')
+    till_event = ny_tz.localize(till_event_naive)
+
+    # Assume you have a SQLAlchemy session
+    session = Session()
+
+    # Fetch the Till object from the database
+    till = session.query(Till).get(till_id)
+
+    if till:
+        # Update the Till object
+        till.name = till_name
+        till.event = till_event
+        session.commit()
+
+        # Convert event time to string for display (with timezone)
+        till.event = till.event.astimezone(ny_tz)
+
+        # Render the updated card partial
+        updated_card_html = render_template('tillcard.html', till=till)
+
+        # Return the updated card as an HTMX response
+        return updated_card_html
+
+    return jsonify({'error': 'Till not found'}), 404
+
 class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
