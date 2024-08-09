@@ -19,6 +19,8 @@ from pydantic import BaseModel
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import escape
 from flask_wtf.csrf import CSRFProtect
+from flask import session
+
 
 app = Flask(__name__, template_folder='/app/www')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
@@ -30,6 +32,23 @@ logging.basicConfig(level=logging.DEBUG)
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/login/', methods=['GET'])
+def login():
+    token = request.args.get("token")
+    # logging.info(f"token: {token} THIS IS A TILL REQUEST")
+
+    if not token:
+        return jsonify({"error": "Missing token"}), 400
+    try:
+        client_ip = escape(request.remote_addr)
+        logging.info(f"Client IP: {client_ip}")
+        user, conversation_id = asyncio.run(get_user(token))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
+    session['username'] = user
+    return 'Logged in as ' + user
 
 
 @app.route('/ytv')
@@ -53,6 +72,7 @@ def ytv():
 
 
 @app.route('/add_message', methods=['POST'])
+@csrf.exempt
 def add_message():
     try:
         data = request.get_json()
