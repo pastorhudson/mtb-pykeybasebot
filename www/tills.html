@@ -13,6 +13,7 @@
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Edit Till</h2>
         <form id="tillForm" method="POST" action="/update_till">
+                {{ csrf_token() }}
             <input type="hidden" name="till_id" id="tillId">
             <div class="mb-4">
                 <label for="tillName" class="block text-sm font-medium text-gray-200">Till Name</label>
@@ -99,6 +100,11 @@
     function closeModal() {
         document.getElementById('tillModal').classList.add('hidden');
     }
+</script>
+<script>
+    document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = "{{ csrf_token() }}";
+    });
 </script>
 <script src="https://unpkg.com/htmx.org@1.7.0"></script>
 

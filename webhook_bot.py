@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 from collections import defaultdict
 from datetime import datetime, timezone
 
@@ -17,9 +18,12 @@ from pydantic import ValidationError
 from pydantic import BaseModel
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import escape
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__, template_folder='/app/www')
 app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+app.secret_key = os.environ.get('FLASK_SESSION_KEY')  # Ensure you have a secret key for session management
+csrf = CSRFProtect(app)
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -149,17 +153,14 @@ def update_till():
     till_event_naive = datetime.strptime(till_event_str, '%Y-%m-%dT%H:%M')
     till_event = ny_tz.localize(till_event_naive)
 
-    # Assume you have a SQLAlchemy session
-    session = Session()
-
     # Fetch the Till object from the database
-    till = session.query(Till).get(till_id)
+    till = s.query(Till).get(till_id)
 
     if till:
         # Update the Till object
         till.name = till_name
         till.event = till_event
-        session.commit()
+        s.commit()
 
         # Convert event time to string for display (with timezone)
         till.event = till.event.astimezone(ny_tz)
