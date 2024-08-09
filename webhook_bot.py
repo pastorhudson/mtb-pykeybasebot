@@ -3,6 +3,7 @@ import logging
 from collections import defaultdict
 from datetime import datetime
 
+import pytz
 from flask import jsonify, render_template
 from werkzeug.exceptions import BadRequest, HTTPException
 from botcommands.youtube_dlp import get_mp4
@@ -126,7 +127,8 @@ def get_till():
 
 
 def calculate_time_difference(event_time):
-    now = datetime.utcnow()
+    # Make the current time timezone-aware with the same timezone as event_time
+    now = datetime.now(pytz.UTC)
     time_difference = event_time - now
     days = time_difference.days
     hours, remainder = divmod(time_difference.seconds, 3600)
