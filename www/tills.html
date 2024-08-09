@@ -15,21 +15,9 @@
             <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {% for till in tills %}
-                <div class="bg-gray-800 rounded-lg shadow-lg p-4">
-                    <h3 class="text-lg font-bold mb-1">{{ till.name }}</h3>
-                    <p class="text-gray-400 mb-2 text-sm">Event: {{ till.event.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                    <div class="text-base font-semibold" data-event="{{ till.event.isoformat() }}">
-                        {% if till.days > 0 %}
-                        <span class="days">{{ till.days }} Days</span>{% if till.hours > 0 or till.minutes > 0 %}, {% endif %}
-                        {% endif %}
-                        {% if till.hours > 0 %}
-                        <span class="hours">{{ till.hours }} Hours</span>{% if till.minutes > 0 %}, {% endif %}
-                        {% endif %}
-                        {% if till.minutes > 0 %}
-                        <span class="minutes">{{ till.minutes }} Minutes</span>
-                        {% endif %}
-                    </div>
-                </div>
+                    {% with till as till %}
+                        {% include 'tillcard.html' %}
+                    {% endwith %}
                 {% endfor %}
             </div>
         </div>
