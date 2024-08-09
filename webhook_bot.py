@@ -33,22 +33,22 @@ logging.basicConfig(level=logging.DEBUG)
 def home():
     return render_template('index.html')
 
-@app.route('/login/', methods=['GET'])
-def login():
-    token = request.args.get("token")
-    # logging.info(f"token: {token} THIS IS A TILL REQUEST")
-
-    if not token:
-        return jsonify({"error": "Missing token"}), 400
-    try:
-        client_ip = escape(request.remote_addr)
-        logging.info(f"Client IP: {client_ip}")
-        user, conversation_id = asyncio.run(get_user(token))
-    except HTTPException as e:
-        logging.info(e)
-        return jsonify({"error": "Could Not Validate Credentials"}), 403
-    session['username'] = user
-    return 'Logged in as ' + user
+# @app.route('/login/', methods=['GET'])
+# def login():
+#     token = request.args.get("token")
+#     # logging.info(f"token: {token} THIS IS A TILL REQUEST")
+#
+#     if not token:
+#         return jsonify({"error": "Missing token"}), 400
+#     try:
+#         client_ip = escape(request.remote_addr)
+#         logging.info(f"Client IP: {client_ip}")
+#         user, conversation_id = asyncio.run(get_user(token))
+#     except HTTPException as e:
+#         logging.info(e)
+#         return jsonify({"error": "Could Not Validate Credentials"}), 403
+#     session['username'] = user
+#     return 'Logged in as ' + user
 
 
 @app.route('/ytv')
@@ -162,6 +162,7 @@ def calculate_time_difference(event_time):
 
 @app.route('/update_till', methods=['POST'])
 def update_till():
+    referer_url = request.headers.get('Referer')
     till_id = request.form.get('till_id')
     till_name = request.form.get('till_name')
     till_event_str = request.form.get('till_event')
@@ -182,7 +183,7 @@ def update_till():
         till.event = till_event
 
         s.commit()
-        return redirect('/tills')
+        return redirect(referer_url)
 
     return jsonify({'error': 'Till not found'}), 404
 
