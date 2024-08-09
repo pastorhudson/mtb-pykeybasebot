@@ -147,6 +147,12 @@ class Team(Base):
             states.append(s.state)
         return set(states)
 
+    def get_tills(self):
+        all_tills = []
+        for team in self.teams:
+            all_tills.extend(team.tills.all())
+        return all_tills
+
 
 class Bet(Base):
     __tablename__ = 'bet'
