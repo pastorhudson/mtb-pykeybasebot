@@ -95,6 +95,7 @@ def auth_refresh():
     return jsonify({"token": user.create_access_token(conversation_id=conversation_id),
                     "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
 
+
 @app.route('/till', methods=['GET'])
 def get_till():
     token = request.args.get("token")
@@ -103,12 +104,13 @@ def get_till():
         return jsonify({"error": "Missing token"}), 400
     try:
         client_ip = escape(request.remote_addr)
+        logging.info(f"Client IP: {client_ip}")
         user, conversation_id = asyncio.run(get_user(token))
     except HTTPException as e:
         logging.info(e)
         return jsonify({"error": "Could Not Validate Credentials"}), 403
 
-    tills = user.teams.tills.all()
+    tills = user.get_tills()
     return {"tills": tills}, 201
 
 
@@ -140,7 +142,7 @@ async def get_user(token: str):
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
             raise HTTPException("Token Expired")
 
-    except(jwt.JWTError, ValidationError):
+    except (jwt.JWTError, ValidationError):
         raise HTTPException("Could not validate credentials")
 
     user = s.query(User).filter(User.username == token_data.user).first()
