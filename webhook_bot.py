@@ -132,7 +132,7 @@ def get_till():
 
 def calculate_time_difference(event_time):
     # Make the current time timezone-aware with the same timezone as event_time
-    now = datetime.now(pytz.UTC)
+    now = datetime.now(pytz.timezone('America/New_York'))
     time_difference = event_time - now
     days = time_difference.days
     hours, remainder = divmod(time_difference.seconds, 3600)
@@ -160,7 +160,12 @@ def update_till():
         # Update the Till object
         till.name = till_name
         till.event = till_event
+
         s.commit()
+        days, hours, minutes = calculate_time_difference(till.event)
+        till.days = days
+        till.hours = hours
+        till.minutes = minutes
 
         # Convert event time to string for display (with timezone)
         till.event = till.event.astimezone(ny_tz)
@@ -172,6 +177,7 @@ def update_till():
         return updated_card_html
 
     return jsonify({'error': 'Till not found'}), 404
+
 
 class TokenSchema(BaseModel):
     access_token: str
