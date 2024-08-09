@@ -30,6 +30,8 @@ async def sync(event, bot):
             team = s.query(Team).filter(Team.name.match(channel)).first()
             new_user.teams = [team]
             s.add(new_user)
+        if user.username not in team.users:
+            team.users.append(user)
     # await bot.chat.react(conv_id, event.msg.id, ":arrows_clockwise:")
     s.commit()
     s.close()
