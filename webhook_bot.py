@@ -111,7 +111,7 @@ def get_till():
         return jsonify({"error": "Could Not Validate Credentials"}), 403
 
     tills = user.get_tills()
-    return {"tills": tills}, 201
+    return render_template('tills.html', tills=tills, user=user)
 
 
 class TokenSchema(BaseModel):
