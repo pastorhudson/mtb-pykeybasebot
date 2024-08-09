@@ -117,6 +117,7 @@ def get_till():
     team_tills = defaultdict(list)
 
     for team in user.teams:
+        print(team)
         for till in team.tills:
             days, hours, minutes = calculate_time_difference(till.event)
             till.days = days
