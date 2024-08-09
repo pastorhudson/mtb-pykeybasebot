@@ -138,14 +138,16 @@ def get_till():
 
     team_tills = defaultdict(list)
     current_time = datetime.now(timezone.utc)
+    ny_tz = pytz.timezone('America/New_York')
 
     for team in user.teams:
-        print(team)
         for till in team.tills.filter(Till.event > current_time).all():
             days, hours, minutes = calculate_time_difference(till.event)
             till.days = days
             till.hours = hours
             till.minutes = minutes
+
+            till.event = till.event.replace(timezone=ny_tz)
             team_tills[team.name].append(till)
     return render_template('tills.html', team_tills=team_tills, user=user)
 
