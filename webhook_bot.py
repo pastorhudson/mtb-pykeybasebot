@@ -172,7 +172,8 @@ def update_till():
 
     # Parse the datetime from the form input
     till_event_naive = datetime.strptime(till_event_str, '%Y-%m-%dT%H:%M')
-    till_event = ny_tz.localize(till_event_naive)
+    till_event = till_event_naive.replace(tzinfo=pytz.timezone('America/New_York'))
+    # till_event = ny_tz.localize(till_event_naive)
 
     # Fetch the Till object from the database
     till = s.query(Till).get(till_id)
