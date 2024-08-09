@@ -1,3 +1,27 @@
+<div id="tillModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+        <h2 class="text-xl font-bold mb-4">Edit Till</h2>
+        <form id="tillForm" method="POST" action="/update_till">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="till_id" id="tillId">
+                <label for="tillName" class="block text-sm font-medium text-gray-200">Till Name</label>
+                <input type="text" id="tillName" name="till_name"
+                       class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
+
+            <div class="mb-4">
+                <label for="tillEvent" class="block text-sm font-medium text-gray-200">Event Date & Time</label>
+                <input type="datetime-local" id="tillEvent" name="till_event"
+                       class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
+            </div>
+            <div class="flex justify-end">
+                <button type="button" class="text-gray-400 mr-4" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="bg-gray-800 rounded-lg shadow-lg p-4 cursor-pointer" onclick="openModal('{{ till.id }}', '{{ till.name }}', '{{ till.event.isoformat() }}')">
     <h3 class="text-lg font-bold mb-1">{{ till.name }}</h3>
     <p class="text-gray-400 mb-2 text-sm">Event: {{ till.event.strftime('%Y-%m-%d %H:%M:%S') }}</p>
