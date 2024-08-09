@@ -45,9 +45,12 @@ def set_till(team_name, event_name, event_time):
     tills = team.tills.filter(Till.name == event_name).filter(Till.event > current_time).all()
     if len(tills) > 0:
         return f"There is already a till set for {event_name}\n{tills[0]}"
-    till = Till(team_id=team.id, name=event_name, event=till_event)
-    s.add(till)
-    s.commit()
+    try:
+        till = Till(team_id=team.id, name=event_name, event=till_event)
+        s.add(till)
+        s.commit()
+    except TypeError as e:
+        return None
     return f"{till}"
 
 
