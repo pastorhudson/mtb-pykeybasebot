@@ -2,7 +2,7 @@
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Edit Till</h2>
         <form id="tillForm" method="POST" action="/update_till">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type="hidden" name="csrf_token" id="csrf_token"/>
             <input type="hidden" name="till_id" id="tillId">
                 <label for="tillName" class="block text-sm font-medium text-gray-200">Till Name</label>
                 <input type="text" id="tillName" name="till_name"

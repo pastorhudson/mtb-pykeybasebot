@@ -69,6 +69,7 @@
 </script>
 <script>
     function openModal(id, name, event) {
+        document.getElementById('csrf_token').value = "{{ csrf_token() }}";
         document.getElementById('tillId').value = id;
         document.getElementById('tillName').value = name;
         document.getElementById('tillEvent').value = event.substring(0, 16); // Trim to fit the datetime-local format
