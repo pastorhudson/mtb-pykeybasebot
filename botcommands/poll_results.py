@@ -1,110 +1,40 @@
-from rcp import get_poll_data, get_polls
+import requests
+from bs4 import BeautifulSoup
 from prettytable import PrettyTable
-from models import Team
-from crud import s
-import us
 
+# URL to scrape
+url = 'https://www.realclearpolling.com/polls/president/general/2024/trump-vs-biden'  # Replace with the actual URL
 
-def get_poll_result(team_name, national=True):
-    team = s.query(Team).filter_by(name=team_name).first()
-    states = []
-    try:
-        for st in team.get_states():
-            states.append(us.states.lookup(st))
-    except Exception as e:
-        pass
-    poll_table = PrettyTable()
-    poll_table.border = False
-    poll_table.field_names = ["Poll", "Biden", "Trump", "Sp"]
-    message = ""
+# Send a GET request to the URL
+response = requests.get(url)
+response.raise_for_status()  # Check if the request was successful
 
-    if national:
-        td = get_poll_data(
-            "https://www.realclearpolitics.com/epolls/2024/president/us/general_election_trump_vs_biden-6247.html"
-        )
-        # pa = get_poll_data("https://www.realclearpolitics.com/epolls/2020/president/pa/pennsylvania_trump_vs_biden-6861.html")
-        # ky = get_poll_data("https://www.realclearpolitics.com/epolls/2020/president/ky/kentucky_trump_vs_biden-6915.html")
-        # battle_grounds = "https://www.realclearpolitics.com/json/battleground_script/key_battleground_states_2020_spread_average_oct_23.json"
-        # print(pa)
+# Parse the HTML content
+soup = BeautifulSoup(response.content, 'html.parser')
 
-        for row in td[0]["data"]:
-            if row['Poll'] == 'RCP Average':
-                message += f'\n\nNational Real Clear Politics Average:\n```' \
-                           f'Date: {row["Date"]}\n' \
-                           f'Biden: {row["Biden (D)"]}  ' \
-                           f'Trump: {row["Trump (R)"]}\n' \
-                           f'Spread: {row["Spread"]}'
-        message += "```\n\n"
+# Find the table with class 'w-full'
+table = soup.find('table', class_='w-full')
 
-    try:
-        for state in states:
-            spread_total = 0
-            row_count = 0
-            biden_total = 0
-            trump_total = 0
-            spread = 0
-            message += f"{state} Polls:\n```"
-            for row in get_polls(state=str(state)):
-                poll_name = (row["poll"][:13] + '..') if len(row['poll']) > 13 else row['poll']
+# Initialize a PrettyTable object
+pretty_table = PrettyTable()
 
-                if row['result'].split(",")[0].strip().split(" ")[0] == 'Biden':
-                    biden = int(row['result'].split(",")[0].strip().split(" ")[1])
-                    trump = int(row['result'].split(",")[1].strip().split(" ")[1])
-                elif row['result'].split(",")[0].strip().split(" ")[0] == 'Trump':
-                    biden = int(row['result'].split(",")[1].strip().split(" ")[1])
-                    trump = int(row['result'].split(",")[0].strip().split(" ")[1])
-                else:
-                    continue
-                biden_total = biden + biden_total
-                trump_total = trump + trump_total
-                if biden > trump:
-                    spread = biden - trump
-                    biden = f"{biden}+"
-                else:
-                    spread = trump - biden
-                    trump = f"{trump}+"
-                poll_table.add_row([poll_name, biden, trump, spread])
-                row_count += 1
-            if row_count > 1:
-                if biden_total > trump_total:
-                    spread_total = round(biden_total/row_count, 3) - round(trump_total/row_count, 3)
-                    biden_total = f"{round(biden_total/row_count, 1)}+"
-                    trump_total = round(trump_total/row_count, 1)
-                else:
-                    spread_total = round(trump_total/row_count, 3) - round(biden_total/row_count, 3)
-                    biden_total = round(biden_total/row_count, 1)
-                    trump_total = f"{round(trump_total / row_count, 1)}+"
+# Check if the table is found
+if table:
+    # Get all the rows in the table
+    rows = table.find_all('tr')
 
-                poll_table.add_row(["Total", biden_total, trump_total, round(spread_total, 2)])
+    # Extract and add the header row to the PrettyTable
+    header = rows[0].find_all('th')
+    header = [th.text.strip() for th in header]
+    pretty_table.field_names = header
 
+    # Extract and add all the data rows to the PrettyTable
+    for row in rows[1:]:
+        columns = row.find_all('td')
+        columns = [col.text.strip() for col in columns]
+        pretty_table.add_row(columns)
 
-            poll_table.align = "l"
-            # poll_table.sortby = '#'
-            # poll_table.reversesort = True
-            message += poll_table.get_string()
-            message += "```\n\n"
-            poll_table.clear_rows()
-    except UnboundLocalError:
-        message += "Set Team Local to get State Polling Data"
-
-    except ZeroDivisionError:
-        pass
-
-
-    # for row in pa[0]["data"]:
-    #     if row['Poll'] == 'RCP Average':
-    #         message += f'Pennsylvania Real Clear Politics Average:\n' \
-    #                    f'Date: {row["Date"]}\n' \
-    #                    f'Biden: {row["Biden (D)"]}  ' \
-    #                    f'Trump: {row["Trump (R)"]}  ' \
-    #                    f'Spread: {row["Spread"]}'
-
-    s.close()
-    return message
-
-
-if __name__ == '__main__':
-    # print(get_polls(state='Kentucky'))
-
-    print(get_poll_result('morethanmarvin,pastorhudson',  national=True))
-
+    # Print the table
+    print(pretty_table)
+else:
+    print("Table with class 'w-full' not found.")

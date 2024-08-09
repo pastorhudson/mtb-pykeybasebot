@@ -96,7 +96,7 @@ def auth_refresh():
                     "refresh_token": user.create_refresh_token(conversation_id=conversation_id)}), 200
 
 @app.route('/till', methods=['GET'])
-def add_message():
+def get_till():
     try:
         # data = request.get_json()
         token = escape(request.args.get("token"))
