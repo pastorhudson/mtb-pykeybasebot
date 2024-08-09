@@ -10,7 +10,7 @@ from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
-from botcommands.poll_results import get_poll_result
+# from botcommands.poll_results import get_poll_result
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
@@ -810,13 +810,13 @@ async def handler(bot, event):
                                                  "Usage: !payout <#wager> <True/False>\n"
                                                  "Example: `!payout #3 True`")
 
-    if str(event.msg.content.text.body).startswith("!pollresult"):
-        channel = event.msg.channel.name
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        polls = get_poll_result(channel)
-        await bot.chat.send(conversation_id, polls)
+    # if str(event.msg.content.text.body).startswith("!pollresult"):
+    #     channel = event.msg.channel.name
+    #     msg_id = event.msg.id
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     polls = get_poll_result(channel)
+    #     await bot.chat.send(conversation_id, polls)
 
     if str(event.msg.content.text.body).startswith("!poll"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
