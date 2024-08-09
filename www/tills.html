@@ -13,82 +13,86 @@
     <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
         <h2 class="text-xl font-bold mb-4">Edit Till</h2>
         <form id="tillForm" method="POST" action="/update_till">
-                {{ csrf_token() }}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="hidden" name="till_id" id="tillId">
             <div class="mb-4">
                 <label for="tillName" class="block text-sm font-medium text-gray-200">Till Name</label>
-                <input type="text" id="tillName" name="till_name" class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
+                <input type="text" id="tillName" name="till_name"
+                       class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
             </div>
             <div class="mb-4">
                 <label for="tillEvent" class="block text-sm font-medium text-gray-200">Event Date & Time</label>
-                <input type="datetime-local" id="tillEvent" name="till_event" class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
+                <input type="datetime-local" id="tillEvent" name="till_event"
+                       class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
             </div>
             <div class="flex justify-end">
                 <button type="button" class="text-gray-400 mr-4" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                    Save
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 
-    <div class="container mx-auto p-2">
-        {% for team_name, tills in team_tills.items() %}
-        <div class="mb-4">
-            <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {% for till in tills %}
-                        {% include 'tillcard.html' %}
-                {% endfor %}
-            </div>
+<div class="container mx-auto p-2">
+    {% for team_name, tills in team_tills.items() %}
+    <div class="mb-4">
+        <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for till in tills %}
+            {% include 'tillcard.html' %}
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
+</div>
 
-    <script>
-        // JavaScript to update countdown timers
-        function updateCountdown() {
-            const eventElements = document.querySelectorAll('[data-event]');
-            eventElements.forEach(element => {
-                const endTime = new Date(element.getAttribute('data-event')).getTime();
-                const now = new Date().getTime();
-                const distance = endTime - now;
+<script>
+    // JavaScript to update countdown timers
+    function updateCountdown() {
+        const eventElements = document.querySelectorAll('[data-event]');
+        eventElements.forEach(element => {
+            const endTime = new Date(element.getAttribute('data-event')).getTime();
+            const now = new Date().getTime();
+            const distance = endTime - now;
 
-                if (distance > 0) {
-                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
-                    const daysSpan = element.querySelector('.days');
-                    const hoursSpan = element.querySelector('.hours');
-                    const minutesSpan = element.querySelector('.minutes');
+                const daysSpan = element.querySelector('.days');
+                const hoursSpan = element.querySelector('.hours');
+                const minutesSpan = element.querySelector('.minutes');
 
-                    if (days > 0) {
-                        daysSpan.textContent = `${days} Days`;
-                        daysSpan.style.display = 'inline';
-                    } else {
-                        daysSpan.style.display = 'none';
-                    }
-
-                    if (hours > 0) {
-                        hoursSpan.textContent = `${hours} Hours`;
-                        hoursSpan.style.display = 'inline';
-                    } else {
-                        hoursSpan.style.display = 'none';
-                    }
-
-                    if (minutes > 0) {
-                        minutesSpan.textContent = `${minutes} Minutes`;
-                        minutesSpan.style.display = 'inline';
-                    } else {
-                        minutesSpan.style.display = 'none';
-                    }
+                if (days > 0) {
+                    daysSpan.textContent = `${days} Days`;
+                    daysSpan.style.display = 'inline';
+                } else {
+                    daysSpan.style.display = 'none';
                 }
-            });
-        }
 
-        setInterval(updateCountdown, 1000);
-    </script>
+                if (hours > 0) {
+                    hoursSpan.textContent = `${hours} Hours`;
+                    hoursSpan.style.display = 'inline';
+                } else {
+                    hoursSpan.style.display = 'none';
+                }
+
+                if (minutes > 0) {
+                    minutesSpan.textContent = `${minutes} Minutes`;
+                    minutesSpan.style.display = 'inline';
+                } else {
+                    minutesSpan.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    setInterval(updateCountdown, 1000);
+</script>
 <script>
     function openModal(id, name, event) {
         document.getElementById('tillId').value = id;
