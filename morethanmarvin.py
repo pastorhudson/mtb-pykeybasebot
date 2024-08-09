@@ -1200,8 +1200,15 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!till'):
         msg = ""
+        dm_channel = f'marvn,{event.msg.sender.username}'
+        channel = chat1.ChatChannel(name=dm_channel)
+        username = event.msg.sender.username
+        user = s.query(User).filter(User.username == username).first()
+
         commands = str(event.msg.content.text.body)[6:].split("-t")
         conversation_id = event.msg.conv_id
+        token = user.create_access_token(conversation_id)
+
         team_name = event.msg.channel.name
         try:
             event_name = commands[0]
@@ -1216,6 +1223,7 @@ async def handler(bot, event):
             msg = "Knock it off @sakanakami"
         finally:
             await bot.chat.send(conversation_id, msg)
+            await bot.chat.send(channel, f"https://marvn.app/till?token={token}")
 
     # if str(event.msg.content.text.body).startswith('!waffle'):
     #     conversation_id = event.msg.conv_id
