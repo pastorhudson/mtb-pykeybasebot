@@ -171,7 +171,7 @@ def get_wager():
     # ny_tz = pytz.timezone('America/New_York')
 
     for team in user.teams:
-        for wager in team.wagers.all():
+        for wager in team.wagers:
             team_wagers[team.name].append(wager)
     return render_template('wagers.html', team_wagers=team_wagers, user=user)
 
