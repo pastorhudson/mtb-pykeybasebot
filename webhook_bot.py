@@ -152,6 +152,30 @@ def get_till():
     return render_template('tills.html', team_tills=team_tills, user=user)
 
 
+@app.route('/wager', methods=['GET'])
+def get_wager():
+    token = request.args.get("token")
+    logging.info(f"token: {token} THIS IS A WAGER REQUEST")
+    if not token:
+        return jsonify({"error": "Missing token"}), 400
+    try:
+        client_ip = escape(request.remote_addr)
+        logging.info(f"Client IP: {client_ip}")
+        user, conversation_id = asyncio.run(get_user(token))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
+
+    team_wagers = defaultdict(list)
+    # current_time = datetime.now(timezone.utc)
+    # ny_tz = pytz.timezone('America/New_York')
+
+    for team in user.teams:
+        for wager in team.wagers.all():
+            team_wagers[team.name].append(wager)
+    return render_template('wagers.html', team_wagers=team_wagers, user=user)
+
+
 def calculate_time_difference(event_time):
     # Make the current time timezone-aware with the same timezone as event_time
     now = datetime.now(pytz.timezone('America/New_York'))
