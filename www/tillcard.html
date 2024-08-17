@@ -22,7 +22,11 @@
         </form>
     </div>
 </div>
-<div class="bg-gray-800 rounded-lg shadow-lg p-4 cursor-pointer" onclick="openModal('{{ till.id }}', '{{ till.name|escapejs }}', '{{ till.event.isoformat() }}')">
+<div class="bg-gray-800 rounded-lg shadow-lg p-4 cursor-pointer" onclick="openModal(
+    '{{ till.id }}',
+    '{{ till.name.replace("'", "\\'") }}',
+    '{{ till.event.isoformat() }}'
+    )">
     <h3 class="text-lg font-bold mb-1">{{ till.name }}</h3>
     <p class="text-gray-400 mb-2 text-sm">Event: {{ till.event.strftime('%Y-%m-%d %H:%M:%S') }}</p>
     <div class="text-base font-semibold" data-event="{{ till.event.isoformat() }}">
