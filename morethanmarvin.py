@@ -1091,32 +1091,32 @@ async def handler(bot, event):
             #                                                     "message_id": sent_msg.message_id}}}
             #     )
 
-    if str(event.msg.content.text.body).startswith('https://'):
-        url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        domain = get_domain(url[0])
-        yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        conversation_id = event.msg.conv_id
-
-        if 'youtube' in yt_urls[0] or 'youtu.be' in yt_urls[0]:
-            try:
-                await set_unfurl(unfurl=False)
-            except Exception as e:
-                logging.info(e)
-
-            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-            yt_payload = get_meta(yt_urls[0])
-            yt_msg = yt_payload['msg']
-            logging.info(yt_msg)
-            await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
-            await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
-
-        else:
-            yt_payload = get_meta(yt_urls[0])
-            yt_msg = yt_payload['msg']
-            # if is_supported(yt_urls[0]):
-            if "That video url didn't work." not in yt_msg:
-                await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
+    # if str(event.msg.content.text.body).startswith('https://'):
+    #     url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+    #     domain = get_domain(url[0])
+    #     yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+    #     conversation_id = event.msg.conv_id
+    #
+    #     if 'youtube' in yt_urls[0] or 'youtu.be' in yt_urls[0]:
+    #         try:
+    #             await set_unfurl(unfurl=False)
+    #         except Exception as e:
+    #             logging.info(e)
+    #
+    #         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #         yt_payload = get_meta(yt_urls[0])
+    #         yt_msg = yt_payload['msg']
+    #         logging.info(yt_msg)
+    #         await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+    #         await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
+    #
+    #     else:
+    #         yt_payload = get_meta(yt_urls[0])
+    #         yt_msg = yt_payload['msg']
+    #         # if is_supported(yt_urls[0]):
+    #         if "That video url didn't work." not in yt_msg:
+    #             await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
 
 
 
