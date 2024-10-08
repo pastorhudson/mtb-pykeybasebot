@@ -70,7 +70,7 @@ async def get_chat(prompt, team='convo'):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_completion = await client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": seed},
             {"role": "user", "content": get_convo(team)},
