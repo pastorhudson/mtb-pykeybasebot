@@ -197,7 +197,9 @@ def get_mp4(url):
                 }
 
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'format': 'bestvideo+bestaudio/best',
+
         'proxy': proxy_url,
 
         # 'cookies': cookies.absolute(),
@@ -237,7 +239,9 @@ def get_meta(url):
                 "file": ""
                 }
     ydl_opts = {
-        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'format': 'bestvideo+bestaudio/best',
+
         'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
         'postprocessors': [
@@ -259,7 +263,9 @@ def get_meta(url):
         'progress_hooks': [my_hook],
     }
     ydl_opts_no_subs = {
-        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'format': 'bestvideo+bestaudio/best',
+
         'proxy': proxy_url,
 
         # 'cookies': cookies.absolute(),
@@ -386,7 +392,7 @@ def extract_transcript_from_vtt(vtt_file):
 
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
-    print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
+    print(get_meta('https://www.youtube.com/watch?v=bBDNN8SyL98'))
 
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
     # meta = get_meta('https://youtu.be/w0ZHlp6atUQ?si=qhGgjVxVrl0olCyZ')
