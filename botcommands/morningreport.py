@@ -40,7 +40,6 @@ async def get_morningreport(channel):
     msg[2] += "\n\nToday's Top Hacker News:\n"
     msg[2] += get_top_hacker_news()
     msg[3] += f"\nToday's Joke:```{get_joke(False)}```"
-    print(msg[3])
     closings, no_school = get_school_closings(search=schools, observations=False)
     if no_school:
         msg[4] = closings['msg']

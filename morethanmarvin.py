@@ -1308,7 +1308,8 @@ async def periodic_task():
             joke = msg[3]
             print(joke)
 
-            prompt = joke
+            prompt = joke[16:].strip('`')
+            print(prompt)
             draw_payload = await generate_dalle_image(prompt)
             if draw_payload['file']:
                 # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
