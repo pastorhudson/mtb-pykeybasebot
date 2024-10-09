@@ -9,6 +9,7 @@ from yt_dlp.postprocessor.common import PostProcessor
 
 storage = Path('./storage')
 cookies = Path('/app/botcommands/cookies.txt')
+proxy_url = os.environ.get('PROXY_URL')
 info = []
 payload = {}
 
@@ -159,6 +160,7 @@ def get_mp3(url):
 
     ydl_opts = {
         'format': 'bestaudio/best',
+        'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
         'restrictfilenames': True,
         'writeautomaticsub': True,  # Download auto-generated subtitles
@@ -196,6 +198,8 @@ def get_mp4(url):
 
     ydl_opts = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'proxy': proxy_url,
+
         # 'cookies': cookies.absolute(),
         'postprocessors': [
             {'key': 'SponsorBlock'},
@@ -234,6 +238,7 @@ def get_meta(url):
                 }
     ydl_opts = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
         'postprocessors': [
             {'key': 'SponsorBlock'},
@@ -255,6 +260,8 @@ def get_meta(url):
     }
     ydl_opts_no_subs = {
         'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        'proxy': proxy_url,
+
         # 'cookies': cookies.absolute(),
         'postprocessors': [
             {'key': 'SponsorBlock'},
@@ -379,6 +386,8 @@ def extract_transcript_from_vtt(vtt_file):
 
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
+    print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
+
     # print(get_mp4('https://fb.watch/ffBAHvNt1A/'))
     # meta = get_meta('https://youtu.be/w0ZHlp6atUQ?si=qhGgjVxVrl0olCyZ')
     # pprint(meta)
