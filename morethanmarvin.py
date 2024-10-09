@@ -1306,6 +1306,8 @@ async def periodic_task():
                                   filename=meh_img,
                                   title=msg[1])
             joke = msg[3]
+            print(joke)
+
             prompt = joke
             draw_payload = await generate_dalle_image(prompt)
             if draw_payload['file']:
