@@ -16,7 +16,7 @@ def get_weather(name, LATLONG):
                        tempMin=day.temperatureMin,
                        tempMax=day.temperatureMax
                        )
-            msg +='{day}: {tempMin} °F - {tempMax} °F {sum}\n'.format(**day)
+            msg +='{day}: {tempMin}°F - {tempMax}°F {sum}\n'.format(**day)
             weekday += timedelta(days=1)
     msg += "```"
 
