@@ -217,11 +217,11 @@ async def scrape_article_playwright(url):
         return page_text
 
 
-
-
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(scrape_article_playwright('https://nypost.com/2024/08/01/sports/why-italys-angela-carini-abandoned-brief-olympics-fight/'))
+    # result = loop.run_until_complete(scrape_article_playwright('https://nypost.com/2024/08/01/sports/why-italys-angela-carini-abandoned-brief-olympics-fight/'))
+    result = loop.run_until_complete(scrape_article_playwright('https://www.nature.com/articles/s41467-023-40605-2'))
+
     pprint(result)
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
     # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
