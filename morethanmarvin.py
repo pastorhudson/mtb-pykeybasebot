@@ -1305,24 +1305,23 @@ async def periodic_task():
             await bot.chat.attach(channel=mtb_conversation_id,
                                   filename=meh_img,
                                   title=msg[1])
-            joke = msg[3]
-            print(joke)
-
-            prompt = joke[16:].strip('`')
-            print(prompt)
-            draw_payload = await generate_dalle_image(prompt)
-            if draw_payload['file']:
-                # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-
-                await bot.chat.attach(channel=mtb_conversation_id,
-                                      filename=draw_payload['file'],
-                                      title=joke)
-            else:
-                await bot.chat.send(mtb_conversation_id, draw_payload['msg'])
+            # joke = msg[3]
+            # print(joke)
+            #
+            # prompt = joke[16:].strip('`')
+            # print(prompt)
+            # draw_payload = await generate_dalle_image(prompt)
+            # if draw_payload['file']:
+            #     # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+            #
+            #     await bot.chat.attach(channel=mtb_conversation_id,
+            #                           filename=draw_payload['file'],
+            #                           title=joke)
+            # else:
+            await bot.chat.send(mtb_conversation_id, msg[3])
             await bot.chat.send(mtb_conversation_id, msg[2])
             await bot.chat.send(mtb_conversation_id, msg[4])
             await bot.chat.send(mtb_conversation_id, msg[5])
-
 
             await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
