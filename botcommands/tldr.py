@@ -183,11 +183,29 @@ def scrape_article(url):
     return page_text
 
 
-async def scrape_article_playwright(url):
+async def scrape_article_playwright(url, options=None):
+    if options is None:
+        options = {}
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser_config = {
+            "viewport": {"width": 1920, "height": 1080},
+            "locale": "en-US",
+            "timezone_id": "America/New_York",
+            "geolocation": {"latitude": 40.7128, "longitude": -74.0060},
+            "permissions": ["geolocation"],
+            "user_agent": options.get('user_agent',
+                                      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                                      )
+        }
+        browser = await p.chromium.launch(
+            headless=options.get('headless', True),
+            args=['--no-sandbox', '--disable-setuid-sandbox']
+        )
         context = await browser.new_context(
-            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+            **browser_config,
+            proxy=options.get('proxy', None),
+            http_credentials=options.get('http_credentials', None)
+        )
         page = await context.new_page()
 
         # Open the URL
