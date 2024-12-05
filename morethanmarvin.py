@@ -539,7 +539,7 @@ async def handler(bot, event):
                 logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
         else:
             msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
-            await bot.chat.reply(conversation_id,msg_id, msg)
+            await bot.chat.reply(conversation_id, msg_id, msg)
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
