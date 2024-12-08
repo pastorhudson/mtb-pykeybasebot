@@ -227,7 +227,7 @@ def get_mp4(url):
         ydl.add_post_processor(MyCustomPP(), when='post_process')
 
         yt_info = ydl.extract_info(url)
-        pprint(yt_info)
+        # pprint(yt_info)
     return payload
 
 
@@ -239,8 +239,8 @@ def get_meta(url):
                 "file": ""
                 }
     ydl_opts = {
-        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        'format': 'bestvideo+bestaudio/best',
+        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        # 'format': 'bestvideo+bestaudio/best',
 
         'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
@@ -263,8 +263,8 @@ def get_meta(url):
         'progress_hooks': [my_hook],
     }
     ydl_opts_no_subs = {
-        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        'format': 'bestvideo+bestaudio/best',
+        'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
+        # 'format': 'bestvideo+bestaudio/best',
 
         'proxy': proxy_url,
 
@@ -297,7 +297,7 @@ def get_meta(url):
             upload_date = yt_info['upload_date']
 
             if upload_date:
-                print('HERE')
+                # print('HERE')
                 # Format the date if needed, here it is kept in YYYYMMDD format
                 formatted_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
             else:
@@ -351,7 +351,7 @@ def get_meta(url):
                 msg += "```"
             except Exception as e:
                 print(e)
-                print(yt_info)
+                # print(yt_info)
 
                 logging.info(e)
                 logging.info(msg)
