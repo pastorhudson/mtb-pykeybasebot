@@ -96,7 +96,7 @@ def get_marvn_reaction(username, msg):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_completion = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": seed},
             {"role": "user", "content": get_convo()},
@@ -124,7 +124,7 @@ async def get_chat_with_image(image_path, prompt):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_complettion = await client.chat.completions.create(
-        model="gpt-4-vision-preview",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": seed},
             {"role": "user", "content": await asyncio.to_thread(get_convo)},
