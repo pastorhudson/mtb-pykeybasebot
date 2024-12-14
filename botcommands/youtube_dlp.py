@@ -8,8 +8,8 @@ import yt_dlp
 from yt_dlp.postprocessor.common import PostProcessor
 
 storage = Path('./storage')
-cookies = Path('/app/botcommands/cookies.txt')
-proxy_url = os.environ.get('PROXY_URL')
+# cookies = Path('/app/botcommands/cookies.txt')
+# proxy_url = os.environ.get('PROXY_URL')
 info = []
 payload = {}
 
@@ -160,7 +160,7 @@ def get_mp3(url):
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'proxy': proxy_url,
+        # 'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
         'restrictfilenames': True,
         'writeautomaticsub': True,  # Download auto-generated subtitles
@@ -200,13 +200,13 @@ def get_mp4(url):
         # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
         'format': 'bestvideo+bestaudio/best',
 
-        'proxy': proxy_url,
+        # 'proxy': proxy_url,
 
         # 'cookies': cookies.absolute(),
         'postprocessors': [
-            {'key': 'SponsorBlock'},
-            {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
+            # {'key': 'SponsorBlock'},
+            # {'key': 'ModifyChapters',
+            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
             {
                 'key': 'FFmpegVideoConvertor',
                 'preferedformat': 'mp4'  # Convert final file to mp4
@@ -246,16 +246,16 @@ def get_meta(url):
         # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
         'format': 'bestvideo+bestaudio/best',
 
-        'proxy': proxy_url,
+        # 'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
         'postprocessors': [
-            {'key': 'SponsorBlock'},
-            {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
-            {
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4'  # Convert final file to mp4
-            }
+            # {'key': 'SponsorBlock'},
+            # {'key': 'ModifyChapters',
+            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
+            # {
+            #     'key': 'FFmpegVideoConvertor',
+            #     'preferedformat': 'mp4'  # Convert final file to mp4
+            # }
         ],
         'writeautomaticsub': True,  # Download auto-generated subtitles
         'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
@@ -274,18 +274,18 @@ def get_meta(url):
         # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
         'format': 'bestvideo+bestaudio/best',
 
-        'proxy': proxy_url,
+        # 'proxy': proxy_url,
 
         # 'cookies': cookies.absolute(),
         'postprocessors': [
-            {'key': 'SponsorBlock'},
-            {'key': 'ModifyChapters',
-             'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
-                                         'interaction']},
-            {
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4'  # Convert final file to mp4
-            }
+            # {'key': 'SponsorBlock'},
+            # {'key': 'ModifyChapters',
+            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
+            #                              'interaction']},
+            # {
+            #     'key': 'FFmpegVideoConvertor',
+            #     'preferedformat': 'mp4'  # Convert final file to mp4
+            # }
         ],
         'writeautomaticsub': True,  # Download auto-generated subtitles
         # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
