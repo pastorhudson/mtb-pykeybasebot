@@ -197,21 +197,8 @@ def get_mp4(url):
                 }
 
     ydl_opts = {
-        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        'format': 'bestvideo+bestaudio/best',
-
-        # 'proxy': proxy_url,
-
-        # 'cookies': cookies.absolute(),
-        'postprocessors': [
-            # {'key': 'SponsorBlock'},
-            # {'key': 'ModifyChapters',
-            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
-            {
-                'key': 'FFmpegVideoConvertor',
-                'preferedformat': 'mp4'  # Convert final file to mp4
-            }
-        ],
+        'format': 'bv*[ext=mp4]+ba[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]',
+        'merge_output_format': 'mp4',
 
         'writethumbnail': True,
         'restrictfilenames': True,
@@ -221,7 +208,6 @@ def get_mp4(url):
         'windowsfilenames': True,
 
         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
 
         'logger': MyLogger(),
         'progress_hooks': [my_hook],
@@ -244,11 +230,11 @@ def get_meta(url):
                 }
     ydl_opts = {
         # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        'format': 'bestvideo+bestaudio/best',
+        # 'format': 'bestvideo+bestaudio/best',
 
         # 'proxy': proxy_url,
         # 'cookies': cookies.absolute(),
-        'postprocessors': [
+        # 'postprocessors': [
             # {'key': 'SponsorBlock'},
             # {'key': 'ModifyChapters',
             #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
@@ -256,7 +242,7 @@ def get_meta(url):
             #     'key': 'FFmpegVideoConvertor',
             #     'preferedformat': 'mp4'  # Convert final file to mp4
             # }
-        ],
+        # ],
         'writeautomaticsub': True,  # Download auto-generated subtitles
         'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
         'writethumbnail': True,
@@ -272,12 +258,12 @@ def get_meta(url):
     }
     ydl_opts_no_subs = {
         # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        'format': 'bestvideo+bestaudio/best',
+        # 'format': 'bestvideo+bestaudio/best',
 
         # 'proxy': proxy_url,
 
         # 'cookies': cookies.absolute(),
-        'postprocessors': [
+        # 'postprocessors': [
             # {'key': 'SponsorBlock'},
             # {'key': 'ModifyChapters',
             #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
@@ -286,7 +272,7 @@ def get_meta(url):
             #     'key': 'FFmpegVideoConvertor',
             #     'preferedformat': 'mp4'  # Convert final file to mp4
             # }
-        ],
+        # ],
         'writeautomaticsub': True,  # Download auto-generated subtitles
         # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
         'writethumbnail': True,
