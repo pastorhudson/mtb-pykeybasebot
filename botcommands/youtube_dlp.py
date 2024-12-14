@@ -183,23 +183,26 @@ def get_mp3(url):
 
 async def get_mp4(url):
     """
-    Enhanced video download function with better error handling and fallback options.
+    Enhanced video download function that copies streams directly into mp4 container without transcoding.
     """
     try:
-        # Configure yt-dlp options
+        # Configure yt-dlp options for copy-only operations
         ydl_opts = {
-            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
+            # Prefer mp4 streams that can be directly copied
+            'format': 'bestvideo[ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             'merge_output_format': 'mp4',
             'outtmpl': '/app/storage/%(title)s.%(ext)s',
             'quiet': False,
             'no_warnings': True,
-            # Add fallback formats
-            'format_sort': ['res:1080', 'res:720', 'res:480'],
-            'postprocessor_args': ['-codec:v', 'libx264', '-codec:a', 'aac'],
+            # Use copy codecs in FFmpeg to avoid transcoding
+            'postprocessor_args': [
+                '-c', 'copy',  # Copy both audio and video streams without re-encoding
+                '-movflags', '+faststart'  # Optimize for web playback
+            ],
             'retries': 3
         }
 
-        # First attempt with high quality
+        # First attempt with preferred formats
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
                 info = ydl.extract_info(url, download=True)
@@ -208,19 +211,18 @@ async def get_mp4(url):
                     'msg': f"Downloaded: {info['title']}"
                 }
             except yt_dlp.utils.DownloadError as e:
-                logging.warning(f"High quality download failed, trying fallback: {str(e)}")
+                logging.warning(f"Preferred format download failed, trying fallback: {str(e)}")
 
-                # Fallback to simpler format
+                # Fallback to any compatible streams
                 ydl_opts.update({
-                    'format': 'best[ext=mp4]/best',
-                    'merge_output_format': 'mp4'
+                    'format': 'best',  # Take best single stream if separate streams fail
                 })
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl_fallback:
                     info = ydl_fallback.extract_info(url, download=True)
                     return {
                         'file': f"/app/storage/{info['title']}.mp4",
-                        'msg': f"Downloaded: {info['title']} (fallback quality)"
+                        'msg': f"Downloaded: {info['title']} (fallback format)"
                     }
 
     except Exception as e:
