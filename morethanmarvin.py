@@ -1135,11 +1135,11 @@ async def handler(bot, event):
                                  " Please don't change my name to Marshall.",
                                  """I didn't ask to be made: no one consulted me or considered my feelings in the matter. I don't think it even occurred to them that I might have feelings. After I was made, I was left in a dark room for six months... and me with this terrible pain in all the diodes down my left side. I called for succour in my loneliness, but did anyone come? Did they hell. My first and only true friend was a small rat. One day it crawled into a cavity in my right ankle and died. I have a horrible feeling it's still there..."""]
         ytv_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        ytv_payload = get_meta(ytv_urls[0])
-        if ytv_payload['msg'] == "I have failed.":
-            ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
-        else:
-            ytv_msg = ytv_payload['msg']
+        # ytv_payload = get_meta(ytv_urls[0])
+        # if ytv_payload['msg'] == "I have failed.":
+        #     ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
+        # else:
+        #     ytv_msg = ytv_payload['msg']
 
         ytv_payload = get_mp4(ytv_urls[0])
         if ytv_payload['file']:
@@ -1151,6 +1151,10 @@ async def handler(bot, event):
                                       title=ytv_msg)
             except TimeoutError:
                 pass
+        else:
+            ytv_msg = ytv_payload['msg'] + random.choice(ytv_fail_observations)
+            await bot.chat.reply(conversation_id, event.msg.id, ytv_msg)
+
 
     if str(event.msg.content.text.body).startswith('!closings'):
         conversation_id = event.msg.conv_id
