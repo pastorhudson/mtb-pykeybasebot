@@ -181,45 +181,94 @@ def get_mp3(url):
     return payload
 
 
-def get_mp4(url):
-    global info
-    global payload
-    info = {}
-    payload = {}
+async def download_video(url):
+    """
+    Enhanced video download function with better error handling and fallback options.
+    """
+    try:
+        # Configure yt-dlp options
+        ydl_opts = {
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
+            'merge_output_format': 'mp4',
+            'outtmpl': '/app/storage/%(title)s.%(ext)s',
+            'quiet': True,
+            'no_warnings': True,
+            # Add fallback formats
+            'format_sort': ['res:1080', 'res:720', 'res:480'],
+            'postprocessor_args': ['-codec:v', 'libx264', '-codec:a', 'aac'],
+            'retries': 3
+        }
 
-    if not is_supported(url):
-        return {"msg": "That video url didn't work.\n"
-                       "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-                "file": ""
+        # First attempt with high quality
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            try:
+                info = ydl.extract_info(url, download=True)
+                return {
+                    'file': f"/app/storage/{info['title']}.mp4",
+                    'msg': f"Downloaded: {info['title']}"
                 }
+            except yt_dlp.utils.DownloadError as e:
+                logging.warning(f"High quality download failed, trying fallback: {str(e)}")
 
-    ydl_opts = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
-        'merge_output_format': 'mp4',    # Final merged file format
-        'postprocessors': [
-            {  # Use FFmpeg to merge video and audio
-                'key': 'FFmpegMerger',
-            }
-        ],
-        'writethumbnail': True,
-        'restrictfilenames': True,
-        'writeautomaticsub': True,  # Download auto-generated subtitles
-        'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-        'windowsfilenames': True,
+                # Fallback to simpler format
+                ydl_opts.update({
+                    'format': 'best[ext=mp4]/best',
+                    'merge_output_format': 'mp4'
+                })
 
-        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl_fallback:
+                    info = ydl_fallback.extract_info(url, download=True)
+                    return {
+                        'file': f"/app/storage/{info['title']}.mp4",
+                        'msg': f"Downloaded: {info['title']} (fallback quality)"
+                    }
 
-        'logger': MyLogger(),
-        'progress_hooks': [my_hook],
-    }
+    except Exception as e:
+        logging.error(f"Video download failed: {str(e)}")
+        return {
+            'file': None,
+            'msg': "Failed to download video. The format may be unsupported or the video may be restricted."
+        }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.add_post_processor(MyCustomPP(), when='post_process')
-
-        yt_info = ydl.extract_info(url)
-        # pprint(yt_info)
-    return payload
+# def get_mp4(url):
+#     global info
+#     global payload
+#     info = {}
+#     payload = {}
+#
+#     if not is_supported(url):
+#         return {"msg": "That video url didn't work.\n"
+#                        "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
+#                 "file": ""
+#                 }
+#
+#     ydl_opts = {
+#         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
+#         'merge_output_format': 'mp4',    # Final merged file format
+#         'postprocessors': [
+#             {  # Use FFmpeg to merge video and audio
+#                 'key': 'FFmpegMerger',
+#             }
+#         ],
+#         'writethumbnail': True,
+#         'restrictfilenames': True,
+#         'writeautomaticsub': True,  # Download auto-generated subtitles
+#         'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+#         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+#         'windowsfilenames': True,
+#
+#         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+#
+#         'logger': MyLogger(),
+#         'progress_hooks': [my_hook],
+#     }
+#
+#     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+#         ydl.add_post_processor(MyCustomPP(), when='post_process')
+#
+#         yt_info = ydl.extract_info(url)
+#         # pprint(yt_info)
+#     return payload
 
 
 def get_meta(url):

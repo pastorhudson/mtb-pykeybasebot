@@ -1141,7 +1141,7 @@ async def handler(bot, event):
         # else:
         #     ytv_msg = ytv_payload['msg']
 
-        ytv_payload = get_mp4(ytv_urls[0])
+        ytv_payload = await get_mp4(ytv_urls[0])
         if ytv_payload['file']:
 
             try:
