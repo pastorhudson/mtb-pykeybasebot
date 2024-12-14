@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from pathlib import Path
 from pprint import pprint
 import webvtt
@@ -183,21 +184,39 @@ def get_mp3(url):
 
 async def get_mp4(url):
     """
-    Enhanced video download function that copies streams directly into mp4 container without transcoding.
+    Enhanced video download function with filename sanitization including space to underscore conversion.
     """
+
+    def sanitize_filename(filename):
+        """
+        Sanitize filename to remove or replace problematic characters.
+        Converts spaces to underscores and handles special characters.
+        """
+        # Replace vertical bars and other special characters with hyphen
+        filename = re.sub(r'[|｜]', '-', filename)
+        # Replace spaces with underscores
+        filename = filename.replace(' ', '_')
+        # Replace other problematic characters
+        filename = re.sub(r'[<>:"/\\|?*]', '-', filename)
+        # Replace multiple hyphens with single hyphen
+        filename = re.sub(r'-+', '-', filename)
+        # Replace multiple underscores with single underscore
+        filename = re.sub(r'_+', '_', filename)
+        # Remove any trailing/leading hyphens or underscores
+        filename = filename.strip('-_')
+        return filename
+
     try:
-        # Configure yt-dlp options for copy-only operations
+        # Configure yt-dlp options
         ydl_opts = {
-            # Prefer mp4 streams that can be directly copied
             'format': 'bestvideo[ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             'merge_output_format': 'mp4',
             'outtmpl': '/app/storage/%(title)s.%(ext)s',
-            'quiet': False,
+            'quiet': True,
             'no_warnings': True,
-            # Use copy codecs in FFmpeg to avoid transcoding
             'postprocessor_args': [
-                '-c', 'copy',  # Copy both audio and video streams without re-encoding
-                '-movflags', '+faststart'  # Optimize for web playback
+                '-c', 'copy',  # Copy streams without re-encoding
+                '-movflags', '+faststart'
             ],
             'retries': 3
         }
@@ -205,31 +224,45 @@ async def get_mp4(url):
         # First attempt with preferred formats
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
-                info = ydl.extract_info(url, download=True)
-                return {
-                    'file': f"/app/storage/{info['title']}.mp4",
-                    'msg': f"Downloaded: {info['title']}"
-                }
-            except yt_dlp.utils.DownloadError as e:
+                info = ydl.extract_info(url, download=False)  # First get info without downloading
+                # Sanitize the filename before download
+                sanitized_title = sanitize_filename(info['title'])
+                ydl_opts['outtmpl'] = f'/app/storage/{sanitized_title}.%(ext)s'
+
+                # Now download with sanitized filename
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl_download:
+                    info = ydl_download.extract_info(url, download=True)
+                    output_file = f"/app/storage/{sanitized_title}.mp4"
+
+                    # Verify file exists before returning
+                    if os.path.exists(output_file):
+                        return {
+                            'file': output_file,
+                            'msg': f"Downloaded: {info['title']}"  # Use original title in message
+                        }
+                    else:
+                        raise FileNotFoundError(f"Output file not found: {output_file}")
+
+            except (yt_dlp.utils.DownloadError, FileNotFoundError) as e:
                 logging.warning(f"Preferred format download failed, trying fallback: {str(e)}")
 
-                # Fallback to any compatible streams
+                # Fallback to simpler format if needed
                 ydl_opts.update({
-                    'format': 'best',  # Take best single stream if separate streams fail
+                    'format': 'best',
                 })
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl_fallback:
                     info = ydl_fallback.extract_info(url, download=True)
                     return {
-                        'file': f"/app/storage/{info['title']}.mp4",
-                        'msg': f"Downloaded: {info['title']} (fallback format)"
+                        'file': f"/app/storage/{sanitized_title}.mp4",
+                        'msg': f"Downloaded: {info['title']} (fallback format)"  # Use original title in message
                     }
 
     except Exception as e:
         logging.error(f"Video download failed: {str(e)}")
         return {
             'file': None,
-            'msg': "Failed to download video. The format may be unsupported or the video may be restricted."
+            'msg': f"Failed to download video: {str(e)}"
         }
 
 # def get_mp4(url):
