@@ -1148,7 +1148,7 @@ async def handler(bot, event):
 
                 await bot.chat.attach(channel=conversation_id,
                                       filename=ytv_payload['file'],
-                                      title=ytv_msg)
+                                      title=ytv_payload['msg'])
             except TimeoutError:
                 pass
         else:
