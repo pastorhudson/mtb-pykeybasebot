@@ -181,7 +181,7 @@ def get_mp3(url):
     return payload
 
 
-async def download_video(url):
+async def get_mp4(url):
     """
     Enhanced video download function with better error handling and fallback options.
     """
