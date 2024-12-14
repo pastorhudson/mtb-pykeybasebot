@@ -191,7 +191,7 @@ async def get_mp4(url):
             'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
             'merge_output_format': 'mp4',
             'outtmpl': '/app/storage/%(title)s.%(ext)s',
-            'quiet': True,
+            'quiet': False,
             'no_warnings': True,
             # Add fallback formats
             'format_sort': ['res:1080', 'res:720', 'res:480'],
