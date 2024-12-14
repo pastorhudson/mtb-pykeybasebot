@@ -195,8 +195,12 @@ def get_mp4(url):
 
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
-        'merge_output_format': 'mp4',
-
+        'merge_output_format': 'mp4',    # Final merged file format
+        'postprocessors': [
+            {  # Use FFmpeg to merge video and audio
+                'key': 'FFmpegMerger',
+            }
+        ],
         'writethumbnail': True,
         'restrictfilenames': True,
         'writeautomaticsub': True,  # Download auto-generated subtitles
@@ -255,7 +259,12 @@ def get_meta(url):
     }
     ydl_opts_no_subs = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
-
+        'merge_output_format': 'mp4',  # Final merged file format
+        'postprocessors': [
+            {  # Use FFmpeg to merge video and audio
+                'key': 'FFmpegMerger',
+            }
+        ],
         # 'postprocessors': [
             # {'key': 'SponsorBlock'},
             # {'key': 'ModifyChapters',
