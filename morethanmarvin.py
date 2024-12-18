@@ -45,7 +45,7 @@ from botcommands.poll import make_poll
 from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
-from botcommands.wordle import get_wordle
+from botcommands.wordle import solve_wordle
 from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
@@ -1261,18 +1261,17 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
         try:
-            date_to_query = str(event.msg.content.text.body)[8:]
-        except Exception as e:
-            date_to_query = None
-
-        try:
-
-            msg = get_wordle(date_to_query)
+            result, attempts = solve_wordle(debug=True, headless=True)
+            if attempts:
+                msg = f'\nSuccess! Word: "{result}" found in {attempts} attempts'
+            else:
+                msg = f"\nError: {result}"
 
         except Exception as e:
-            msg = "Today's word is GAINS"
-        finally:
-            my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
+            msg = "I couldn't solve the wordle. Try again later."
+
+
+        my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
 listen_options = {
     "local": False,
