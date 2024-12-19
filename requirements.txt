@@ -88,7 +88,6 @@ marshmallow-enum==1.5.1
 mdurl==0.1.2
 msgpack==1.0.0
 multidict==6.1.0
-mutagen==1.45.1
 numpy==2.2.0
 oauthlib==3.1.1
 openai==1.56.2
