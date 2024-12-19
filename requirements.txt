@@ -70,7 +70,6 @@ jdcal==1.4.1
 jeepney==0.8.0
 jellyfish==0.6.1
 jieba3k==0.35.1
-Jinja2==3.1.4
 numpy==2.2.0
 oauthlib==3.1.1
 openai==1.56.2
