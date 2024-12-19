@@ -160,7 +160,7 @@ typing-inspect==0.6.0
 typing_extensions==4.12.2
 tzdata==2024.2
 tzlocal==2.1
-urllib3==2.2.3
+urllib3==1.26
 us==2.0.2
 virtualenv==20.0.31
 wcwidth==0.2.5
