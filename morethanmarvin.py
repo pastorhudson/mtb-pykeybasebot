@@ -656,7 +656,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!eyebleach"):
         try:
-            await set_unfurl(unfurl=False)
+            await set_unfurl(unfurl=True)
         except Exception as e:
             logging.info(e)
         conversation_id = event.msg.conv_id
