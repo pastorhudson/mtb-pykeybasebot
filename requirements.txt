@@ -23,12 +23,9 @@ certifi==2024.12.14
 cffi==1.17.1
 chardet==5.2.0
 charset-normalizer==3.4.0
-cleo==2.1.0
 click==8.1.7
-clikit==0.6.2
 colorama==0.4.6
 cowsay==4.0
-crashtest==0.4.1
 cryptography==44.0.0
 cssselect==1.2.0
 dadjokes-plus-plus==1.2
@@ -87,7 +84,6 @@ marshmallow==3.8.0
 marshmallow-enum==1.5.1
 mdurl==0.1.2
 msgpack==1.0.0
-multidict==6.1.0
 numpy==2.2.0
 oauthlib==3.1.1
 openai==1.56.2
