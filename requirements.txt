@@ -145,7 +145,7 @@ sniffio==1.3.1
 sortedcontainers==2.4.0
 soupsieve==2.6
 speedtest-cli==2.1.3
-SQLAlchemy==2.0.36
+SQLAlchemy
 stringcase==1.2.0
 tabcompleter==1.4.0
 tabulate==0.8.7
