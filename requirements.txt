@@ -72,7 +72,6 @@ jellyfish==0.6.1
 jieba3k==0.35.1
 Jinja2==3.1.4
 jiter==0.8.2
-joblib==1.1.1
 numpy==2.2.0
 oauthlib==3.1.1
 openai==1.56.2
