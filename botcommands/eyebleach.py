@@ -12,7 +12,7 @@ def _fetch_bleach(count):
         count = 5
     try:
         url = f"https://api.thecatapi.com/v1/images/search?limit={abs(count)}"
-        response = requests.get(url, headers={'x-api-key': os.environ['CAT-API-KEY']})
+        response = requests.get(url, headers={'x-api-key': os.environ['CAT_API_KEY']})
         return response.json()
     except Exception as e:
         return []
