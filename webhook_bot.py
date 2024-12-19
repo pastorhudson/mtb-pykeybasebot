@@ -17,7 +17,7 @@ from jose import jwt
 from pydantic import ValidationError
 from pydantic import BaseModel
 from werkzeug.middleware.proxy_fix import ProxyFix
-from flask import escape
+from markupsafe import escape
 from flask_wtf.csrf import CSRFProtect
 from flask import session
 
