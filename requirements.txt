@@ -16,10 +16,6 @@ bcrypt==4.2.1
 beautifulsoup4==4.12.3
 behave==1.2.6
 blinker==1.9.0
-CacheControl==0.14.1
-cachetools==4.2.2
-cachy==0.3.0
-charset-normalizer==3.4.0
 click==8.1.7
 colorama==0.4.6
 cowsay==4.0
@@ -164,5 +160,4 @@ wheel==0.45.1
 wsproto==1.2.0
 WTForms==3.2.1
 yarl==1.18.3
-youtube-dl==2021.12.17
 yt-dlp==2024.12.3
