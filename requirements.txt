@@ -116,7 +116,7 @@ rich==13.9.4
 rsa==4.7.2
 sbvirtualdisplay==1.4.0
 SecretStorage==3.3.3
-setuptools==70.2
+setuptools==75.6.0
 selenium==4.27.1
 seleniumbase==4.33.11
 sgmllib3k==1.0.0
