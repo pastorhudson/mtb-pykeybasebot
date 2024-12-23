@@ -120,7 +120,7 @@ pywin32-ctypes==0.2.0
 PyYAML==6.0.2
 RapidFuzz==3.11.0
 regex==2024.11.6
-requests
+requests==2.32.0
 retrying==1.3.4
 rich==13.9.4
 rsa==4.7.2
