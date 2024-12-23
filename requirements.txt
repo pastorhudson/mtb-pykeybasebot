@@ -159,3 +159,4 @@ wsproto==1.2.0
 WTForms==3.2.1
 yarl==1.18.3
 yt-dlp==2024.12.3
+ipdb==0.13.13
