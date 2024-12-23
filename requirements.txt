@@ -13,7 +13,6 @@ atomicwrites==1.4.0
 attrs==24.3.0
 backoff==2.2.1
 bcrypt==4.2.1
-beautifulsoup4==4.12.3
 behave==1.2.6
 blinker==1.9.0
 click==8.1.7
@@ -147,7 +146,6 @@ typing-inspect==0.6.0
 typing_extensions==4.12.2
 tzdata==2024.2
 tzlocal==2.1
-urllib3
 us==2.0.2
 virtualenv==20.0.31
 wcwidth==0.2.5
