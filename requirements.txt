@@ -111,12 +111,7 @@ pyotp==2.9.0
 pyparsing==2.4.7
 pyreadline3==3.5.4
 PySocks==1.7.1
-pytest==8.3.4
-pytest-html==4.0.2
-pytest-metadata==3.1.1
-pytest-ordering==0.6
-pytest-rerunfailures==15.0
-pytest-xdist==3.6.1
+pytest
 python-dateutil==2.8.2
 python-dotenv==0.14.0
 python-editor==1.0.4
