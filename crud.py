@@ -12,7 +12,8 @@ if database_url is None:
     raise ValueError("DATABASE_URL environment variable is not set")
 
 if database_url.startswith("postgres://"):
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+    database_url = database_url.replace("postgres://", "postgresql+psycopg://", 1)
+
 
 # Create engine with error handling
 try:
