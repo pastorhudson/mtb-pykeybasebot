@@ -265,214 +265,119 @@ async def get_mp4(url):
             'msg': f"Failed to download video: {str(e)}"
         }
 
-# def get_mp4(url):
-#     global info
-#     global payload
-#     info = {}
-#     payload = {}
-#
-#     if not is_supported(url):
-#         return {"msg": "That video url didn't work.\n"
-#                        "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-#                 "file": ""
-#                 }
-#
-#     ydl_opts = {
-#         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
-#         'merge_output_format': 'mp4',    # Final merged file format
-#         'postprocessors': [
-#             {  # Use FFmpeg to merge video and audio
-#                 'key': 'FFmpegMerger',
-#             }
-#         ],
-#         'writethumbnail': True,
-#         'restrictfilenames': True,
-#         'writeautomaticsub': True,  # Download auto-generated subtitles
-#         'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-#         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-#         'windowsfilenames': True,
-#
-#         'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-#
-#         'logger': MyLogger(),
-#         'progress_hooks': [my_hook],
-#     }
-#
-#     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-#         ydl.add_post_processor(MyCustomPP(), when='post_process')
-#
-#         yt_info = ydl.extract_info(url)
-#         # pprint(yt_info)
-#     return payload
 
+def get_meta(url, storage_path=storage):
+    """
+    Retrieve metadata and transcript from a YouTube video.
 
-def get_meta(url):
-    global info
-    if not is_supported(url):
-        return {"msg": "That video url didn't work.\n"
-                       "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-                "file": ""
-                }
+    Args:
+        url (str): YouTube video URL
+        storage_path (Path): Path to store temporary subtitle files
+
+    Returns:
+        dict: Dictionary containing video metadata and transcript
+    """
     ydl_opts = {
-        # 'format': 'bestvideo[ext=mp4][vcodec=h264]+bestaudio[ext=m4a][acodec=aac]/best[ext=mp4]/best',
-        # 'format': 'bestvideo+bestaudio/best',
-
-        # 'proxy': proxy_url,
-        # 'cookies': cookies.absolute(),
-        # 'postprocessors': [
-            # {'key': 'SponsorBlock'},
-            # {'key': 'ModifyChapters',
-            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler', 'interaction']},
-            # {
-            #     'key': 'FFmpegVideoConvertor',
-            #     'preferedformat': 'mp4'  # Convert final file to mp4
-            # }
-        # ],
-        'writeautomaticsub': True,  # Download auto-generated subtitles
-        'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-        'writethumbnail': True,
+        'writeautomaticsub': True,
+        'subtitleslangs': ['en'],
+        'writethumbnail': False,  # We don't need thumbnails
         'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
+        'outtmpl': f'{storage_path.absolute()}/%(title).50s.%(ext)s',
         'windowsfilenames': True,
-
-        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
-
-        'logger': MyLogger(),
-        'progress_hooks': [my_hook],
-    }
-    ydl_opts_no_subs = {
-        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best',
-        'merge_output_format': 'mp4',  # Final merged file format
-        'postprocessors': [
-            {  # Use FFmpeg to merge video and audio
-                'key': 'FFmpegMerger',
-            }
-        ],
-        # 'postprocessors': [
-            # {'key': 'SponsorBlock'},
-            # {'key': 'ModifyChapters',
-            #  'remove_sponsor_segments': ['sponsor', 'intro', 'outro', 'selfpromo', 'preview', 'filler',
-            #                              'interaction']},
-            # {
-            #     'key': 'FFmpegVideoConvertor',
-            #     'preferedformat': 'mp4'  # Convert final file to mp4
-            # }
-        # ],
-        'writeautomaticsub': True,  # Download auto-generated subtitles
-        # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
-        'writethumbnail': True,
-        'restrictfilenames': True,
-        'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
-        'windowsfilenames': True,
-
-        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        # 'ffmpeg_location': 'C://tools//ffmpeg-6.1-full_build//bin//ffmpeg.exe',
-
-        'logger': MyLogger(),
-        'progress_hooks': [my_hook],
+        'skip_download': True,  # Skip video download but allow subtitle download
+        'writesubtitles': True,  # Write the subtitles file
     }
 
-
-    with yt_dlp.YoutubeDL(ydl_opts_no_subs) as ydl:
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
-            ydl.add_post_processor(MyCustomPP())
-            yt_info = ydl.extract_info(url)
-            upload_date = yt_info['upload_date']
+            # Extract video information
+            yt_info = ydl.extract_info(url, download=False)
 
-            if upload_date:
-                # print('HERE')
-                # Format the date if needed, here it is kept in YYYYMMDD format
-                formatted_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
-            else:
-                formatted_date = "Unknown"
+            # Format upload date
+            upload_date = yt_info.get('upload_date')
+            formatted_date = (f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:]}"
+                              if upload_date else "Unknown")
+
+            # Try to get transcript if available
+            transcript = None
             try:
-                payload = {"title": yt_info["title"],
-                           "file": None,
-                           'transcript': extract_transcript_from_vtt(yt_info['requested_subtitles']['en']['filepath']),
-                           "duration": convert_seconds(yt_info["duration"]),
-                           "upload_date": formatted_date,
-                           'url': yt_info['webpage_url']
-                           }
+                # Download info first to get potential subtitle info
+                info = ydl.extract_info(url, download=False)
+                if info.get('subtitles') or info.get('automatic_captions'):
+                    # Now download with subtitles
+                    info = ydl.extract_info(url, download=True)
+                    # Find the subtitle file
+                    subtitle_files = [f for f in Path(storage_path).glob("*.vtt")]
+                    if subtitle_files:
+                        transcript = extract_transcript_from_vtt(subtitle_files[0])
+                        # Clean up subtitle file after reading
+                        subtitle_files[0].unlink()
             except Exception as e:
+                logging.error(f"Failed to extract transcript: {e}")
 
-                payload = {"title": yt_info["title"],
-                           "file": None,
-                           'transcript': None,
-                           "duration": convert_seconds(yt_info["duration"]),
-                           "upload_date": formatted_date,
-                           'url': yt_info['webpage_url']
-                           }
+            # Prepare metadata message
+            metadata_msg = [
+                "```",
+                yt_info["title"],
+                f"Channel: {yt_info.get('uploader', 'Unknown')}",
+                f"Uploaded: {formatted_date}",
+                f"Duration: {convert_seconds(yt_info.get('duration', 0))}",
+                f"Views: {yt_info.get('view_count', 0):,}",
+            ]
 
-            try:
-                msg = "```"
-                msg += yt_info["title"] + '\n'
-                try:
-                    msg += f"Channel: {yt_info['uploader']}\n"
-                except KeyError:
-                    pass
-                try:
-                    msg += f"Uploaded: {formatted_date}\n"
-                except KeyError:
-                    pass
-                try:
-                    msg += f"Duration: {convert_seconds(yt_info['duration'])}\n"
-                except KeyError:
-                    pass
-                try:
-                    msg += f"Views: {yt_info['view_count']:,}\n"
-                except KeyError:
-                    pass
-                try:
-                    msg += f"Average Rating: {yt_info['average_rating']}\n"
-                except KeyError:
-                    pass
-                try:
-                    msg += f"Likes: {yt_info['like_count']:,} Dislikes: {yt_info['dislike_count']:,}\n"
-                except KeyError:
-                    pass
+            # Add optional metadata if available
+            if 'average_rating' in yt_info:
+                metadata_msg.append(f"Average Rating: {yt_info['average_rating']}")
+            if 'like_count' in yt_info:
+                metadata_msg.append(f"Likes: {yt_info['like_count']:,}")
 
-                msg += "```"
-            except Exception as e:
-                print(e)
-                # print(yt_info)
+            metadata_msg.append("```")
 
-                logging.info(e)
-                logging.info(msg)
+            return {
+                "title": yt_info["title"],
+                "transcript": transcript,
+                "duration": convert_seconds(yt_info.get('duration', 0)),
+                "upload_date": formatted_date,
+                "url": yt_info['webpage_url'],
+                "msg": "\n".join(metadata_msg)
+            }
 
-            payload['msg'] = msg
         except Exception as e:
-            print(e)
-            payload = {"msg": "That video url didn't work.\n"
-                              "https://media.giphy.com/media/SFkjp1R8iRIWc/giphy.gif",
-                       "file": ""
-                       }
-
-        return payload
+            logging.error(f"Failed to extract video information: {e}")
+            return {
+                "msg": "Failed to retrieve video metadata.",
+                "transcript": None
+            }
 
 
-def extract_transcript_from_vtt(vtt_file):
+def convert_seconds(seconds):
+    """Convert seconds to HH:MM:SS format"""
+    if not seconds:
+        return "00:00"
 
-    vtt = webvtt.read(vtt_file)
-    transcript = ""
+    hours = seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
 
-    lines = []
-    for line in vtt:
-        # Strip the newlines from the end of the text.
-        # Split the string if it has a newline in the middle
-        # Add the lines to an array
-        lines.extend(line.text.strip().splitlines())
+    if hours > 0:
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    return f"{minutes:02d}:{seconds:02d}"
 
-    # Remove repeated lines
-    previous = None
-    for line in lines:
-        if line == previous:
-            continue
-        transcript += " " + line
-        previous = line
 
-    return transcript
-
+def extract_transcript_from_vtt(vtt_path):
+    """Extract text content from VTT file"""
+    try:
+        with open(vtt_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            # Basic VTT parsing - you might want to enhance this
+            lines = [line.strip() for line in content.split('\n')
+                     if line.strip() and not line.strip().isdigit()
+                     and not '-->' in line
+                     and not line.strip() == 'WEBVTT']
+            return ' '.join(lines)
+    except Exception as e:
+        logging.error(f"Failed to parse VTT file: {e}")
+        return None
 
 if __name__ == '__main__':
     # print(get_mp4('https://twitter.com/klasfeldreports/status/1450874629338324994?s=21'))
@@ -486,4 +391,5 @@ if __name__ == '__main__':
     # vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
     # transcript = extract_transcript_from_vtt(vtt_file)
     # print(transcript)
+    print(get_meta('https://www.youtube.com/watch?v=gqupdjbzs0M'))
     pass
