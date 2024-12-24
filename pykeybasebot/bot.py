@@ -14,9 +14,6 @@ SLEEP_SECS_BETWEEEN_RETRIES = 1
 
 
 def _with_reconnect_to_keybase(keybase_bot_start_function):
-    # This decorator manages catching disconnect errors from the keybase service
-    # and attempting to reconnect to it periodically. If the very first attempt
-    # to connect fails, that error will be allowed to bubble up.
     @wraps(keybase_bot_start_function)
     async def wrapped_f(self, *args, **kwargs):
         attempts = RETRY_ATTEMPTS
@@ -25,7 +22,6 @@ def _with_reconnect_to_keybase(keybase_bot_start_function):
                 await keybase_bot_start_function(self, *args, **kwargs)
             except KeybaseNotConnectedError:
                 if self._initialized:
-                    # this is the first caught error after it was previously working
                     attempts = 0
                     self._initialized = False
                     logging.info(
@@ -33,8 +29,6 @@ def _with_reconnect_to_keybase(keybase_bot_start_function):
                     )
                 attempts += 1
                 if attempts > RETRY_ATTEMPTS:
-                    # Retries exhausted or the bot hasn't initialized on its first attempt.
-                    # Either way, reraise the caught exception.
                     raise
                 logging.info(
                     f"RECONNECT: sleeping {SLEEP_SECS_BETWEEEN_RETRIES} seconds..."
@@ -45,8 +39,6 @@ def _with_reconnect_to_keybase(keybase_bot_start_function):
 
 
 class _botlifecycle:
-    # This context manager ensures that the bot is initialized and torn down
-    # around calls to listening for events.
     def __init__(self, bot, listen_options):
         self.bot = bot
         self.listen_options = listen_options
@@ -69,9 +61,7 @@ class Bot:
         keybase: Optional[str] = None,
         home_path: Optional[str] = None,
         pid_file: Optional[str] = None,
-        disable_typing: Optional[
-            bool
-        ] = True,  # Disable sending/receiving typing notifications
+        disable_typing: Optional[bool] = True,
     ):
         self.username = username
         self.paperkey = paperkey
@@ -88,13 +78,10 @@ class Bot:
 
     @_with_reconnect_to_keybase
     async def start(self, listen_options):
-        # This is the main, expected entry point.
         async with _botlifecycle(self, listen_options) as events:
             async for event in events:
-                if self.loop is not None:
-                    self.loop.create_task(self.handler(self, event))
-                else:
-                    asyncio.create_task(self.handler(self, event))
+                # Updated to use asyncio.create_task() directly
+                asyncio.create_task(self.handler(self, event))
 
     async def submit(self, command, input_data=None, **opts):
         return await kbsubmit(
@@ -152,20 +139,17 @@ class Bot:
 
     async def _initialize(self):
         if await self._is_initialized():
-            # already initialized. fine to bail.
             return
 
         if self.paperkey is None:
             raise Exception("No paperkey specified, unable to login to keybase")
 
-        # login as a `oneshot` device
         env_with_paperkey = os.environ.copy()
         env_with_paperkey["KEYBASE_PAPERKEY"] = self.paperkey
         oneshot_command = f"oneshot -u {self.username}"
         oneshot_result = await self.submit(oneshot_command, env=env_with_paperkey)
         logging.info(oneshot_result)
         if not await self._is_initialized():
-            # raise an exception because we can't authenticate
             raise Exception(f"failed to initialize with oneshot {oneshot_result}")
         await self.submit(
             f"chat notification-settings -disable-typing={self.disable_typing}"
@@ -173,5 +157,4 @@ class Bot:
 
     async def teardown(self):
         if self.paperkey is not None:
-            # don't log out the user if they didn't use a paperkey to login
             await self.submit("logout")

@@ -153,3 +153,4 @@ WTForms==3.2.1
 yarl==1.18.3
 yt-dlp==2024.12.3
 python-Levenshtein
+newspaper4k
