@@ -149,7 +149,7 @@ def get_till():
 
             till.event = till.event.astimezone(ny_tz)
             team_tills[team.name].append(till)
-    return render_template('tills.html', team_tills=team_tills, user=user)
+    return render_template('tills.html', team_tills=team_tills, user=user, title="Tills")
 
 @app.route('/since', methods=['GET'])
 def get_since():
@@ -178,7 +178,7 @@ def get_since():
 
             since.event = since.event.astimezone(ny_tz)
             team_sinces[team.name].append(since)
-    return render_template('tills.html', team_tills=team_sinces, user=user)
+    return render_template('tills.html', team_tills=team_sinces, user=user, title="Sinces")
 
 
 @app.route('/wager', methods=['GET'])
