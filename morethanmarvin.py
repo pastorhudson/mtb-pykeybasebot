@@ -10,6 +10,7 @@ from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
+from botcommands.since import set_since, get_since
 # from botcommands.poll_results import get_poll_result
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
@@ -1232,15 +1233,32 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, msg)
             await bot.chat.send(channel, f"https://marvn.app/till?token={token}")
 
-    # if str(event.msg.content.text.body).startswith('!waffle'):
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     try:
-    #         state = str(event.msg.content.text.body)[7:].strip()
-    #         waffles_msg = get_waffle_closings(state)
-    #     except:
-    #         waffles_msg = get_waffle_closings()
-    #     my_msg = await bot.chat.send(conversation_id, waffles_msg)
+    if str(event.msg.content.text.body).startswith('!since'):
+        msg = ""
+        dm_channel = f'marvn,{event.msg.sender.username}'
+        channel = chat1.ChatChannel(name=dm_channel)
+        username = event.msg.sender.username
+        user = s.query(User).filter(User.username == username).first()
+
+        commands = str(event.msg.content.text.body)[6:].split("-t")
+        conversation_id = event.msg.conv_id
+        token = user.create_access_token(conversation_id, expires_delta=timedelta(minutes=60))
+
+        team_name = event.msg.channel.name
+        try:
+            event_name = commands[0]
+            event_time = commands[1]
+            msg = set_since(team_name, event_name, event_time)
+            if msg is None:
+                msg = "Knock it off @sakanakami"
+            # print(msg)
+        except IndexError:
+            msg = get_since(team_name=team_name)
+        except TypeError:
+            msg = "Knock it off @sakanakami"
+        finally:
+            await bot.chat.send(conversation_id, msg)
+            await bot.chat.send(channel, f"https://marvn.app/since?token={token}")
 
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id

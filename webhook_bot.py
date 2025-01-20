@@ -151,6 +151,35 @@ def get_till():
             team_tills[team.name].append(till)
     return render_template('tills.html', team_tills=team_tills, user=user)
 
+@app.route('/since', methods=['GET'])
+def get_since():
+    token = request.args.get("token")
+    logging.info(f"token: {token} THIS IS A TILL REQUEST")
+    if not token:
+        return jsonify({"error": "Missing token"}), 400
+    try:
+        client_ip = escape(request.remote_addr)
+        logging.info(f"Client IP: {client_ip}")
+        user, conversation_id = asyncio.run(get_user(token))
+    except HTTPException as e:
+        logging.info(e)
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
+
+    team_sinces = defaultdict(list)
+    current_time = datetime.now(timezone.utc)
+    ny_tz = pytz.timezone('America/New_York')
+
+    for team in user.teams:
+        for since in team.sinces.filter(Since.event > current_time).all():
+            days, hours, minutes = calculate_time_difference(since.event)
+            since.days = days
+            since.hours = hours
+            since.minutes = minutes
+
+            since.event = since.event.astimezone(ny_tz)
+            team_sinces[team.name].append(since)
+    return render_template('tills.html', team_tills=team_sinces, user=user)
+
 
 @app.route('/wager', methods=['GET'])
 def get_wager():
