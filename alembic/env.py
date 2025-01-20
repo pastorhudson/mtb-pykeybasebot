@@ -14,7 +14,12 @@ sys.path = ['', '..'] + sys.path[1:]
 config = context.config
 
 # SET DB_URL
-config.set_main_option('sqlalchemy.url', os.environ.get('DATABASE_URL'))
+# config.set_main_option('sqlalchemy.url', os.environ.get('DATABASE_URL'))
+# SET DB_URL
+db_url = os.environ.get('DATABASE_URL')
+if db_url and db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+config.set_main_option('sqlalchemy.url', db_url)
 
 
 # Interpret the config file for Python logging.
