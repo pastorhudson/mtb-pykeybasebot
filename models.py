@@ -309,6 +309,33 @@ class Till(Base):
             return f"`{minutes} Minutes {seconds} Seconds` till:{self.name}"
 
 
+class Since(Base):
+    __tablename__ = 'since'
+    id = Column(Integer, primary_key=True)
+    team_id = Column(Integer, ForeignKey('team.id'), nullable=False)
+    name = Column(String)
+    event = Column(DateTime(timezone=True))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    def __repr__(self):
+        tspan = self.event + datetime.now(pytz.timezone('America/New_York'))
+        s = tspan.seconds
+        # m, remainder = divmod(s, 60)
+        hours, remainder = divmod(s, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        print(tspan.days)
+        if tspan.days > 0:
+            return f"`{tspan.days} Days` since: {self.name}"
+
+        elif tspan.seconds > 3600:
+            return f"`{hours} Hours` since:{self.name}"
+
+        else:
+            return f"`{minutes} Minutes {seconds} Seconds` since:{self.name}"
+
+
 class CompletedTasks(Base):
     __tablename__ = 'completed_tasks'
     id = Column(Integer, primary_key=True)
