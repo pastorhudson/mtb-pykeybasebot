@@ -20,7 +20,7 @@ def get_since(team_name, observation=True):
     x.field_names = ["Event", "since", ]
     team = get_team(team_name)
     current_time = datetime.now(timezone.utc)
-    sinces = team.sinces.filter(Since.event > current_time).all()
+    sinces = team.sinces.filter(Since.event < current_time).all()
 
     msg = ""
     if observation:
@@ -55,10 +55,22 @@ def set_since(team_name, event_name, event_time):
         return None
     return f"{since}"
 
+# def reset_since(team_name, since_id):
+#     team = get_team(team_name)
+#     current_time = datetime.now(timezone.utc)
+#     since_to_reset = team.sinces.filter(Since.id == int(since_id))
+#     since_to_reset.event = current_time
+#
+#     since_to_reset.commit()
+
 
 if __name__ == "__main__":
-    print(get_since(team_name='morethanmarvin,pastorhudson'))
-    # print(set_since(team_name='morethanmarvin,pastorhudson', event_name='Yule', event_time='8:30 AM on Monday, December 21'))
+    print(get_since(team_name='marvn,pastorhudson'))
+    # print('TEST')
+    # team = get_team('marvn,pastorhudson')
+    # print(team)
+    # print(set_since(team_name='marvn,pastorhudson', event_name='Christmas', event_time='8:30 AM on December 25'))
+    # print('DONE')
     # print(set_since(team_name='morethanmarvin,pastorhudson', event_name='US Presidential Election', event_time='November 3 2024'))
     # print(set_since(team_name='morethanmarvin,pastorhudson', event_name='TESTTESTTEST', event_time='5pm'))
 

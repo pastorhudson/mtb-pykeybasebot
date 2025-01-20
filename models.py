@@ -320,7 +320,7 @@ class Since(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __repr__(self):
-        tspan = self.event + datetime.now(pytz.timezone('America/New_York'))
+        tspan = datetime.now(pytz.timezone('America/New_York')) - self.event
         s = tspan.seconds
         # m, remainder = divmod(s, 60)
         hours, remainder = divmod(s, 3600)
@@ -328,13 +328,13 @@ class Since(Base):
 
         print(tspan.days)
         if tspan.days > 0:
-            return f"`{tspan.days} Days` since: {self.name}"
+            return f"#{self.id} `{tspan.days} Days` since: {self.name}"
 
         elif tspan.seconds > 3600:
-            return f"`{hours} Hours` since:{self.name}"
+            return f"#{self.id} `{hours} Hours` since:{self.name}"
 
         else:
-            return f"`{minutes} Minutes {seconds} Seconds` since:{self.name}"
+            return f"#{self.id} `{minutes} Minutes {seconds} Seconds` since:{self.name}"
 
 
 class CompletedTasks(Base):
