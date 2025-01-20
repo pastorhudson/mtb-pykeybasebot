@@ -35,7 +35,7 @@ def get_since(team_name, observation=True):
 def set_since(team_name, event_name, event_time):
     event_name = event_name.strip('`')
     team = get_team(team_name)
-    since_event = dateparser.parse(event_time, settings={'PREFER_DATES_FROM': 'future',
+    since_event = dateparser.parse(event_time, settings={'PREFER_DATES_FROM': 'past',
                                                         'TIMEZONE': 'US/Eastern',
                                                         'RETURN_AS_TIMEZONE_AWARE': True
                                                         })
@@ -44,7 +44,7 @@ def set_since(team_name, event_name, event_time):
         return None
 
     current_time = datetime.now(pytz.timezone('America/New_York'))
-    sinces = team.sinces.filter(Since.name == event_name).filter(Since.event > current_time).all()
+    sinces = team.sinces.filter(Since.name == event_name).filter(Since.event < current_time).all()
     if len(sinces) > 0:
         return f"There is already a since set for {event_name}\n{sinces[0]}"
     try:
