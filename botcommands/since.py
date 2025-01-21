@@ -55,17 +55,25 @@ def set_since(team_name, event_name, event_time):
         return None
     return f"{since}"
 
-# def reset_since(team_name, since_id):
-#     team = get_team(team_name)
-#     current_time = datetime.now(timezone.utc)
-#     since_to_reset = team.sinces.filter(Since.id == int(since_id))
-#     since_to_reset.event = current_time
-#
-#     since_to_reset.commit()
+
+def reset_since(team_name, since_id):
+    numerical_since_id = since_id.strip('#')
+    print(numerical_since_id)
+    team = get_team(team_name)
+    current_time = datetime.now(timezone.utc)
+    since_to_reset = team.sinces.filter(Since.id == numerical_since_id).one()
+    if since_to_reset:
+        since_to_reset.event = current_time
+        s.add(since_to_reset)
+        s.commit()
+    else:
+        print('Not your since')
+    return since_to_reset
 
 
 if __name__ == "__main__":
-    print(get_since(team_name='marvn,pastorhudson'))
+    # print(get_since(team_name='marvn,pastorhudson'))
+    print(reset_since(team_name='marvn,pastorhudson', since_id="#1"))
     # print('TEST')
     # team = get_team('marvn,pastorhudson')
     # print(team)

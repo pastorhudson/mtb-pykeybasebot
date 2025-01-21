@@ -1236,6 +1236,33 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, msg)
             await bot.chat.send(channel, f"https://marvn.app/till?token={token}")
 
+    # if str(event.msg.content.text.body).startswith('!since'):
+    #     msg = ""
+    #     dm_channel = f'marvn,{event.msg.sender.username}'
+    #     channel = chat1.ChatChannel(name=dm_channel)
+    #     username = event.msg.sender.username
+    #     user = s.query(User).filter(User.username == username).first()
+    #
+    #     commands = str(event.msg.content.text.body)[6:].split("-t")
+    #     conversation_id = event.msg.conv_id
+    #     token = user.create_access_token(conversation_id, expires_delta=timedelta(minutes=60))
+    #
+    #     team_name = event.msg.channel.name
+    #     try:
+    #         event_name = commands[0]
+    #         event_time = commands[1]
+    #         msg = set_since(team_name, event_name, event_time)
+    #         if msg is None:
+    #             msg = "Knock it off @sakanakami"
+    #         # print(msg)
+    #     except IndexError:
+    #         msg = get_since(team_name=team_name)
+    #     except TypeError as e:
+    #         print(e)
+    #         msg = "Knock it off @sakanakami"
+    #     finally:
+    #         await bot.chat.send(conversation_id, msg)
+    #         await bot.chat.send(channel, f"https://marvn.app/since?token={token}")
     if str(event.msg.content.text.body).startswith('!since'):
         msg = ""
         dm_channel = f'marvn,{event.msg.sender.username}'
@@ -1243,21 +1270,28 @@ async def handler(bot, event):
         username = event.msg.sender.username
         user = s.query(User).filter(User.username == username).first()
 
-        commands = str(event.msg.content.text.body)[6:].split("-t")
+        command_text = str(event.msg.content.text.body)[6:].strip()  # Remove '!since' and whitespace
         conversation_id = event.msg.conv_id
         token = user.create_access_token(conversation_id, expires_delta=timedelta(minutes=60))
-
         team_name = event.msg.channel.name
+
         try:
-            event_name = commands[0]
-            event_time = commands[1]
-            msg = set_since(team_name, event_name, event_time)
-            if msg is None:
-                msg = "Knock it off @sakanakami"
-            # print(msg)
-        except IndexError:
-            msg = get_since(team_name=team_name)
-        except TypeError as e:
+            if command_text.startswith('-r'):  # Check for reset command first
+                parts = command_text.split()
+                if len(parts) > 1:
+                    since_id = parts[1]
+                    msg = reset_since(team_name, since_id)
+                    if msg is None:
+                        msg = "Reset failed - since not found or unauthorized"
+            elif '-t' in command_text:  # Existing set command
+                event_name, event_time = command_text.split('-t')
+                msg = set_since(team_name, event_name, event_time)
+                if msg is None:
+                    msg = "Knock it off @sakanakami"
+            else:  # Default to get
+                msg = get_since(team_name=team_name)
+
+        except Exception as e:
             print(e)
             msg = "Knock it off @sakanakami"
         finally:
