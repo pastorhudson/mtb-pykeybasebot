@@ -178,7 +178,7 @@ def get_since():
 
             since.event = since.event.astimezone(ny_tz)
             team_sinces[team.name].append(since)
-    return render_template('sinces.html', team_tills=team_sinces, user=user, title="Sinces")
+    return render_template('sinces.html', team_sinces=team_sinces, user=user, title="Sinces")
 
 
 @app.route('/wager', methods=['GET'])
