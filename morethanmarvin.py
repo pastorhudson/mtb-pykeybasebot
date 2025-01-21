@@ -10,7 +10,7 @@ from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
-from botcommands.since import set_since, get_since
+from botcommands.since import set_since, get_since, reset_since
 # from botcommands.poll_results import get_poll_result
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
