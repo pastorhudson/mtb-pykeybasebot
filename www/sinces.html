@@ -8,7 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-900 text-gray-100">
+<body class="bg-gray-900 text-gray-100 flex justify-center items-center min-h-screen">
+
+<div class="container mx-auto p-2">
     <div class="container mx-auto p-2">
         {% for team_name, sinces in team_sinces.items() %}
         <div class="mb-4">
