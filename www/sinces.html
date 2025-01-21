@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team {{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-gray-100 flex justify-center items-center min-h-screen">
+
+<div class="container mx-auto p-2">
+    {% for team_name, sinces in team_sinces.items() %}
+    <div class="mb-4">
+        <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {% for since in sinces %}
+            {% include 'sincecard.html' %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    // JavaScript to update countdown timers
+    function updateCountdown() {
+        const eventElements = document.querySelectorAll('[data-event]');
+        eventElements.forEach(element => {
+            const endTime = new Date(element.getAttribute('data-event')).getTime();
+            const now = new Date().getTime();
+            const distance = endTime - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                const daysSpan = element.querySelector('.days');
+                const hoursSpan = element.querySelector('.hours');
+                const minutesSpan = element.querySelector('.minutes');
+
+                if (days > 0) {
+                    daysSpan.textContent = `${days} Days`;
+                    daysSpan.style.display = 'inline';
+                } else {
+                    daysSpan.style.display = 'none';
+                }
+
+                if (hours > 0) {
+                    hoursSpan.textContent = `${hours} Hours`;
+                    hoursSpan.style.display = 'inline';
+                } else {
+                    hoursSpan.style.display = 'none';
+                }
+
+                if (minutes > 0) {
+                    minutesSpan.textContent = `${minutes} Minutes`;
+                    minutesSpan.style.display = 'inline';
+                } else {
+                    minutesSpan.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    setInterval(updateCountdown, 1000);
+</script>
+<script>
+    function openModal(id, name, event) {
+        document.getElementById('csrf_token').value = "{{ csrf_token() }}";
+        document.getElementById('sinceId').value = id;
+        document.getElementById('sinceName').value = name;
+        document.getElementById('sinceEvent').value = event.substring(0, 16); // Trim to fit the datetime-local format
+        document.getElementById('sinceModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('sinceModal').classList.add('hidden');
+    }
+</script>
+<script>
+    document.body.addEventListener('htmx:configRequest', function(event) {
+        event.detail.headers['X-CSRFToken'] = document.querySelector('input[name="csrf_token"]').value;
+    });
+</script>
+<script src="https://unpkg.com/htmx.org@1.7.0"></script>
+
+
+</body>
+
+</html>

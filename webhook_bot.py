@@ -154,7 +154,7 @@ def get_till():
 @app.route('/since', methods=['GET'])
 def get_since():
     token = request.args.get("token")
-    logging.info(f"token: {token} THIS IS A TILL REQUEST")
+    logging.info(f"token: {token} THIS IS A SINCE REQUEST")
     if not token:
         return jsonify({"error": "Missing token"}), 400
     try:
@@ -178,7 +178,7 @@ def get_since():
 
             since.event = since.event.astimezone(ny_tz)
             team_sinces[team.name].append(since)
-    return render_template('tills.html', team_tills=team_sinces, user=user, title="Sinces")
+    return render_template('sinces.html', team_tills=team_sinces, user=user, title="Sinces")
 
 
 @app.route('/wager', methods=['GET'])
@@ -250,28 +250,28 @@ def update_till():
 @app.route('/update_since', methods=['POST'])
 def update_since():
     referer_url = request.headers.get('Referer')
-    till_id = request.form.get('till_id')
-    till_name = request.form.get('till_name')
-    since_event_str = request.form.get('till_event')
+    since_id = request.form.get('since_id')
+    since_name = request.form.get('since_name')
+    since_event_str = request.form.get('since_event')
 
     # Set the timezone to America/New_York
     ny_tz = pytz.timezone('America/New_York')
 
     # Parse the datetime from the form input
     since_event_naive = datetime.strptime(since_event_str, '%Y-%m-%dT%H:%M')
-    logging.info(f"TILL TIME naive: {since_event_naive}")
+    logging.info(f"SINCE TIME naive: {since_event_naive}")
     since_event_ny_tz = ny_tz.localize(since_event_naive)
-    # till_event = till_event_naive.replace(tzinfo=pytz.timezone('America/New_York'))
+    # till_event = since_event_naive.replace(tzinfo=pytz.timezone('America/New_York'))
     since_event = since_event_ny_tz.astimezone(pytz.utc)
-    logging.info(f"TILL TIME event: {since_event}")
+    logging.info(f"SINCE TIME event: {since_event}")
 
 
     # Fetch the Till object from the database
-    since = s.query(Since).get(till_id)
+    since = s.query(Since).get(since_id)
 
     if since:
         # Update the Till object
-        since.name = till_name
+        since.name = since_name
         since.event = since_event
 
         s.commit()
