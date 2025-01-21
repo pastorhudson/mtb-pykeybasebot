@@ -327,13 +327,13 @@ class Since(Base):
         minutes, seconds = divmod(remainder, 60)
 
         if tspan.days > 0:
-            return f"`{tspan.days} Days` since: {self.name} #{self.id}"
+            return f"`{tspan.days} Days` since: {self.name} - `#{self.id}`"
 
         elif tspan.seconds > 3600:
-            return f"`{hours} Hours` since:{self.name} #{self.id}"
+            return f"`{hours} Hours` since: {self.name} - `#{self.id}`"
 
         else:
-            return f"`{minutes} Minutes {seconds} Seconds` since:{self.name} #{self.id}"
+            return f"`{minutes} Minutes {seconds} Seconds` since: {self.name} - `#{self.id}`"
 
 
 class CompletedTasks(Base):
