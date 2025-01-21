@@ -51,24 +51,24 @@ def home():
 #     return 'Logged in as ' + user
 
 
-@app.route('/ytv')
-def ytv():
-    if request.args.get('url'):
-        url = request.args.get('url')
-        try:
-            payload = get_mp4(url)
-        # print(payload)
-        except DownloadError as e:
-            payload = {'Error': str(e)}
-            return jsonify(payload)
-
-        try:
-            return send_file(payload['file'],
-                             attachment_filename='v.mp4')
-        except Exception as e:
-            return jsonify(payload)
-    else:
-        return '<p>Wat?</p>'
+# @app.route('/ytv')
+# async def ytv():
+#     if request.args.get('url'):
+#         url = request.args.get('url')
+#         try:
+#             payload = await get_mp4(url)
+#         # print(payload)
+#         except DownloadError as e:
+#             payload = {'Error': str(e)}
+#             return jsonify(payload)
+#
+#         try:
+#             return send_file(payload['file'],
+#                              attachment_filename='v.mp4')
+#         except Exception as e:
+#             return jsonify(payload)
+#     else:
+#         return '<p>Wat?</p>'
 
 
 @app.route('/add_message', methods=['POST'])
@@ -278,6 +278,53 @@ def update_since():
         return redirect(referer_url)
 
     return jsonify({'error': 'Since not found'}), 404
+
+
+@app.route('/delete_since', methods=['POST'])
+def delete_since():
+    # Get the referrer URL for redirect after deletion
+    referer_url = request.headers.get('Referer')
+
+    # Get the since_id from the form data
+    since_id = request.form.get('since_id')
+    token = request.args.get("token")
+
+    if not token:
+        return jsonify({"error": "Missing token"}), 400
+
+    try:
+        # Verify user authentication
+        client_ip = escape(request.remote_addr)
+        logging.info(f"Client IP: {client_ip} attempting to delete since {since_id}")
+        user, conversation_id = asyncio.run(get_user(token))
+
+        # Get the Since object
+        since = s.query(Since).get(since_id)
+
+        if not since:
+            return jsonify({'error': 'Since not found'}), 404
+
+        # Verify user has permission to delete this Since object
+        # Check if the user is part of the team that owns this Since
+        user_teams = {team.id for team in user.teams}
+        if since.team_id not in user_teams:
+            logging.warning(f"Unauthorized deletion attempt of Since {since_id} by user {user.username}")
+            return jsonify({'error': 'Unauthorized'}), 403
+
+        # Delete the Since object
+        s.delete(since)
+        s.commit()
+
+        # Redirect back to the previous page
+        return redirect(referer_url)
+
+    except HTTPException as e:
+        logging.error(f"Authentication error while deleting Since {since_id}: {str(e)}")
+        return jsonify({"error": "Could Not Validate Credentials"}), 403
+    except Exception as e:
+        logging.error(f"Error deleting Since {since_id}: {str(e)}")
+        s.rollback()
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 class TokenSchema(BaseModel):
