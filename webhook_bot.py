@@ -170,7 +170,7 @@ def get_since():
     ny_tz = pytz.timezone('America/New_York')
 
     for team in user.teams:
-        for since in team.sinces.filter(Since.event > current_time).all():
+        for since in team.sinces.filter(Since.event < current_time).all():
             days, hours, minutes = calculate_time_difference(since.event)
             since.days = days
             since.hours = hours
@@ -246,6 +246,38 @@ def update_till():
         return redirect(referer_url)
 
     return jsonify({'error': 'Till not found'}), 404
+
+@app.route('/update_since', methods=['POST'])
+def update_since():
+    referer_url = request.headers.get('Referer')
+    till_id = request.form.get('till_id')
+    till_name = request.form.get('till_name')
+    since_event_str = request.form.get('till_event')
+
+    # Set the timezone to America/New_York
+    ny_tz = pytz.timezone('America/New_York')
+
+    # Parse the datetime from the form input
+    since_event_naive = datetime.strptime(since_event_str, '%Y-%m-%dT%H:%M')
+    logging.info(f"TILL TIME naive: {since_event_naive}")
+    since_event_ny_tz = ny_tz.localize(since_event_naive)
+    # till_event = till_event_naive.replace(tzinfo=pytz.timezone('America/New_York'))
+    since_event = since_event_ny_tz.astimezone(pytz.utc)
+    logging.info(f"TILL TIME event: {since_event}")
+
+
+    # Fetch the Till object from the database
+    since = s.query(Since).get(till_id)
+
+    if since:
+        # Update the Till object
+        since.name = till_name
+        since.event = since_event
+
+        s.commit()
+        return redirect(referer_url)
+
+    return jsonify({'error': 'Since not found'}), 404
 
 
 class TokenSchema(BaseModel):
