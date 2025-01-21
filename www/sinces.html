@@ -62,7 +62,7 @@
             eventElements.forEach(element => {
                 const endTime = new Date(element.getAttribute('data-event')).getTime();
                 const now = new Date().getTime();
-                const distance = endTime - now;
+                const distance = now - endTime;
 
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
