@@ -33,7 +33,7 @@ def get_since(team_name, observation=True):
 
 
 def set_since(team_name, event_name, event_time):
-    event_name = event_name.strip('`')
+    event_name = event_name.strip('`').strip()
     team = get_team(team_name)
     since_event = dateparser.parse(event_time, settings={'PREFER_DATES_FROM': 'past',
                                                         'TIMEZONE': 'US/Eastern',
