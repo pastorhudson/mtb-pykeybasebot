@@ -17,9 +17,9 @@ import re
 import random
 import pykeybasebot.types.chat1 as chat1
 from botcommands.weather import get_weather
-from botcommands.youtube import get_domain
 from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
+from urllib.parse import urlparse
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import get_cow
@@ -1048,7 +1048,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('https://'):
         url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        domain = get_domain(url[0])
+        # domain = urlparse(url[0]).netloc
         yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         conversation_id = event.msg.conv_id
 
