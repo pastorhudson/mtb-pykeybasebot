@@ -337,7 +337,7 @@ async def handler(bot, event):
                 else:
                     urls = re.findall(r'(https?://[^\s]+)', original_body)
                     await bot.chat.react(conversation_id, original_msg_id, ":tv:")
-                    ytv_payload = get_mp4(urls[0])
+                    ytv_payload = await get_mp4(urls[0])
                     if ytv_payload['file']:
                         ytv_msg = ytv_payload['msg']
                         try:
@@ -558,32 +558,6 @@ async def handler(bot, event):
         msg = get_morse_code(get_esv_text(passage, plain_txt=True))
         await bot.chat.send(conversation_id, msg)
 
-    # if str(event.msg.content.text.body).startswith("!aoc"):
-    #     conversation_id = event.msg.conv_id
-    #     prompt = str(event.msg.content.text.body)[5:].split(" ")
-    #
-    #     await bot.chat.react(conversation_id, event.msg.id, ":christmas_tree:")
-    #     await bot.chat.send(conversation_id,
-    #                         f"Attempting to solve Advent of Code {prompt[0]} Day: {prompt[1]} Part: {prompt[2]}\n"
-    #                         f"https://adventofcode.com/{prompt[0]}/day/{prompt[1]}\n"
-    #                         f"This might take a bit. I'll get back to you. :stopwatch::keyboard::monkey:")
-    #     # !aoc 2022 1 1
-    #     aoc_payload = tell_solve(*prompt)
-    #
-    #     await bot.chat.send(conversation_id, aoc_payload['message'])
-    #     if aoc_payload['file']:
-    #         await bot.chat.attach(channel=conversation_id,
-    #                               filename=aoc_payload['file'],
-    #                               title=f"```{aoc_payload['code']}```")
-
-    # if str(event.msg.content.text.body).startswith('!canary'):
-    #     vt_url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #
-    #     msg = get_scan(vt_url[0])
-    #     await bot.chat.send(conversation_id, msg)
-
     if str(event.msg.content.text.body).startswith('!chuck'):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -636,20 +610,6 @@ async def handler(bot, event):
         else:
             await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
 
-    # if str(event.msg.content.text.body).startswith('!stabledraw'):
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     prompt = event.msg.content.text.body[6:]
-    #     draw_payload = generate_image(prompt)
-    #     if draw_payload['file']:
-    #         await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-    #
-    #         await bot.chat.attach(channel=conversation_id,
-    #                               filename=draw_payload['file'],
-    #                               title=draw_payload['msg'])
-    #     else:
-    #         await bot.chat.reply(conversation_id, event.msg.id, draw_payload['msg'])
-
     if str(event.msg.content.text.body).startswith("!drwho"):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
@@ -677,15 +637,6 @@ async def handler(bot, event):
             msg = get_eyebleach()
 
         await bot.chat.send(conversation_id, msg)
-
-    # if str(event.msg.content.text.body).startswith("!files"):
-    #     conversation_id = event.msg.conv_id
-    #     team_name = event.msg.channel.name
-    #     if team_name in ['morethanbits', 'growinlove'] or event.msg.sender == 'pastorhudson':
-    #         msg = get_files()
-    #     else:
-    #         msg = "No Files."
-    #     await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!grades"):
         conversation_id = event.msg.conv_id
