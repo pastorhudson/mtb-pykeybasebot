@@ -9,7 +9,7 @@ import dateparser
 
 def get_observation():
     observations = [
-        'The end is coming.\n',
+        'Seems like yesterday.\n',
         'Counting the days.\n'
     ]
     return observations[0]
@@ -25,7 +25,7 @@ def get_since(team_name, observation=True):
     msg = ""
     if observation:
         msg += get_observation()
-    msg += "There are:\n"
+    msg += "It's been:\n"
     for since in sinces:
         msg += f"""{since}\n"""
 
@@ -39,7 +39,6 @@ def set_since(team_name, event_name, event_time):
                                                         'TIMEZONE': 'US/Eastern',
                                                         'RETURN_AS_TIMEZONE_AWARE': True
                                                         })
-    print(since_event)
     if since_event is None:
         return None
 
@@ -58,7 +57,6 @@ def set_since(team_name, event_name, event_time):
 
 def reset_since(team_name, since_id):
     numerical_since_id = since_id.strip('#')
-    print(numerical_since_id)
     team = get_team(team_name)
     current_time = datetime.now(timezone.utc)
     since_to_reset = team.sinces.filter(Since.id == numerical_since_id).one()
@@ -72,8 +70,8 @@ def reset_since(team_name, since_id):
 
 
 if __name__ == "__main__":
-    # print(get_since(team_name='marvn,pastorhudson'))
-    print(reset_since(team_name='marvn,pastorhudson', since_id="#1"))
+    print(get_since(team_name='marvn,pastorhudson'))
+    # print(get_since(team_name='marvn,pastorhudson', since_id="#1"))
     # print('TEST')
     # team = get_team('marvn,pastorhudson')
     # print(team)

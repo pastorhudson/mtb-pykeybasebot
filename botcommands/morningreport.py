@@ -1,4 +1,5 @@
 from botcommands.meh import get_meh
+from botcommands.since import get_since
 from botcommands.stardate import get_stardate
 from botcommands.till import get_till
 from botcommands.school_closings import get_school_closings
@@ -37,6 +38,7 @@ async def get_morningreport(channel):
     msg[1] = "\nMeh:" + meh
     msg[2] = f"\n\nEverything is made up and the points don't matter.\n\n"
     msg[2] += get_till(team_name=team.name, observation=False)
+    msg[2] += get_since(team_name=team.name, observation=False)
     msg[2] += "\n\nToday's Top Hacker News:\n"
     msg[2] += get_top_hacker_news()
     msg[3] += f"\nToday's Joke:```{get_joke(False)}```"
