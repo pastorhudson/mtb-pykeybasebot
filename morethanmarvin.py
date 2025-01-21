@@ -436,10 +436,17 @@ async def handler(bot, event):
                         pass
 
     if event.msg.content.type_name == 'reaction':
+        team_name = event.msg.channel.name
+        if team_name == "morethanbits":
+            if event.msg.content.reaction.body == ":notebook:":
+                tldr_length = 3
+                await tldr_react(event, bot, tldr_length)
 
-        if event.msg.content.reaction.body == ":notebook:":
-            tldr_length = 3
-            await tldr_react(event, bot, tldr_length)
+    if event.msg.content.type_name == 'reaction':
+
+        if event.msg.content.reaction.body == ":tap-the-sign:":
+            reset_since(team_name, "#8")
+
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
