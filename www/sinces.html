@@ -1,4 +1,3 @@
-<!--
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,31 +8,60 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-900 text-gray-100 flex justify-center items-center min-h-screen">
+<body class="bg-gray-900 text-gray-100">
+    <div class="container mx-auto p-2">
+        {% for team_name, sinces in team_sinces.items() %}
+        <div class="mb-4">
+            <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {% for since in sinces %}
+                {% include 'sincecard.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 
-<div class="container mx-auto p-2">
-    {% for team_name, sinces in team_sinces.items() %}
-    <div class="mb-4">
-        <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {% for since in sinces %}
-            {% include 'sincecard.html' %}
-            {% endfor %}
+    <!-- Modal -->
+    <div id="sinceModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+            <h2 class="text-xl font-bold mb-4">Edit Since</h2>
+            <form id="sinceForm" method="POST" action="/update_since">
+                <input type="hidden" name="csrf_token" id="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="since_id" id="sinceId">
+                <div class="mb-4">
+                    <label for="sinceName" class="block text-sm font-medium text-gray-200">Since Name</label>
+                    <input type="text" id="sinceName" name="since_name"
+                           class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
+                </div>
+                <div class="mb-4">
+                    <label for="sinceEvent" class="block text-sm font-medium text-gray-200">Event Date & Time</label>
+                    <input type="datetime-local" id="sinceEvent" name="since_event"
+                           class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" class="text-gray-400" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                        Save
+                    </button>
+                    <button type="button"
+                            onclick="deleteSince(document.getElementById('sinceId').value)"
+                            class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
+                        Delete
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-    {% endfor %}
-</div>
 
-<script>
-    // JavaScript to update countdown timers
-    function updateCountdown() {
-        const eventElements = document.querySelectorAll('[data-event]');
-        eventElements.forEach(element => {
-            const endTime = new Date(element.getAttribute('data-event')).getTime();
-            const now = new Date().getTime();
-            const distance = endTime - now;
+    <script>
+        function updateCountdown() {
+            const eventElements = document.querySelectorAll('[data-event]');
+            eventElements.forEach(element => {
+                const endTime = new Date(element.getAttribute('data-event')).getTime();
+                const now = new Date().getTime();
+                const distance = now - endTime;
 
-            if (distance > 0) {
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -42,170 +70,75 @@
                 const hoursSpan = element.querySelector('.hours');
                 const minutesSpan = element.querySelector('.minutes');
 
-                if (days > 0) {
+                if (daysSpan && days > 0) {
                     daysSpan.textContent = `${days} Days`;
                     daysSpan.style.display = 'inline';
-                } else {
+                } else if (daysSpan) {
                     daysSpan.style.display = 'none';
                 }
 
-                if (hours > 0) {
+                if (hoursSpan && hours > 0) {
                     hoursSpan.textContent = `${hours} Hours`;
                     hoursSpan.style.display = 'inline';
-                } else {
+                } else if (hoursSpan) {
                     hoursSpan.style.display = 'none';
                 }
 
-                if (minutes > 0) {
+                if (minutesSpan && minutes > 0) {
                     minutesSpan.textContent = `${minutes} Minutes`;
                     minutesSpan.style.display = 'inline';
-                } else {
+                } else if (minutesSpan) {
                     minutesSpan.style.display = 'none';
                 }
-            }
-        });
-    }
-
-    setInterval(updateCountdown, 1000);
-</script>
-<script>
-    function openModal(id, name, event) {
-        document.getElementById('csrf_token').value = "{{ csrf_token() }}";
-        document.getElementById('sinceId').value = id;
-        document.getElementById('sinceName').value = name;
-        document.getElementById('sinceEvent').value = event.substring(0, 16); // Trim to fit the datetime-local format
-        document.getElementById('sinceModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-        document.getElementById('sinceModal').classList.add('hidden');
-    }
-</script>
-<script>
-    document.body.addEventListener('htmx:configRequest', function(event) {
-        event.detail.headers['X-CSRFToken'] = document.querySelector('input[name="csrf_token"]').value;
-    });
-</script>
-<script src="https://unpkg.com/htmx.org@1.7.0"></script>
-
-
-</body>
-
-</html>
--->
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team {{ title }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-gray-900 text-gray-100 flex justify-center items-center min-h-screen">
-
-<div class="container mx-auto p-2">
-    {% for team_name, sinces in team_sinces.items() %}
-    <div class="mb-4">
-        <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {% for since in sinces %}
-                {% include 'sincecard.html' with context %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<script>
-    // Update countdown timers
-    function updateCountdown() {
-        const eventElements = document.querySelectorAll('[data-event]');
-        eventElements.forEach(element => {
-            const endTime = new Date(element.getAttribute('data-event')).getTime();
-            const now = new Date().getTime();
-            const distance = now - endTime; // Changed to now - endTime to count up
-
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-
-            const daysSpan = element.querySelector('.days');
-            const hoursSpan = element.querySelector('.hours');
-            const minutesSpan = element.querySelector('.minutes');
-
-            if (daysSpan && days > 0) {
-                daysSpan.textContent = `${days} Days`;
-                daysSpan.style.display = 'inline';
-            } else if (daysSpan) {
-                daysSpan.style.display = 'none';
-            }
-
-            if (hoursSpan && hours > 0) {
-                hoursSpan.textContent = `${hours} Hours`;
-                hoursSpan.style.display = 'inline';
-            } else if (hoursSpan) {
-                hoursSpan.style.display = 'none';
-            }
-
-            if (minutesSpan && minutes > 0) {
-                minutesSpan.textContent = `${minutes} Minutes`;
-                minutesSpan.style.display = 'inline';
-            } else if (minutesSpan) {
-                minutesSpan.style.display = 'none';
-            }
-        });
-    }
-
-    setInterval(updateCountdown, 1000);
-
-    // Modal functions
-    function openModal(id, name, event) {
-        document.getElementById('csrf_token').value = "{{ csrf_token() }}";
-        document.getElementById('sinceId').value = id;
-        document.getElementById('sinceName').value = name;
-        document.getElementById('sinceEvent').value = event.substring(0, 16);
-        document.getElementById('sinceModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-        document.getElementById('sinceModal').classList.add('hidden');
-    }
-
-    // Delete functionality
-    function deleteSince(sinceId) {
-        if (confirm('Are you sure you want to delete this Since?')) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '/delete_since?token=' + '{{ token }}';
-
-            // Add CSRF token
-            const csrfInput = document.createElement('input');
-            csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf_token';
-            csrfInput.value = document.getElementById('csrf_token').value;
-
-            const sinceIdInput = document.createElement('input');
-            sinceIdInput.type = 'hidden';
-            sinceIdInput.name = 'since_id';
-            sinceIdInput.value = sinceId;
-
-            form.appendChild(csrfInput);
-            form.appendChild(sinceIdInput);
-            document.body.appendChild(form);
-            form.submit();
+            });
         }
-    }
 
-    // HTMX CSRF handling
-    document.body.addEventListener('htmx:configRequest', function(event) {
-        event.detail.headers['X-CSRFToken'] = document.querySelector('input[name="csrf_token"]').value;
-    });
-</script>
+        setInterval(updateCountdown, 1000);
 
-<script src="https://unpkg.com/htmx.org@1.7.0"></script>
+        function openModal(id, name, event) {
+            document.getElementById('csrf_token').value = "{{ csrf_token() }}";
+            document.getElementById('sinceId').value = id;
+            document.getElementById('sinceName').value = name;
+            document.getElementById('sinceEvent').value = event.substring(0, 16);
+            document.getElementById('sinceModal').classList.remove('hidden');
+        }
 
+        function closeModal() {
+            document.getElementById('sinceModal').classList.add('hidden');
+        }
+
+        function deleteSince(sinceId) {
+            if (confirm('Are you sure you want to delete this Since?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/delete_since?token=' + '{{token}}';
+
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = document.getElementById('csrf_token').value;
+
+                const sinceIdInput = document.createElement('input');
+                sinceIdInput.type = 'hidden';
+                sinceIdInput.name = 'since_id';
+                sinceIdInput.value = sinceId;
+
+                form.appendChild(csrfInput);
+                form.appendChild(sinceIdInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        /*function getToken() {
+            return localStorage.getItem('auth_token') || '';
+        }*/
+
+        document.body.addEventListener('htmx:configRequest', function(event) {
+            event.detail.headers['X-CSRFToken'] = document.querySelector('input[name="csrf_token"]').value;
+        });
+    </script>
+
+    <script src="https://unpkg.com/htmx.org@1.7.0"></script>
 </body>
 </html>
