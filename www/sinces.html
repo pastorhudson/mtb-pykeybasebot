@@ -93,6 +93,7 @@
 
 </html>
 -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -111,43 +112,11 @@
         <h2 class="text-xl font-bold mb-2">{{ team_name }}</h2>
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {% for since in sinces %}
-            {% include 'sincecard.html' %}
+                {% include 'sincecard.html' with context %}
             {% endfor %}
         </div>
     </div>
     {% endfor %}
-</div>
-
-<!-- Modal from previous implementation -->
-<div id="sinceModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-xl font-bold mb-4">Edit Since</h2>
-        <form id="sinceForm" method="POST" action="/update_since">
-            <input type="hidden" name="csrf_token" id="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="hidden" name="since_id" id="sinceId">
-            <div class="mb-4">
-                <label for="sinceName" class="block text-sm font-medium text-gray-200">Since Name</label>
-                <input type="text" id="sinceName" name="since_name"
-                       class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
-            </div>
-            <div class="mb-4">
-                <label for="sinceEvent" class="block text-sm font-medium text-gray-200">Event Date & Time</label>
-                <input type="datetime-local" id="sinceEvent" name="since_event"
-                       class="mt-1 block w-full bg-gray-900 border border-gray-600 rounded-lg p-2 text-gray-100">
-            </div>
-            <div class="flex justify-end space-x-4">
-                <button type="button" class="text-gray-400" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
-                    Save
-                </button>
-                <button type="button"
-                        onclick="deleteSince(document.getElementById('sinceId').value)"
-                        class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">
-                    Delete
-                </button>
-            </div>
-        </form>
-    </div>
 </div>
 
 <script>
