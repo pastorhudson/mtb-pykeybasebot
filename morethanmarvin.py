@@ -451,7 +451,7 @@ async def handler(bot, event):
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body in [":mag:", ":zuckerberg:" ]:
             conversation_id = event.msg.conv_id
-            await bot.chat.react(conversation_id, event.msg.id, ":mag:")
+            # await bot.chat.react(conversation_id, event.msg.id, ":mag:")
             # await bot.chat.react(conversation_id, event.msg.id, ":zuckerberg:")
 
             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
