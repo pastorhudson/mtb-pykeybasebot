@@ -75,6 +75,7 @@ def reset_since(team_name, since_id):
 
 if __name__ == "__main__":
     print(get_since(team_name='marvn,pastorhudson'))
+    print(reset_since("marvn,pastorhudson", since_id='#3'))
     # print(get_since(team_name='marvn,pastorhudson', since_id="#1"))
     # print('TEST')
     # team = get_team('marvn,pastorhudson')
