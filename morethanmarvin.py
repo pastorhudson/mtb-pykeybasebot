@@ -450,6 +450,12 @@ async def handler(bot, event):
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body in [":mag:", ":zuckerberg:" ]:
+            conversation_id = event.msg.conv_id
+            await bot.chat.react(conversation_id, event.msg.id, ":mag:")
+            # await bot.chat.react(conversation_id, event.msg.id, ":zuckerberg:")
+
+            await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
             msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
             original_body = msg.message[0]['msg']['content']['text']['body']
             url = re.findall(r'(https?://[^\s]+)', original_body)
