@@ -10,7 +10,7 @@ from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
-from botcommands.since import set_since, get_since, reset_since
+from botcommands.since import set_since, get_since, reset_since, reset_sign
 # from botcommands.poll_results import get_poll_result
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
@@ -443,9 +443,10 @@ async def handler(bot, event):
 
     if event.msg.content.type_name == 'reaction':
         team_name = event.msg.channel.name
+        username = event.msg.sender.username
         if team_name == "morethanbits":
             if event.msg.content.reaction.body == ":tap-the-sign:":
-                reset_since(team_name, "#8")
+                reset_sign(team_name, "#8", username)
 
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:

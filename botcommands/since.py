@@ -72,6 +72,23 @@ def reset_since(team_name, since_id):
         print(e)
         return "Fail"
 
+def reset_sign(team_name, since_id, user):
+    numerical_since_id = int(since_id.strip('#'))
+    team = get_team(team_name)
+    current_time = datetime.now(timezone.utc)
+    try:
+        since_to_reset = team.sinces.filter(Since.id == numerical_since_id).one()
+        if since_to_reset:
+            since_to_reset.event = current_time
+            since_to_reset.name = f"@{user} tapped the sign."
+            s.add(since_to_reset)
+            s.commit()
+        else:
+            print('Not your since')
+        return since_to_reset
+    except Exception as e:
+        print(e)
+        return "Fail"
 
 if __name__ == "__main__":
     print(get_since(team_name='marvn,pastorhudson'))
