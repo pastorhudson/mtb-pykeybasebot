@@ -56,7 +56,7 @@ def set_since(team_name, event_name, event_time):
 
 
 def reset_since(team_name, since_id):
-    numerical_since_id = since_id.strip('#')
+    numerical_since_id = int(since_id.strip('#'))
     team = get_team(team_name)
     current_time = datetime.now(timezone.utc)
     try:
