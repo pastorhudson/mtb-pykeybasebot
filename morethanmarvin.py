@@ -450,9 +450,10 @@ async def handler(bot, event):
 
     if event.msg.content.type_name == 'reaction':
         if event.msg.content.reaction.body in [":mag:", ":zuckerberg:" ]:
-            url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-            # domain = urlparse(url[0]).netloc
-            yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+            msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+            original_body = msg.message[0]['msg']['content']['text']['body']
+            url = re.findall(r'(https?://[^\s]+)', original_body)
+            yt_urls = re.findall(r'(https?://[^\s]+)', original_body)
             conversation_id = event.msg.conv_id
 
             if 'youtube' in yt_urls[0] or 'youtu.be' in yt_urls[0]:
