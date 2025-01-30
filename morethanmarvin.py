@@ -39,7 +39,7 @@ from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
 from crud import s
-from botcommands.pacyber import get_academic_snapshot
+from botcommands.get_grades import get_academic_snapshot
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
