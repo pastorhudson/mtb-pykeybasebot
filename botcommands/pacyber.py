@@ -85,12 +85,12 @@ def get_last_activity(event_target, s):
                     cur_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
                 else:
                     cur_date = datetime.strptime(row[-1:][0], '%b %d, %Y')
-                print(today.date())
-                print(cur_date.date())
+                # print(today.date())
+                # print(cur_date.date())
                 if last_date < cur_date:
                     last_date = cur_date
                 if cur_date.date() == today.date():
-                    print('today')
+                    # print('today')
                     assignments_completed_today += 1
                     cur_assignments_completed += 1
                 if cur_date.isocalendar()[1] == date.today().isocalendar()[1]:
