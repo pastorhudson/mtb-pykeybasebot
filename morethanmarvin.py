@@ -912,6 +912,15 @@ async def handler(bot, event):
             msg = "You're not authorized to run this command."
         await bot.chat.send(event.msg.conv_id, msg)
 
+    if str(event.msg.content.text.body).startswith(":tap-the-sign:"):
+        # channel = event.msg.channel
+        # msg_id = event.msg.id
+        # conversation_id = event.msg.conv_id
+
+        team_name = event.msg.channel.name
+        username = event.msg.sender.username
+        reset_sign(team_name, "#8", username)
+
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         channel = event.msg.channel
