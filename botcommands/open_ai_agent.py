@@ -1,3 +1,5 @@
+import asyncio
+
 from openai import OpenAI
 from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
 import logging
@@ -401,16 +403,15 @@ new_tools = [
 #     }]
 
 
-def get_ai_response(user_input: str):
-    """Handles OpenAI response and returns text instead of printing."""
+async def get_ai_response(user_input: str):
+    """Handles OpenAI response, calling functions dynamically based on async/sync type."""
 
     response = client.responses.create(
         model="gpt-4o",
         tools=new_tools,
         input=user_input,
-        instructions='"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endearing in a comical dark humor way.'
+        instructions="You are an AI assistant. Provide helpful and clear responses."
     )
-
 
     if response.output:
         for item in response.output:
@@ -420,7 +421,13 @@ def get_ai_response(user_input: str):
 
                 if function_name in FUNCTION_REGISTRY:
                     function_to_call = FUNCTION_REGISTRY[function_name]
-                    result = function_to_call(**arguments)
+
+                    # **Handle Async & Sync Functions Properly**
+                    if asyncio.iscoroutinefunction(function_to_call):
+                        result = await function_to_call(**arguments)  # ✅ Await async functions
+                    else:
+                        result = function_to_call(**arguments)  # ✅ Call sync functions normally
+
                     return {"type": "text", "content": result}
 
                 return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
