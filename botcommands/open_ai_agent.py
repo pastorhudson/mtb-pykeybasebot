@@ -494,5 +494,6 @@ async def handle_marvn_mention(bot, event):
 
 if __name__ == "__main__":
     # Example usage:
-    result = await get_ai_response("tell me a joke")
-    print(result)  # You can replace this with any return logic needed
+    # result = await get_ai_response("tell me a joke")
+    # print(result)  # You can replace this with any return logic needed
+    pass
