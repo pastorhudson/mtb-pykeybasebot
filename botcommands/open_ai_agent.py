@@ -462,7 +462,7 @@ async def handle_marvn_mention(bot, event):
         if original_msg.message[0]['msg']['content']['type'] == "text":
             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-            response = get_ai_response(prompt)
+            response = await get_ai_response(prompt)
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
             storage = Path('./storage')
@@ -475,10 +475,10 @@ async def handle_marvn_mention(bot, event):
             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
 
-            response = get_ai_response(f"{prompt} (Image: {filename})")
+            response = await get_ai_response(f"{prompt} (Image: {filename})")
 
     else:
-        response = get_ai_response(str(event.msg.content.text.body)[7:])
+        response = await get_ai_response(str(event.msg.content.text.body)[7:])
 
     # **Fix the TypeError by checking response type**
     if isinstance(response, dict) and "type" in response:
@@ -492,6 +492,7 @@ async def handle_marvn_mention(bot, event):
         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
 
 
-# Example usage:
-result = get_ai_response("tell me a joke")
-print(result)  # You can replace this with any return logic needed
+if __name__ == "__main__":
+    # Example usage:
+    result = await get_ai_response("tell me a joke")
+    print(result)  # You can replace this with any return logic needed
