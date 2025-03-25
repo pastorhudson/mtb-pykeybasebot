@@ -590,7 +590,7 @@ async def handler(bot, event):
     #         msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
     #         await bot.chat.reply(conversation_id, msg_id, msg)
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
-        await handle_marvn_mention(bot, event)
+        asyncio.create_task(handle_marvn_mention(bot, event))
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
