@@ -29,7 +29,7 @@ from botcommands.get_members import get_members
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
-from botcommands.get_grades import get_academic_snapshot
+# from botcommands.get_grades import get_academic_snapshot
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
@@ -53,7 +53,7 @@ FUNCTION_REGISTRY = {
     "generate_dalle_image": generate_dalle_image,
     "get_drwho": get_drwho,
     "get_eyebleach": get_eyebleach,
-    "get_academic_snapshot": get_academic_snapshot,
+    # "get_academic_snapshot": get_academic_snapshot,
     "get_joke": get_joke,
     "get_meh": get_meh,
     "get_top_hacker_news": get_top_hacker_news,
@@ -77,7 +77,7 @@ FUNCTION_REGISTRY = {
     "award_activity_points": award_activity_points,
     "is_morning_report": is_morning_report,
     "write_morning_report_task": write_morning_report_task,
-    "get_grades": get_academic_snapshot,
+    # "get_grades": get_academic_snapshot,
     "process_message_queue": process_message_queue,
     # "get_curl": get_curl,
     # "extract_message_sender": extract_message_sender,
@@ -194,16 +194,16 @@ new_tools = [
             }
         }
     },
-    {
-        "name": "get_academic_snapshot",
-        "type": "function",
-        "description": "Retrieve an academic performance snapshot.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
+    # {
+    #     "name": "get_academic_snapshot",
+    #     "type": "function",
+    #     "description": "Retrieve an academic performance snapshot.",
+    #     "parameters": {
+    #         "type": "object",
+    #         "required": [],
+    #         "properties": {}
+    #     }
+    # },
     {
         "name": "get_joke",
         "type": "function",
