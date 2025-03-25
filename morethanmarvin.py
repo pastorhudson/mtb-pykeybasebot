@@ -51,6 +51,8 @@ from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
 from datetime import timedelta
+from botcommands.open-ai-agent import handle_marvn_mention
+
 
 
 
@@ -544,49 +546,51 @@ async def handler(bot, event):
                                 f"You did it wrong.\n `-42` points deducted from  @{event.msg.sender.username} "
                                 f"for trying to be cute.\n{instructions}")
 
+    # if str(event.msg.content.text.body).lower().startswith("@marvn"):
+    #     msg_id = event.msg.id
+    #     team_name = event.msg.channel.name
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     if event.msg.content.text.reply_to:
+    #         logging.info("I have a reply")
+    #         original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+    #         logging.info(type(original_msg.message[0]['msg']['content']))
+    #         logging.info(original_msg.message[0]['msg']['sender']['username'])
+    #
+    #         if original_msg.message[0]['msg']['content']['type'] == "text":
+    #             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+    #                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+    #             msg = await get_chat(prompt, team_name)
+    #             await bot.chat.reply(conversation_id, msg_id, msg)
+    #         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
+    #
+    #             # Download the file
+    #             storage = Path('./storage')
+    #
+    #             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
+    #                      f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+    #             org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
+    #
+    #             filename = f"{storage.absolute()}/{org_filename}"
+    #
+    #             # Download the file
+    #             logging.info("Trying to download")
+    #             attachment_title = original_msg.message[0]['msg']['content']['attachment']['object']['title']
+    #             logging.info(conversation_id)
+    #             logging.info(attachment_title)
+    #             logging.info(filename)
+    #             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
+    #             file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+    #             msg = await get_chat_with_image(filename, prompt)
+    #             logging.info(msg)
+    #             await bot.chat.reply(conversation_id,msg_id, msg)
+    #
+    #             logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+    #     else:
+    #         msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
+    #         await bot.chat.reply(conversation_id, msg_id, msg)
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
-        msg_id = event.msg.id
-        team_name = event.msg.channel.name
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        if event.msg.content.text.reply_to:
-            logging.info("I have a reply")
-            original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-            logging.info(type(original_msg.message[0]['msg']['content']))
-            logging.info(original_msg.message[0]['msg']['sender']['username'])
-
-            if original_msg.message[0]['msg']['content']['type'] == "text":
-                prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-                         f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-                msg = await get_chat(prompt, team_name)
-                await bot.chat.reply(conversation_id, msg_id, msg)
-            elif original_msg.message[0]['msg']['content']['type'] == "attachment":
-
-                # Download the file
-                storage = Path('./storage')
-
-                prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
-                         f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-                org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
-
-                filename = f"{storage.absolute()}/{org_filename}"
-
-                # Download the file
-                logging.info("Trying to download")
-                attachment_title = original_msg.message[0]['msg']['content']['attachment']['object']['title']
-                logging.info(conversation_id)
-                logging.info(attachment_title)
-                logging.info(filename)
-                org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-                file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
-                msg = await get_chat_with_image(filename, prompt)
-                logging.info(msg)
-                await bot.chat.reply(conversation_id,msg_id, msg)
-
-                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-        else:
-            msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
-            await bot.chat.reply(conversation_id, msg_id, msg)
+        await handle_marvn_mention(bot, event)
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
