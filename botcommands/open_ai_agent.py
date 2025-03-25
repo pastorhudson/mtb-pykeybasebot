@@ -1,7 +1,7 @@
 from openai import OpenAI
 from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
-
-from botcommands.bible import get_esv_text
+import logging
+from pathlib import Path
 import json
 
 # Bot Command Imports
@@ -398,6 +398,7 @@ def get_ai_response(user_input: str):
         instructions='"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endearing in a comical dark humor way.'
     )
 
+
     if response.output:
         for item in response.output:
             if isinstance(item, ResponseFunctionToolCall) and item.type == "function_call":
@@ -405,24 +406,23 @@ def get_ai_response(user_input: str):
                 arguments = json.loads(item.arguments)
 
                 if function_name in FUNCTION_REGISTRY:
-                    function_to_call = FUNCTION_REGISTRY[function_name]  # Get function from registry
-                    return function_to_call(**arguments)  # Execute and return result
-                else:
-                    return f"⚠️ No registered function found for `{function_name}`."
+                    function_to_call = FUNCTION_REGISTRY[function_name]
+                    result = function_to_call(**arguments)
+                    return {"type": "text", "content": result}
+
+                return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
 
             elif isinstance(item, ResponseOutputMessage) and item.type == "message":
-                # Handle normal text responses
                 for content in item.content:
                     if isinstance(content, ResponseOutputText) and content.type == "output_text":
-                        return content.text  # Return AI's text response
+                        return {"type": "text", "content": content.text}
 
-    return "⚠️ No valid output was found in the response."
+            elif isinstance(item, ResponseOutputMessage) and item.type == "image":
+                for content in item.content:
+                    if content.type == "image":
+                        return {"type": "image", "url": content.url}
 
-
-import logging
-import os
-import json
-from pathlib import Path
+    return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
 
 async def handle_marvn_mention(bot, event):
@@ -438,22 +438,13 @@ async def handle_marvn_mention(bot, event):
     if event.msg.content.text.reply_to:
         logging.info("Processing a reply")
         original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-        logging.info(type(original_msg.message[0]['msg']['content']))
-        logging.info(original_msg.message[0]['msg']['sender']['username'])
 
         if original_msg.message[0]['msg']['content']['type'] == "text":
-            # Create prompt using both original & new messages
             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-            response = get_ai_response(prompt)  # Call AI
-
-            if response["type"] == "text":
-                await bot.chat.reply(conversation_id, msg_id, response["content"])
-            elif response["type"] == "image":
-                await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
+            response = get_ai_response(prompt)
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
-            # Handle Image Attachments (Download & Send to AI)
             storage = Path('./storage')
             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
                      f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
@@ -462,24 +453,23 @@ async def handle_marvn_mention(bot, event):
 
             logging.info("Downloading attachment...")
             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-            file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+            await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
 
-            # Send file & prompt to AI
             response = get_ai_response(f"{prompt} (Image: {filename})")
 
-            if response["type"] == "text":
-                await bot.chat.reply(conversation_id, msg_id, response["content"])
-            elif response["type"] == "image":
-                await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
-
     else:
-        # Standard Message (Not a reply)
         response = get_ai_response(str(event.msg.content.text.body)[7:])
 
+    # **Fix the TypeError by checking response type**
+    if isinstance(response, dict) and "type" in response:
         if response["type"] == "text":
             await bot.chat.reply(conversation_id, msg_id, response["content"])
         elif response["type"] == "image":
             await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
+        else:
+            await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
+    else:
+        await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
 
 
 # Example usage:
