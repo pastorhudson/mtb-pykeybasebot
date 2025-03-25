@@ -1,3 +1,5 @@
+import asyncio
+
 from openai import OpenAI
 from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
 import logging
@@ -370,36 +372,6 @@ new_tools = [
     }
 ]
 
-# Define available tools
-# tools = [{
-#     "name": "get_esv_text",
-#     "type": "function",
-#     "description": "Fetches the text of a specified Bible passage from the ESV API.",
-#     "strict": True,
-#     "parameters": {
-#         "type": "object",
-#         "required": ["passage", "plain_txt"],
-#         "properties": {
-#             "passage": {"type": "string", "description": "The Bible reference (e.g., 'john 3:16')."},
-#             "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
-#         },
-#         "additionalProperties": False
-#     }
-# },
-#     {"type": "web_search_preview"},
-#     {
-#         "name": "generate_dalle_image",
-#         "type": "function",
-#         "description": "Generates an image using DALL-E.",
-#         "parameters": {
-#             "type": "object",
-#             "required": ["prompt"],
-#             "properties": {
-#                 "prompt": {"type": "string", "description": "Text describing the image to generate."}
-#             }
-#         }
-#     }]
-
 
 def get_ai_response(user_input: str):
     """Handles OpenAI response and returns text instead of printing."""
@@ -438,51 +410,46 @@ def get_ai_response(user_input: str):
     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
 
-async def handle_marvn_mention(bot, event):
-    """Handles @Marvn mentions and responds using AI."""
-    msg_id = event.msg.id
-    team_name = event.msg.channel.name
-    conversation_id = event.msg.conv_id
+async def get_ai_response(user_input: str):
+    """Handles OpenAI response, calling functions dynamically based on async/sync type."""
 
-    # React to the mention
-    await bot.chat.react(conversation_id, msg_id, ":marvin:")
+    response = client.responses.create(
+        model="gpt-4o",
+        tools=new_tools,
+        input=user_input,
+        instructions="You are an AI assistant. Provide helpful and clear responses."
+    )
 
-    # Handle replies (if user is replying to a previous message)
-    if event.msg.content.text.reply_to:
-        logging.info("Processing a reply")
-        original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+    if response.output:
+        for item in response.output:
+            if isinstance(item, ResponseFunctionToolCall) and item.type == "function_call":
+                function_name = item.name
+                arguments = json.loads(item.arguments)
 
-        if original_msg.message[0]['msg']['content']['type'] == "text":
-            prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-                     f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-            response = get_ai_response(prompt)
+                if function_name in FUNCTION_REGISTRY:
+                    function_to_call = FUNCTION_REGISTRY[function_name]
 
-        elif original_msg.message[0]['msg']['content']['type'] == "attachment":
-            storage = Path('./storage')
-            prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
-                     f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-            org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
-            filename = f"{storage.absolute()}/{org_filename}"
+                    # **Handle Async & Sync Functions Properly**
+                    if asyncio.iscoroutinefunction(function_to_call):
+                        result = await function_to_call(**arguments)  # ✅ Await async functions
+                    else:
+                        result = function_to_call(**arguments)  # ✅ Call sync functions normally
 
-            logging.info("Downloading attachment...")
-            org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-            await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+                    return {"type": "text", "content": result}
 
-            response = get_ai_response(f"{prompt} (Image: {filename})")
+                return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
 
-    else:
-        response = get_ai_response(str(event.msg.content.text.body)[7:])
+            elif isinstance(item, ResponseOutputMessage) and item.type == "message":
+                for content in item.content:
+                    if isinstance(content, ResponseOutputText) and content.type == "output_text":
+                        return {"type": "text", "content": content.text}
 
-    # **Fix the TypeError by checking response type**
-    if isinstance(response, dict) and "type" in response:
-        if response["type"] == "text":
-            await bot.chat.reply(conversation_id, msg_id, response["content"])
-        elif response["type"] == "image":
-            await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
-        else:
-            await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
-    else:
-        await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+            elif isinstance(item, ResponseOutputMessage) and item.type == "image":
+                for content in item.content:
+                    if content.type == "image":
+                        return {"type": "image", "url": content.url}
+
+    return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
 
 # Example usage:
