@@ -354,25 +354,7 @@ new_tools = [
                 "url": {"type": "string", "description": "YouTube video URL."}
             }
         }
-    }
-]
-
-# Define available tools
-tools = [{
-    "name": "get_esv_text",
-    "type": "function",
-    "description": "Fetches the text of a specified Bible passage from the ESV API.",
-    "strict": True,
-    "parameters": {
-        "type": "object",
-        "required": ["passage", "plain_txt"],
-        "properties": {
-            "passage": {"type": "string", "description": "The Bible reference (e.g., 'john 3:16')."},
-            "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
-        },
-        "additionalProperties": False
-    }
-},
+    },
     {"type": "web_search_preview"},
     {
         "name": "generate_dalle_image",
@@ -385,7 +367,38 @@ tools = [{
                 "prompt": {"type": "string", "description": "Text describing the image to generate."}
             }
         }
-    }]
+    }
+]
+
+# Define available tools
+# tools = [{
+#     "name": "get_esv_text",
+#     "type": "function",
+#     "description": "Fetches the text of a specified Bible passage from the ESV API.",
+#     "strict": True,
+#     "parameters": {
+#         "type": "object",
+#         "required": ["passage", "plain_txt"],
+#         "properties": {
+#             "passage": {"type": "string", "description": "The Bible reference (e.g., 'john 3:16')."},
+#             "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
+#         },
+#         "additionalProperties": False
+#     }
+# },
+#     {"type": "web_search_preview"},
+#     {
+#         "name": "generate_dalle_image",
+#         "type": "function",
+#         "description": "Generates an image using DALL-E.",
+#         "parameters": {
+#             "type": "object",
+#             "required": ["prompt"],
+#             "properties": {
+#                 "prompt": {"type": "string", "description": "Text describing the image to generate."}
+#             }
+#         }
+#     }]
 
 
 def get_ai_response(user_input: str):
