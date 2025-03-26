@@ -19,6 +19,18 @@ def get_team(team_name):
     return team
 
 
+async def set_unfurl(bot, unfurl):
+    if unfurl:
+        furl = await bot.chat.execute(
+            {"method": "setunfurlsettings",
+             "params": {"options": {"mode": "always"}}})
+    else:
+        furl = await bot.chat.execute(
+            {"method": "setunfurlsettings",
+             "params": {"options": {"mode": "never"}}})
+    return
+
+
 async def download_image(pic_url, file_name='meh.png'):
     storage = Path('./storage')
 
