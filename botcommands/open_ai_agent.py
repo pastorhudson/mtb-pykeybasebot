@@ -529,17 +529,45 @@ async def handle_marvn_mention(bot, event, context=None):
         prompt = f"{message_text}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
         response = await get_ai_response(prompt, team_name, bot, event)
 
+    # # **Fix the TypeError by checking response type**
+    # if isinstance(response, dict) and "type" in response:
+    #     logging.info(f"Response: {response}")
+    #     if response["type"] == "text":
+    #         await bot.chat.reply(conversation_id, msg_id, response["content"])
+    #     elif response["type"] == "image":
+    #         await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]), title="Here's your image!")
+    #     else:
+    #         await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
+    # else:
+    #     await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+
     # **Fix the TypeError by checking response type**
+
+
     if isinstance(response, dict) and "type" in response:
         logging.info(f"Response: {response}")
         if response["type"] == "text":
-            await bot.chat.reply(conversation_id, msg_id, response["content"])
+            # If content is a string, use it directly
+            if isinstance(response["content"], str):
+                await bot.chat.reply(conversation_id, msg_id, response["content"])
+            # If content is a dict with 'msg' key, use that
+            elif isinstance(response["content"], dict) and "msg" in response["content"]:
+                await bot.chat.reply(conversation_id, msg_id, response["content"]["msg"])
+                # If there's also a file, attach it separately
+                if "file" in response["content"]:
+                    await bot.chat.attach(channel=conversation_id,
+                                          filename=response["content"]["file"],
+                                          title=response["content"]["msg"])
+            else:
+                await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid content format.")
         elif response["type"] == "image":
-            await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]), title="Here's your image!")
+            await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]),
+                                  title="Here's your image!")
         else:
             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
     else:
         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+
     await set_unfurl(bot, False)
 
 
