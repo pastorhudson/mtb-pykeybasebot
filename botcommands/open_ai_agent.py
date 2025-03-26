@@ -280,7 +280,15 @@ new_tools = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of possible answers."
-                }
+                },
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                },
+                "event": {
+                    "type": "object",
+                    "description": "The event object containing conversation details including sender, channel, and message information."
+                },
             }
         }
     },

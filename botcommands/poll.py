@@ -37,7 +37,8 @@ def make_poll(command):
     return msg, emojis
 
 
-def make_ai_poll(question, options):
+async def make_ai_poll(bot, event, question, options):
+    conversation_id = event.msg.conv_id
 
 
     msg = f"Stupid Poll: {question}\n"
@@ -49,7 +50,14 @@ def make_ai_poll(question, options):
             emojis.append(f":{get_moji(option_num)}:")
             option_num += 1
 
-    return msg, emojis
+    if not options:
+        await bot.chat.send(conversation_id, msg)
+    else:
+        poll_msg = await bot.chat.send(conversation_id, msg)
+        for emoji in emojis:
+            await bot.chat.react(conversation_id, poll_msg.message_id, emoji)
+
+    return
 
 
 if __name__ == "__main__":
