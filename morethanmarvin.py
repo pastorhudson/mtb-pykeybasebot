@@ -970,9 +970,8 @@ async def handler(bot, event):
         logging.info(pprint(event))
         await sync(event=event, bot=bot)
         conversation_id = event.msg.conv_id
-        mentions = event.msg.at_mentions
 
-        msg = f"Sigh. . . yes I'm still here. {mentions}"
+        msg = f"Sigh. . . yes I'm still here."
         members = await get_channel_members(conversation_id)
         msg += str(members)
         test_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
