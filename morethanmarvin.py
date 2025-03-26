@@ -22,7 +22,7 @@ from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from urllib.parse import urlparse
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
-from botcommands.cow_say import get_cow
+from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
 from botcommands.draw_dallie import generate_dalle_image
 from botcommands.drwho import get_drwho
@@ -643,7 +643,7 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-        msg = get_cow(str(event.msg.content.text.body)[5:])
+        msg = cowsay(str(event.msg.content.text.body)[5:])
         my_msg = await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith('!draw'):
