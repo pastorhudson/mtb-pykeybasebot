@@ -13,6 +13,7 @@ from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
 from botcommands.since import set_since, get_since, reset_since, reset_sign
 from botcommands.tldr import tldr_react, get_gpt_summary
+from botcommands.utils import download_image
 from botcommands.weather import get_weather
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from botcommands.covid import get_covid
@@ -576,7 +577,7 @@ async def handle_marvn_mention(bot, event):
         if response["type"] == "text":
             await bot.chat.reply(conversation_id, msg_id, response["content"])
         elif response["type"] == "image":
-            await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here's your image!")
+            await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]), title="Here's your image!")
         else:
             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
     else:
