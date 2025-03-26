@@ -103,51 +103,48 @@ FUNCTION_REGISTRY = {
 new_tools = [
     {
         "type": "function",
-        "function": {
-            "name": "award",
-            "description": "Awards points to a user in the team chat system. Points can only be given to users in the same chat, with restrictions on amount and format.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "bot": {
-                        "type": "object",
-                        "description": "The bot object that provides access to chat APIs for sending messages and reactions."
-                    },
-                    "event": {
-                        "type": "object",
-                        "description": "The event object containing conversation details including sender, channel, and message information."
-                    },
-                    "sender": {
-                        "type": "string",
-                        "description": "Username of the person giving the points."
-                    },
-                    "recipient": {
-                        "type": "string",
-                        "description": "Username of the person receiving the points. Must be a user in the current chat."
-                    },
-                    "team_members": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "List of usernames who are members of the team/chat."
-                    },
-                    "points": {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 5000,
-                        "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Brief explanation for why the points are being awarded."
-                    }
+        "name": "award",
+        "description": "Awards points to a user in the team chat system. Points can only be given to users in the same chat, with restrictions on amount and format.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
                 },
-                "required": ["bot", "event", "sender", "team_members", "points", "description"]
-            }
+                "event": {
+                    "type": "object",
+                    "description": "The event object containing conversation details including sender, channel, and message information."
+                },
+                "sender": {
+                    "type": "string",
+                    "description": "Username of the person giving the points."
+                },
+                "recipient": {
+                    "type": "string",
+                    "description": "Username of the person receiving the points. Must be a user in the current chat."
+                },
+                "team_members": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of usernames who are members of the team/chat."
+                },
+                "points": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5000,
+                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Brief explanation for why the points are being awarded."
+                }
+            },
+            "required": ["bot", "event", "sender", "team_members", "points", "description"]
         }
     },
-
     {
         "name": "get_esv_text",
         "type": "function",
