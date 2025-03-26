@@ -57,7 +57,6 @@ FUNCTION_REGISTRY = {
     "get_new_chuck": get_new_chuck,
     "get_cow": cowsay,
     "generate_dalle_image": generate_dalle_image,
-    "get_drwho": get_drwho,
     "get_eyebleach": get_eyebleach,
     # "get_academic_snapshot": get_academic_snapshot,
     "get_joke": get_joke,
@@ -206,18 +205,6 @@ new_tools = [
         }
     },
     {
-        "name": "get_drwho",
-        "type": "function",
-        "description": "Retrieve information about a Doctor Who episode.",
-        "parameters": {
-            "type": "object",
-            "required": ["query"],
-            "properties": {
-                "query": {"type": "string", "description": "Episode title or ID to search for."}
-            }
-        }
-    },
-    {
         "name": "get_eyebleach",
         "type": "function",
         "description": "Fetch images from r/eyebleach to improve mood.",
@@ -338,9 +325,9 @@ new_tools = [
         "description": "Get the current stardate (or convert from Earth date).",
         "parameters": {
             "type": "object",
-            "required": ["date"],
+            # "required": ["date"],
             "properties": {
-                "date": {"type": "string", "description": "Date to convert (optional)."}
+                "sd": {"type": "string", "description": "Date to convert (optional)."}
             }
         }
     },
