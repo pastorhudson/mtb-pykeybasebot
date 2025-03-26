@@ -408,20 +408,123 @@ new_tools = [
 ]
 
 
-async def get_ai_response(user_input: str, team_name, bot=None, event=None, context=None):
-    """Handles OpenAI responses dynamically, supporting both async and sync function calls."""
+# async def get_ai_response(user_input: str, team_name, bot=None, event=None, context=None):
+#     """Handles OpenAI responses dynamically, supporting both async and sync function calls."""
+#
+#     enhanced_seed = seed + """
+#     When processing commands, extract the relevant information from the user's message
+#     and call the appropriate function with the correct parameters.
+#     """
+#
+#     response = client.responses.create(
+#         model="gpt-4o",
+#         tools=new_tools,
+#         input=user_input,
+#         instructions=enhanced_seed
+#     )
+#
+#     if response.output:
+#         for item in response.output:
+#             if isinstance(item, ResponseFunctionToolCall) and item.type == "function_call":
+#                 function_name = item.name
+#                 arguments = json.loads(item.arguments)
+#
+#                 if function_name in FUNCTION_REGISTRY:
+#                     function_to_call = FUNCTION_REGISTRY[function_name]
+#
+#                     # Get function signature to check if it requires bot or event objects
+#                     import inspect
+#                     function_signature = inspect.signature(function_to_call)
+#                     param_names = list(function_signature.parameters.keys())
+#
+#                     # Automatically inject bot and event if the function accepts them
+#                     if "bot" in param_names and bot:
+#                         arguments["bot"] = bot
+#                     if "event" in param_names and event:
+#                         arguments["event"] = event
+#                     if "team_members" in param_names and bot and event:
+#                         arguments["team_members"] = await get_channel_members(event.msg.conv_id, bot)
+#                     if "sender" in param_names and event:
+#                         arguments["sender"] = event.msg.sender.username
+#
+#                     # Handle both asynchronous (async) and synchronous (sync) functions properly
+#                     if asyncio.iscoroutinefunction(function_to_call):
+#                         result = await function_to_call(**arguments)  # Await async functions
+#                     else:
+#                         result = function_to_call(**arguments)  # Call sync functions normally
+#
+#                     return {"type": "text", "content": result}
+#
+#                 return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
+#
+#             # Rest of response handling remains the same
+#             elif isinstance(item, ResponseOutputMessage) and item.type == "message":
+#                 for content in item.content:
+#                     if isinstance(content, ResponseOutputText) and content.type == "output_text":
+#                         return {"type": "text", "content": content.text}
+#
+#             elif isinstance(item, ResponseOutputMessage) and item.type == "image":
+#                 for content in item.content:
+#                     if content.type == "image":
+#                         return {"type": "image", "url": content.url}
+#
+#     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
+
+async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
+    """
+    Handles OpenAI responses dynamically, supporting both async and sync function calls.
+
+    Parameters:
+    user_input: str - The text prompt from the user
+    team_name: str - The team or channel name
+    image_path: str - Optional path to an image file to include with the request
+    bot: object - Bot instance for API calls
+    event: object - Event information for context
+    context: object - Additional context information
+    """
 
     enhanced_seed = seed + """
     When processing commands, extract the relevant information from the user's message
     and call the appropriate function with the correct parameters.
     """
 
-    response = client.responses.create(
-        model="gpt-4o",
-        tools=new_tools,
-        input=user_input,
-        instructions=enhanced_seed
-    )
+    # If there's an image, use the vision model API
+    if image_path and os.path.exists(image_path):
+        try:
+            # Read the image as base64
+            with open(image_path, "rb") as image_file:
+                import base64
+                base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+
+            # Create a content array with text and image
+            content = [
+                {"type": "text", "text": user_input},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{base64_image}"
+                    }
+                }
+            ]
+
+            # Call the vision model API
+            response = client.responses.create(
+                model="gpt-4o",  # Use a vision-capable model
+                tools=new_tools,
+                input=content,  # Pass the content array
+                instructions=enhanced_seed
+            )
+        except Exception as e:
+            logging.error(f"Error processing image: {str(e)}")
+            return {"type": "error", "content": f"⚠️ Error processing image: {str(e)}"}
+    else:
+        # Standard text-only API call
+        response = client.responses.create(
+            model="gpt-4o",
+            tools=new_tools,
+            input=user_input,
+            instructions=enhanced_seed
+        )
 
     if response.output:
         for item in response.output:
@@ -463,14 +566,14 @@ async def get_ai_response(user_input: str, team_name, bot=None, event=None, cont
                     if isinstance(content, ResponseOutputText) and content.type == "output_text":
                         return {"type": "text", "content": content.text}
 
-            elif isinstance(item, ResponseOutputMessage) and item.type == "image":
+            # Handle image outputs from the API
+            elif isinstance(item, ResponseOutputMessage) and item.type == "message":
                 for content in item.content:
-                    if content.type == "image":
+                    # Check if this is an image in the message content
+                    if hasattr(content, "type") and content.type == "image":
                         return {"type": "image", "url": content.url}
 
     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
-
-
 
 async def handle_marvn_mention(bot, event, context=None):
     """Handles @Marvn mentions and responds using AI."""
@@ -494,8 +597,71 @@ async def handle_marvn_mention(bot, event, context=None):
     # React to the mention
     await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
+    # Handle direct attachment uploads
+    try:
+        if event.msg.content.type_name == 'attachment':
+            storage = Path('./storage')
+            prompt = event.msg.content.attachment.object.title
+
+            # Check if the title starts with or contains "@marvn"
+            if "@marvn" in prompt:
+                # Remove the @marvn from the prompt
+                prompt = prompt.replace("@marvn", "").strip()
+
+                # Add metadata to the prompt
+                prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
+
+                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
+
+                # Download the file
+                logging.info(f"Downloading attachment: {filename}")
+                await bot.chat.download(conversation_id, msg_id, filename)
+
+                # Process the attachment with the AI - pass image path as separate parameter
+                response = await get_ai_response(
+                    user_input=prompt,
+                    team_name=team_name,
+                    image_path=filename,
+                    bot=bot,
+                    event=event
+                )
+
+                # Handle the response
+                if isinstance(response, dict) and "type" in response:
+                    if response["type"] == "text":
+                        if isinstance(response["content"], str):
+                            await bot.chat.reply(conversation_id, msg_id, response["content"])
+                        elif isinstance(response["content"], dict) and "msg" in response["content"]:
+                            await bot.chat.reply(conversation_id, msg_id, response["content"]["msg"])
+                            if "file" in response["content"]:
+                                await bot.chat.attach(channel=conversation_id,
+                                                      filename=response["content"]["file"],
+                                                      title=response["content"]["msg"])
+                        else:
+                            await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid content format.")
+                    elif response["type"] == "image":
+                        await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]),
+                                              title="Here's your image!")
+                    else:
+                        await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
+                else:
+                    await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+
+                await set_unfurl(bot, False)
+                return
+    except Exception as e:
+        logging.error(f"Error handling attachment: {str(e)}")
+        logging.error(f"Type: {type(e)}")
+        logging.debug("Not an attachment or error processing attachment")
+
+    # Continue with the original text message handling
     # Construct the prompt with the metadata
-    message_text = str(event.msg.content.text.body)[7:]  # Original message without the @marvn prefix
+    try:
+        message_text = str(event.msg.content.text.body)[7:]  # Original message without the @marvn prefix
+    except:
+        # If we can't get text content, it might not be a text message
+        await bot.chat.reply(conversation_id, msg_id, "⚠️ I couldn't process that message type.")
+        return
 
     # Handle replies (if user is replying to a previous message)
     if event.msg.content.text.reply_to:
@@ -507,7 +673,12 @@ async def handle_marvn_mention(bot, event, context=None):
                      f"{event.msg.sender.username}: {message_text}"
             # Add metadata to the prompt
             prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-            response = await get_ai_response(prompt, team_name, bot, event)
+            response = await get_ai_response(
+                user_input=prompt,
+                team_name=team_name,
+                bot=bot,
+                event=event
+            )
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
             storage = Path('./storage')
@@ -522,27 +693,24 @@ async def handle_marvn_mention(bot, event, context=None):
             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
 
-            response = await get_ai_response(f"{prompt} (Image: {filename})", team_name, bot, event)
+            # Pass image path as separate parameter
+            response = await get_ai_response(
+                user_input=prompt,
+                team_name=team_name,
+                image_path=filename,
+                bot=bot,
+                event=event
+            )
 
     else:
         # Add metadata to the prompt
         prompt = f"{message_text}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-        response = await get_ai_response(prompt, team_name, bot, event)
-
-    # # **Fix the TypeError by checking response type**
-    # if isinstance(response, dict) and "type" in response:
-    #     logging.info(f"Response: {response}")
-    #     if response["type"] == "text":
-    #         await bot.chat.reply(conversation_id, msg_id, response["content"])
-    #     elif response["type"] == "image":
-    #         await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]), title="Here's your image!")
-    #     else:
-    #         await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
-    # else:
-    #     await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
-
-    # **Fix the TypeError by checking response type**
-
+        response = await get_ai_response(
+            user_input=prompt,
+            team_name=team_name,
+            bot=bot,
+            event=event
+        )
 
     if isinstance(response, dict) and "type" in response:
         logging.info(f"Response: {response}")
@@ -569,6 +737,89 @@ async def handle_marvn_mention(bot, event, context=None):
         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
 
     await set_unfurl(bot, False)
+
+# async def handle_marvn_mention(bot, event, context=None):
+#     """Handles @Marvn mentions and responds using AI."""
+#     msg_id = event.msg.id
+#     team_name = event.msg.channel.name
+#     conversation_id = event.msg.conv_id
+#     members = await get_channel_members(conversation_id, bot)
+#
+#     sender = event.msg.sender.username
+#     mentions = event.msg.at_mention_usernames
+#
+#     # Add context about message metadata to help the model understand
+#     message_metadata = {
+#         "sender": sender,
+#         "mentions": mentions,
+#         "team_members": members,
+#         "conversation_id": conversation_id,
+#         # "Chat Context": context.get_context_for_bot()
+#     }
+#
+#     # React to the mention
+#     await bot.chat.react(conversation_id, msg_id, ":marvin:")
+#
+#     # Construct the prompt with the metadata
+#     message_text = str(event.msg.content.text.body)[7:]  # Original message without the @marvn prefix
+#
+#     # Handle replies (if user is replying to a previous message)
+#     if event.msg.content.text.reply_to:
+#         logging.info("Processing a reply")
+#         original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+#
+#         if original_msg.message[0]['msg']['content']['type'] == "text":
+#             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+#                      f"{event.msg.sender.username}: {message_text}"
+#             # Add metadata to the prompt
+#             prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
+#             response = await get_ai_response(prompt, team_name, bot, event)
+#
+#         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
+#             storage = Path('./storage')
+#             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
+#                      f"Question from {event.msg.sender.username}: {message_text}"
+#             # Add metadata to the prompt
+#             prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
+#             org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
+#             filename = f"{storage.absolute()}/{org_filename}"
+#
+#             logging.info("Downloading attachment...")
+#             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
+#             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+#
+#             response = await get_ai_response(f"{prompt} (Image: {filename})", team_name, bot, event)
+#
+#     else:
+#         # Add metadata to the prompt
+#         prompt = f"{message_text}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
+#         response = await get_ai_response(prompt, team_name, bot, event)
+#
+#     if isinstance(response, dict) and "type" in response:
+#         logging.info(f"Response: {response}")
+#         if response["type"] == "text":
+#             # If content is a string, use it directly
+#             if isinstance(response["content"], str):
+#                 await bot.chat.reply(conversation_id, msg_id, response["content"])
+#             # If content is a dict with 'msg' key, use that
+#             elif isinstance(response["content"], dict) and "msg" in response["content"]:
+#                 await bot.chat.reply(conversation_id, msg_id, response["content"]["msg"])
+#                 # If there's also a file, attach it separately
+#                 if "file" in response["content"]:
+#                     await bot.chat.attach(channel=conversation_id,
+#                                           filename=response["content"]["file"],
+#                                           title=response["content"]["msg"])
+#             else:
+#                 await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid content format.")
+#         elif response["type"] == "image":
+#             await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]),
+#                                   title="Here's your image!")
+#         else:
+#             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
+#     else:
+#         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+#
+#     await set_unfurl(bot, False)
 
 
 if __name__ == "__main__":
