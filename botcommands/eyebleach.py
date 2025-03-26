@@ -1,8 +1,11 @@
+import logging
 from pprint import pprint
 import os
 import requests
 import random
 from botcommands.utils import set_unfurl
+
+logger = logging.getLogger(__name__)
 
 
 def _fetch_bleach(count):
@@ -20,8 +23,10 @@ def _fetch_bleach(count):
 
 
 def get_eyebleach(bot=None, bleach_level=3):
-    if bot:
+    try:
         set_unfurl(bot, True)
+    except Exception as e:
+        logger.info(e)
     observations = [
         "Moving right along. . . ",
         "And now for a pallet cleansing. . .",
