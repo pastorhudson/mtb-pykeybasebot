@@ -151,6 +151,8 @@ async def award(bot, event, sender, recipient, team_members, points, description
                             f"You did it wrong.\n `-42` points deducted from  @{event.msg.sender.username} "
                             f"for trying to be cute.\n{instructions}")
 
+    return
+
 if __name__ == "__main__":
     pass
     # channel_members = {'owners': [{'uid': 'a5465087aede61be961a6bb3bf964f19', 'username': 'morethanmarvin', 'fullName': ''}, {'uid': 'f4089cdf5fc8ebe433d5b9f49b66d619', 'username': 'pastorhudson', 'fullName': 'Ron Hudson'}], 'admins': [], 'writers': [], 'readers': [], 'bots': [], 'restrictedBots': []}
