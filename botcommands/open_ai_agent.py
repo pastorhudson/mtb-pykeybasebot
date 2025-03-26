@@ -105,7 +105,7 @@ new_tools = [
     {
         "type": "function",
         "name": "award",
-        "description": "Awards points to a user in the team chat system. Points can only be given to users in the same chat, with restrictions on amount and format.",
+        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -123,7 +123,7 @@ new_tools = [
                 },
                 "recipient": {
                     "type": "string",
-                    "description": "Username of the person receiving the points. Must be a user in the current chat."
+                    "description": "Username of the person receiving the points (exactly as shown in the message)."
                 },
                 "team_members": {
                     "type": "array",
