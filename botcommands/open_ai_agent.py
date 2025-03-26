@@ -13,7 +13,7 @@ from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
 from botcommands.since import set_since, get_since, reset_since, reset_sign
 from botcommands.tldr import tldr_react, get_gpt_summary
-from botcommands.utils import download_image
+from botcommands.utils import download_image, set_unfurl
 from botcommands.weather import get_weather
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from botcommands.covid import get_covid
@@ -211,6 +211,10 @@ new_tools = [
             "type": "object",
             "required": ["bleach_level"],
             "properties": {
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                },
                 "bleach_level": {
                     "type": "integer",
                     "description": "Number of images to retrieve (1-11)."
@@ -526,6 +530,9 @@ async def handle_marvn_mention(bot, event):
             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
     else:
         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+    await set_unfurl(bot, False)
+
+
 if __name__ == "__main__":
     # Example usage:
     # result = await get_ai_response("tell me a joke")

@@ -2,6 +2,7 @@ from pprint import pprint
 import os
 import requests
 import random
+from botcommands.utils import set_unfurl
 
 
 def _fetch_bleach(count):
@@ -18,8 +19,9 @@ def _fetch_bleach(count):
         return []
 
 
-def get_eyebleach(bleach_level=3):
-
+def get_eyebleach(bot=None, bleach_level=3):
+    if bot:
+        set_unfurl(bot, True)
     observations = [
         "Moving right along. . . ",
         "And now for a pallet cleansing. . .",
