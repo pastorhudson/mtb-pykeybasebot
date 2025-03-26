@@ -39,8 +39,8 @@ def make_poll(command):
 
 def make_ai_poll(question, options):
 
-    try:
-        msg = f"Stupid Poll: {question}\n"
+
+    msg = f"Stupid Poll: {question}\n"
     option_num = 1
     emojis = []
     for index, option in enumerate(options):
