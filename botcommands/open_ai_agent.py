@@ -417,9 +417,9 @@ async def get_ai_response(user_input: str, team_name):
 
                     # Handle both asynchronous (async) and synchronous (sync) functions properly
                     if asyncio.iscoroutinefunction(function_to_call):
-                            result = await function_to_call(**arguments)  # Await async functions
-                        else:
-                            result = function_to_call(**arguments)  # Call sync functions normally
+                        result = await function_to_call(**arguments)  # Await async functions
+                    else:
+                        result = function_to_call(**arguments)  # Call sync functions normally
 
                     return {"type": "text", "content": result}
 

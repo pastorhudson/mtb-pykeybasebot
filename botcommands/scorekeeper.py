@@ -100,7 +100,7 @@ def RepresentsInt(s):
         return False
 
 
-async def award(event, sender, recipient, team_members, points, message):
+async def award(bot, event, sender, recipient, team_members, points, description):
 
     pts_max = 5000
 
@@ -116,7 +116,8 @@ async def award(event, sender, recipient, team_members, points, message):
     conversation_id = event.msg.conv_id
     user = event.msg.sender.username
     team_name = event.msg.channel.name
-    members = await get_channel_members(conversation_id, bot)
+    message_id = event.msg.id
+
 
     if not recipient:
         recipient = event.msg.at_mention_usernames[0]
@@ -131,13 +132,13 @@ async def award(event, sender, recipient, team_members, points, message):
             user = event.msg.sender.username
             return f"`-500` points awarded to @{user}. I'm the only negative one around here."
 
-        if user in members:
+        if user in team_members:
             logging.info("User is in members")
         if user != event.msg.sender.username:
             logging.info(f"{event.msg.sender.username} is not {user}")
         if points <= pts_max:
             logging.info(f"{points} is less than or equal to {pts_max}")
-        if user in members and user != event.msg.sender.username and points <= pts_max:
+        if user in team_members and user != event.msg.sender.username and points <= pts_max:
             score = write_score(user, event.msg.sender.username, team_name, points, description=description)
             await bot.chat.react(conversation_id, msg_id, ":marvin:")
 
