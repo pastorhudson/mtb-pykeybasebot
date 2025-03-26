@@ -25,7 +25,6 @@ from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
-# from botcommands.cow_characters import get_characters
 # from botcommands.morningreport import get_morningreport
 # from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
@@ -55,7 +54,7 @@ FUNCTION_REGISTRY = {
     "get_esv_text": get_esv_text,
     "get_morse_code": get_morse_code,
     "get_new_chuck": get_new_chuck,
-    "get_cow": cowsay,
+    "cowsay": cowsay,
     "generate_dalle_image": generate_dalle_image,
     "get_eyebleach": get_eyebleach,
     # "get_academic_snapshot": get_academic_snapshot,
@@ -181,7 +180,7 @@ new_tools = [
         }
     },
     {
-        "name": "get_cow",
+        "name": "cowsay",
         "type": "function",
         "description": "Generate ASCII art of a cow saying something.",
         "parameters": {
