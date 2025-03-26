@@ -24,9 +24,9 @@ from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
-from botcommands.cow_characters import get_characters
-from botcommands.morningreport import get_morningreport
-from botcommands.scorekeeper import get_score, write_score, sync_score
+# from botcommands.cow_characters import get_characters
+# from botcommands.morningreport import get_morningreport
+# from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
@@ -95,8 +95,8 @@ FUNCTION_REGISTRY = {
     "reset_sign": reset_sign,
     "tldr_react": tldr_react,
     "get_gpt_summary": get_gpt_summary,
-    "write_score": write_score,
-    "sync_score": sync_score,
+    # "write_score": write_score,
+    # "sync_score": sync_score,
     "get_members": get_members,
 }
 
@@ -104,7 +104,7 @@ new_tools = [
     {
         "type": "function",
         "function": {
-            "name": "award_points",
+            "name": "award",
             "description": "Awards points to a user in the team chat system. Points can only be given to users in the same chat, with restrictions on amount and format.",
             "parameters": {
                 "type": "object",
