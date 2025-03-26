@@ -121,7 +121,7 @@ new_tools = [
                 },
                 "recipient": {
                     "type": "string",
-                    "description": "Username of the person receiving the points (exactly as shown in the message)."
+                    "description": "Username of the person receiving the points (exactly as shown in the message). make sure you use recipient as the keyword argument."
                 },
                 "team_members": {
                     "type": "array",
