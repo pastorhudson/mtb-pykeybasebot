@@ -43,7 +43,7 @@ from botcommands.get_grades import get_academic_snapshot
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
-from botcommands.award_activity_points import award_activity_points
+# from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import solve_wordle
@@ -231,7 +231,7 @@ async def handler(bot, event):
     ]
 
     #award points based on activity
-    await award_activity_points(event=event)
+    # await award_activity_points(event=event)
 
     try:
         if event.msg.content.type_name == 'attachment':
