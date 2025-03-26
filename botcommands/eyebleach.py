@@ -22,9 +22,9 @@ def _fetch_bleach(count):
         return []
 
 
-def get_eyebleach(bot=None, bleach_level=3):
+async def get_eyebleach(bot=None, bleach_level=3):
     try:
-        set_unfurl(bot, True)
+        await set_unfurl(bot, True)
     except Exception as e:
         logger.info(e)
     observations = [

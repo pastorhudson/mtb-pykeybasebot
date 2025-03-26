@@ -52,11 +52,13 @@ from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
 from datetime import timedelta
 from botcommands.open_ai_agent import handle_marvn_mention
+from botcommands.ai_context import ChatContextManager
 
 
 
 
 logging.basicConfig(level=logging.DEBUG)
+context = ChatContextManager()
 
 if "win32" in sys.platform:
     # Windows specific event-loop policy
@@ -491,6 +493,8 @@ async def handler(bot, event):
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
 
+    context.add_message(event.msg.content.text.body)
+
     if str(event.msg.content.text.body).startswith("!award"):
         await sync(event=event, bot=bot)
 
@@ -592,7 +596,7 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
         await sync(event=event, bot=bot)
 
-        asyncio.create_task(handle_marvn_mention(bot, event))
+        asyncio.create_task(handle_marvn_mention(bot, event, context))
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id

@@ -408,7 +408,7 @@ new_tools = [
 ]
 
 
-async def get_ai_response(user_input: str, team_name, bot=None, event=None):
+async def get_ai_response(user_input: str, team_name, bot=None, event=None, context=None):
     """Handles OpenAI responses dynamically, supporting both async and sync function calls."""
 
     enhanced_seed = seed + """
@@ -472,7 +472,7 @@ async def get_ai_response(user_input: str, team_name, bot=None, event=None):
 
 
 
-async def handle_marvn_mention(bot, event):
+async def handle_marvn_mention(bot, event, context=None):
     """Handles @Marvn mentions and responds using AI."""
     msg_id = event.msg.id
     team_name = event.msg.channel.name
@@ -487,7 +487,8 @@ async def handle_marvn_mention(bot, event):
         "sender": sender,
         "mentions": mentions,
         "team_members": members,
-        "conversation_id": conversation_id
+        "conversation_id": conversation_id,
+        "Chat Context": context.get_context_for_bot()
     }
 
     # React to the mention
