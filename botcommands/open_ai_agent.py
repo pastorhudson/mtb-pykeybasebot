@@ -35,15 +35,18 @@ from botcommands.sync import sync
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_poll
-from botcommands.award_activity_points import award_activity_points
+from botcommands.scorekeeper import award
 from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 from botcommands.wordle import solve_wordle
 from botcommands.send_queue import process_message_queue
+from pykeybasebot.utils import get_channel_members
+
 # from botcommands.curl_commands import get_curl, extract_message_sender
 
 # Initialize OpenAI client
 client = OpenAI()
+seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
 
 # Define function registry (mapping function names to actual implementations)
 # Function Registry: Maps command names to their respective functions
@@ -76,7 +79,7 @@ FUNCTION_REGISTRY = {
     "make_bet": make_bet,
     "payout_wager": payout_wager,
     "sync": sync,
-    "award_activity_points": award_activity_points,
+    # "award_activity_points": award_activity_points,
     "is_morning_report": is_morning_report,
     "write_morning_report_task": write_morning_report_task,
     # "get_grades": get_academic_snapshot,
@@ -99,17 +102,37 @@ FUNCTION_REGISTRY = {
 
 new_tools = [
     {
-        "name": "award_activity_points",
         "type": "function",
-        "description": "Award points based on user activity.",
-        "parameters": {
-            "type": "object",
-            "required": ["event"],
-            "properties": {
-                "event": {"type": "object", "description": "The event triggering the point award."}
+        "function": {
+            "name": "awardPoints",
+            "description": "Awards a specified number of points to a user in a chat, following predefined rules.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "sender": {
+                        "type": "string",
+                        "description": "The username of the sender awarding points."
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "description": "The username of the recipient receiving points."
+                    },
+                    "points": {
+                        "type": "integer",
+                        "description": "The number of points to be awarded. Must be a whole number between 1 and 5000.",
+                        "minimum": 1,
+                        "maximum": 5000
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The reason for awarding the points."
+                    }
+                },
+                "required": ["sender", "recipient", "points"]
             }
         }
     },
+
     {
         "name": "get_esv_text",
         "type": "function",
@@ -372,45 +395,15 @@ new_tools = [
     }
 ]
 
-# Define available tools
-# tools = [{
-#     "name": "get_esv_text",
-#     "type": "function",
-#     "description": "Fetches the text of a specified Bible passage from the ESV API.",
-#     "strict": True,
-#     "parameters": {
-#         "type": "object",
-#         "required": ["passage", "plain_txt"],
-#         "properties": {
-#             "passage": {"type": "string", "description": "The Bible reference (e.g., 'john 3:16')."},
-#             "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
-#         },
-#         "additionalProperties": False
-#     }
-# },
-#     {"type": "web_search_preview"},
-#     {
-#         "name": "generate_dalle_image",
-#         "type": "function",
-#         "description": "Generates an image using DALL-E.",
-#         "parameters": {
-#             "type": "object",
-#             "required": ["prompt"],
-#             "properties": {
-#                 "prompt": {"type": "string", "description": "Text describing the image to generate."}
-#             }
-#         }
-#     }]
 
-
-async def get_ai_response(user_input: str):
-    """Handles OpenAI response, calling functions dynamically based on async/sync type."""
+async def get_ai_response(user_input: str, team_name):
+    """Handles OpenAI responses dynamically, supporting both async and sync function calls."""
 
     response = client.responses.create(
         model="gpt-4o",
         tools=new_tools,
         input=user_input,
-        instructions="You are an AI assistant. Provide helpful and clear responses."
+        instructions=seed
     )
 
     if response.output:
@@ -422,11 +415,11 @@ async def get_ai_response(user_input: str):
                 if function_name in FUNCTION_REGISTRY:
                     function_to_call = FUNCTION_REGISTRY[function_name]
 
-                    # **Handle Async & Sync Functions Properly**
+                    # Handle both asynchronous (async) and synchronous (sync) functions properly
                     if asyncio.iscoroutinefunction(function_to_call):
-                        result = await function_to_call(**arguments)  # ✅ Await async functions
-                    else:
-                        result = function_to_call(**arguments)  # ✅ Call sync functions normally
+                            result = await function_to_call(**arguments)  # Await async functions
+                        else:
+                            result = function_to_call(**arguments)  # Call sync functions normally
 
                     return {"type": "text", "content": result}
 
@@ -450,6 +443,10 @@ async def handle_marvn_mention(bot, event):
     msg_id = event.msg.id
     team_name = event.msg.channel.name
     conversation_id = event.msg.conv_id
+    members = await get_channel_members(conversation_id, bot)
+
+    sender = event.msg.sender.username
+    mentions = event.msg.at_mention_usernames
 
     # React to the mention
     await bot.chat.react(conversation_id, msg_id, ":marvin:")
@@ -462,7 +459,7 @@ async def handle_marvn_mention(bot, event):
         if original_msg.message[0]['msg']['content']['type'] == "text":
             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-            response = await get_ai_response(prompt)
+            response = await get_ai_response(prompt, team_name)
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
             storage = Path('./storage')
@@ -475,10 +472,10 @@ async def handle_marvn_mention(bot, event):
             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
 
-            response = await get_ai_response(f"{prompt} (Image: {filename})")
+            response = await get_ai_response(f"{prompt} (Image: {filename})", team_name)
 
     else:
-        response = await get_ai_response(str(event.msg.content.text.body)[7:])
+        response = await get_ai_response(str(event.msg.content.text.body)[7:], team_name)
 
     # **Fix the TypeError by checking response type**
     if isinstance(response, dict) and "type" in response:
