@@ -580,6 +580,7 @@ async def handle_marvn_mention(bot, event):
 
     # **Fix the TypeError by checking response type**
     if isinstance(response, dict) and "type" in response:
+        logging.info(f"Response: {response}")
         if response["type"] == "text":
             await bot.chat.reply(conversation_id, msg_id, response["content"])
         elif response["type"] == "image":
