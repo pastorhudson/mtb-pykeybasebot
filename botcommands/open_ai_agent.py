@@ -409,22 +409,12 @@ new_tools = [
 ]
 
 
-
-
-async def get_ai_response(user_input: str, team_name):
+async def get_ai_response(user_input: str, team_name, bot=None, event=None):
     """Handles OpenAI responses dynamically, supporting both async and sync function calls."""
 
-    # Enhanced instruction specifically for award commands
     enhanced_seed = seed + """
-    
-    When processing messages about awarding points:
-    1. The SENDER is always the username of the person who sent the message (found in MESSAGE_METADATA)
-    2. The RECIPIENT is the username mentioned in the message with @ symbol
-    3. If someone tries to award points to themselves, inform them this is not allowed
-    4. Extract the points value (must be a number between 1-5000) and the description
-    5. Call the award function with these parameters
-    
-    Example command pattern: "hook @username up with X points for [description]"
+    When processing commands, extract the relevant information from the user's message
+    and call the appropriate function with the correct parameters.
     """
 
     response = client.responses.create(
@@ -443,6 +433,21 @@ async def get_ai_response(user_input: str, team_name):
                 if function_name in FUNCTION_REGISTRY:
                     function_to_call = FUNCTION_REGISTRY[function_name]
 
+                    # Get function signature to check if it requires bot or event objects
+                    import inspect
+                    function_signature = inspect.signature(function_to_call)
+                    param_names = list(function_signature.parameters.keys())
+
+                    # Automatically inject bot and event if the function accepts them
+                    if "bot" in param_names and bot:
+                        arguments["bot"] = bot
+                    if "event" in param_names and event:
+                        arguments["event"] = event
+                    if "team_members" in param_names and bot and event:
+                        arguments["team_members"] = await get_channel_members(event.msg.conv_id, bot)
+                    if "sender" in param_names and event:
+                        arguments["sender"] = event.msg.sender.username
+
                     # Handle both asynchronous (async) and synchronous (sync) functions properly
                     if asyncio.iscoroutinefunction(function_to_call):
                         result = await function_to_call(**arguments)  # Await async functions
@@ -453,6 +458,7 @@ async def get_ai_response(user_input: str, team_name):
 
                 return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
 
+            # Rest of response handling remains the same
             elif isinstance(item, ResponseOutputMessage) and item.type == "message":
                 for content in item.content:
                     if isinstance(content, ResponseOutputText) and content.type == "output_text":
