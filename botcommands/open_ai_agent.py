@@ -488,7 +488,7 @@ async def handle_marvn_mention(bot, event, context=None):
         "mentions": mentions,
         "team_members": members,
         "conversation_id": conversation_id,
-        "Chat Context": context.get_context_for_bot()
+        # "Chat Context": context.get_context_for_bot()
     }
 
     # React to the mention
