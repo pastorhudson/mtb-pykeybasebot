@@ -5,7 +5,7 @@ from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessa
 import logging
 from pathlib import Path
 import json
-
+import os
 # Bot Command Imports
 from botcommands.morse import get_morse_code
 # from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
