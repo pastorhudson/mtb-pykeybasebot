@@ -556,7 +556,7 @@ async def handle_marvn_mention(bot, event):
                      f"{event.msg.sender.username}: {message_text}"
             # Add metadata to the prompt
             prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-            response = await get_ai_response(prompt, team_name)
+            response = await get_ai_response(prompt, team_name, bot, event)
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
             storage = Path('./storage')
@@ -571,12 +571,12 @@ async def handle_marvn_mention(bot, event):
             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
 
-            response = await get_ai_response(f"{prompt} (Image: {filename})", team_name)
+            response = await get_ai_response(f"{prompt} (Image: {filename})", team_name, bot, event)
 
     else:
         # Add metadata to the prompt
         prompt = f"{message_text}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-        response = await get_ai_response(prompt, team_name)
+        response = await get_ai_response(prompt, team_name, bot, event)
 
     # **Fix the TypeError by checking response type**
     if isinstance(response, dict) and "type" in response:
