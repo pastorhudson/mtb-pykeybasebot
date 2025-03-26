@@ -209,7 +209,7 @@ new_tools = [
         "description": "Fetch images from r/eyebleach to improve mood.",
         "parameters": {
             "type": "object",
-            "required": ["bleach_level"],
+            "required": ["bot", "bleach_level"],
             "properties": {
                 "bot": {
                     "type": "object",
@@ -219,7 +219,8 @@ new_tools = [
                     "type": "integer",
                     "description": "Number of images to retrieve (1-11)."
                 }
-            }
+            },
+
         }
     },
     # {
