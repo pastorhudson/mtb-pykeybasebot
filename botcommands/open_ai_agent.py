@@ -408,14 +408,29 @@ new_tools = [
 ]
 
 
+
+
 async def get_ai_response(user_input: str, team_name):
     """Handles OpenAI responses dynamically, supporting both async and sync function calls."""
+
+    # Enhanced instruction specifically for award commands
+    enhanced_seed = seed + """
+    
+    When processing messages about awarding points:
+    1. The SENDER is always the username of the person who sent the message (found in MESSAGE_METADATA)
+    2. The RECIPIENT is the username mentioned in the message with @ symbol
+    3. If someone tries to award points to themselves, inform them this is not allowed
+    4. Extract the points value (must be a number between 1-5000) and the description
+    5. Call the award function with these parameters
+    
+    Example command pattern: "hook @username up with X points for [description]"
+    """
 
     response = client.responses.create(
         model="gpt-4o",
         tools=new_tools,
         input=user_input,
-        instructions=seed
+        instructions=enhanced_seed
     )
 
     if response.output:
@@ -450,6 +465,56 @@ async def get_ai_response(user_input: str, team_name):
     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
 
+# async def handle_marvn_mention(bot, event):
+#     """Handles @Marvn mentions and responds using AI."""
+#     msg_id = event.msg.id
+#     team_name = event.msg.channel.name
+#     conversation_id = event.msg.conv_id
+#     members = await get_channel_members(conversation_id, bot)
+#
+#     sender = event.msg.sender.username
+#     mentions = event.msg.at_mention_usernames
+#
+#     # React to the mention
+#     await bot.chat.react(conversation_id, msg_id, ":marvin:")
+#
+#     # Handle replies (if user is replying to a previous message)
+#     if event.msg.content.text.reply_to:
+#         logging.info("Processing a reply")
+#         original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+#
+#         if original_msg.message[0]['msg']['content']['type'] == "text":
+#             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
+#                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+#             response = await get_ai_response(prompt, team_name)
+#
+#         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
+#             storage = Path('./storage')
+#             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
+#                      f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+#             org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
+#             filename = f"{storage.absolute()}/{org_filename}"
+#
+#             logging.info("Downloading attachment...")
+#             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
+#             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+#
+#             response = await get_ai_response(f"{prompt} (Image: {filename})", team_name)
+#
+#     else:
+#         response = await get_ai_response(str(event.msg.content.text.body)[7:], team_name)
+#
+#     # **Fix the TypeError by checking response type**
+#     if isinstance(response, dict) and "type" in response:
+#         if response["type"] == "text":
+#             await bot.chat.reply(conversation_id, msg_id, response["content"])
+#         elif response["type"] == "image":
+#             await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
+#         else:
+#             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
+#     else:
+#         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+
 async def handle_marvn_mention(bot, event):
     """Handles @Marvn mentions and responds using AI."""
     msg_id = event.msg.id
@@ -460,8 +525,19 @@ async def handle_marvn_mention(bot, event):
     sender = event.msg.sender.username
     mentions = event.msg.at_mention_usernames
 
+    # Add context about message metadata to help the model understand
+    message_metadata = {
+        "sender": sender,
+        "mentions": mentions,
+        "team_members": members,
+        "conversation_id": conversation_id
+    }
+
     # React to the mention
     await bot.chat.react(conversation_id, msg_id, ":marvin:")
+
+    # Construct the prompt with the metadata
+    message_text = str(event.msg.content.text.body)[7:]  # Original message without the @marvn prefix
 
     # Handle replies (if user is replying to a previous message)
     if event.msg.content.text.reply_to:
@@ -470,13 +546,17 @@ async def handle_marvn_mention(bot, event):
 
         if original_msg.message[0]['msg']['content']['type'] == "text":
             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-                     f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+                     f"{event.msg.sender.username}: {message_text}"
+            # Add metadata to the prompt
+            prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
             response = await get_ai_response(prompt, team_name)
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
             storage = Path('./storage')
             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
-                     f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
+                     f"Question from {event.msg.sender.username}: {message_text}"
+            # Add metadata to the prompt
+            prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
             org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
             filename = f"{storage.absolute()}/{org_filename}"
 
@@ -487,20 +567,20 @@ async def handle_marvn_mention(bot, event):
             response = await get_ai_response(f"{prompt} (Image: {filename})", team_name)
 
     else:
-        response = await get_ai_response(str(event.msg.content.text.body)[7:], team_name)
+        # Add metadata to the prompt
+        prompt = f"{message_text}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
+        response = await get_ai_response(prompt, team_name)
 
     # **Fix the TypeError by checking response type**
     if isinstance(response, dict) and "type" in response:
         if response["type"] == "text":
             await bot.chat.reply(conversation_id, msg_id, response["content"])
         elif response["type"] == "image":
-            await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
+            await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here's your image!")
         else:
             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
     else:
         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
-
-
 if __name__ == "__main__":
     # Example usage:
     # result = await get_ai_response("tell me a joke")
