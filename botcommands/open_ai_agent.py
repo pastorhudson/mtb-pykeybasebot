@@ -18,7 +18,7 @@ from botcommands.weather import get_weather
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
-from botcommands.cow_say import get_cow
+from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
 from botcommands.draw_dallie import generate_dalle_image
 from botcommands.drwho import get_drwho
@@ -55,7 +55,7 @@ FUNCTION_REGISTRY = {
     "get_esv_text": get_esv_text,
     "get_morse_code": get_morse_code,
     "get_new_chuck": get_new_chuck,
-    "get_cow": get_cow,
+    "get_cow": cowsay,
     "generate_dalle_image": generate_dalle_image,
     "get_drwho": get_drwho,
     "get_eyebleach": get_eyebleach,
@@ -472,55 +472,6 @@ async def get_ai_response(user_input: str, team_name, bot=None, event=None):
     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
 
-# async def handle_marvn_mention(bot, event):
-#     """Handles @Marvn mentions and responds using AI."""
-#     msg_id = event.msg.id
-#     team_name = event.msg.channel.name
-#     conversation_id = event.msg.conv_id
-#     members = await get_channel_members(conversation_id, bot)
-#
-#     sender = event.msg.sender.username
-#     mentions = event.msg.at_mention_usernames
-#
-#     # React to the mention
-#     await bot.chat.react(conversation_id, msg_id, ":marvin:")
-#
-#     # Handle replies (if user is replying to a previous message)
-#     if event.msg.content.text.reply_to:
-#         logging.info("Processing a reply")
-#         original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-#
-#         if original_msg.message[0]['msg']['content']['type'] == "text":
-#             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-#                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-#             response = await get_ai_response(prompt, team_name)
-#
-#         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
-#             storage = Path('./storage')
-#             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
-#                      f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-#             org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
-#             filename = f"{storage.absolute()}/{org_filename}"
-#
-#             logging.info("Downloading attachment...")
-#             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-#             await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
-#
-#             response = await get_ai_response(f"{prompt} (Image: {filename})", team_name)
-#
-#     else:
-#         response = await get_ai_response(str(event.msg.content.text.body)[7:], team_name)
-#
-#     # **Fix the TypeError by checking response type**
-#     if isinstance(response, dict) and "type" in response:
-#         if response["type"] == "text":
-#             await bot.chat.reply(conversation_id, msg_id, response["content"])
-#         elif response["type"] == "image":
-#             await bot.chat.attach(channel=conversation_id, filename=response["url"], title="Here’s your image!")
-#         else:
-#             await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
-#     else:
-#         await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
 
 async def handle_marvn_mention(bot, event):
     """Handles @Marvn mentions and responds using AI."""

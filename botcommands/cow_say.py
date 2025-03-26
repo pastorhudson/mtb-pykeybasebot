@@ -1,55 +1,65 @@
-import requests
-import random
-import json
-from botcommands.cow_characters import get_characters
-import cowsay
-
-
-def py_cow(msg):
-    characters = cowsay.chars
-    for c in characters:
-        print(c("This is a test"))
-
-
-def get_cow(msg):
-    characters = get_characters()
-
-    """faces     'default' => ["oo", "  "],
-    'borg' => ["==", "  "],
-    'dead' => ["==", "U "],
-    'greedy' => ["$$", "  "],
-    'paranoid' => ["@@", "  "],
-    'stoned' => ["**", "U "],
-    'tired' => ["--", "  "],
-    'wired' => ["OO", "  "],
-    'young' => ["..", "  "]
+def cowsay(text, width=30):
     """
-    # print(characters)
-    character = random.choice(get_characters())
-    # print(msg.split(" ")[0])
-    if msg.split(" ")[0] in characters:
-        character = msg.split(" ")[0]
-        # print(character)
-        char_length = len(character) + 1
-        msg = msg[char_length:]
-    url = "https://marvn.app/say"
-    payload = {"message": msg, "cow": character, "balloon_type": "say", "face_type": "default"}
-    # print(payload)
-    # payload = {"message": msg}
-    response = requests.post(url, json=payload)
+    Generate cowsay ASCII art with the given text in a speech bubble.
 
-    observations = [
-        "I can't believe you've done this.",
-        "This is a new low.",
-        "I'm so embarrassed.",
-        "What were you thinking? You monster. . . "
+    Args:
+        text (str): The text to be displayed in the speech bubble.
+        width (int, optional): Maximum width of the speech bubble. Defaults to 40.
+
+    Returns:
+        str: The complete cowsay ASCII art as a string.
+    """
+    # Wrap the text to fit within the specified width
+    lines = []
+    current_line = ""
+
+    for word in text.split():
+        if len(current_line) + len(word) + 1 <= width:
+            if current_line:
+                current_line += " " + word
+            else:
+                current_line = word
+        else:
+            lines.append(current_line)
+            current_line = word
+
+    if current_line:
+        lines.append(current_line)
+
+    # Create the speech bubble
+    bubble = []
+
+    if len(lines) == 1:
+        bubble.append(f"< {lines[0]} >")
+    else:
+        bubble.append(f"/ {lines[0]} {' ' * (width - len(lines[0]) - 2)}\\")
+
+        for line in lines[1:-1]:
+            padding = width - len(line) - 2
+            bubble.append(f"| {line}{' ' * padding} |")
+
+        bubble.append(f"\\ {lines[-1]} {' ' * (width - len(lines[-1]) - 2)}/")
+
+    # Create the top and bottom borders of the speech bubble
+    bubble_width = max(len(line) for line in bubble)
+    bubble.insert(0, " " + "_" * (bubble_width - 2))
+    bubble.append(" " + "-" * (bubble_width - 2))
+
+    # Create the cow
+    cow = [
+        "        \\   ^__^",
+        "         \\  (oo)\\_______",
+        "            (__)\\       )\\/\\",
+        "                ||----w |",
+        "                ||     ||"
     ]
-    msg = random.choice(observations)
-    msg += f"```{response.json()['message']}```"
-    return msg
+
+    # Combine the speech bubble and cow
+    combined = "\n".join(bubble + cow)
+    return f"```{combined}```"
 
 
+# Example usage
 if __name__ == "__main__":
-    print("Test")
-    print(py_cow("This test"))
-
+    message = "Hello! I'm a cow saying things through Python code!"
+    print(cowsay(message))
