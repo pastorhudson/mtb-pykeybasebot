@@ -138,9 +138,10 @@ async def award(bot, event, sender, recipient, team_members, points, description
             logging.info(f"{event.msg.sender.username} is not {user}")
         if points <= pts_max:
             logging.info(f"{points} is less than or equal to {pts_max}")
-        if user in team_members and user != event.msg.sender.username and points <= pts_max:
-            score = write_score(user, event.msg.sender.username, team_name, points, description=description)
-            await bot.chat.react(conversation_id, msg_id, ":marvin:")
+        if recipient in team_members and recipient != event.msg.sender.username and points <= pts_max:
+            score = write_score(recipient, event.msg.sender.username, team_name, points, description=description)
+
+            await bot.chat.react(conversation_id, message_id, ":marvin:")
 
         else:
             await bot.chat.send(conversation_id, instructions)
