@@ -1,9 +1,9 @@
-def cowsay(text, width=30):
+def cowsay(message, width=30):
     """
     Generate cowsay ASCII art with the given text in a speech bubble.
 
     Args:
-        text (str): The text to be displayed in the speech bubble.
+        message (str): The text to be displayed in the speech bubble.
         width (int, optional): Maximum width of the speech bubble. Defaults to 40.
 
     Returns:
@@ -13,7 +13,7 @@ def cowsay(text, width=30):
     lines = []
     current_line = ""
 
-    for word in text.split():
+    for word in message.split():
         if len(current_line) + len(word) + 1 <= width:
             if current_line:
                 current_line += " " + word
