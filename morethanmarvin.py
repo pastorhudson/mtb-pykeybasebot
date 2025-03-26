@@ -235,30 +235,30 @@ async def handler(bot, event):
     #award points based on activity
     # await award_activity_points(event=event)
 
-    try:
-        if event.msg.content.type_name == 'attachment':
-            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
-                storage = Path('./storage')
-                conversation_id = event.msg.conv_id
-                await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-                message_id = event.msg.id
-                logging.info(f"Event msg id: {message_id}")
-                prompt = event.msg.content.attachment.object.title
-                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
-
-                # Download the file
-                logging.info("Trying to download")
-
-                await bot.chat.download(conversation_id, message_id, filename)
-                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-                msg = await get_chat_with_image(filename, prompt)
-                await bot.chat.reply(conversation_id, event.msg.id, msg)
-
-    except Exception as e:
-        print(e)
-        print(type(e))
-        print("Not an attachment")
+    # try:
+    #     if event.msg.content.type_name == 'attachment':
+    #         if str(event.msg.content.attachment.object.title).startswith("@marvn"):
+    #             storage = Path('./storage')
+    #             conversation_id = event.msg.conv_id
+    #             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #             message_id = event.msg.id
+    #             logging.info(f"Event msg id: {message_id}")
+    #             prompt = event.msg.content.attachment.object.title
+    #             filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
+    #
+    #             # Download the file
+    #             logging.info("Trying to download")
+    #
+    #             await bot.chat.download(conversation_id, message_id, filename)
+    #             logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+    #             msg = await get_chat_with_image(filename, prompt)
+    #             await bot.chat.reply(conversation_id, event.msg.id, msg)
+    #
+    # except Exception as e:
+    #     print(e)
+    #     print(type(e))
+    #     print("Not an attachment")
 
     # logging.info(event.msg.content)
 
