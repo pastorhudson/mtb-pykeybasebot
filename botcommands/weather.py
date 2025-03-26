@@ -3,7 +3,7 @@ from pirateweather import forecast
 from datetime import date, timedelta
 
 
-def get_weather(name, LATLONG):
+def get_weather(name="Uniontown PA", LATLONG=(39.90008, -79.71643)):
     msg = ""
     weekday = date.today()
     with forecast(os.environ.get('PIRATE_WEATHER'), *LATLONG) as place:
