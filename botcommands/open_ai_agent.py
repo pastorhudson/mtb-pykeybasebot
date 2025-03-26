@@ -35,7 +35,7 @@ from botcommands.sync import sync
 # from botcommands.get_grades import get_academic_snapshot
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
-from botcommands.poll import make_poll
+from botcommands.poll import make_ai_poll
 from botcommands.scorekeeper import award
 from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
@@ -62,7 +62,7 @@ FUNCTION_REGISTRY = {
     "get_joke": get_joke,
     "get_meh": get_meh,
     "get_top_hacker_news": get_top_hacker_news,
-    "make_poll": make_poll,
+    "make_poll": make_ai_poll,
     "get_school_closings": get_school_closings,
     "get_screenshot": get_screenshot,
     "get_speed": get_speed,

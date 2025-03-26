@@ -37,6 +37,21 @@ def make_poll(command):
     return msg, emojis
 
 
+def make_ai_poll(question, options):
+
+    try:
+        msg = f"Stupid Poll: {question}\n"
+    option_num = 1
+    emojis = []
+    for index, option in enumerate(options):
+        if option != " " and option != "":
+            msg += f":{get_moji(option_num)}: {option}\n"
+            emojis.append(f":{get_moji(option_num)}:")
+            option_num += 1
+
+    return msg, emojis
+
+
 if __name__ == "__main__":
     s = '!poll “Does IPhone ruin everything?” “yes” “No”'
 
