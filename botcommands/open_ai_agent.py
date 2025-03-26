@@ -79,7 +79,7 @@ FUNCTION_REGISTRY = {
     "make_bet": make_bet,
     "payout_wager": payout_wager,
     "sync": sync,
-    # "award_activity_points": award_activity_points,
+    "award": award,
     "is_morning_report": is_morning_report,
     "write_morning_report_task": write_morning_report_task,
     # "get_grades": get_academic_snapshot,
@@ -104,7 +104,7 @@ new_tools = [
     {
         "type": "function",
         "function": {
-            "name": "awardPoints",
+            "name": "award",
             "description": "Awards a specified number of points to a user in a chat, following predefined rules.",
             "parameters": {
                 "type": "object",
