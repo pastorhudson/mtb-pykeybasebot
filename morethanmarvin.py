@@ -16,6 +16,7 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
+from botcommands.utils import download_image
 from botcommands.weather import get_weather
 from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
@@ -260,18 +261,75 @@ async def handler(bot, event):
     #     print(type(e))
     #     print("Not an attachment")
 
-
     try:
         if event.msg.content.type_name == 'attachment':
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
-                # Simply call the handle_marvn_mention function
-                # which already has the attachment handling logic
-                await handle_marvn_mention(bot, event)
+                storage = Path('./storage')
+                conversation_id = event.msg.conv_id
+                await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+                message_id = event.msg.id
+                logging.info(f"Event msg id: {message_id}")
+                prompt = event.msg.content.attachment.object.title
+                # Remove "@marvn" from the prompt
+                prompt = prompt.replace("@marvn", "").strip()
+                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
+
+                # Download the file
+                logging.info("Trying to download")
+                await bot.chat.download(conversation_id, message_id, filename)
+                logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
+
+                # Add sender metadata
+                sender = event.msg.sender.username
+                message_metadata = {
+                    "sender": sender,
+                    "conversation_id": conversation_id
+                }
+
+                # Add metadata to the prompt
+                full_prompt = f"{prompt}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
+
+                # Call the AI with proper content format
+                response = await get_ai_response(
+                    user_input=full_prompt,
+                    team_name=event.msg.channel.name,
+                    image_path=filename,
+                    bot=bot,
+                    event=event
+                )
+
+            # Handle the response
+            if isinstance(response, dict) and "type" in response:
+                if response["type"] == "text":
+                    # If content is a string, use it directly
+                    if isinstance(response["content"], str):
+                        await bot.chat.reply(conversation_id, message_id, response["content"])
+                    # If content is a dict with 'msg' key, use that
+                    elif isinstance(response["content"], dict) and "msg" in response["content"]:
+                        await bot.chat.reply(conversation_id, message_id, response["content"]["msg"])
+                        # If there's also a file, attach it separately
+                        if "file" in response["content"]:
+                            await bot.chat.attach(channel=conversation_id,
+                                                  filename=response["content"]["file"],
+                                                  title=response["content"]["msg"])
+                    else:
+                        await bot.chat.reply(conversation_id, message_id, "⚠️ Invalid content format.")
+                elif response["type"] == "image":
+                    # Generate a unique filename with timestamp
+                    import time
+                    image_filename = f"image_{int(time.time())}.png"
+                    image_file = await download_image(response["url"], file_name=image_filename)
+                    await bot.chat.attach(channel=conversation_id, filename=image_file, title="Here's your image!")
+                else:
+                    await bot.chat.reply(conversation_id, message_id, "⚠️ Unknown response type.")
+            else:
+                await bot.chat.reply(conversation_id, message_id, "⚠️ Error: Response format invalid.")
 
     except Exception as e:
-        print(e)
-        print(type(e))
-        print("Not an attachment")
+        logging.error(f"Error handling attachment: {str(e)}")
+        logging.error(f"Type: {type(e)}")
+        print("Not an attachment or error processing attachment")
 
     # logging.info(event.msg.content)
 
