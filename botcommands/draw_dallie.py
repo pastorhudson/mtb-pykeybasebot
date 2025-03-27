@@ -3,7 +3,7 @@ from pathlib import Path
 from pprint import pprint
 
 import aiohttp
-from openai import OpenAI, AsyncOpenAI
+from openai import AsyncOpenAI
 import os
 
 
@@ -58,35 +58,36 @@ async def restyle_image(image_path, style_prompt):
         style_prompt (str): Description of the style to apply to the image
 
     Returns:
-        dict: Contains the original prompt, revised prompt, and file path of the restyled image
+        dict: Contains the original prompt and file path of the restyled image
     """
     import os
-    import base64
     from openai import AsyncOpenAI
+    from botcommands.utils import download_image
 
     client = AsyncOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
 
-    # Read and encode the image
+    # Open the image file properly - don't convert to base64
     with open(image_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-
-    # Create the API request
-    response = await client.images.create_variation(
-        image=encoded_image,
-        model="dall-e-3",
-        prompt=style_prompt,
-        size="1024x1024",
-        quality="hd",
-        n=1,
-    )
+        # Pass the file object directly to the API
+        response = await client.images.edit(
+            image=image_file,  # Pass the file handle directly
+            prompt=style_prompt,
+            model="dall-e-3",
+            size="1024x1024",
+            n=1,
+        )
 
     image_url = response.data[0].url
-    revised_prompt = f"Revised Prompt:```{response.data[0].revised_prompt}```"
+
+    # Check if revised_prompt exists in response
+    revised_prompt = ""
+    if hasattr(response.data[0], 'revised_prompt'):
+        revised_prompt = f"\nRevised Prompt: ```{response.data[0].revised_prompt}```"
 
     return {
-        "msg": "\n".join([style_prompt, revised_prompt]),
+        "msg": f"Style prompt: {style_prompt}{revised_prompt}",
         "file": await download_image(image_url, 'Restyled_image.png')
     }
 
