@@ -260,6 +260,19 @@ async def handler(bot, event):
     #     print(type(e))
     #     print("Not an attachment")
 
+
+    try:
+        if event.msg.content.type_name == 'attachment':
+            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
+                # Simply call the handle_marvn_mention function
+                # which already has the attachment handling logic
+                await handle_marvn_mention(bot, event)
+
+    except Exception as e:
+        print(e)
+        print(type(e))
+        print("Not an attachment")
+
     # logging.info(event.msg.content)
 
     if event.msg.content.type_name == 'reaction':
