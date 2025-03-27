@@ -212,9 +212,14 @@ new_tools = [
             "type": "object",
             "required": ["image_path", "style_prompt"],
             "properties": {
-                "image_path": {"type": "string", "description": "Path to the image file to be restyled."},
-                "style_prompt": {"type": "string",
-                                 "description": "Text prompt describing the style to apply to the image."}
+                "image_path": {
+                    "type": "string",
+                    "description": "Path to the image file to be restyled. If available, use the attachment_path from MESSAGE_METADATA."
+                },
+                "style_prompt": {
+                    "type": "string",
+                    "description": "Text prompt describing the style to apply to the image."
+                }
             }
         }
     },
@@ -574,6 +579,18 @@ async def handle_marvn_mention(bot, event):
                 # Download the file
                 logging.info(f"Downloading attachment: {filename}")
                 await bot.chat.download(conversation_id, msg_id, filename)
+
+                # Add the file path directly to the metadata
+                message_metadata = {
+                    "sender": sender,
+                    "mentions": mentions,
+                    "team_members": members,
+                    "conversation_id": conversation_id,
+                    "attachment_path": filename  # Add this line
+                }
+
+                # Add metadata to the prompt
+                prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
 
                 # Process the attachment with the AI - pass image path as separate parameter
                 response = await get_ai_response(
