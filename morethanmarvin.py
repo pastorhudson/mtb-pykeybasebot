@@ -265,7 +265,7 @@ async def handler(bot, event):
         if event.msg.content.type_name == 'attachment':
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 pprint(event.msg.content)
-                await sync(event=event, bot=bot)
+                await handle_marvn_mention(bot, event)
 
 
     except Exception as e:

@@ -515,7 +515,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
-async def handle_marvn_mention(bot, event, context=None):
+async def handle_marvn_mention(bot, event):
     """Handles @Marvn mentions and responds using AI."""
     msg_id = event.msg.id
     team_name = event.msg.channel.name
