@@ -52,7 +52,7 @@ from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
 from datetime import timedelta
-from botcommands.open_ai_agent import handle_marvn_mention
+from botcommands.open_ai_agent import handle_marvn_mention, get_ai_response
 from botcommands.ai_context import ChatContextManager
 
 
