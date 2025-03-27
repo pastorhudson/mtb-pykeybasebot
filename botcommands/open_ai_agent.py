@@ -20,7 +20,7 @@ from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
-from botcommands.draw_dallie import generate_dalle_image
+from botcommands.draw_dallie import generate_dalle_image, restyle_image
 from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
@@ -56,6 +56,7 @@ FUNCTION_REGISTRY = {
     "get_new_chuck": get_new_chuck,
     "cowsay": cowsay,
     "generate_dalle_image": generate_dalle_image,
+    "restyle_image": restyle_image,
     "get_eyebleach": get_eyebleach,
     # "get_academic_snapshot": get_academic_snapshot,
     "get_joke": get_joke,
@@ -200,6 +201,20 @@ new_tools = [
             "required": ["prompt"],
             "properties": {
                 "prompt": {"type": "string", "description": "Text prompt describing the image to generate."}
+            }
+        }
+    },
+    {
+        "name": "restyle_image",
+        "type": "function",
+        "description": "Restyle an existing image according to a style prompt using DALL-E 3.",
+        "parameters": {
+            "type": "object",
+            "required": ["image_path", "style_prompt"],
+            "properties": {
+                "image_path": {"type": "string", "description": "Path to the image file to be restyled."},
+                "style_prompt": {"type": "string",
+                                 "description": "Text prompt describing the style to apply to the image."}
             }
         }
     },
