@@ -438,12 +438,15 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
             # Create a content array with text and image
             content = [
-                {"type": "text", "text": user_input},
                 {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{base64_image}"
-                    }
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": user_input},
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/jpeg;base64,{base64_image}"
+                        }
+                    ]
                 }
             ]
 
