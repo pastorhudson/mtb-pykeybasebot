@@ -391,24 +391,24 @@ new_tools = [
     {
         "name": "get_mp3",
         "type": "function",
-        "description": "Download YouTube video as MP3.",
+        "description": "Download YouTube, Twitter, X, and many other website videos as MP3.",
         "parameters": {
             "type": "object",
             "required": ["url"],
             "properties": {
-                "url": {"type": "string", "description": "YouTube video URL."}
+                "url": {"type": "string", "description": "URL."}
             }
         }
     },
     {
         "name": "get_mp4",
         "type": "function",
-        "description": "Download YouTube video as MP4.",
+        "description": "Download YouTube, Twitter, X, and many other website videos as MP4.",
         "parameters": {
             "type": "object",
             "required": ["url"],
             "properties": {
-                "url": {"type": "string", "description": "YouTube video URL."}
+                "url": {"type": "string", "description": "URL."}
             }
         }
     },
