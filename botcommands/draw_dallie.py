@@ -41,10 +41,10 @@ async def generate_dalle_image(prompt):
     )
 
     image_url = response.data[0].url
-    revised_prompt = f"Revised Prompt:```{response.data[0].revised_prompt}```"
+    # revised_prompt = f"Revised Prompt:```{response.data[0].revised_prompt}```"
 
     return {
-        "msg": "\n".join([prompt, revised_prompt]),
+        "msg": "\n".join([prompt]),
         "file": await download_image(image_url, 'Dall-e-3_img.png')
     }
 
