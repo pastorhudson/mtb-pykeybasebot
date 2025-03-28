@@ -15,7 +15,7 @@ from botcommands.since import set_since, get_since, reset_since, reset_sign
 from botcommands.tldr import tldr_react, get_gpt_summary
 from botcommands.utils import download_image, set_unfurl
 from botcommands.weather import get_weather
-from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
+from botcommands.youtube_dlp import get_mp3, get_mp4_tool, get_meta
 from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import cowsay
@@ -70,7 +70,7 @@ FUNCTION_REGISTRY = {
     "solve_wordle": solve_wordle,
     "get_weather": get_weather,
     "get_mp3": get_mp3,
-    "get_mp4": get_mp4,
+    "get_mp4": get_mp4_tool,
     "get_meta": get_meta,
     "get_till": get_till,
     "set_till": set_till,
@@ -519,7 +519,12 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                     else:
                         result = function_to_call(**arguments)  # Call sync functions normally
 
-                    return {"type": "text", "content": result}
+                    # If result is a dictionary with 'msg' and 'file' keys, return it as is
+                    if isinstance(result, dict) and "msg" in result and "file" in result:
+                        return {"type": "text", "content": result}  # Return the entire dictionary
+                    # If result is a string, return it wrapped in the standard format
+                    else:
+                        return {"type": "text", "content": result}
 
                 return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
 

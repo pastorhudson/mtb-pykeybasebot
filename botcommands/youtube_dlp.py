@@ -1,12 +1,9 @@
-import json
-import logging
+from pathlib import Path
+from yt_dlp.postprocessor.common import PostProcessor
 import os
 import re
-from pathlib import Path
-from pprint import pprint
-import webvtt
+import logging
 import yt_dlp
-from yt_dlp.postprocessor.common import PostProcessor
 
 storage = Path('./storage')
 # cookies = Path('/app/botcommands/cookies.txt')
@@ -265,6 +262,97 @@ async def get_mp4(url):
             'msg': f"Failed to download video: {str(e)}"
         }
 
+
+
+
+
+async def get_mp4_tool(url):
+    """
+    Enhanced video download function with filename sanitization including space to underscore conversion.
+    """
+
+    def sanitize_filename(filename):
+        """
+        Sanitize filename to remove or replace problematic characters.
+        Converts spaces to underscores and handles special characters.
+        """
+        # Replace vertical bars and other special characters with hyphen
+        filename = re.sub(r'[|｜]', '-', filename)
+        # Replace spaces with underscores
+        filename = filename.replace(' ', '_')
+        # Replace other problematic characters
+        filename = re.sub(r'[<>:"/\\|?*]', '-', filename)
+        # Replace multiple hyphens with single hyphen
+        filename = re.sub(r'-+', '-', filename)
+        # Replace multiple underscores with single underscore
+        filename = re.sub(r'_+', '_', filename)
+        # Remove any trailing/leading hyphens or underscores
+        filename = filename.strip('-_')
+        return filename
+
+    try:
+        # Configure yt-dlp options
+        ydl_opts = {
+            'format': 'bestvideo[ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+            'merge_output_format': 'mp4',
+            'outtmpl': '/app/storage/%(title)s.%(ext)s',
+            'quiet': True,
+            'no_warnings': True,
+            'postprocessor_args': [
+                '-c', 'copy',  # Copy streams without re-encoding
+                '-movflags', '+faststart'
+            ],
+            'retries': 3
+        }
+
+        # First attempt with preferred formats
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            try:
+                info = ydl.extract_info(url, download=False)  # First get info without downloading
+                # Sanitize the filename before download
+                sanitized_title = sanitize_filename(info['title'])
+                ydl_opts['outtmpl'] = f'/app/storage/{sanitized_title}.%(ext)s'
+
+                # Now download with sanitized filename
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl_download:
+                    info = ydl_download.extract_info(url, download=True)
+                    output_file = f"/app/storage/{sanitized_title}.mp4"
+
+                    # Verify file exists before returning
+                    if os.path.exists(output_file):
+                        logging.info(f"Successfully downloaded video to {output_file}")
+                        return {
+                            'msg': f"Downloaded: {info['title']}",  # Use original title in message
+                            'file': output_file
+                        }
+                    else:
+                        raise FileNotFoundError(f"Output file not found: {output_file}")
+
+            except (yt_dlp.utils.DownloadError, FileNotFoundError) as e:
+                logging.warning(f"Preferred format download failed, trying fallback: {str(e)}")
+
+                # Fallback to simpler format if needed
+                ydl_opts.update({
+                    'format': 'best',
+                })
+
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl_fallback:
+                    info = ydl_fallback.extract_info(url, download=True)
+                    output_file = f"/app/storage/{sanitize_filename(info['title'])}.mp4"
+
+                    # Verify file exists before returning
+                    if os.path.exists(output_file):
+                        logging.info(f"Successfully downloaded video (fallback) to {output_file}")
+                        return {
+                            'msg': f"Downloaded: {info['title']} (fallback format)",
+                            'file': output_file
+                        }
+                    else:
+                        return f"⚠️ Failed to download video: File not created"
+
+    except Exception as e:
+        logging.error(f"Video download failed: {str(e)}")
+        return f"⚠️ Failed to download video: {str(e)}"
 
 def get_meta(url, storage_path=storage):
     """
