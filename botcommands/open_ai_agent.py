@@ -226,7 +226,7 @@ new_tools = [
     {
         "name": "get_eyebleach",
         "type": "function",
-        "description": "Fetch images from r/eyebleach to improve mood.",
+        "description": "Fetch images from r/eyebleach to improve mood. This cleans the chat.",
         "parameters": {
             "type": "object",
             "required": ["bot", "bleach_level"],
