@@ -74,7 +74,7 @@ async def restyle_image(image_path, style_prompt):
         response = await client.images.edit(
             image=image_file,  # Pass the file handle directly
             prompt=style_prompt,
-            model="dall-e-3",
+            model="dall-e-2",
             size="1024x1024",
             n=1,
         )
