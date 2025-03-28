@@ -1,7 +1,6 @@
 import asyncio
 from pathlib import Path
 from pprint import pprint
-
 import aiohttp
 from openai import AsyncOpenAI
 import os
@@ -41,10 +40,10 @@ async def generate_dalle_image(prompt):
     )
 
     image_url = response.data[0].url
-    # revised_prompt = f"Revised Prompt:```{response.data[0].revised_prompt}```"
+    revised_prompt = f"Revised Prompt:```{response.data[0].revised_prompt}```"
 
     return {
-        "msg": "\n".join([prompt]),
+        "msg": revised_prompt,
         "file": await download_image(image_url, 'Dall-e-3_img.png')
     }
 
