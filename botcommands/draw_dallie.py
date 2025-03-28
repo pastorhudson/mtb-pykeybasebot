@@ -51,45 +51,66 @@ async def generate_dalle_image(prompt):
 
 async def restyle_image(image_path, style_prompt):
     """
-    Restyles an existing image according to a style prompt using OpenAI's API.
+    Creates a variation of an existing image using OpenAI's API.
+    Note: This fallback method doesn't use the style_prompt for API calls,
+    as the variations endpoint doesn't support prompts.
 
     Args:
-        image_path (str): Path to the image file to be restyled
-        style_prompt (str): Description of the style to apply to the image
+        image_path (str): Path to the image file
+        style_prompt (str): Used for response message only, not for API
 
     Returns:
-        dict: Contains the original prompt and file path of the restyled image
+        dict: Contains message and file path of the varied image
     """
     import os
+    import io
+    from PIL import Image
     from openai import AsyncOpenAI
     from botcommands.utils import download_image
+    import logging
 
     client = AsyncOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
 
-    # Open the image file properly - don't convert to base64
-    with open(image_path, "rb") as image_file:
-        # Pass the file object directly to the API
-        response = await client.images.edit(
-            image=image_file,  # Pass the file handle directly
-            prompt=style_prompt,
-            model="dall-e-2",
-            size="1024x1024",
+    logging.info(f"Creating variation of image: {image_path}")
+    logging.info(f"Style description (for reference only): {style_prompt}")
+
+    try:
+        # Open and prepare the image
+        img = Image.open(image_path)
+
+        # Convert to RGBA if needed
+        if img.mode != "RGBA":
+            img = img.convert("RGBA")
+
+        # Save to buffer
+        img_buffer = io.BytesIO()
+        img.save(img_buffer, format="PNG")
+        img_buffer.seek(0)
+
+        # Call the variations API - note: no prompt parameter
+        response = await client.images.create_variation(
+            image=img_buffer,
             n=1,
+            size="1024x1024"
         )
 
-    image_url = response.data[0].url
+        image_url = response.data[0].url
+        result_path = await download_image(image_url, 'Image_Variation.png')
 
-    # Check if revised_prompt exists in response
-    revised_prompt = ""
-    if hasattr(response.data[0], 'revised_prompt'):
-        revised_prompt = f"\nRevised Prompt: ```{response.data[0].revised_prompt}```"
+        logging.info(f"Successfully created image variation. Saved to: {result_path}")
 
-    return {
-        "msg": f"Style prompt: {style_prompt}{revised_prompt}",
-        "file": await download_image(image_url, 'Restyled_image.png')
-    }
+        return {
+            "msg": f"Created a variation of your image.\nNote: The style \"{style_prompt}\" was not applied as the variations API doesn't support style prompts.",
+            "file": result_path
+        }
+
+    except Exception as e:
+        logging.error(f"Error creating image variation: {str(e)}")
+        return {
+            "msg": f"Sorry, I couldn't create a variation of your image. Error: {str(e)}"
+        }
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
