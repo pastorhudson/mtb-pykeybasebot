@@ -673,7 +673,7 @@ async def handle_simple_request(bot, event, message_text, client):
 
             try:
                 result = await execute_function(
-                    function_name, arguments, function_registry, bot, event
+                    function_name, arguments, bot, event
                 )
 
                 # Handle the result
@@ -913,7 +913,7 @@ async def detect_and_process_patterns(bot, event, message_text):
 # =============================================================================
 
 class DynamicToolExecutor:
-    def __init__(self, function_registry, client, model="gpt-4o"):
+    def __init__(self, client, model="gpt-4o"):
         self.function_registry = function_registry
         self.client = client
         self.model = model
@@ -1044,7 +1044,7 @@ class DynamicToolExecutor:
         return user_response
 
 
-async def handle_medium_complexity(bot, event, message_text, client, function_registry):
+async def handle_medium_complexity(bot, event, message_text, client):
     """Handle medium-complexity requests"""
     msg_id = event.msg.id
     conversation_id = event.msg.conv_id
@@ -1070,7 +1070,7 @@ async def handle_medium_complexity(bot, event, message_text, client, function_re
 # =============================================================================
 
 class ToolAgent:
-    def __init__(self, function_registry, client, model="gpt-4o"):
+    def __init__(self, client, model="gpt-4o"):
         self.function_registry = function_registry
         self.client = client
         self.model = model
