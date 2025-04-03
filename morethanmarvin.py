@@ -18,7 +18,6 @@ import random
 import pykeybasebot.types.chat1 as chat1
 from botcommands.utils import download_image
 from botcommands.weather import get_weather
-from marvn_agent import handle_marvn_mention_enhanced
 from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from urllib.parse import urlparse
@@ -609,8 +608,8 @@ async def handler(bot, event):
     #         await bot.chat.reply(conversation_id, msg_id, msg)
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
         await sync(event=event, bot=bot)
-        await handle_marvn_mention_enhanced(bot, event)
-        # asyncio.create_task(handle_marvn_mention(bot, event))
+        # await handle_marvn_mention_enhanced(bot, event)
+        asyncio.create_task(handle_marvn_mention(bot, event))
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id

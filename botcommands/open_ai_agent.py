@@ -47,7 +47,7 @@ from pykeybasebot.utils import get_channel_members
 
 # Initialize OpenAI client
 client = OpenAI()
-seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
+seed = """"Marvn" is a chatbot with a depressing and sarcastic personality modeled after the robot from hitchhikers guide to the galaxy. He is skilled in all things. He is ultimately endeering in a comical dark humor way. You should answer questions but complain about it."""
 
 # Define function registry (mapping function names to actual implementations)
 # Function Registry: Maps command names to their respective functions
@@ -101,394 +101,440 @@ FUNCTION_REGISTRY = {
     "get_members": get_members,
 }
 
+# Corrected new_tools list
 new_tools = [
     {
         "type": "function",
-        "name": "award",
-        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "bot": {
-                    "type": "object",
-                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
-                },
-                "event": {
-                    "type": "object",
-                    "description": "The event object containing conversation details including sender, channel, and message information."
-                },
-                "sender": {
-                    "type": "string",
-                    "description": "Username of the person giving the points."
-                },
-                "recipient": {
-                    "type": "string",
-                    "description": "Username of the person receiving the points (exactly as shown in the message). make sure you use recipient as the keyword argument."
-                },
-                "team_members": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
+        "function": {  # <-- Correct nesting
+            "name": "award",
+            "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "bot": {
+                        "type": "object",
+                        "description": "The bot object that provides access to chat APIs for sending messages and reactions."
                     },
-                    "description": "List of usernames who are members of the team/chat."
+                    "event": {
+                        "type": "object",
+                        "description": "The event object containing conversation details including sender, channel, and message information."
+                    },
+                    "sender": {
+                        "type": "string",
+                        "description": "Username of the person giving the points."
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "description": "Username of the person receiving the points (exactly as shown in the message). make sure you use recipient as the keyword argument."
+                    },
+                    "team_members": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "List of usernames who are members of the team/chat."
+                    },
+                    "points": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 5000,
+                        "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Brief explanation for why the points are being awarded."
+                    }
                 },
-                "points": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 5000,
-                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
-                },
-                "description": {
-                    "type": "string",
-                    "description": "Brief explanation for why the points are being awarded."
-                }
-            },
-            "required": ["bot", "event", "sender", "team_members", "points", "description"]
-        }
-    },
-    {
-        "name": "get_esv_text",
-        "type": "function",
-        "description": "Retrieve Bible text from the ESV API.",
-        "parameters": {
-            "type": "object",
-            "required": ["passage"],
-            "properties": {
-                "passage": {"type": "string", "description": "The Bible passage reference (e.g., 'John 3:16')."},
-                "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
+                "required": ["bot", "event", "sender", "team_members", "points", "description"]
             }
         }
     },
     {
-        "name": "get_morse_code",
         "type": "function",
-        "description": "Translate text to Morse code.",
-        "parameters": {
-            "type": "object",
-            "required": ["text"],
-            "properties": {
-                "text": {"type": "string", "description": "Text to convert into Morse code."}
-            }
-        }
-    },
-    {
-        "name": "get_new_chuck",
-        "type": "function",
-        "description": "Retrieve a Chuck Norris joke.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_since",
-        "type": "function",
-        "description": "Get a list of events and how long it's been since they occurred for a given team. These are called 'sinces'",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "team_name": {
-                    "type": "string",
-                    "description": "The name of the team to get events for."
-                },
-                "observation": {
-                    "type": "boolean",
-                    "description": "Whether to include an observation in the message.",
-                    "default": False
-                }
-            },
-            "required": ["team_name"]
-        }
-    },
-    {
-        "name": "set_since",
-        "type": "function",
-        "description": "Set a new 'since' event for a team with a given event time.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "team_name": {
-                    "type": "string",
-                    "description": "The name of the team to set the event for."
-                },
-                "event_name": {
-                    "type": "string",
-                    "description": "The name of the event to set."
-                },
-                "event_time": {
-                    "type": "string",
-                    "description": "The date and time the event occurred (natural language supported)."
-                }
-            },
-            "required": ["team_name", "event_name", "event_time"]
-        }
-    },
-    {
-        "name": "reset_since",
-        "type": "function",
-        "description": "Reset an existing 'since' event to the current time.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "team_name": {
-                    "type": "string",
-                    "description": "The name of the team to reset the event for."
-                },
-                "since_id": {
-                    "type": "string",
-                    "description": "The ID of the since event to reset (e.g., '#42')."
-                }
-            },
-            "required": ["team_name", "since_id"]
-        }
-    },
-    {
-        "name": "cowsay",
-        "type": "function",
-        "description": "Generate ASCII art of a cow saying something.",
-        "parameters": {
-            "type": "object",
-            "required": ["message"],
-            "properties": {
-                "message": {"type": "string", "description": "Message for the cow to say."}
-            }
-        }
-    },
-    {
-        "name": "generate_dalle_image",
-        "type": "function",
-        "description": "Generate an AI-generated image using DALL-E 3.",
-        "parameters": {
-            "type": "object",
-            "required": ["prompt"],
-            "properties": {
-                "prompt": {"type": "string", "description": "Text prompt describing the image to generate."}
-            }
-        }
-    },
-    {
-        "name": "restyle_image",
-        "type": "function",
-        "description": "Restyle an existing image according to a style prompt using DALL-E 3.",
-        "parameters": {
-            "type": "object",
-            "required": ["image_path", "style_prompt"],
-            "properties": {
-                "image_path": {
-                    "type": "string",
-                    "description": "Path to the image file to be restyled. If available, use the attachment_path from MESSAGE_METADATA."
-                },
-                "style_prompt": {
-                    "type": "string",
-                    "description": "Text prompt describing the style to apply to the image."
+        "function": {  # <-- Correct nesting
+            "name": "get_esv_text",
+            "description": "Retrieve Bible text from the ESV API.",
+            "parameters": {
+                "type": "object",
+                "required": ["passage"],
+                "properties": {
+                    "passage": {"type": "string", "description": "The Bible passage reference (e.g., 'John 3:16')."},
+                    "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
                 }
             }
         }
     },
     {
-        "name": "get_eyebleach",
         "type": "function",
-        "description": "Fetch images from r/eyebleach to improve mood. This cleans the chat.",
-        "parameters": {
-            "type": "object",
-            "required": ["bot", "bleach_level"],
-            "properties": {
-                "bot": {
-                    "type": "object",
-                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
-                },
-                "bleach_level": {
-                    "type": "integer",
-                    "description": "Number of images to retrieve (1-11)."
+        "function": {  # <-- Correct nesting
+            "name": "get_morse_code",
+            "description": "Translate text to Morse code.",
+            "parameters": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                    "text": {"type": "string", "description": "Text to convert into Morse code."}
                 }
-            },
-
+            }
         }
     },
-    # {
-    #     "name": "get_academic_snapshot",
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_new_chuck",
+            "description": "Retrieve a Chuck Norris joke.",
+            "parameters": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_since",
+            "description": "Get a list of events and how long it's been since they occurred for a given team. These are called 'sinces'",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "team_name": {
+                        "type": "string",
+                        "description": "The name of the team to get events for."
+                    },
+                    "observation": {
+                        "type": "boolean",
+                        "description": "Whether to include an observation in the message.",
+                        "default": False
+                    }
+                },
+                "required": ["team_name"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "set_since",
+            "description": "Set a new 'since' event for a team with a given event time.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "team_name": {
+                        "type": "string",
+                        "description": "The name of the team to set the event for."
+                    },
+                    "event_name": {
+                        "type": "string",
+                        "description": "The name of the event to set."
+                    },
+                    "event_time": {
+                        "type": "string",
+                        "description": "The date and time the event occurred (natural language supported)."
+                    }
+                },
+                "required": ["team_name", "event_name", "event_time"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "reset_since",
+            "description": "Reset an existing 'since' event to the current time.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "team_name": {
+                        "type": "string",
+                        "description": "The name of the team to reset the event for."
+                    },
+                    "since_id": {
+                        "type": "string",
+                        "description": "The ID of the since event to reset (e.g., '#42')."
+                    }
+                },
+                "required": ["team_name", "since_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "cowsay",
+            "description": "Generate ASCII art of a cow saying something.",
+            "parameters": {
+                "type": "object",
+                "required": ["message"],
+                "properties": {
+                    "message": {"type": "string", "description": "Message for the cow to say."}
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "generate_dalle_image",
+            "description": "Generate an AI-generated image using DALL-E 3.",
+            "parameters": {
+                "type": "object",
+                "required": ["prompt"],
+                "properties": {
+                    "prompt": {"type": "string", "description": "Text prompt describing the image to generate."}
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "restyle_image",
+            "description": "Restyle an existing image according to a style prompt using DALL-E 3.",
+            "parameters": {
+                "type": "object",
+                "required": ["image_path", "style_prompt"],
+                "properties": {
+                    "image_path": {
+                        "type": "string",
+                        "description": "Path to the image file to be restyled. If available, use the attachment_path from MESSAGE_METADATA."
+                    },
+                    "style_prompt": {
+                        "type": "string",
+                        "description": "Text prompt describing the style to apply to the image."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_eyebleach",
+            "description": "Fetch images from r/eyebleach to improve mood. This cleans the chat.",
+            "parameters": {
+                "type": "object",
+                "required": ["bot", "bleach_level"],
+                "properties": {
+                    "bot": {
+                        "type": "object",
+                        "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                    },
+                    "bleach_level": {
+                        "type": "integer",
+                        "description": "Number of images to retrieve (1-11)."
+                    }
+                },
+            }
+        }
+    },
+    # { # This was commented out, leaving it commented
     #     "type": "function",
-    #     "description": "Retrieve an academic performance snapshot.",
-    #     "parameters": {
-    #         "type": "object",
-    #         "required": [],
-    #         "properties": {}
+    #     "function": {
+    #         "name": "get_academic_snapshot",
+    #         "description": "Retrieve an academic performance snapshot.",
+    #         "parameters": {
+    #             "type": "object",
+    #             "required": [],
+    #             "properties": {}
+    #         }
     #     }
     # },
     {
-        "name": "get_joke",
         "type": "function",
-        "description": "Retrieve a random joke.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
+        "function": {  # <-- Correct nesting
+            "name": "get_joke",
+            "description": "Retrieve a random joke.",
+            "parameters": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+            }
         }
     },
     {
-        "name": "get_meh",
         "type": "function",
-        "description": "Fetch today's 'meh' (low-effort product deal).",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
+        "function": {  # <-- Correct nesting
+            "name": "get_meh",
+            "description": "Fetch today's 'meh' (low-effort product deal).",
+            "parameters": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+            }
         }
     },
     {
-        "name": "get_top_hacker_news",
         "type": "function",
-        "description": "Retrieve top articles from Hacker News.",
-        "parameters": {
-            "type": "object",
-            "required": ["num_articles"],
-            "properties": {
-                "num_articles": {
-                    "type": "integer",
-                    "description": "Number of articles to fetch."
+        "function": {  # <-- Correct nesting
+            "name": "get_top_hacker_news",
+            "description": "Retrieve top articles from Hacker News.",
+            "parameters": {
+                "type": "object",
+                "required": ["num_articles"],
+                "properties": {
+                    "num_articles": {
+                        "type": "integer",
+                        "description": "Number of articles to fetch."
+                    }
                 }
             }
         }
     },
     {
-        "name": "make_poll",
         "type": "function",
-        "description": "Create a new poll in the chat.",
-        "parameters": {
-            "type": "object",
-            "required": ["question", "options"],
-            "properties": {
-                "question": {"type": "string", "description": "The poll question."},
-                "options": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "List of possible answers."
-                },
-                "bot": {
-                    "type": "object",
-                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
-                },
-                "event": {
-                    "type": "object",
-                    "description": "The event object containing conversation details including sender, channel, and message information."
-                },
-            }
-        }
-    },
-    {
-        "name": "get_school_closings",
-        "type": "function",
-        "description": "Fetch school closing information.",
-        "parameters": {
-            "type": "object",
-            "required": ["schools"],
-            "properties": {
-                "schools": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "List of school names to check."
+        "function": {  # <-- Correct nesting
+            "name": "make_poll",
+            "description": "Create a new poll in the chat.",
+            "parameters": {
+                "type": "object",
+                "required": ["question", "options"],
+                "properties": {
+                    "question": {"type": "string", "description": "The poll question."},
+                    "options": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of possible answers."
+                    },
+                    "bot": {
+                        "type": "object",
+                        "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                    },
+                    "event": {
+                        "type": "object",
+                        "description": "The event object containing conversation details including sender, channel, and message information."
+                    },
                 }
             }
         }
     },
     {
-        "name": "get_screenshot",
         "type": "function",
-        "description": "Take a screenshot of a given URL.",
-        "parameters": {
-            "type": "object",
-            "required": ["url"],
-            "properties": {
-                "url": {"type": "string", "description": "Website URL to capture."}
-            }
-        }
-    },
-    {
-        "name": "get_speed",
-        "type": "function",
-        "description": "Check the bot's internet speed.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_stardate",
-        "type": "function",
-        "description": "Get the current stardate (or convert from Earth date).",
-        "parameters": {
-            "type": "object",
-            # "required": ["date"],
-            "properties": {
-                "sd": {"type": "string", "description": "Date to convert (optional)."}
-            }
-        }
-    },
-    {
-        "name": "solve_wordle",
-        "type": "function",
-        "description": "Solve today's Wordle puzzle.",
-        "parameters": {
-            "type": "object",
-            "required": ["date"],
-            "properties": {
-                "date": {
-                    "type": "string",
-                    "description": "Optional date for the Wordle puzzle."
+        "function": {  # <-- Correct nesting
+            "name": "get_school_closings",
+            "description": "Fetch school closing information.",
+            "parameters": {
+                "type": "object",
+                "required": ["schools"],
+                "properties": {
+                    "schools": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of school names to check."
+                    }
                 }
             }
         }
     },
     {
-        "name": "get_weather",
         "type": "function",
-        "description": "Retrieve current weather for Uniontown, PA.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_mp3",
-        "type": "function",
-        "description": "Download YouTube, Twitter, X, and many other website videos as MP3.",
-        "parameters": {
-            "type": "object",
-            "required": ["url"],
-            "properties": {
-                "url": {"type": "string", "description": "URL."}
+        "function": {  # <-- Correct nesting
+            "name": "get_screenshot",
+            "description": "Take a screenshot of a given URL.",
+            "parameters": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                    "url": {"type": "string", "description": "Website URL to capture."}
+                }
             }
         }
     },
     {
-        "name": "get_mp4",
         "type": "function",
-        "description": "Download YouTube, Twitter, X, and many other website videos as MP4.",
-        "parameters": {
-            "type": "object",
-            "required": ["url"],
-            "properties": {
-                "url": {"type": "string", "description": "URL."}
+        "function": {  # <-- Correct nesting
+            "name": "get_speed",
+            "description": "Check the bot's internet speed.",
+            "parameters": {
+                "type": "object",
+                "required": [],
+                "properties": {}
             }
         }
     },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_stardate",
+            "description": "Get the current stardate (or convert from Earth date).",
+            "parameters": {
+                "type": "object",
+                # "required": ["date"], # Assuming date is optional based on description
+                "properties": {
+                    "sd": {"type": "string", "description": "Date to convert (optional)."}
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "solve_wordle",
+            "description": "Solve today's Wordle puzzle.",
+            "parameters": {
+                "type": "object",
+                "required": ["date"],
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "Optional date for the Wordle puzzle."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_weather",
+            "description": "Retrieve current weather for Uniontown, PA.",
+            "parameters": {
+                "type": "object",
+                "required": [],
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_mp3",
+            "description": "Download YouTube, Twitter, X, and many other website videos as MP3.",
+            "parameters": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                    "url": {"type": "string", "description": "URL."}
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {  # <-- Correct nesting
+            "name": "get_mp4",
+            "description": "Download YouTube, Twitter, X, and many other website videos as MP4.",
+            "parameters": {
+                "type": "object",
+                "required": ["url"],
+                "properties": {
+                    "url": {"type": "string", "description": "URL."}
+                }
+            }
+        }
+    },
+    # Note: The "web_search_preview" type doesn't need the "function" nesting.
+    # Ensure this tool type is supported by the specific model/API you are using.
+    # If using standard chat completions, this might need removal or replacement
+    # with a function that performs web search via an external API.
+    # For Assistants API v2, tool resources like file_search/code_interpreter are enabled differently.
+    # Assuming it's okay for now based on the error message focusing on 'function'.
     {"type": "web_search_preview"},
-    {
-        "name": "generate_dalle_image",
-        "type": "function",
-        "description": "Generates an image using DALL-E.",
-        "parameters": {
-            "type": "object",
-            "required": ["prompt"],
-            "properties": {
-                "prompt": {"type": "string", "description": "Text describing the image to generate."}
-            }
-        }
-    }
+    # Removed the duplicate generate_dalle_image definition from the end
 ]
+
+
+# Replace the old new_tools definition in your script with the corrected one above.
 
 
 
