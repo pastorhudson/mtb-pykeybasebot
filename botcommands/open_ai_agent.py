@@ -194,7 +194,7 @@ new_tools = [
                 "observation": {
                     "type": "boolean",
                     "description": "Whether to include an observation in the message.",
-                    "default": true
+                    "default": False
                 }
             },
             "required": ["team_name"]
