@@ -191,7 +191,7 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "since",
          "description": "Gives the days SINCE events.",
-         "usage": "<event_name> -t <event_datetime> adds event.\n<no_arguments> lists all sinces.\n-r #number resets since."},
+         "usage": "<name> -t <datetime> adds event. -r #number resets since. <no_arguments> lists all sinces."},
         {"name": "stardate",
          "description": " Print's the current stardate if no stardate is given.",
          "usage": "<stardate> <- Optional"},
