@@ -184,7 +184,7 @@ new_tools = [
     {
         "name": "get_since",
         "type": "function",
-        "description": "Get a list of events and how long it's been since they occurred for a given team.",
+        "description": "Get a list of events and how long it's been since they occurred for a given team. These are called 'sinces'",
         "parameters": {
             "type": "object",
             "properties": {
@@ -611,7 +611,7 @@ client = OpenAI()
 seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
 
 
-async def get_function_arguments(function_to_call, arguments, bot=None, event=None):
+async def get_function_arguments(function_to_call, arguments, bot=None, event=None, team_name=None):
     sig = inspect.signature(function_to_call)
     param_names = list(sig.parameters.keys())
 
@@ -673,7 +673,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
                     if function_name in FUNCTION_REGISTRY:
                         func = FUNCTION_REGISTRY[function_name]
-                        arguments = await get_function_arguments(func, arguments, bot, event)
+                        arguments = await get_function_arguments(func, arguments, bot, event, team_name)
                         result = await func(**arguments) if asyncio.iscoroutinefunction(func) else func(**arguments)
 
                         tool_outputs.append({
