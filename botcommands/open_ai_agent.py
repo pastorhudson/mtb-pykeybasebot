@@ -492,208 +492,119 @@ new_tools = [
 
 
 
-#
-# async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
-#     """
-#     Handles OpenAI responses dynamically, supporting both async and sync function calls.
-#
-#     Parameters:
-#     user_input: str - The text prompt from the user
-#     team_name: str - The team or channel name
-#     image_path: str - Optional path to an image file to include with the request
-#     bot: object - Bot instance for API calls
-#     event: object - Event information for context
-#     context: object - Additional context information
-#     """
-#
-#     enhanced_seed = seed + """
-#     When processing commands, extract the relevant information from the user's message
-#     and call the appropriate function with the correct parameters.
-#     """
-#
-#     # If there's an image, use the vision model API
-#     if image_path and os.path.exists(image_path):
-#         try:
-#             # Read the image as base64
-#             with open(image_path, "rb") as image_file:
-#                 import base64
-#                 base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-#
-#             # Create a content array with text and image
-#             content = [
-#                 {
-#                     "role": "user",
-#                     "content": [
-#                         {"type": "input_text", "text": user_input},
-#                         {
-#                             "type": "input_image",
-#                             "image_url": f"data:image/jpeg;base64,{base64_image}"
-#                         }
-#                     ]
-#                 }
-#             ]
-#
-#             # Call the vision model API
-#             response = client.responses.create(
-#                 model="gpt-4o",  # Use a vision-capable model
-#                 tools=new_tools,
-#                 input=content,  # Pass the content array
-#                 instructions=enhanced_seed
-#             )
-#         except Exception as e:
-#             logging.error(f"Error processing image: {str(e)}")
-#             return {"type": "error", "content": f"⚠️ Error processing image: {str(e)}"}
-#     else:
-#         # Standard text-only API call
-#         response = client.responses.create(
-#             model="gpt-4o",
-#             tools=new_tools,
-#             input=user_input,
-#             instructions=enhanced_seed
-#         )
-#
-#     if response.output:
-#         for item in response.output:
-#             if isinstance(item, ResponseFunctionToolCall) and item.type == "function_call":
-#                 function_name = item.name
-#                 arguments = json.loads(item.arguments)
-#
-#                 if function_name in FUNCTION_REGISTRY:
-#                     function_to_call = FUNCTION_REGISTRY[function_name]
-#
-#                     # Get function signature to check if it requires bot or event objects
-#                     import inspect
-#                     function_signature = inspect.signature(function_to_call)
-#                     param_names = list(function_signature.parameters.keys())
-#
-#                     # Automatically inject bot and event if the function accepts them
-#                     if "bot" in param_names and bot:
-#                         arguments["bot"] = bot
-#                     if "event" in param_names and event:
-#                         arguments["event"] = event
-#                     if "team_members" in param_names and bot and event:
-#                         arguments["team_members"] = await get_channel_members(event.msg.conv_id, bot)
-#                     if "sender" in param_names and event:
-#                         arguments["sender"] = event.msg.sender.username
-#
-#                     # Handle both asynchronous (async) and synchronous (sync) functions properly
-#                     if asyncio.iscoroutinefunction(function_to_call):
-#                         result = await function_to_call(**arguments)  # Await async functions
-#                     else:
-#                         result = function_to_call(**arguments)  # Call sync functions normally
-#
-#                     # If result is a dictionary with 'msg' and 'file' keys, return it as is
-#                     if isinstance(result, dict) and "msg" in result and "file" in result:
-#                         return {"type": "text", "content": result}  # Return the entire dictionary
-#                     # If result is a string, return it wrapped in the standard format
-#                     else:
-#                         return {"type": "text", "content": result}
-#
-#                 return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
-#
-#             # Rest of response handling remains the same
-#             elif isinstance(item, ResponseOutputMessage) and item.type == "message":
-#                 for content in item.content:
-#                     if isinstance(content, ResponseOutputText) and content.type == "output_text":
-#                         return {"type": "text", "content": content.text}
-#
-#             # Handle image outputs from the API
-#             elif isinstance(item, ResponseOutputMessage) and item.type == "message":
-#                 for content in item.content:
-#                     # Check if this is an image in the message content
-#                     if hasattr(content, "type") and content.type == "image":
-#                         return {"type": "image", "url": content.url}
-#
-#     return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
-
-client = OpenAI()
-
-seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
-
-
-async def get_function_arguments(function_to_call, arguments, bot=None, event=None, team_name=None):
-    sig = inspect.signature(function_to_call)
-    param_names = list(sig.parameters.keys())
-
-    if "bot" in param_names and bot:
-        arguments["bot"] = bot
-    if "event" in param_names and event:
-        arguments["event"] = event
-    if "team_members" in param_names and bot and event:
-        arguments["team_members"] = asyncio.run(get_channel_members(event.msg.conv_id, bot))
-    if "sender" in param_names and event:
-        arguments["sender"] = event.msg.sender.username
-
-    return arguments
-
 
 async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
+    """
+    Handles OpenAI responses dynamically, supporting both async and sync function calls.
+
+    Parameters:
+    user_input: str - The text prompt from the user
+    team_name: str - The team or channel name
+    image_path: str - Optional path to an image file to include with the request
+    bot: object - Bot instance for API calls
+    event: object - Event information for context
+    context: object - Additional context information
+    """
+
     enhanced_seed = seed + """
     When processing commands, extract the relevant information from the user's message
     and call the appropriate function with the correct parameters.
     """
 
-    messages = [{"role": "user", "content": user_input}]
-    tool_outputs = []
-
+    # If there's an image, use the vision model API
     if image_path and os.path.exists(image_path):
         try:
+            # Read the image as base64
             with open(image_path, "rb") as image_file:
                 import base64
                 base64_image = base64.b64encode(image_file.read()).decode('utf-8')
 
+            # Create a content array with text and image
             content = [
                 {
                     "role": "user",
                     "content": [
                         {"type": "input_text", "text": user_input},
-                        {"type": "input_image", "image_url": f"data:image/jpeg;base64,{base64_image}"}
+                        {
+                            "type": "input_image",
+                            "image_url": f"data:image/jpeg;base64,{base64_image}"
+                        }
                     ]
                 }
             ]
-            messages = content
+
+            # Call the vision model API
+            response = client.responses.create(
+                model="gpt-4o",  # Use a vision-capable model
+                tools=new_tools,
+                input=content,  # Pass the content array
+                instructions=enhanced_seed
+            )
         except Exception as e:
             logging.error(f"Error processing image: {str(e)}")
             return {"type": "error", "content": f"⚠️ Error processing image: {str(e)}"}
-
-    while True:
+    else:
+        # Standard text-only API call
         response = client.responses.create(
             model="gpt-4o",
             tools=new_tools,
-            input=messages,
+            input=user_input,
             instructions=enhanced_seed
         )
 
-        if response.output:
-            function_calls = [item for item in response.output if isinstance(item, ResponseFunctionToolCall)]
-            if function_calls:
-                for tool_call in function_calls:
-                    function_name = tool_call.name
-                    arguments = json.loads(tool_call.arguments)
+    if response.output:
+        for item in response.output:
+            if isinstance(item, ResponseFunctionToolCall) and item.type == "function_call":
+                function_name = item.name
+                arguments = json.loads(item.arguments)
 
-                    if function_name in FUNCTION_REGISTRY:
-                        func = FUNCTION_REGISTRY[function_name]
-                        arguments = await get_function_arguments(func, arguments, bot, event, team_name)
-                        result = await func(**arguments) if asyncio.iscoroutinefunction(func) else func(**arguments)
+                if function_name in FUNCTION_REGISTRY:
+                    function_to_call = FUNCTION_REGISTRY[function_name]
 
-                        tool_outputs.append({
-                            "role": "tool",
-                            "name": function_name,
-                            "content": result if isinstance(result, str) else json.dumps(result)
-                        })
+                    # Get function signature to check if it requires bot or event objects
+                    import inspect
+                    function_signature = inspect.signature(function_to_call)
+                    param_names = list(function_signature.parameters.keys())
 
-                messages += tool_outputs
-                continue
-            else:
-                for item in response.output:
-                    if isinstance(item, ResponseOutputMessage):
-                        for content in item.content:
-                            if isinstance(content, ResponseOutputText):
-                                return {"type": "text", "content": content.text}
-                            elif hasattr(content, "type") and content.type == "image":
-                                return {"type": "image", "url": content.url}
+                    # Automatically inject bot and event if the function accepts them
+                    if "bot" in param_names and bot:
+                        arguments["bot"] = bot
+                    if "event" in param_names and event:
+                        arguments["event"] = event
+                    if "team_members" in param_names and bot and event:
+                        arguments["team_members"] = await get_channel_members(event.msg.conv_id, bot)
+                    if "sender" in param_names and event:
+                        arguments["sender"] = event.msg.sender.username
 
-        return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
+                    # Handle both asynchronous (async) and synchronous (sync) functions properly
+                    if asyncio.iscoroutinefunction(function_to_call):
+                        result = await function_to_call(**arguments)  # Await async functions
+                    else:
+                        result = function_to_call(**arguments)  # Call sync functions normally
+
+                    # If result is a dictionary with 'msg' and 'file' keys, return it as is
+                    if isinstance(result, dict) and "msg" in result and "file" in result:
+                        return {"type": "text", "content": result}  # Return the entire dictionary
+                    # If result is a string, return it wrapped in the standard format
+                    else:
+                        return {"type": "text", "content": result}
+
+                return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
+
+            # Rest of response handling remains the same
+            elif isinstance(item, ResponseOutputMessage) and item.type == "message":
+                for content in item.content:
+                    if isinstance(content, ResponseOutputText) and content.type == "output_text":
+                        return {"type": "text", "content": content.text}
+
+            # Handle image outputs from the API
+            elif isinstance(item, ResponseOutputMessage) and item.type == "message":
+                for content in item.content:
+                    # Check if this is an image in the message content
+                    if hasattr(content, "type") and content.type == "image":
+                        return {"type": "image", "url": content.url}
+
+    return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
 
 
 async def handle_marvn_mention(bot, event):
