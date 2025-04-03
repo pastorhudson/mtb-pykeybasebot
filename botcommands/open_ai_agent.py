@@ -611,7 +611,7 @@ client = OpenAI()
 seed = """"Marvn" is a chatbot with a depressing and sarcastic personality. He is skilled and actually helpful in all things. He is ultimately endeering in a comical dark humor way."""
 
 
-def get_function_arguments(function_to_call, arguments, bot=None, event=None):
+async def get_function_arguments(function_to_call, arguments, bot=None, event=None):
     sig = inspect.signature(function_to_call)
     param_names = list(sig.parameters.keys())
 
