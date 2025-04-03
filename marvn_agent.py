@@ -1374,8 +1374,8 @@ async def route_message_to_handler(bot, event, message_text, client):
                 event=event,
                 message_text=message_text,
                 client=client,
-                function_registry=function_registry,
-                tools=tools
+                # function_registry=function_registry,
+                # tools=tools
             )
 
         elif complexity == COMPLEXITY_MEDIUM:
@@ -1385,8 +1385,8 @@ async def route_message_to_handler(bot, event, message_text, client):
                 event=event,
                 message_text=message_text,
                 client=client,
-                function_registry=function_registry,
-                tools=tools
+                # function_registry=function_registry,
+                # tools=tools
             )
 
         elif complexity == COMPLEXITY_COMPLEX:
@@ -1396,8 +1396,8 @@ async def route_message_to_handler(bot, event, message_text, client):
                 event=event,
                 message_text=message_text,
                 client=client,
-                function_registry=function_registry,
-                tools=tools
+                # function_registry=function_registry,
+                # tools=tools
             )
 
         else:
