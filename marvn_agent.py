@@ -1469,8 +1469,8 @@ async def handle_marvn_mention_enhanced(bot, event):
                         event=event,
                         message_text=prompt,
                         client=client,
-                        function_registry=function_registry,
-                        tools=tools
+                        # function_registry=function_registry,
+                        # tools=tools
                     )
 
                 await bot.chat.reply(conversation_id, msg_id,
@@ -1513,8 +1513,8 @@ async def handle_marvn_mention_enhanced(bot, event):
                 event=event,
                 message_text=prompt,
                 client=client,
-                function_registry=function_registry,
-                tools=tools
+                # function_registry=function_registry,
+                # tools=tools
             )
 
         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
@@ -1554,8 +1554,8 @@ async def handle_marvn_mention_enhanced(bot, event):
                     event=event,
                     message_text=prompt,
                     client=client,
-                    function_registry=function_registry,
-                    tools=tools
+                    # function_registry=function_registry,
+                    # tools=tools
                 )
     else:
         # Regular message (not a reply)
@@ -1572,8 +1572,8 @@ async def handle_marvn_mention_enhanced(bot, event):
             event=event,
             message_text=enhanced_message,
             client=client,
-            function_registry=function_registry,
-            tools=tools
+            # function_registry=function_registry,
+            # tools=tools
         )
 
     # Reset unfurl setting if needed
