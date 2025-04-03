@@ -183,6 +183,7 @@ new_tools = [
     },
     {
         "name": "get_since",
+        "type": "function",
         "description": "Get a list of events and how long it's been since they occurred for a given team.",
         "parameters": {
             "type": "object",
@@ -202,6 +203,7 @@ new_tools = [
     },
     {
         "name": "set_since",
+        "type": "function",
         "description": "Set a new 'since' event for a team with a given event time.",
         "parameters": {
             "type": "object",
@@ -224,6 +226,7 @@ new_tools = [
     },
     {
         "name": "reset_since",
+        "type": "function",
         "description": "Reset an existing 'since' event to the current time.",
         "parameters": {
             "type": "object",
