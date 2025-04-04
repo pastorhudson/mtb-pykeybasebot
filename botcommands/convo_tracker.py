@@ -213,10 +213,9 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
                 elif original_content_type == "attachment":
                     obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
                     original_data["content"] = obj.get('title', '[Attachment]')
-                    original_data["attachment"] = {
-                        "filename": obj.get('filename', 'unknown'),
-                        "title": obj.get('title', '')
-                    }
+                    original_data["has_attachment"] = True
+                    original_data["attachment_filename"] = obj.get('filename', 'unknown')
+                    original_data["attachment_title"] = obj.get('title', '')
 
                 # Store the original message content in this message's metadata
                 message["replied_to_message"] = original_data
