@@ -681,7 +681,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
                     logging.debug(f"Tool output (string): {tool_output_str[:300]}...")
                     # Create the output item structure for function results
-                    output_itemoutput_item = {
+                    output_item = {
                         "type": "function_call_output",
                         "tool_call_id": tool_call_id,
                         "call_id": tool_call_id,  # This is the missing required parameter
