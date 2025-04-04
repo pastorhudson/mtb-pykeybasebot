@@ -258,17 +258,18 @@ async def handler(bot, event):
     #     print(type(e))
     #     print("Not an attachment")
 
-    # try:
-    #     if event.msg.content.type_name == 'attachment':
-    #         if str(event.msg.content.attachment.object.title).startswith("@marvn"):
-    #             pprint(event.msg.content)
-    #             await handle_marvn_mention_with_context(bot, event)
-    #
-    #
-    # except Exception as e:
-    #     logging.error(f"Error handling attachment: {str(e)}")
-    #     logging.error(f"Type: {type(e)}")
-    #     print("Not an attachment or error processing attachment")
+    try:
+        if event.msg.content.type_name == 'attachment':
+            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
+                pprint(event.msg.content)
+                logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
+                await handle_marvn_mention_with_context(bot, event)
+
+
+    except Exception as e:
+        logging.error(f"Error handling attachment: {str(e)}")
+        logging.error(f"Type: {type(e)}")
+        print("Not an attachment or error processing attachment")
 
     # logging.info(event.msg.content)
 
