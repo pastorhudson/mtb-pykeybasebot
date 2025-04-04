@@ -599,7 +599,8 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
 
                 elif item_type == "function_call" and isinstance(item, ResponseFunctionToolCall):
-                    logging.info(f"Found function call request: {item.name}")  # Changed from item.function.name
+                    function_call_id = item.id  # Use the exact ID provided by the API
+                    logging.info(f"Found function call request: {item.name} with ID: {function_call_id}")
                     tool_calls_requested.append(item)
 
                 elif item_type == "web_search_call":  # Actual type from experimentation might differ
@@ -628,14 +629,14 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 for tool_call in tool_calls_requested:
                     # Structure is {"type": "function", "function": {"name": ..., "arguments": ...}, "id": ...}
                     function_name = tool_call.name
-                    tool_call_id = tool_call.id  # ID is at the top level of the call item
+                    function_call_id = tool_call.id  # ID is at the top level of the call item
 
-                    if not tool_call_id:
+                    if not function_call_id:
                         # Should not happen based on spec, but handle defensively
                         logging.error(f"Function call item for {function_name} missing 'id'!")
                         continue  # Skip this call if ID is missing
 
-                    logging.info(f"Executing: {function_name} (Call ID: {tool_call_id})")
+                    logging.info(f"Executing: {function_name} (Call ID: {function_call_id})...)")
                     arguments = {}
                     try:
                         # Arguments string needs parsing
@@ -683,7 +684,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                     # Create the output item structure for function results
                     output_item = {
                         "type": "function_call_output",
-                        "call_id": tool_call_id,  # This is the missing required parameter
+                        "call_id": function_call_id,  # This is the missing required parameter
                         "output": tool_output_str
                     }
                     function_outputs.append(output_item)
