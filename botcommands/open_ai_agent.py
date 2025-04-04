@@ -1026,14 +1026,46 @@ async def handle_marvn_mention_with_context(bot, event):
                 original_content_type = original_msg.get('content', {}).get('type', 'unknown')
                 original_text = ""
                 original_attachment_info = ""
+
+                # Check if this is a reply to another message that's already in our conversation history
+                original_msg_id = event.msg.content.text.reply_to
+
                 if original_content_type == "text":
                     original_text = original_msg.get('content', {}).get('text', {}).get('body', '')
                 elif original_content_type == "attachment":
                     obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
                     original_text = obj.get('title', '[Attachment]')
                     original_attachment_info = f"[Original message attachment: {obj.get('filename', 'unknown')}]"
+
+                # Build explicit reply context for current request
                 reply_context = f"--- Context: Replying to {original_sender} ---\n'{original_text}'\n{original_attachment_info}\n---\n\n"
                 user_prompt_text = reply_context + user_prompt_text
+
+                # Check if we need to fetch previous context
+                further_reply_to = original_msg.get('content', {}).get('text', {}).get('reply_to', None)
+                if further_reply_to:
+                    try:
+                        # This is part of a longer reply chain, try to get one more level
+                        further_original = await bot.chat.get(conversation_id, further_reply_to)
+                        if further_original and further_original.message and len(further_original.message) > 0:
+                            further_msg = further_original.message[0]['msg']
+                            further_sender = further_msg.get('sender', {}).get('username', 'unknown')
+                            further_type = further_msg.get('content', {}).get('type', 'unknown')
+                            further_text = ""
+
+                            if further_type == "text":
+                                further_text = further_msg.get('content', {}).get('text', {}).get('body', '')
+                            elif further_type == "attachment":
+                                obj = further_msg.get('content', {}).get('attachment', {}).get('object', {})
+                                further_text = obj.get('title', '[Attachment]')
+
+                            # Add this additional context as well
+                            additional_context = f"--- Additional Context: Earlier message from {further_sender} ---\n'{further_text}'\n---\n\n"
+                            user_prompt_text = additional_context + user_prompt_text
+                            logging.info("Added additional reply chain context from earlier message")
+                    except Exception as chain_err:
+                        logging.error(f"Error retrieving earlier messages in reply chain: {chain_err}")
+                        # Don't add error info to prompt, just log it
             except Exception as e:
                 logging.exception(f"Error processing replied-to message. {e}")
                 user_prompt_text = f"[System Note: Failed to load reply context]\n\n{user_prompt_text}"

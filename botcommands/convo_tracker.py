@@ -21,7 +21,7 @@ class ConversationTracker:
     Each team/channel gets its own file for conversation history.
     """
 
-    def __init__(self, storage_dir: str = "./storage/conversation_history", max_messages: int = 50):
+    def __init__(self, storage_dir: str = "./conversation_history", max_messages: int = 50):
         """
         Initialize the conversation tracker.
 
@@ -322,7 +322,7 @@ async def enhance_marvn_with_conversation_context(bot, event, conversation_track
 # Example usage in your main bot code
 """
 # Initialization
-conversation_tracker = ConversationTracker(storage_dir="./storage/conversation_history", max_messages=50)
+conversation_tracker = ConversationTracker(storage_dir="./conversation_history", max_messages=50)
 
 # In your message handling function where handle_marvn_mention is called
 async def on_message(bot, event):
