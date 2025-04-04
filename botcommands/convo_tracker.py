@@ -173,6 +173,7 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
     # Determine team/channel name
     team_name = event.msg.channel.name if hasattr(event.msg,
                                                   'channel') and event.msg.channel else f"DM_{event.msg.conv_id[:8]}"
+    conversation_id = event.msg.conv_id
 
     # Create message object
     message = {
@@ -192,7 +193,40 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
 
     # Add reply info if present
     if hasattr(event.msg.content, 'text') and event.msg.content.text.reply_to:
-        message["reply_to"] = event.msg.content.text.reply_to
+        reply_to_id = event.msg.content.text.reply_to
+        message["reply_to"] = reply_to_id
+
+        # Fetch and store the original message content
+        try:
+            original_msg_info = await bot.chat.get(conversation_id, reply_to_id)
+            if original_msg_info and original_msg_info.message and len(original_msg_info.message) > 0:
+                original_msg = original_msg_info.message[0]['msg']
+                original_sender = original_msg.get('sender', {}).get('username', 'unknown')
+                original_content_type = original_msg.get('content', {}).get('type', 'unknown')
+
+                original_data = {
+                    "sender": original_sender,
+                    "msg_id": reply_to_id,
+                }
+
+                if original_content_type == "text":
+                    original_data["content"] = original_msg.get('content', {}).get('text', {}).get('body', '')
+                elif original_content_type == "attachment":
+                    obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
+                    original_data["content"] = obj.get('title', '[Attachment]')
+                    original_data["attachment"] = {
+                        "filename": obj.get('filename', 'unknown'),
+                        "title": obj.get('title', '')
+                    }
+
+                # Store the original message content in this message's metadata
+                message["replied_to_message"] = original_data
+
+                # Log the successful retrieval of the original message
+                logging.info(f"Retrieved original message from {original_sender} for reply chain context")
+        except Exception as e:
+            logging.error(f"Error retrieving original message for reply chain: {e}")
+            message["replied_to_message"] = {"error": f"Failed to retrieve: {str(e)}"}
 
     # Track the message
     await conversation_tracker.add_message(team_name, message)
@@ -237,8 +271,21 @@ def get_conversation_context(conversation_tracker, team_name, limit=10):
             attachment = msg["attachment"]
             attachment_info = f" [Attachment: {attachment.get('filename', 'unknown')}]"
 
+        # Format reply context if present
+        reply_context = ""
+        if "replied_to_message" in msg and isinstance(msg["replied_to_message"], dict):
+            original = msg["replied_to_message"]
+            original_sender = original.get("sender", "unknown")
+            original_content = original.get("content", "[CONTENT UNAVAILABLE]")
+
+            # Truncate long original messages
+            if len(original_content) > 100:
+                original_content = original_content[:97] + "..."
+
+            reply_context = f" [Replying to {original_sender}: \"{original_content}\"]"
+
         # Format message
-        formatted_msg = f"[{time_str}] {sender}: {content}{attachment_info}"
+        formatted_msg = f"[{time_str}] {sender}: {content}{attachment_info}{reply_context}"
         formatted_messages.append(formatted_msg)
 
     return "\n".join(formatted_messages)
