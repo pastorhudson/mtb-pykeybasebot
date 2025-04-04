@@ -1551,7 +1551,7 @@ async def handle_marvn_mention_with_context(bot, event):
                 message_text = response_content or file_data.get("msg", "Here's your file.")
 
                 # Send the text message
-                await bot.chat.reply(conversation_id, msg_id, message_text)
+                # await bot.chat.reply(conversation_id, msg_id, message_text)
 
                 # Track Marvn's response in the conversation history
                 bot_response = {
