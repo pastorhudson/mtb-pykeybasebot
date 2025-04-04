@@ -961,7 +961,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
                             # --- FIXED: Improved file detection and handling ---
                             # Check if the result is a file-based response from specific functions
-                            if function_name in ["get_screenshot", "get_mp3", "get_mp4", "get_meta"] and isinstance(
+                            if function_name in ["get_screenshot", "get_mp3", "get_mp4", "get_meta", "generate_dalle_image", "restyle_image"] and isinstance(
                                     result, dict) and "file" in result:
                                 # Immediately return a file response for these file-generating functions
                                 logging.info(f"Detected file response from {function_name}, returning directly")
