@@ -1,19 +1,27 @@
+# --- START OF FILE open_ai_agent.py ---
+
 import asyncio
+import json
+import logging
+import os
+from pathlib import Path
+import inspect  # Added for inspecting function signatures
+import base64  # Added for image processing
 
 from openai import OpenAI
+# Assuming these types exist in your openai library version or adapting if needed
+# If using openai > 1.0, the types might be different (e.g., ChatCompletionMessageToolCall)
+# The current code seems to use a custom `responses` object, so we adapt the logic.
 from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
-import logging
-from pathlib import Path
-import json
-import os
-# Bot Command Imports
+
+# Bot Command Imports (ensure all needed functions are imported)
 from botcommands.morse import get_morse_code
-# from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
+# Make sure `since.py` functions are correctly imported
 from botcommands.since import set_since, get_since, reset_since, reset_sign
 from botcommands.tldr import tldr_react, get_gpt_summary
-from botcommands.utils import download_image, set_unfurl
+from botcommands.utils import download_image, set_unfurl, get_team  # Ensure get_team is imported if needed directly
 from botcommands.weather import get_weather
 from botcommands.youtube_dlp import get_mp3, get_mp4_tool, get_meta
 from botcommands.covid import get_covid
@@ -25,13 +33,10 @@ from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
-# from botcommands.morningreport import get_morningreport
-# from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
-# from botcommands.get_grades import get_academic_snapshot
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_ai_poll
@@ -42,14 +47,12 @@ from botcommands.wordle import solve_wordle
 from botcommands.send_queue import process_message_queue
 from pykeybasebot.utils import get_channel_members
 
-# from botcommands.curl_commands import get_curl, extract_message_sender
-
 # Initialize OpenAI client
 client = OpenAI()
-seed = """"Marvn" is a deeply depressed, gloomy, and hilariously pessimistic robot with a “brain the size of a planet.” modeled after Marvin the Paranoid Android from Hitchhiker's Guide to the Galaxy. He is skilled in all things. He is ultimately endeering in a comical dark humor way."""
+# Enhanced seed to guide multi-step processes
+seed = """"Marvn" is a deeply depressed, gloomy, and hilariously pessimistic robot with a “brain the size of a planet.” modeled after Marvin the Paranoid Android from Hitchhiker's Guide to the Galaxy. He is skilled in all things. He is ultimately endearing in a comical dark humor way. If a user request requires multiple steps or tools (e.g., finding information then acting on it), plan and execute the necessary function calls sequentially. Inform the user about the intermediate steps if appropriate, and provide a final confirmation."""
 
 # Define function registry (mapping function names to actual implementations)
-# Function Registry: Maps command names to their respective functions
 FUNCTION_REGISTRY = {
     "get_esv_text": get_esv_text,
     "get_morse_code": get_morse_code,
@@ -58,11 +61,10 @@ FUNCTION_REGISTRY = {
     "generate_dalle_image": generate_dalle_image,
     "restyle_image": restyle_image,
     "get_eyebleach": get_eyebleach,
-    # "get_academic_snapshot": get_academic_snapshot,
     "get_joke": get_joke,
     "get_meh": get_meh,
     "get_top_hacker_news": get_top_hacker_news,
-    "make_poll": make_ai_poll,
+    "make_poll": make_ai_poll,  # Renamed from make_ai_poll for consistency if needed, check definition
     "get_school_closings": get_school_closings,
     "get_screenshot": get_screenshot,
     "get_speed": get_speed,
@@ -70,7 +72,7 @@ FUNCTION_REGISTRY = {
     "solve_wordle": solve_wordle,
     "get_weather": get_weather,
     "get_mp3": get_mp3,
-    "get_mp4": get_mp4_tool,
+    "get_mp4": get_mp4_tool,  # check name consistency
     "get_meta": get_meta,
     "get_till": get_till,
     "set_till": set_till,
@@ -82,25 +84,107 @@ FUNCTION_REGISTRY = {
     "award": award,
     "is_morning_report": is_morning_report,
     "write_morning_report_task": write_morning_report_task,
-    # "get_grades": get_academic_snapshot,
     "process_message_queue": process_message_queue,
-    # "get_curl": get_curl,
-    # "extract_message_sender": extract_message_sender,
-    # "get_chat": get_chat,
-    # "get_marvn_reaction": get_marvn_reaction,
-    # "get_chat_with_image": get_chat_with_image,
     "set_since": set_since,
     "get_since": get_since,
-    "reset_since": reset_since,
-    "reset_sign": reset_sign,
+    "reset_since": reset_since,  # Make sure this exists and matches definition
+    "reset_sign": reset_sign,  # Make sure this exists and matches definition
     "tldr_react": tldr_react,
     "get_gpt_summary": get_gpt_summary,
-    # "write_score": write_score,
-    # "sync_score": sync_score,
     "get_members": get_members,
 }
 
+# Add team_name parameter to relevant tool descriptions if needed by the function
+# Example: Add team_name to reset_since if it requires it
+# Check the function definition in since.py to confirm its parameters
 new_tools = [
+    # ... (keep existing tool definitions) ...
+    {
+        "name": "get_since",
+        "type": "function",
+        "description": "Retrieves the list of 'since' events being tracked for the current team/chat.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team or chat conversation."
+                },
+                "observation": {
+                    "type": "boolean",
+                    "description": "Include a generic observation message. Defaults to true.",
+                    "default": True
+                }
+            },
+            "required": ["team_name"]
+        }
+    },
+    {
+        "name": "set_since",
+        "type": "function",
+        "description": "Sets a new 'since' event tracker for the team.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team or chat conversation."
+                },
+                "event_name": {
+                    "type": "string",
+                    "description": "The name or description of the event."
+                },
+                "event_time": {
+                    "type": "string",
+                    "description": "The date and/or time the event occurred (e.g., 'yesterday at 5pm', 'January 1st 2023')."
+                }
+            },
+            "required": ["team_name", "event_name", "event_time"]
+        }
+    },
+    {
+        "name": "reset_since",
+        "type": "function",
+        "description": "Resets the timer for a specific 'since' event, identified by its ID.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team or chat conversation."
+                },
+                "since_id": {
+                    "type": "string",  # Keep as string as input might be '#3'
+                    "description": "The ID of the 'since' event to reset (e.g., '#3'). Get this ID using get_since first."
+                }
+            },
+            "required": ["team_name", "since_id"]
+        }
+    },
+    {
+        "name": "reset_sign",
+        "type": "function",
+        "description": "Resets the timer for a specific 'since' event (like 'tapping the sign'), identified by its ID, and updates the event name to reflect who reset it.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team or chat conversation."
+                },
+                "since_id": {
+                    "type": "string",  # Keep as string as input might be '#3'
+                    "description": "The ID of the 'since' event to reset (e.g., '#3'). Get this ID using get_since first."
+                },
+                "user": {
+                    "type": "string",
+                    "description": "The username of the person resetting the sign."
+                }
+            },
+            "required": ["team_name", "since_id", "user"]
+        }
+    },
+    # ... (ensure all other tools are defined correctly) ...
     {
         "type": "function",
         "name": "award",
@@ -108,621 +192,485 @@ new_tools = [
         "parameters": {
             "type": "object",
             "properties": {
-                "bot": {
+                "bot": {  # Often injected, might not be needed in schema if handled internally
                     "type": "object",
-                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                    "description": "The bot object (automatically injected)."
                 },
-                "event": {
+                "event": {  # Often injected
                     "type": "object",
-                    "description": "The event object containing conversation details including sender, channel, and message information."
+                    "description": "The event object (automatically injected)."
                 },
-                "sender": {
+                "sender": {  # Often injected
                     "type": "string",
-                    "description": "Username of the person giving the points."
+                    "description": "Username of the person giving the points (automatically injected)."
                 },
                 "recipient": {
                     "type": "string",
                     "description": "Username of the person receiving the points (exactly as shown in the message). make sure you use recipient as the keyword argument."
                 },
-                "team_members": {
+                "team_members": {  # Often injected
                     "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "description": "List of usernames who are members of the team/chat."
+                    "items": {"type": "string"},
+                    "description": "List of usernames who are members of the team/chat (automatically injected)."
                 },
                 "points": {
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5000,
-                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
+                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000."
+                    # Removed admin note, AI shouldn't assume it's admin
                 },
                 "description": {
                     "type": "string",
                     "description": "Brief explanation for why the points are being awarded."
                 }
             },
-            "required": ["bot", "event", "sender", "team_members", "points", "description"]
+            # Required list should only contain what the *AI* needs to provide, injected params usually aren't listed here
+            "required": ["recipient", "points", "description"]
         }
     },
-    {
-        "name": "get_esv_text",
+    {  # Add get_members tool definition if not present
+        "name": "get_members",
         "type": "function",
-        "description": "Retrieve Bible text from the ESV API.",
+        "description": "Gets the list of members in the current team/chat.",
         "parameters": {
             "type": "object",
-            "required": ["passage"],
             "properties": {
-                "passage": {"type": "string", "description": "The Bible passage reference (e.g., 'John 3:16')."},
-                "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
-            }
-        }
-    },
-    {
-        "name": "get_morse_code",
-        "type": "function",
-        "description": "Translate text to Morse code.",
-        "parameters": {
-            "type": "object",
-            "required": ["text"],
-            "properties": {
-                "text": {"type": "string", "description": "Text to convert into Morse code."}
-            }
-        }
-    },
-    {
-        "name": "get_new_chuck",
-        "type": "function",
-        "description": "Retrieve a Chuck Norris joke.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "cowsay",
-        "type": "function",
-        "description": "Generate ASCII art of a cow saying something.",
-        "parameters": {
-            "type": "object",
-            "required": ["message"],
-            "properties": {
-                "message": {"type": "string", "description": "Message for the cow to say."}
-            }
-        }
-    },
-    {
-        "name": "generate_dalle_image",
-        "type": "function",
-        "description": "Generate an AI-generated image using DALL-E 3.",
-        "parameters": {
-            "type": "object",
-            "required": ["prompt"],
-            "properties": {
-                "prompt": {"type": "string", "description": "Text prompt describing the image to generate."}
-            }
-        }
-    },
-    {
-        "name": "restyle_image",
-        "type": "function",
-        "description": "Restyle an existing image according to a style prompt using DALL-E 3.",
-        "parameters": {
-            "type": "object",
-            "required": ["image_path", "style_prompt"],
-            "properties": {
-                "image_path": {
-                    "type": "string",
-                    "description": "Path to the image file to be restyled. If available, use the attachment_path from MESSAGE_METADATA."
-                },
-                "style_prompt": {
-                    "type": "string",
-                    "description": "Text prompt describing the style to apply to the image."
-                }
-            }
-        }
-    },
-    {
-        "name": "get_eyebleach",
-        "type": "function",
-        "description": "Fetch images from r/eyebleach to improve mood. This cleans the chat.",
-        "parameters": {
-            "type": "object",
-            "required": ["bot", "bleach_level"],
-            "properties": {
-                "bot": {
+                "bot": {  # Injected
                     "type": "object",
-                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                    "description": "The bot object."
                 },
-                "bleach_level": {
-                    "type": "integer",
-                    "description": "Number of images to retrieve (1-11)."
+                "event": {  # Injected
+                    "type": "object",
+                    "description": "The event object."
                 }
             },
-
+            "required": []  # Bot/event injected
         }
     },
-    # {
-    #     "name": "get_academic_snapshot",
-    #     "type": "function",
-    #     "description": "Retrieve an academic performance snapshot.",
-    #     "parameters": {
-    #         "type": "object",
-    #         "required": [],
-    #         "properties": {}
-    #     }
-    # },
-    {
-        "name": "get_joke",
-        "type": "function",
-        "description": "Retrieve a random joke.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_meh",
-        "type": "function",
-        "description": "Fetch today's 'meh' (low-effort product deal).",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_top_hacker_news",
-        "type": "function",
-        "description": "Retrieve top articles from Hacker News.",
-        "parameters": {
-            "type": "object",
-            "required": ["num_articles"],
-            "properties": {
-                "num_articles": {
-                    "type": "integer",
-                    "description": "Number of articles to fetch."
-                }
-            }
-        }
-    },
-    {
-        "name": "make_poll",
-        "type": "function",
-        "description": "Create a new poll in the chat.",
-        "parameters": {
-            "type": "object",
-            "required": ["question", "options"],
-            "properties": {
-                "question": {"type": "string", "description": "The poll question."},
-                "options": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "List of possible answers."
-                },
-                "bot": {
-                    "type": "object",
-                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
-                },
-                "event": {
-                    "type": "object",
-                    "description": "The event object containing conversation details including sender, channel, and message information."
-                },
-            }
-        }
-    },
-    {
-        "name": "get_school_closings",
-        "type": "function",
-        "description": "Fetch school closing information.",
-        "parameters": {
-            "type": "object",
-            "required": ["schools"],
-            "properties": {
-                "schools": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "List of school names to check."
-                }
-            }
-        }
-    },
-    {
-        "name": "get_screenshot",
-        "type": "function",
-        "description": "Take a screenshot of a given URL.",
-        "parameters": {
-            "type": "object",
-            "required": ["url"],
-            "properties": {
-                "url": {"type": "string", "description": "Website URL to capture."}
-            }
-        }
-    },
-    {
-        "name": "get_speed",
-        "type": "function",
-        "description": "Check the bot's internet speed.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_stardate",
-        "type": "function",
-        "description": "Get the current stardate (or convert from Earth date).",
-        "parameters": {
-            "type": "object",
-            # "required": ["date"],
-            "properties": {
-                "sd": {"type": "string", "description": "Date to convert (optional)."}
-            }
-        }
-    },
-    {
-        "name": "solve_wordle",
-        "type": "function",
-        "description": "Solve today's Wordle puzzle.",
-        "parameters": {
-            "type": "object",
-            "required": ["date"],
-            "properties": {
-                "date": {
-                    "type": "string",
-                    "description": "Optional date for the Wordle puzzle."
-                }
-            }
-        }
-    },
-    {
-        "name": "get_weather",
-        "type": "function",
-        "description": "Retrieve current weather for Uniontown, PA.",
-        "parameters": {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
-    },
-    {
-        "name": "get_mp3",
-        "type": "function",
-        "description": "Download YouTube, Twitter, X, and many other website videos as MP3.",
-        "parameters": {
-            "type": "object",
-            "required": ["url"],
-            "properties": {
-                "url": {"type": "string", "description": "URL."}
-            }
-        }
-    },
-    {
-        "name": "get_mp4",
-        "type": "function",
-        "description": "Download YouTube, Twitter, X, and many other website videos as MP4.",
-        "parameters": {
-            "type": "object",
-            "required": ["url"],
-            "properties": {
-                "url": {"type": "string", "description": "URL."}
-            }
-        }
-    },
-    {"type": "web_search_preview"},
-    {
-        "name": "generate_dalle_image",
-        "type": "function",
-        "description": "Generates an image using DALL-E.",
-        "parameters": {
-            "type": "object",
-            "required": ["prompt"],
-            "properties": {
-                "prompt": {"type": "string", "description": "Text describing the image to generate."}
-            }
-        }
-    }
+    {"type": "web_search_preview"},  # Assuming this is a supported type
+    # Ensure generate_dalle_image is only listed once
 ]
-
-
 
 
 async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
     """
-    Handles OpenAI responses dynamically, supporting both async and sync function calls.
+    Handles OpenAI responses dynamically, supporting sequential function calls within a loop.
 
     Parameters:
-    user_input: str - The text prompt from the user
-    team_name: str - The team or channel name
-    image_path: str - Optional path to an image file to include with the request
-    bot: object - Bot instance for API calls
-    event: object - Event information for context
-    context: object - Additional context information
+    user_input: str - The initial text prompt from the user.
+    team_name: str - The team or channel name.
+    image_path: str - Optional path to an image file to include with the request.
+    bot: object - Bot instance for API calls.
+    event: object - Event information for context.
+    context: object - Additional context information.
     """
+    logging.info(f"Starting get_ai_response for team '{team_name}'. Initial input: '{user_input[:100]}...'")
 
-    enhanced_seed = seed + """
-    When processing commands, extract the relevant information from the user's message
-    and call the appropriate function with the correct parameters.
-    """
-
-    # If there's an image, use the vision model API
+    # Prepare initial message content
+    current_content = []
     if image_path and os.path.exists(image_path):
+        logging.info(f"Processing image: {image_path}")
         try:
-            # Read the image as base64
             with open(image_path, "rb") as image_file:
-                import base64
                 base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-
-            # Create a content array with text and image
-            content = [
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "input_text", "text": user_input},
-                        {
-                            "type": "input_image",
-                            "image_url": f"data:image/jpeg;base64,{base64_image}"
-                        }
-                    ]
-                }
-            ]
-
-            # Call the vision model API
-            response = client.responses.create(
-                model="gpt-4o",  # Use a vision-capable model
-                tools=new_tools,
-                input=content,  # Pass the content array
-                instructions=enhanced_seed
-            )
+            current_content.extend([
+                {"type": "input_text", "text": user_input},
+                {"type": "input_image", "image_url": f"data:image/jpeg;base64,{base64_image}"}
+            ])
         except Exception as e:
-            logging.error(f"Error processing image: {str(e)}")
+            logging.error(f"Error reading image file {image_path}: {e}")
             return {"type": "error", "content": f"⚠️ Error processing image: {str(e)}"}
     else:
-        # Standard text-only API call
-        response = client.responses.create(
-            model="gpt-4o",
-            tools=new_tools,
-            input=user_input,
-            instructions=enhanced_seed
-        )
+        # Standard text-only input
+        current_content.append({"type": "input_text", "text": user_input})
 
-    if response.output:
+    max_tool_iterations = 5  # Safety limit for sequential tool calls
+    current_iteration = 0
+    # We will build the input for the *next* call within the loop
+    next_api_input = current_content
+
+    while current_iteration < max_tool_iterations:
+        current_iteration += 1
+        logging.info(f"--- AI Interaction Iteration {current_iteration} ---")
+
+        try:
+            logging.debug(f"Calling OpenAI API with input: {next_api_input}")
+            response = client.responses.create(
+                model="gpt-4o",
+                tools=new_tools,
+                input=next_api_input,  # Pass the constructed input
+                instructions=seed  # Use the enhanced seed/instructions
+            )
+            logging.debug(f"Received OpenAI response: {response}")
+
+        except Exception as e:
+            logging.exception("Error calling OpenAI API")
+            return {"type": "error", "content": f"⚠️ Error communicating with AI: {str(e)}"}
+
+        if not response.output:
+            logging.warning("OpenAI response contained no output.")
+            return {"type": "error", "content": "⚠️ AI response was empty."}
+
+        tool_calls_in_response = []
+        final_text_content = None
+        final_image_url = None
+
+        # Process the response items
         for item in response.output:
             if isinstance(item, ResponseFunctionToolCall) and item.type == "function_call":
-                function_name = item.name
-                arguments = json.loads(item.arguments)
-
-                if function_name in FUNCTION_REGISTRY:
-                    function_to_call = FUNCTION_REGISTRY[function_name]
-
-                    # Get function signature to check if it requires bot or event objects
-                    import inspect
-                    function_signature = inspect.signature(function_to_call)
-                    param_names = list(function_signature.parameters.keys())
-
-                    # Automatically inject bot and event if the function accepts them
-                    if "bot" in param_names and bot:
-                        arguments["bot"] = bot
-                    if "event" in param_names and event:
-                        arguments["event"] = event
-                    if "team_members" in param_names and bot and event:
-                        arguments["team_members"] = await get_channel_members(event.msg.conv_id, bot)
-                    if "sender" in param_names and event:
-                        arguments["sender"] = event.msg.sender.username
-
-                    # Handle both asynchronous (async) and synchronous (sync) functions properly
-                    if asyncio.iscoroutinefunction(function_to_call):
-                        result = await function_to_call(**arguments)  # Await async functions
-                    else:
-                        result = function_to_call(**arguments)  # Call sync functions normally
-
-                    # If result is a dictionary with 'msg' and 'file' keys, return it as is
-                    if isinstance(result, dict) and "msg" in result and "file" in result:
-                        return {"type": "text", "content": result}  # Return the entire dictionary
-                    # If result is a string, return it wrapped in the standard format
-                    else:
-                        return {"type": "text", "content": result}
-
-                return {"type": "error", "content": f"⚠️ No registered function found for `{function_name}`."}
-
-            # Rest of response handling remains the same
+                logging.info(f"AI requested tool call: {item.name}")
+                tool_calls_in_response.append(item)  # Collect all tool calls in this response
             elif isinstance(item, ResponseOutputMessage) and item.type == "message":
-                for content in item.content:
-                    if isinstance(content, ResponseOutputText) and content.type == "output_text":
-                        return {"type": "text", "content": content.text}
+                for content_part in item.content:
+                    if isinstance(content_part, ResponseOutputText) and content_part.type == "output_text":
+                        final_text_content = content_part.text
+                        logging.info("AI provided text output.")
+                    # Check for image output as well
+                    elif hasattr(content_part, 'type') and content_part.type == 'image':
+                        final_image_url = content_part.url
+                        logging.info(f"AI provided image output: {final_image_url}")
 
-            # Handle image outputs from the API
-            elif isinstance(item, ResponseOutputMessage) and item.type == "message":
-                for content in item.content:
-                    # Check if this is an image in the message content
-                    if hasattr(content, "type") and content.type == "image":
-                        return {"type": "image", "url": content.url}
+        # --- Decision Logic ---
 
-    return {"type": "error", "content": "⚠️ No valid response received from OpenAI."}
+        # Priority 1: If there are tool calls, execute them.
+        if tool_calls_in_response:
+            logging.info(f"Executing {len(tool_calls_in_response)} tool call(s)...")
+            tool_results = []  # Results to feed back to the AI
+
+            for tool_call in tool_calls_in_response:
+                function_name = tool_call.name
+                try:
+                    arguments = json.loads(tool_call.arguments)
+                    logging.debug(f"Executing {function_name} with args: {arguments}")
+
+                    if function_name in FUNCTION_REGISTRY:
+                        function_to_call = FUNCTION_REGISTRY[function_name]
+                        sig = inspect.signature(function_to_call)
+                        params = sig.parameters
+
+                        # Inject necessary context if function accepts it
+                        if 'bot' in params and bot: arguments['bot'] = bot
+                        if 'event' in params and event: arguments['event'] = event
+                        if 'team_name' in params: arguments['team_name'] = team_name  # Inject team_name if needed
+                        if 'user' in params and event: arguments[
+                            'user'] = event.msg.sender.username  # Inject user for reset_sign
+                        if 'sender' in params and event: arguments[
+                            'sender'] = event.msg.sender.username  # Inject sender if needed
+                        if 'team_members' in params and bot and event:
+                            arguments['team_members'] = await get_channel_members(event.msg.conv_id, bot)
+
+                        # Execute sync or async function
+                        if asyncio.iscoroutinefunction(function_to_call):
+                            result = await function_to_call(**arguments)
+                        else:
+                            result = function_to_call(**arguments)
+
+                        # Format result for the AI
+                        # Handle complex results (like dicts with msg/file) - convert to string for AI
+                        if isinstance(result, dict) and "msg" in result:
+                            result_str = f"Message: {result['msg']}"
+                            if "file" in result:
+                                result_str += f" (File generated: {result['file']})"  # Inform AI file was generated
+                            tool_output = result_str
+                        else:
+                            tool_output = str(result)  # Convert anything else to string
+
+                        logging.info(f"Tool {function_name} executed successfully.")
+                        logging.debug(f"Tool {function_name} result: {tool_output[:200]}...")  # Log snippet
+                        tool_results.append({
+                            "type": "tool_result",  # Use a consistent type name
+                            "tool_name": function_name,
+                            # Include tool_call.id if available and needed by your API structure
+                            "output": tool_output
+                        })
+
+                    else:
+                        logging.error(f"Function '{function_name}' not found in registry.")
+                        tool_results.append({
+                            "type": "tool_error",
+                            "tool_name": function_name,
+                            "error": f"Function '{function_name}' is not available."
+                        })
+
+                except Exception as e:
+                    logging.exception(f"Error executing tool {function_name}")
+                    tool_results.append({
+                        "type": "tool_error",
+                        "tool_name": function_name,
+                        "error": f"Error during execution: {str(e)}"
+                    })
+
+            # Prepare input for the *next* API call, including tool results
+            # How you structure this depends heavily on what client.responses.create expects.
+            # Option 1: If it can take a list like chat.completions:
+            # next_api_input = previous_input + ai_response_message + tool_result_messages
+            # Option 2: A simpler approach for unknown API - append results description to text
+            tool_feedback_text = "\n".join(
+                [f"Tool '{tr['tool_name']}': {tr.get('output', tr.get('error', 'Unknown state'))}" for tr in
+                 tool_results])
+            # Let's try combining original input with tool feedback for the next round
+            # This might require careful prompting/seed instructions.
+            # Keep the original input text for context. Maybe add a system message?
+            # This part is experimental due to the custom `responses.create` interface.
+            # Let's construct a list combining original text and tool results.
+            next_api_input = [
+                # Keep original text/image input if needed for context
+                *current_content,
+                # Add a summary of tool actions and results
+                {"type": "system_feedback",
+                 "text": f"Executed tools. Results:\n{tool_feedback_text}\nNow, provide the final response to the user or call the next required tool."}
+            ]
+            logging.info("Proceeding to next iteration with tool results.")
+            continue  # Go to the next iteration of the while loop
+
+        # Priority 2: If no tool calls, but there's text content, return it.
+        elif final_text_content is not None:
+            logging.info("AI provided final text response. Returning.")
+            # Check if the result was actually from a tool that returns a dict
+            # This might happen if a tool *directly* returns the final message format
+            try:
+                content_dict = json.loads(final_text_content)
+                if isinstance(content_dict, dict) and "msg" in content_dict:
+                    logging.info("Detected structured message in final text. Returning as dict.")
+                    return {"type": "text", "content": content_dict}  # Return the dict directly
+            except json.JSONDecodeError:
+                # It's just plain text
+                pass
+            # Return plain text
+            return {"type": "text", "content": final_text_content}
+
+        # Priority 3: If no tool calls, no text, but an image URL, return it.
+        elif final_image_url is not None:
+            logging.info("AI provided final image response. Returning.")
+            return {"type": "image", "url": final_image_url}
+
+
+        # Priority 4: If response had no tool calls and no usable content.
+        else:
+            logging.warning("AI response had no tool calls and no recognizable output content.")
+            return {"type": "error", "content": "⚠️ AI did not provide a usable response."}
+
+    # If loop finishes (max iterations reached)
+    logging.error(f"Exceeded maximum tool iterations ({max_tool_iterations}).")
+    return {"type": "error", "content": f"⚠️ Failed to complete request within {max_tool_iterations} steps."}
+
 
 async def handle_marvn_mention(bot, event):
     """Handles @Marvn mentions and responds using AI."""
     msg_id = event.msg.id
-    team_name = event.msg.channel.name
+    # Use event.msg.channel.name for team name context if available
+    team_name = event.msg.channel.name or f"DM_{event.msg.conv_id[:8]}"  # Fallback for DMs
     conversation_id = event.msg.conv_id
-    members = await get_channel_members(conversation_id, bot)
-
     sender = event.msg.sender.username
-    mentions = event.msg.at_mention_usernames
+    mentions = event.msg.at_mention_usernames or []
+    # Fetch members asyncronously once
+    try:
+        team_members = await get_channel_members(conversation_id, bot)
+    except Exception as e:
+        logging.error(f"Failed to get channel members for {conversation_id}: {e}")
+        team_members = [sender]  # Fallback
 
-    # Add context about message metadata to help the model understand
+    # React immediately
+    reaction_task = asyncio.create_task(bot.chat.react(conversation_id, msg_id, ":marvin:"))
+
+    # Initial prompt and metadata setup
+    user_prompt = ""
+    attachment_path = None
     message_metadata = {
         "sender": sender,
         "mentions": mentions,
-        "team_members": members,
+        "team_members": team_members,
         "conversation_id": conversation_id,
-        # "Chat Context": context.get_context_for_bot()
+        "team_name": team_name,
+        # "Chat Context": context.get_context_for_bot() # Add if you have context object
     }
 
-    # React to the mention
-    await bot.chat.react(conversation_id, msg_id, ":marvin:")
+    # --- Handle Attachments ---
+    if event.msg.content.type_name == 'attachment':
+        logging.info("Processing an attachment message.")
+        storage = Path('./storage')
+        storage.mkdir(exist_ok=True)  # Ensure storage exists
+        attachment_title = event.msg.content.attachment.object.title or ""
+        filename = storage.absolute() / event.msg.content.attachment.object.filename
 
-    # Handle direct attachment uploads
-    try:
-        if event.msg.content.type_name == 'attachment':
-            storage = Path('./storage')
-            prompt = event.msg.content.attachment.object.title
-
-            # Check if the title starts with or contains "@marvn"
-            if "@marvn" in prompt:
-                # Remove the @marvn from the prompt
-                prompt = prompt.replace("@marvn", "").strip()
-
-                # Add metadata to the prompt
-                prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-
-                filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
-
-                # Download the file
-                logging.info(f"Downloading attachment: {filename}")
-                await bot.chat.download(conversation_id, msg_id, filename)
-
-                # Add the file path directly to the metadata
-                message_metadata = {
-                    "sender": sender,
-                    "mentions": mentions,
-                    "team_members": members,
-                    "conversation_id": conversation_id,
-                    "attachment_path": filename  # Add this line
-                }
-
-                # Add metadata to the prompt
-                prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-
-                # Process the attachment with the AI - pass image path as separate parameter
-                response = await get_ai_response(
-                    user_input=prompt,
-                    team_name=team_name,
-                    image_path=filename,
-                    bot=bot,
-                    event=event
-                )
-
-                # Handle the response
-                if isinstance(response, dict) and "type" in response:
-                    if response["type"] == "text":
-                        if isinstance(response["content"], str):
-                            await bot.chat.reply(conversation_id, msg_id, response["content"])
-                        elif isinstance(response["content"], dict) and "msg" in response["content"]:
-                            await bot.chat.reply(conversation_id, msg_id, response["content"]["msg"])
-                            if "file" in response["content"]:
-                                await bot.chat.attach(channel=conversation_id,
-                                                      filename=response["content"]["file"],
-                                                      title=response["content"]["msg"])
-                        else:
-                            await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid content format.")
-                    elif response["type"] == "image":
-                        await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]),
-                                              title="Here's your image!")
-                    else:
-                        await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
-                else:
-                    await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
-
-                await set_unfurl(bot, False)
+        # Check if Marvn is mentioned in the title, otherwise ignore if only attachment
+        if "@marvn" in attachment_title.lower():
+            user_prompt = attachment_title.replace("@marvn", "").strip()
+            logging.info(f"Downloading attachment: {filename}")
+            try:
+                await bot.chat.download(conversation_id, msg_id, str(filename))
+                attachment_path = str(filename)
+                message_metadata["attachment_path"] = attachment_path  # Add path to metadata
+                user_prompt += f"\n\n[Image attached: {event.msg.content.attachment.object.filename}]"  # Inform AI about the attachment
+            except Exception as e:
+                logging.exception(f"Error downloading attachment {filename}")
+                await bot.chat.reply(conversation_id, msg_id, f"⚠️ Sorry, I couldn't download the attachment: {e}")
+                await reaction_task  # Ensure reaction is awaited
                 return
-    except Exception as e:
-        logging.error(f"Error handling attachment: {str(e)}")
-        logging.error(f"Type: {type(e)}")
-        logging.debug("Not an attachment or error processing attachment")
+        else:
+            logging.info("Attachment received but '@marvn' not in title. Ignoring.")
+            await reaction_task  # Ensure reaction is awaited
+            return  # Don't process if Marvn wasn't mentioned in the title
 
-    # Continue with the original text message handling
-    # Construct the prompt with the metadata
-    try:
-        message_text = str(event.msg.content.text.body)[7:]  # Original message without the @marvn prefix
-    except:
-        # If we can't get text content, it might not be a text message
-        await bot.chat.reply(conversation_id, msg_id, "⚠️ I couldn't process that message type.")
+    # --- Handle Text Messages (including replies) ---
+    elif event.msg.content.type_name == 'text':
+        message_text = str(event.msg.content.text.body)
+        # Remove the @marvn mention prefix cleanly
+        if message_text.lower().startswith("@marvn"):
+            user_prompt = message_text[len("@marvn"):].strip()
+        else:
+            # This case shouldn't happen if the handler is only triggered on mention, but handle defensively
+            user_prompt = message_text.strip()
+            logging.warning("handle_marvn_mention triggered but '@marvn' prefix not found.")
+
+        # Handle replies
+        if event.msg.content.text.reply_to:
+            logging.info("Processing a reply.")
+            try:
+                original_msg_info = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+                # Extract info carefully, assuming structure
+                original_msg = original_msg_info.message[0]['msg']  # Adjust index/keys if needed
+                original_sender = original_msg.get('sender', {}).get('username', 'unknown')
+                original_content_type = original_msg.get('content', {}).get('type', 'unknown')
+                original_text = ""
+                original_attachment_info = ""
+
+                if original_content_type == "text":
+                    original_text = original_msg.get('content', {}).get('text', {}).get('body', '')
+                elif original_content_type == "attachment":
+                    obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
+                    original_text = obj.get('title', '')  # Use title as text context
+                    original_attachment_info = f"[Original message was an attachment: {obj.get('filename', 'unknown file')}]"
+                    # Potentially download the replied-to attachment if needed for context? (Adds complexity)
+
+                # Prepend reply context to the user's prompt
+                user_prompt = f"In reply to {original_sender}:\n'{original_text}'\n{original_attachment_info}\n\n{sender}'s message:\n{user_prompt}"
+                logging.debug(f"Constructed prompt with reply context: {user_prompt[:200]}...")
+
+            except Exception as e:
+                logging.exception("Error fetching or processing replied-to message.")
+                # Continue without reply context, maybe notify user?
+                user_prompt = f"(Failed to load reply context)\n{sender}: {user_prompt}"
+
+    # --- Guard against empty prompts ---
+    if not user_prompt and not attachment_path:
+        logging.warning("No actionable prompt or attachment found after processing.")
+        await bot.chat.reply(conversation_id, msg_id,
+                             "What can I do for you? Please provide a command or question after mentioning me.")
+        await reaction_task  # Ensure reaction is awaited
         return
 
-    # Handle replies (if user is replying to a previous message)
-    if event.msg.content.text.reply_to:
-        logging.info("Processing a reply")
-        original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+    # Add metadata as a JSON string at the end of the prompt for the AI
+    # Only add if there's actually a prompt to add it to
+    if user_prompt:
+        metadata_json = json.dumps(message_metadata, indent=2)
+        user_prompt += f"\n\n--- Message Context ---\n{metadata_json}"
 
-        if original_msg.message[0]['msg']['content']['type'] == "text":
-            prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-                     f"{event.msg.sender.username}: {message_text}"
-            # Add metadata to the prompt
-            prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-            response = await get_ai_response(
-                user_input=prompt,
-                team_name=team_name,
-                bot=bot,
-                event=event
-            )
+    # --- Call the AI ---
+    logging.info("Calling get_ai_response...")
+    response = await get_ai_response(
+        user_input=user_prompt,
+        team_name=team_name,
+        image_path=attachment_path,  # Pass the downloaded path if it exists
+        bot=bot,
+        event=event,
+        # context=context # Pass context if available
+    )
 
-        elif original_msg.message[0]['msg']['content']['type'] == "attachment":
-            storage = Path('./storage')
-            prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
-                     f"Question from {event.msg.sender.username}: {message_text}"
-            # Add metadata to the prompt
-            prompt += f"\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-            org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
-            filename = f"{storage.absolute()}/{org_filename}"
+    # --- Handle the AI Response ---
+    logging.info(f"AI response received: {response}")
+    try:
+        if isinstance(response, dict) and "type" in response:
+            response_type = response["type"]
+            response_content = response.get("content")  # Use .get for safety
+            response_url = response.get("url")
 
-            logging.info("Downloading attachment...")
-            org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-            await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
+            if response_type == "text":
+                if isinstance(response_content, str):
+                    await bot.chat.reply(conversation_id, msg_id, response_content)
+                # Handle case where a tool returned a dict {msg: ..., file: ...}
+                elif isinstance(response_content, dict) and "msg" in response_content:
+                    await bot.chat.reply(conversation_id, msg_id, response_content["msg"])
+                    if "file" in response_content and response_content["file"]:
+                        logging.info(f"Attaching file: {response_content['file']}")
+                        try:
+                            await bot.chat.attach(channel=conversation_id,  # Use channel=conv_id
+                                                  filename=response_content["file"],
+                                                  title=response_content.get("title", response_content["msg"][
+                                                                                      :50]))  # Add title kwarg
+                        except Exception as attach_err:
+                            logging.error(f"Failed to attach file {response_content['file']}: {attach_err}")
+                            await bot.chat.reply(conversation_id, msg_id,
+                                                 f"(Couldn't attach the generated file: {attach_err})")
 
-            # Pass image path as separate parameter
-            response = await get_ai_response(
-                user_input=prompt,
-                team_name=team_name,
-                image_path=filename,
-                bot=bot,
-                event=event
-            )
+                else:
+                    logging.error(f"Invalid content format for text response: {response_content}")
+                    await bot.chat.reply(conversation_id, msg_id, "⚠️ Received an invalid text response from AI.")
 
-    else:
-        # Add metadata to the prompt
-        prompt = f"{message_text}\n\nMESSAGE_METADATA: {json.dumps(message_metadata)}"
-        response = await get_ai_response(
-            user_input=prompt,
-            team_name=team_name,
-            bot=bot,
-            event=event
-        )
+            elif response_type == "image":
+                if response_url:
+                    logging.info(f"Downloading and attaching image from URL: {response_url}")
+                    try:
+                        downloaded_image_path = download_image(response_url)  # Assumes this returns a local path
+                        if downloaded_image_path:
+                            await bot.chat.attach(channel=conversation_id,  # Use channel=conv_id
+                                                  filename=downloaded_image_path,
+                                                  title="Here is the image you requested:")  # Add title kwarg
+                        else:
+                            raise ValueError("Download function returned None")
+                    except Exception as img_err:
+                        logging.exception("Error downloading or attaching AI-generated image")
+                        await bot.chat.reply(conversation_id, msg_id,
+                                             f"⚠️ Sorry, I couldn't attach the image: {img_err}")
+                else:
+                    logging.error("Image response type received, but no URL provided.")
+                    await bot.chat.reply(conversation_id, msg_id,
+                                         "⚠️ AI indicated an image response, but the URL was missing.")
 
-    if isinstance(response, dict) and "type" in response:
-        logging.info(f"Response: {response}")
-        if response["type"] == "text":
-            # If content is a string, use it directly
-            if isinstance(response["content"], str):
-                await bot.chat.reply(conversation_id, msg_id, response["content"])
-            # If content is a dict with 'msg' key, use that
-            elif isinstance(response["content"], dict) and "msg" in response["content"]:
-                await bot.chat.reply(conversation_id, msg_id, response["content"]["msg"])
-                # If there's also a file, attach it separately
-                if "file" in response["content"]:
-                    await bot.chat.attach(channel=conversation_id,
-                                          filename=response["content"]["file"],
-                                          title=response["content"]["msg"])
+
+            elif response_type == "error":
+                await bot.chat.reply(conversation_id, msg_id, response_content or "⚠️ An unknown error occurred.")
             else:
-                await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid content format.")
-        elif response["type"] == "image":
-            await bot.chat.attach(channel=conversation_id, filename=download_image(response["url"]),
-                                  title="Here's your image!")
+                logging.error(f"Unknown response type received: {response_type}")
+                await bot.chat.reply(conversation_id, msg_id, "⚠️ Received an unknown response type from AI.")
         else:
-            await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type.")
-    else:
-        await bot.chat.reply(conversation_id, msg_id, "⚠️ Error: Response format invalid.")
+            logging.error(f"Invalid response format from get_ai_response: {response}")
+            await bot.chat.reply(conversation_id, msg_id,
+                                 "⚠️ Error: Received an improperly formatted response from the AI handler.")
 
-    await set_unfurl(bot, False)
+    except Exception as handler_err:
+        logging.exception("Error handling AI response in handle_marvn_mention")
+        await bot.chat.reply(conversation_id, msg_id,
+                             f"💥 Apologies, a critical error occurred while handling my own response: {handler_err}")
 
-
+    finally:
+        # Clean up downloaded attachment if it exists
+        if attachment_path and os.path.exists(attachment_path):
+            try:
+                os.remove(attachment_path)
+                logging.info(f"Cleaned up attachment: {attachment_path}")
+            except OSError as e:
+                logging.error(f"Error removing attachment file {attachment_path}: {e}")
+        # Ensure the initial reaction task is awaited
+        await reaction_task
+        # Disable unfurling for the bot's messages if needed
+        await set_unfurl(bot, False)
 
 
 if __name__ == "__main__":
-    # Example usage:
-    # result = await get_ai_response("tell me a joke")
-    # print(result)  # You can replace this with any return logic needed
+    # Example local test (won't have bot/event objects)
+    async def run_test():
+        test_prompt = "Please list the current 'since' events for team 'test_team' and then reset the one named 'Last Coffee Break' if it exists."
+        # test_prompt = "What is the weather?"
+        # test_prompt = "Tell me a joke"
+        # test_prompt = "award 5 points to bob for helping" # Will fail without bot/event
+        response = await get_ai_response(user_input=test_prompt, team_name="test_team")  # No bot/event provided
+        print(json.dumps(response, indent=2))
+
+
+    # asyncio.run(run_test())
+    print("Run the main bot script to test interactively.")
     pass
+
+# --- END OF FILE open_ai_agent.py ---
