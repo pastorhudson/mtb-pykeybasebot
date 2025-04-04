@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 from botcommands.convo_tracker import ConversationTracker, track_message, get_conversation_context
@@ -689,7 +690,17 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                                 result = function_to_call(**arguments)
                             logging.info(f"Tool {function_name} executed.")
 
-                            if isinstance(result, dict) and "msg" in result:
+                            # NEW CODE: Preserve file dictionaries exactly as returned by the function
+                            if isinstance(result, dict) and "file" in result:
+                                # This is a file-based response, preserve its exact structure
+                                # We'll convert to a JSON string to ensure the model doesn't try to format it
+                                tool_output_str = json.dumps({
+                                    "file_response": True,
+                                    "data": result
+                                })
+                                logging.info(f"Preserved file response structure for {function_name}")
+
+                            elif isinstance(result, dict) and "msg" in result:
                                 tool_output_str = f"Success: {result['msg']}" + (
                                     f" (File: {result['file']})" if "file" in result else "")
                             elif result is None:
@@ -723,7 +734,30 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
             # Priority 2: If no tool calls were requested, and we got an assistant message
             elif assistant_message_text is not None:
                 logging.info("AI provided final text response (no further tool calls requested).")
-                # Handle potential dict format in final message (same logic)
+                # NEW CODE: Check if the response contains our special file response marker
+                file_response_match = re.search(r'{"file_response":true,"data":(.*?})}', assistant_message_text)
+                if file_response_match:
+                    try:
+                        # Extract and parse the file data
+                        file_data_str = file_response_match.group(1)
+                        file_data = json.loads(file_data_str)
+
+                        # Replace the JSON in the text with a simple placeholder
+                        clean_text = re.sub(r'{"file_response":true,"data":.*?}}',
+                                            f"File: {file_data.get('msg', 'Attachment')}",
+                                            assistant_message_text)
+
+                        # Return both the cleaned message and the file data
+                        return {
+                            "type": "file",
+                            "content": clean_text,
+                            "file_data": file_data
+                        }
+                    except json.JSONDecodeError:
+                        logging.error("Failed to parse file response JSON")
+                        # Continue with normal processing
+
+                # Normal text processing (unchanged)
                 try:
                     content_dict = json.loads(assistant_message_text)
                     if isinstance(content_dict, dict) and "msg" in content_dict:
@@ -888,7 +922,30 @@ async def handle_marvn_mention(bot, event):
             response_type = response_dict["type"]
             response_content = response_dict.get("content")
 
-            if response_type == "text":
+            # In the response handling section
+
+
+            if response_type == "file":
+                # This is our new file response type
+                file_data = response_dict.get("file_data", {})
+                message_text = response_dict.get("content", "")
+
+                # Send the text message
+                await bot.chat.reply(conversation_id, msg_id, message_text)
+
+                # Attach the file if present
+                if "file" in file_data and file_data["file"]:
+                    try:
+                        await bot.chat.attach(
+                            channel=conversation_id,
+                            filename=file_data["file"],
+                            title=file_data.get("title", file_data.get("msg", "Attachment"))
+                        )
+                    except Exception as attach_err:
+                        logging.error(f"Failed attaching file: {attach_err}")
+                        await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
+
+            elif response_type == "text":
                 if isinstance(response_content, str):
                     await bot.chat.reply(conversation_id, msg_id, response_content)
                 elif isinstance(response_content, dict) and "msg" in response_content:
