@@ -70,7 +70,8 @@ async def get_chat(prompt, team='convo'):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_completion = await client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-search-preview",
+        web_search_options={},
         messages=[
             {"role": "system", "content": seed},
             {"role": "user", "content": get_convo(team)},
@@ -96,7 +97,8 @@ def get_marvn_reaction(username, msg):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_completion = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-search-preview",
+        web_search_options={},
         messages=[
             {"role": "system", "content": seed},
             {"role": "user", "content": get_convo()},
@@ -158,12 +160,29 @@ async def get_chat_with_image(image_path, prompt):
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/itAMIIBnZ-8?si=P795Yp3TMeewBdeq'))
-    img = 'C://Users//geekt//Downloads//ds9meme.png'
-    prompt = "What's going on with this image??"
-
-    result = loop.run_until_complete(get_chat_with_image(img, prompt))
-    print(result)
-
+    # img = 'C://Users//geekt//Downloads//ds9meme.png'
+    # prompt = "What's going on with this image??"
+    #
+    # result = loop.run_until_complete(get_chat_with_image(img, prompt))
+    # prompt = "What is new on hacker news today?"
+    # result = loop.run_until_complete(get_chat(prompt))
+    
+    # print(result)
+#     from openai import OpenAI
+#     client = OpenAI()
+#
+#     completion = client.chat.completions.create(
+#     model="gpt-4o-search-preview",
+#     web_search_options={},
+#     messages=[
+#         {
+#             "role": "user",
+#             "content": "What was a positive news story from today?",
+#         }
+#     ],
+# )
+#
+#     print(completion.choices[0].message.content)
 
     # ic(os.getenv("OPENAI_API_KEY"))
     # print(get_convo())
