@@ -596,10 +596,11 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                                 # Don't break, process all output items, but store latest text
                     # If assistant message exists, it might be the final answer *unless* tool calls also exist
 
+
+
                 elif item_type == "function_call" and isinstance(item, ResponseFunctionToolCall):
-                    logging.info(f"Found function call request: {item.function.name}")
-                    tool_calls_requested.append(
-                        item)  # Collect based on the structure {"type":"function", "function":{...}}
+                    logging.info(f"Found function call request: {item.name}")  # Changed from item.function.name
+                    tool_calls_requested.append(item)
 
                 elif item_type == "web_search_call":  # Actual type from experimentation might differ
                     logging.info("Detected web_search_call item.")
@@ -626,8 +627,9 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 function_outputs = []
                 for tool_call in tool_calls_requested:
                     # Structure is {"type": "function", "function": {"name": ..., "arguments": ...}, "id": ...}
-                    function_name = tool_call.function.name
+                    function_name = tool_call.name
                     tool_call_id = tool_call.id  # ID is at the top level of the call item
+
                     if not tool_call_id:
                         # Should not happen based on spec, but handle defensively
                         logging.error(f"Function call item for {function_name} missing 'id'!")
@@ -637,7 +639,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                     arguments = {}
                     try:
                         # Arguments string needs parsing
-                        raw_args = tool_call.function.arguments
+                        raw_args = tool_call.arguments  # Changed from tool_call.function.arguments
                         arguments = json.loads(raw_args)
                         logging.debug(f"Parsed Arguments: {arguments}")
 
