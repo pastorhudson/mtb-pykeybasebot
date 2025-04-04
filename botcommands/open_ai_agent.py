@@ -937,10 +937,24 @@ async def handle_marvn_mention_with_context(bot, event):
 
                 if original_content_type == "text":
                     original_text = original_msg.get('content', {}).get('text', {}).get('body', '')
+                # Inside the reply processing section, after extracting original_attachment_info
+
+
                 elif original_content_type == "attachment":
                     obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
-                    original_text = obj.get('title', '[Attachment]')
-                    original_attachment_info = f"[Original message attachment: {obj.get('filename', 'unknown')}]"
+                    filename = obj.get('filename', '')
+                    storage = Path('./storage')
+                    storage.mkdir(exist_ok=True)
+                    if filename:
+                        download_path = storage.absolute() / filename
+                        try:
+                            # Download the attachment from the original message
+                            await bot.chat.download(conversation_id, event.msg.content.text.reply_to, str(download_path))
+                            attachment_path = str(download_path)
+                            message_metadata["attachment_filename"] = attachment_path
+                            logging.info(f"Downloaded attachment from replied message: {attachment_path}")
+                        except Exception as e:
+                            logging.exception(f"Error downloading attachment from reply: {e}")
 
                 # Build explicit reply context for current request
                 reply_context = f"--- Context: Replying to {original_sender} ---\n'{original_text}'\n{original_attachment_info}\n---\n\n"
