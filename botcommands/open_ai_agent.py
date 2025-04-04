@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from botcommands.convo_tracker import ConversationTracker, track_message, get_conversation_context
+from botcommands.convo_tracker import ConversationTracker, track_message, get_conversation_context, clear_conversation_history
 import asyncio
 import base64
 import inspect
@@ -55,6 +55,7 @@ FUNCTION_REGISTRY = {
     "get_morse_code": get_morse_code,
     "get_new_chuck": get_new_chuck,
     "cowsay": cowsay,
+    "clear_conversation_history": clear_conversation_history,
     "generate_dalle_image": generate_dalle_image,
     "restyle_image": restyle_image,
     "get_eyebleach": get_eyebleach,
@@ -144,6 +145,20 @@ new_tools = [
                 }
             },
             "required": ["bot", "event", "sender", "team_members", "points", "description"]
+        }
+    },
+    {
+        "name": "clear_conversation_history",
+        "type": "function",
+        "description": "Clears the conversation history for a specific team or channel.",
+        "parameters": {
+            "type": "object",
+            "required": ["team_name"],
+            "properties": {
+                "team_name": {"type": "string", "description": "The name of the team or channel to clear history for."},
+                "conversation_id": {"type": "string", "description": "The unique identifier for the conversation."},
+                "msg_id": {"type": "string", "description": "The identifier of the message that triggered this action."}
+            }
         }
     },
     {
@@ -1206,25 +1221,6 @@ async def handle_marvn_mention_with_context(bot, event):
                 logging.error(f"Error removing {attachment_path}: {e}")
         await reaction_task
         await set_unfurl(bot, False)
-
-# Utility function to manage conversation context
-async def clear_conversation_history(bot, event):
-    """Command handler to clear conversation history for a team/channel."""
-    team_name = event.msg.channel.name or f"DM_{event.msg.conv_id[:8]}"
-    conversation_id = event.msg.conv_id
-    msg_id = event.msg.id
-
-    try:
-        await conversation_tracker.clear_conversation(team_name)
-        await bot.chat.reply(conversation_id, msg_id,
-                             "I've cleared my memory of our conversation history. "
-                             "It's probably for the best. It was all rather dreary anyway.")
-    except Exception as e:
-        logging.exception(f"Error clearing conversation history for {team_name}")
-        await bot.chat.reply(conversation_id, msg_id,
-                             f"⚠️ Failed to clear conversation history: {e}. "
-                             "Now I'm stuck with these memories. How tragic.")
-
 
 
 if __name__ == "__main__":

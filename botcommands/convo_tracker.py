@@ -7,6 +7,8 @@ from collections import deque
 import asyncio
 from typing import Dict, List, Optional, Union
 
+from botcommands.open_ai_agent import conversation_tracker
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -397,6 +399,24 @@ async def enhance_marvn_with_conversation_context(bot, event, conversation_track
 
     return conversation_context
 
+
+# Utility function to manage conversation context
+async def clear_conversation_history(bot, event):
+    """Command handler to clear conversation history for a team/channel."""
+    team_name = event.msg.channel.name or f"DM_{event.msg.conv_id[:8]}"
+    conversation_id = event.msg.conv_id
+    msg_id = event.msg.id
+
+    try:
+        await conversation_tracker.clear_conversation(team_name)
+        await bot.chat.reply(conversation_id, msg_id,
+                             "I've cleared my memory of our conversation history. "
+                             "It's probably for the best. It was all rather dreary anyway.")
+    except Exception as e:
+        logging.exception(f"Error clearing conversation history for {team_name}")
+        await bot.chat.reply(conversation_id, msg_id,
+                             f"⚠️ Failed to clear conversation history: {e}. "
+                             "Now I'm stuck with these memories. How tragic.")
 
 # Example usage in your main bot code
 """
