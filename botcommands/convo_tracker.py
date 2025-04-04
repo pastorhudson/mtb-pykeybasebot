@@ -7,7 +7,7 @@ from collections import deque
 import asyncio
 from typing import Dict, List, Optional, Union
 
-from botcommands.open_ai_agent import conversation_tracker
+# from botcommands.open_ai_agent import conversation_tracker
 
 # Configure logging
 logging.basicConfig(
