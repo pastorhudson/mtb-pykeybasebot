@@ -105,7 +105,7 @@ new_tools = [
     {
         "type": "function",
         "name": "award",
-        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'.",
+        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'. Never give an even amount of points.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -136,7 +136,7 @@ new_tools = [
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5000,
-                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
+                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points. And we never give an even number of points."
                 },
                 "description": {
                     "type": "string",
