@@ -160,6 +160,76 @@ class ConversationTracker:
 
 # Integration with the existing bot system
 
+# async def track_message(conversation_tracker, bot, event, is_bot_message=False):
+#     """
+#     Track a message in the conversation history.
+#
+#     Args:
+#         conversation_tracker: ConversationTracker instance
+#         bot: Bot instance
+#         event: Message event
+#         is_bot_message: True if the message is from the bot, False otherwise
+#     """
+#     # Determine team/channel name
+#     team_name = event.msg.channel.name if hasattr(event.msg,
+#                                                   'channel') and event.msg.channel else f"DM_{event.msg.conv_id[:8]}"
+#     conversation_id = event.msg.conv_id
+#
+#     # Create message object
+#     message = {
+#         "sender": "marvn" if is_bot_message else event.msg.sender.username,
+#         "content": event.msg.content.text.body if hasattr(event.msg.content, 'text') else "[NON-TEXT CONTENT]",
+#         "msg_id": event.msg.id,
+#         "timestamp": datetime.now().isoformat(),
+#         "is_bot": is_bot_message
+#     }
+#
+#     # Add attachment info if present
+#     if hasattr(event.msg.content, 'attachment') and event.msg.content.attachment:
+#         message["has_attachment"] = True
+#         message["attachment_filename"] = event.msg.content.attachment.object.filename
+#         message["attachment_title"] = event.msg.content.attachment.object.title
+#
+#     # Add reply info if present
+#     if hasattr(event.msg.content, 'text') and event.msg.content.text.reply_to:
+#         reply_to_id = event.msg.content.text.reply_to
+#         message["reply_to"] = reply_to_id
+#
+#         # Fetch and store the original message content
+#         try:
+#             original_msg_info = await bot.chat.get(conversation_id, reply_to_id)
+#             if original_msg_info and original_msg_info.message and len(original_msg_info.message) > 0:
+#                 original_msg = original_msg_info.message[0]['msg']
+#                 original_sender = original_msg.get('sender', {}).get('username', 'unknown')
+#                 original_content_type = original_msg.get('content', {}).get('type', 'unknown')
+#
+#                 original_data = {
+#                     "sender": original_sender,
+#                     "msg_id": reply_to_id,
+#                 }
+#
+#                 if original_content_type == "text":
+#                     original_data["content"] = original_msg.get('content', {}).get('text', {}).get('body', '')
+#                 elif original_content_type == "attachment":
+#                     obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
+#                     original_data["content"] = obj.get('title', '[Attachment]')
+#                     original_data["has_attachment"] = True
+#                     original_data["attachment_filename"] = obj.get('filename', 'unknown')
+#                     original_data["attachment_title"] = obj.get('title', '')
+#
+#                 # Store the original message content in this message's metadata
+#                 message["replied_to_message"] = original_data
+#
+#                 # Log the successful retrieval of the original message
+#                 logging.info(f"Retrieved original message from {original_sender} for reply chain context")
+#         except Exception as e:
+#             logging.error(f"Error retrieving original message for reply chain: {e}")
+#             message["replied_to_message"] = {"error": f"Failed to retrieve: {str(e)}"}
+#
+#     # Track the message
+#     await conversation_tracker.add_message(team_name, message)
+#     return message
+
 async def track_message(conversation_tracker, bot, event, is_bot_message=False):
     """
     Track a message in the conversation history.
@@ -175,10 +245,21 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
                                                   'channel') and event.msg.channel else f"DM_{event.msg.conv_id[:8]}"
     conversation_id = event.msg.conv_id
 
+    # Get message content safely
+    message_content = "[NON-TEXT CONTENT]"
+    if hasattr(event.msg.content, 'text') and event.msg.content.text is not None:
+        message_content = event.msg.content.text.body
+    elif hasattr(event.msg.content, 'attachment') and event.msg.content.attachment is not None:
+        # For attachments, use the title as content if available
+        if hasattr(event.msg.content.attachment.object, 'title') and event.msg.content.attachment.object.title:
+            message_content = f"[ATTACHMENT: {event.msg.content.attachment.object.title}]"
+        else:
+            message_content = "[ATTACHMENT]"
+
     # Create message object
     message = {
         "sender": "marvn" if is_bot_message else event.msg.sender.username,
-        "content": event.msg.content.text.body if hasattr(event.msg.content, 'text') else "[NON-TEXT CONTENT]",
+        "content": message_content,
         "msg_id": event.msg.id,
         "timestamp": datetime.now().isoformat(),
         "is_bot": is_bot_message
@@ -188,10 +269,10 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
     if hasattr(event.msg.content, 'attachment') and event.msg.content.attachment:
         message["has_attachment"] = True
         message["attachment_filename"] = event.msg.content.attachment.object.filename
-        message["attachment_title"] = event.msg.content.attachment.object.title
+        message["attachment_title"] = event.msg.content.attachment.object.title or ""
 
     # Add reply info if present
-    if hasattr(event.msg.content, 'text') and event.msg.content.text.reply_to:
+    if hasattr(event.msg.content, 'text') and event.msg.content.text is not None and event.msg.content.text.reply_to:
         reply_to_id = event.msg.content.text.reply_to
         message["reply_to"] = reply_to_id
 
@@ -209,7 +290,8 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
                 }
 
                 if original_content_type == "text":
-                    original_data["content"] = original_msg.get('content', {}).get('text', {}).get('body', '')
+                    original_text = original_msg.get('content', {}).get('text', {})
+                    original_data["content"] = original_text.get('body', '') if original_text else ''
                 elif original_content_type == "attachment":
                     obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
                     original_data["content"] = obj.get('title', '[Attachment]')
@@ -229,7 +311,6 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
     # Track the message
     await conversation_tracker.add_message(team_name, message)
     return message
-
 
 # Function to get conversation context for AI
 def get_conversation_context(conversation_tracker, team_name, limit=10):
