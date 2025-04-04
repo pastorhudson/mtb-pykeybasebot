@@ -186,10 +186,9 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
 
     # Add attachment info if present
     if hasattr(event.msg.content, 'attachment') and event.msg.content.attachment:
-        message["attachment"] = {
-            "filename": event.msg.content.attachment.object.filename,
-            "title": event.msg.content.attachment.object.title
-        }
+        message["has_attachment"] = True
+        message["attachment_filename"] = event.msg.content.attachment.object.filename
+        message["attachment_title"] = event.msg.content.attachment.object.title
 
     # Add reply info if present
     if hasattr(event.msg.content, 'text') and event.msg.content.text.reply_to:
@@ -267,9 +266,9 @@ def get_conversation_context(conversation_tracker, team_name, limit=10):
 
         # Format attachments if present
         attachment_info = ""
-        if "attachment" in msg:
-            attachment = msg["attachment"]
-            attachment_info = f" [Attachment: {attachment.get('filename', 'unknown')}]"
+        if msg.get("has_attachment", False):
+            filename = msg.get("attachment_filename", msg.get("file_path", "unknown"))
+            attachment_info = f" [Attachment: {filename}]"
 
         # Format reply context if present
         reply_context = ""

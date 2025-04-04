@@ -1559,7 +1559,10 @@ async def handle_marvn_mention_with_context(bot, event):
                     "content": message_text,
                     "msg_id": f"response_to_{msg_id}",
                     "timestamp": datetime.now().isoformat(),
-                    "is_bot": True
+                    "is_bot": True,
+                    "has_attachment": False,
+                    "attachment_filename": None,
+                    "attachment_title": None
                 }
                 await conversation_tracker.add_message(team_name, bot_response)
 
@@ -1580,8 +1583,10 @@ async def handle_marvn_mention_with_context(bot, event):
                             "msg_id": f"attachment_to_{msg_id}",
                             "timestamp": datetime.now().isoformat(),
                             "is_bot": True,
-                            "attachment": True,
-                            "file_path": file_data["file"]
+                            "has_attachment": True,
+                            "attachment_filename": file_data["file"],
+                            "attachment_title": file_data.get("title", "File Attachment")
+
                         }
                         await conversation_tracker.add_message(team_name, bot_response)
 
@@ -1633,7 +1638,10 @@ async def handle_marvn_mention_with_context(bot, event):
                     "content": bot_response_text,
                     "msg_id": f"response_to_{msg_id}",  # Not a real ID, just for tracking
                     "timestamp": datetime.now().isoformat(),
-                    "is_bot": True
+                    "is_bot": True,
+                    "has_attachment": False,
+                    "attachment_filename": None,
+                    "attachment_title": None
                 }
 
                 # Track Marvn's response in the conversation history
@@ -1656,7 +1664,9 @@ async def handle_marvn_mention_with_context(bot, event):
                                 "msg_id": f"response_to_{msg_id}",
                                 "timestamp": datetime.now().isoformat(),
                                 "is_bot": True,
-                                "attachment": {"filename": dl_path, "title": "Image from AI:"}
+                                "has_attachment": True,
+                                "attachment_filename": dl_path,
+                                "attachment_title": "Image from AI:"
                             }
                             await conversation_tracker.add_message(team_name, bot_response)
                         else:
@@ -1678,7 +1688,10 @@ async def handle_marvn_mention_with_context(bot, event):
                     "msg_id": f"error_response_to_{msg_id}",
                     "timestamp": datetime.now().isoformat(),
                     "is_bot": True,
-                    "error": True
+                    "error": True,
+                    "has_attachment": False,
+                    "attachment_filename": None,
+                    "attachment_title": None
                 }
                 await conversation_tracker.add_message(team_name, bot_response)
             else:
@@ -1693,7 +1706,10 @@ async def handle_marvn_mention_with_context(bot, event):
                     "msg_id": f"unknown_type_response_to_{msg_id}",
                     "timestamp": datetime.now().isoformat(),
                     "is_bot": True,
-                    "error": True
+                    "error": True,
+                    "has_attachment": False,
+                    "attachment_filename": None,
+                    "attachment_title": None
                 }
                 await conversation_tracker.add_message(team_name, bot_response)
         else:
@@ -1708,7 +1724,10 @@ async def handle_marvn_mention_with_context(bot, event):
                 "msg_id": f"invalid_format_response_to_{msg_id}",
                 "timestamp": datetime.now().isoformat(),
                 "is_bot": True,
-                "error": True
+                "error": True,
+                "has_attachment": False,
+                "attachment_filename": None,
+                "attachment_title": None
             }
             await conversation_tracker.add_message(team_name, bot_response)
 
@@ -1724,7 +1743,10 @@ async def handle_marvn_mention_with_context(bot, event):
             "msg_id": f"handler_error_{msg_id}",
             "timestamp": datetime.now().isoformat(),
             "is_bot": True,
-            "error": True
+            "error": True,
+            "has_attachment": False,
+            "attachment_filename": None,
+            "attachment_title": "NONE"
         }
         await conversation_tracker.add_message(team_name, bot_response)
 
