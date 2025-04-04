@@ -694,11 +694,9 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                             if isinstance(result, dict) and "file" in result:
                                 # This is a file-based response, preserve its exact structure
                                 # We'll convert to a JSON string to ensure the model doesn't try to format it
-                                tool_output_str = json.dumps({
-                                    "file_response": True,
-                                    "data": result
-                                })
-                                logging.info(f"Preserved file response structure for {function_name}")
+                                tool_output_str = json.dumps(result)
+
+                                logging.info(f"Preserved file response structure for {function_name} {tool_output_str}")
 
                             elif isinstance(result, dict) and "msg" in result:
                                 tool_output_str = f"Success: {result['msg']}" + (
