@@ -31,7 +31,7 @@ from botcommands.sync import sync
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_ai_poll
-from botcommands.scorekeeper import award
+from botcommands.scorekeeper import award, get_score
 # from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
 # from botcommands.wordle import solve_wordle
@@ -77,6 +77,7 @@ FUNCTION_REGISTRY = {
     "payout_wager": payout_wager,
     "sync": sync,
     "award": award,
+    "get_score": get_score,
     # "is_morning_report": is_morning_report,
     # "write_morning_report_task": write_morning_report_task,
     # "get_grades": get_academic_snapshot,
@@ -384,6 +385,25 @@ new_tools = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of school names to check."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_score",
+        "type": "function",
+        "description": "Fetch team leaderboard scores and statistics for a specific channel and year.",
+        "parameters": {
+            "type": "object",
+            "required": ["channel_name"],
+            "properties": {
+                "channel_name": {
+                    "type": "string",
+                    "description": "The name of the team/channel to get scores for."
+                },
+                "year": {
+                    "type": "integer",
+                    "description": "The year to fetch scores for. Defaults to current year if not specified."
                 }
             }
         }
