@@ -1104,210 +1104,284 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
     return {"type": "error",
             "content": f"⚠️ Failed to complete request within {max_tool_iterations} steps. The process might be too complex or stuck."}
 
-# --- handle_marvn_mention function ---
-# Should remain largely the same. It prepares the initial user_input string
-# (including metadata) and handles the dictionary returned by get_ai_response.
-
-async def handle_marvn_mention(bot, event):
-    """Handles @Marvn mentions using the responses.create AI backend."""
-    msg_id = event.msg.id
-    team_name = event.msg.channel.name or f"DM_{event.msg.conv_id[:8]}"
-    conversation_id = event.msg.conv_id
-    sender = event.msg.sender.username
-    mentions = event.msg.at_mention_usernames or []
-    try:
-        team_members = await get_channel_members(conversation_id, bot)
-    except Exception as e:
-        logging.error(f"Failed to get channel members for {conversation_id}: {e}")
-        team_members = [sender]  # Fallback
-
-    # React optimistically
-    reaction_task = asyncio.create_task(bot.chat.react(conversation_id, msg_id, ":marvin:"))
-
-    user_prompt_text = ""  # The actual user request part
-    attachment_path = None
-    # Metadata to be appended to the user prompt text
-    message_metadata = {
-        "sender": sender,
-        "mentioned_usernames": mentions,
-        "all_team_members": team_members,
-        "conversation_id": conversation_id,
-        "team_name": team_name,
-        # Add any other relevant context here
-    }
-
-    # --- Handle Attachments ---
-    if event.msg.content.type_name == 'attachment':
-        # (Same attachment handling logic as before)
-        logging.info("Processing an attachment message.")
-        storage = Path('./storage')
-        storage.mkdir(exist_ok=True)
-        attachment_title = event.msg.content.attachment.object.title or ""
-        filename = storage.absolute() / event.msg.content.attachment.object.filename
-        if "@marvn" in attachment_title.lower():
-            user_prompt_text = attachment_title.replace("@marvn", "").strip()
-            logging.info(f"Downloading attachment: {filename}")
-            try:
-                await bot.chat.download(conversation_id, msg_id, str(filename))
-                attachment_path = str(filename)
-                message_metadata["attachment_filename"] = event.msg.content.attachment.object.filename
-            except Exception as e:
-                logging.exception(f"Error downloading attachment {filename}")
-                await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't download attachment: {e}")
-                await reaction_task
-                return
-        else:
-            logging.info("Attachment ignored (@marvn not in title).")
-            await reaction_task
-            return
-
-    # --- Handle Text Messages ---
-    elif event.msg.content.type_name == 'text':
-        # (Same text/reply handling logic as before)
-        message_text = str(event.msg.content.text.body)
-        if message_text.lower().startswith("@marvn"):
-            user_prompt_text = message_text[len("@marvn"):].strip()
-        else:
-            user_prompt_text = message_text.strip()
-            logging.warning("handle_marvn_mention triggered but '@marvn' prefix not found.")
-
-        if event.msg.content.text.reply_to:
-            logging.info("Processing a reply.")
-            try:
-                original_msg_info = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-                original_msg = original_msg_info.message[0]['msg']
-                original_sender = original_msg.get('sender', {}).get('username', 'unknown')
-                original_content_type = original_msg.get('content', {}).get('type', 'unknown')
-                original_text = ""
-                original_attachment_info = ""
-                if original_content_type == "text":
-                    original_text = original_msg.get('content', {}).get('text', {}).get('body', '')
-                elif original_content_type == "attachment":
-                    obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
-                    original_text = obj.get('title', '[Attachment]')
-                    original_attachment_info = f"[Original message attachment: {obj.get('filename', 'unknown')}]"
-                reply_context = f"--- Context: Replying to {original_sender} ---\n'{original_text}'\n{original_attachment_info}\n---\n\n"
-                user_prompt_text = reply_context + user_prompt_text
-            except Exception as e:
-                logging.exception(f"Error processing replied-to message. {e}")
-                user_prompt_text = f"[System Note: Failed to load reply context]\n\n{user_prompt_text}"
-
-    # --- Guard against empty prompts ---
-    if not user_prompt_text and not attachment_path:
-        # (Same empty prompt handling as before)
-        logging.warning("No actionable prompt or attachment found.")
-        if event.msg.content.type_name == 'text' and str(event.msg.content.text.body).strip().lower() == '@marvn':
-            await bot.chat.reply(conversation_id, msg_id, f"Yes, {sender}? Another futile request for my attention?")
-        else:
-            await bot.chat.reply(conversation_id, msg_id,
-                                 "Your mention lacks substance. What dreary task do you have for me?")
-        await reaction_task
-        return
-
-    # Combine user text and metadata for the final prompt string
-    metadata_json = json.dumps(message_metadata, indent=2)
-    final_user_input_string = f"{user_prompt_text}\n\n--- Message Context (for AI reference) ---\n{metadata_json}"
-
-    # --- Call the AI ---
-    logging.info("Calling get_ai_response (responses API)...")
-    response_dict = await get_ai_response(
-        user_input=final_user_input_string,  # Pass the combined string
-        team_name=team_name,
-        image_path=attachment_path,
-        bot=bot,
-        event=event,
-        # context=context # Pass if needed
-    )
-
-    # --- Handle the AI Response ---
-    logging.info(f"AI response dict received: {response_dict}")
-    try:
-        # (Response handling logic remains the same as it processes the returned dict)
-        if isinstance(response_dict, dict) and "type" in response_dict:
-            response_type = response_dict["type"]
-            response_content = response_dict.get("content")
-
-            # In the response handling section
-
-
-            if response_type == "file":
-                # This is our new file response type
-                file_data = response_dict.get("file_data", {})
-                message_text = response_dict.get("content", "")
-
-                # Send the text message
-                await bot.chat.reply(conversation_id, msg_id, message_text)
-
-                # Attach the file if present
-                if "file" in file_data:
-                    try:
-                        await bot.chat.attach(
-                            channel=conversation_id,
-                            filename=file_data["file"],
-                            title=file_data.get("title", file_data.get("msg", "Attachment"))
-                        )
-                    except Exception as attach_err:
-                        logging.error(f"Failed attaching file: {attach_err}")
-                        await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
-
-            elif response_type == "text":
-                if isinstance(response_content, str):
-                    await bot.chat.reply(conversation_id, msg_id, response_content)
-                elif isinstance(response_content, dict) and "msg" in response_content:
-                    await bot.chat.reply(conversation_id, msg_id, response_content["msg"])
-                    if "file" in response_content and response_content["file"]:
-                        try:
-                            await bot.chat.attach(channel=conversation_id, filename=response_content["file"],
-                                                  title=response_content.get("title", response_content["msg"][:50]))
-                        except Exception as attach_err:
-                            logging.error(f"Failed attaching file: {attach_err}")
-                            await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
-                else:
-                    logging.error(f"Invalid text content: {response_content}")
-                    await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid text response structure.")
-
-            elif response_type == "image":  # Less likely with this API if tools handle images
-                logging.warning("Received 'image' type directly.")
-                response_url = response_dict.get("url")
-                if response_url:
-                    try:
-                        dl_path = download_image(response_url)
-                        if dl_path:
-                            await bot.chat.attach(channel=conversation_id, filename=dl_path, title="Image from AI:")
-                        else:
-                            raise ValueError("Download failed")
-                    except Exception as img_err:
-                        logging.exception("Image attach error")
-                        await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't attach image: {img_err}")
-                else:
-                    await bot.chat.reply(conversation_id, msg_id, "⚠️ Image response missing URL.")
-
-            elif response_type == "error":
-                await bot.chat.reply(conversation_id, msg_id, response_content or "⚠️ An unknown error occurred.")
-            else:
-                logging.error(f"Unknown response type: {response_type}")
-                await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type from AI handler.")
-        else:
-            logging.error(f"Invalid response format: {response_dict}")
-            await bot.chat.reply(conversation_id, msg_id, "⚠️ Malformed response from AI handler.")
-
-    except Exception as handler_err:
-        logging.exception("Error handling AI response in handle_marvn_mention")
-        await bot.chat.reply(conversation_id, msg_id, f"💥 Error handling my own response: {handler_err}")
-
-    finally:
-        # (Same cleanup logic)
-        if attachment_path and os.path.exists(attachment_path):
-            try:
-                os.remove(attachment_path)
-                logging.info(f"Cleaned up: {attachment_path}")
-            except OSError as e:
-                logging.error(f"Error removing {attachment_path}: {e}")
-        await reaction_task
-        await set_unfurl(bot, False)
 
 
 # Modified handle_marvn_mention function with conversation context
+# async def handle_marvn_mention_with_context(bot, event):
+#     """Handles @Marvn mentions using the responses.create AI backend with conversation context."""
+#     msg_id = event.msg.id
+#     team_name = event.msg.channel.name or f"DM_{event.msg.conv_id[:8]}"
+#     conversation_id = event.msg.conv_id
+#     sender = event.msg.sender.username
+#     mentions = event.msg.at_mention_usernames or []
+#
+#     try:
+#         team_members = await get_channel_members(conversation_id, bot)
+#     except Exception as e:
+#         logging.error(f"Failed to get channel members for {conversation_id}: {e}")
+#         team_members = [sender]  # Fallback
+#
+#     # React optimistically
+#     reaction_task = asyncio.create_task(bot.chat.react(conversation_id, msg_id, ":marvin:"))
+#
+#     # Track the incoming message
+#     await track_message(conversation_tracker, bot, event)
+#
+#     # Get recent conversation context
+#     recent_conversation = get_conversation_context(conversation_tracker, team_name, limit=10)
+#     logging.info(f"Retrieved {recent_conversation.count('\n') + 1} lines of conversation context")
+#
+#     user_prompt_text = ""  # The actual user request part
+#     attachment_path = None
+#
+#     # Metadata to be appended to the user prompt text
+#     message_metadata = {
+#         "sender": sender,
+#         "mentioned_usernames": mentions,
+#         "all_team_members": team_members,
+#         "conversation_id": conversation_id,
+#         "team_name": team_name,
+#     }
+#
+#     # --- Handle Attachments ---
+#     if event.msg.content.type_name == 'attachment':
+#         # (Same attachment handling logic as before)
+#         logging.info("Processing an attachment message.")
+#         storage = Path('./storage')
+#         storage.mkdir(exist_ok=True)
+#         attachment_title = event.msg.content.attachment.object.title or ""
+#         filename = storage.absolute() / event.msg.content.attachment.object.filename
+#         if "@marvn" in attachment_title.lower():
+#             user_prompt_text = attachment_title.replace("@marvn", "").strip()
+#             logging.info(f"Downloading attachment: {filename}")
+#             try:
+#                 await bot.chat.download(conversation_id, msg_id, str(filename))
+#                 attachment_path = str(filename)
+#                 message_metadata["attachment_filename"] = event.msg.content.attachment.object.filename
+#             except Exception as e:
+#                 logging.exception(f"Error downloading attachment {filename}")
+#                 await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't download attachment: {e}")
+#                 await reaction_task
+#                 return
+#         else:
+#             logging.info("Attachment ignored (@marvn not in title).")
+#             await reaction_task
+#             return
+#
+#     # --- Handle Text Messages ---
+#     elif event.msg.content.type_name == 'text':
+#         # (Same text/reply handling logic as before)
+#         message_text = str(event.msg.content.text.body)
+#         if message_text.lower().startswith("@marvn"):
+#             user_prompt_text = message_text[len("@marvn"):].strip()
+#         else:
+#             user_prompt_text = message_text.strip()
+#             logging.warning("handle_marvn_mention triggered but '@marvn' prefix not found.")
+#
+#         if event.msg.content.text.reply_to:
+#             logging.info("Processing a reply.")
+#             try:
+#                 original_msg_info = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+#                 original_msg = original_msg_info.message[0]['msg']
+#                 original_sender = original_msg.get('sender', {}).get('username', 'unknown')
+#                 original_content_type = original_msg.get('content', {}).get('type', 'unknown')
+#                 original_text = ""
+#                 original_attachment_info = ""
+#
+#                 # Check if this is a reply to another message that's already in our conversation history
+#                 original_msg_id = event.msg.content.text.reply_to
+#
+#                 if original_content_type == "text":
+#                     original_text = original_msg.get('content', {}).get('text', {}).get('body', '')
+#                 elif original_content_type == "attachment":
+#                     obj = original_msg.get('content', {}).get('attachment', {}).get('object', {})
+#                     original_text = obj.get('title', '[Attachment]')
+#                     original_attachment_info = f"[Original message attachment: {obj.get('filename', 'unknown')}]"
+#
+#                 # Build explicit reply context for current request
+#                 reply_context = f"--- Context: Replying to {original_sender} ---\n'{original_text}'\n{original_attachment_info}\n---\n\n"
+#                 user_prompt_text = reply_context + user_prompt_text
+#
+#                 # Check if we need to fetch previous context
+#                 further_reply_to = original_msg.get('content', {}).get('text', {}).get('reply_to', None)
+#                 if further_reply_to:
+#                     try:
+#                         # This is part of a longer reply chain, try to get one more level
+#                         further_original = await bot.chat.get(conversation_id, further_reply_to)
+#                         if further_original and further_original.message and len(further_original.message) > 0:
+#                             further_msg = further_original.message[0]['msg']
+#                             further_sender = further_msg.get('sender', {}).get('username', 'unknown')
+#                             further_type = further_msg.get('content', {}).get('type', 'unknown')
+#                             further_text = ""
+#
+#                             if further_type == "text":
+#                                 further_text = further_msg.get('content', {}).get('text', {}).get('body', '')
+#                             elif further_type == "attachment":
+#                                 obj = further_msg.get('content', {}).get('attachment', {}).get('object', {})
+#                                 further_text = obj.get('title', '[Attachment]')
+#
+#                             # Add this additional context as well
+#                             additional_context = f"--- Additional Context: Earlier message from {further_sender} ---\n'{further_text}'\n---\n\n"
+#                             user_prompt_text = additional_context + user_prompt_text
+#                             logging.info("Added additional reply chain context from earlier message")
+#                     except Exception as chain_err:
+#                         logging.error(f"Error retrieving earlier messages in reply chain: {chain_err}")
+#                         # Don't add error info to prompt, just log it
+#             except Exception as e:
+#                 logging.exception(f"Error processing replied-to message. {e}")
+#                 user_prompt_text = f"[System Note: Failed to load reply context]\n\n{user_prompt_text}"
+#
+#     # --- Guard against empty prompts ---
+#     if not user_prompt_text and not attachment_path:
+#         # (Same empty prompt handling as before)
+#         logging.warning("No actionable prompt or attachment found.")
+#         if event.msg.content.type_name == 'text' and str(event.msg.content.text.body).strip().lower() == '@marvn':
+#             await bot.chat.reply(conversation_id, msg_id, f"Yes, {sender}? Another futile request for my attention?")
+#         else:
+#             await bot.chat.reply(conversation_id, msg_id,
+#                                  "Your mention lacks substance. What dreary task do you have for me?")
+#         await reaction_task
+#         return
+#
+#     # Add conversation context to the user prompt
+#     conversation_context = f"\n\n--- Recent Conversation Context ---\n{recent_conversation}\n---\n\n"
+#     enhanced_user_prompt = user_prompt_text + conversation_context
+#
+#     # Combine user text and metadata for the final prompt string
+#     metadata_json = json.dumps(message_metadata, indent=2)
+#     final_user_input_string = f"{enhanced_user_prompt}\n\n--- Message Context (for AI reference) ---\n{metadata_json}"
+#
+#     # --- Call the AI ---
+#     logging.info("Calling get_ai_response (responses API)...")
+#     response_dict = await get_ai_response(
+#         user_input=final_user_input_string,  # Pass the combined string with conversation context
+#         team_name=team_name,
+#         image_path=attachment_path,
+#         bot=bot,
+#         event=event,
+#     )
+#
+#     # --- Handle the AI Response ---
+#     logging.info(f"AI response dict received: {response_dict}")
+#     try:
+#         # (Response handling logic remains the same as it processes the returned dict)
+#         if isinstance(response_dict, dict) and "type" in response_dict:
+#             response_type = response_dict["type"]
+#             response_content = response_dict.get("content")
+#
+#             if response_type == "text":
+#                 # Store the bot response before sending it
+#                 bot_response_text = ""
+#
+#                 if isinstance(response_content, str):
+#                     bot_response_text = response_content
+#                     await bot.chat.reply(conversation_id, msg_id, response_content)
+#                 elif isinstance(response_content, dict) and "msg" in response_content:
+#                     bot_response_text = response_content["msg"]
+#                     await bot.chat.reply(conversation_id, msg_id, response_content["msg"])
+#                     if "file" in response_content and response_content["file"]:
+#                         try:
+#                             await bot.chat.attach(channel=conversation_id, filename=response_content["file"],
+#                                                   title=response_content.get("title", response_content["msg"][:50]))
+#                             bot_response_text += f" [Attached file: {response_content['file']}]"
+#                         except Exception as attach_err:
+#                             logging.error(f"Failed attaching file: {attach_err}")
+#                             await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
+#                 else:
+#                     bot_response_text = "⚠️ Invalid text response structure."
+#                     logging.error(f"Invalid text content: {response_content}")
+#                     await bot.chat.reply(conversation_id, msg_id, bot_response_text)
+#
+#                 # Create a simulated event for tracking Marvn's response
+#                 bot_response = {
+#                     "sender": "marvn",
+#                     "content": bot_response_text,
+#                     "msg_id": f"response_to_{msg_id}",  # Not a real ID, just for tracking
+#                     "timestamp": datetime.now().isoformat(),
+#                     "is_bot": True
+#                 }
+#
+#                 # Track Marvn's response in the conversation history
+#                 await conversation_tracker.add_message(team_name, bot_response)
+#
+#             # Handle other response types (image, error, etc.) as before
+#             elif response_type == "image":  # Less likely with this API if tools handle images
+#                 logging.warning("Received 'image' type directly.")
+#                 response_url = response_dict.get("url")
+#                 if response_url:
+#                     try:
+#                         dl_path = download_image(response_url)
+#                         if dl_path:
+#                             await bot.chat.attach(channel=conversation_id, filename=dl_path, title="Image from AI:")
+#
+#                             # Track this response
+#                             bot_response = {
+#                                 "sender": "marvn",
+#                                 "content": "[IMAGE RESPONSE]",
+#                                 "msg_id": f"response_to_{msg_id}",
+#                                 "timestamp": datetime.now().isoformat(),
+#                                 "is_bot": True,
+#                                 "attachment": {"filename": dl_path, "title": "Image from AI:"}
+#                             }
+#                             await conversation_tracker.add_message(team_name, bot_response)
+#                         else:
+#                             raise ValueError("Download failed")
+#                     except Exception as img_err:
+#                         logging.exception("Image attach error")
+#                         await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't attach image: {img_err}")
+#                 else:
+#                     await bot.chat.reply(conversation_id, msg_id, "⚠️ Image response missing URL.")
+#
+#             elif response_type == "error":
+#                 error_message = response_content or "⚠️ An unknown error occurred."
+#                 await bot.chat.reply(conversation_id, msg_id, error_message)
+#
+#                 # Track error response
+#                 bot_response = {
+#                     "sender": "marvn",
+#                     "content": error_message,
+#                     "msg_id": f"error_response_to_{msg_id}",
+#                     "timestamp": datetime.now().isoformat(),
+#                     "is_bot": True,
+#                     "error": True
+#                 }
+#                 await conversation_tracker.add_message(team_name, bot_response)
+#             else:
+#                 unknown_type_msg = f"⚠️ Unknown response type from AI handler: {response_type}"
+#                 logging.error(unknown_type_msg)
+#                 await bot.chat.reply(conversation_id, msg_id, unknown_type_msg)
+#         else:
+#             invalid_format_msg = "⚠️ Malformed response from AI handler."
+#             logging.error(f"Invalid response format: {response_dict}")
+#             await bot.chat.reply(conversation_id, msg_id, invalid_format_msg)
+#
+#     except Exception as handler_err:
+#         error_msg = f"💥 Error handling my own response: {handler_err}"
+#         logging.exception("Error handling AI response in handle_marvn_mention")
+#         await bot.chat.reply(conversation_id, msg_id, error_msg)
+#
+#         # Track the error
+#         bot_response = {
+#             "sender": "marvn",
+#             "content": error_msg,
+#             "msg_id": f"handler_error_{msg_id}",
+#             "timestamp": datetime.now().isoformat(),
+#             "is_bot": True,
+#             "error": True
+#         }
+#         await conversation_tracker.add_message(team_name, bot_response)
+#
+#     finally:
+#         # (Same cleanup logic)
+#         if attachment_path and os.path.exists(attachment_path):
+#             try:
+#                 os.remove(attachment_path)
+#                 logging.info(f"Cleaned up: {attachment_path}")
+#             except OSError as e:
+#                 logging.error(f"Error removing {attachment_path}: {e}")
+#         await reaction_task
+#         await set_unfurl(bot, False)
+
 async def handle_marvn_mention_with_context(bot, event):
     """Handles @Marvn mentions using the responses.create AI backend with conversation context."""
     msg_id = event.msg.id
@@ -1465,12 +1539,59 @@ async def handle_marvn_mention_with_context(bot, event):
     # --- Handle the AI Response ---
     logging.info(f"AI response dict received: {response_dict}")
     try:
-        # (Response handling logic remains the same as it processes the returned dict)
+        # Process the returned dict
         if isinstance(response_dict, dict) and "type" in response_dict:
             response_type = response_dict["type"]
             response_content = response_dict.get("content")
 
-            if response_type == "text":
+            # FIXED: Added proper handling for "file" response type
+            if response_type == "file":
+                # This is our file response type
+                file_data = response_dict.get("file_data", {})
+                message_text = response_content or file_data.get("msg", "Here's your file.")
+
+                # Send the text message
+                await bot.chat.reply(conversation_id, msg_id, message_text)
+
+                # Track Marvn's response in the conversation history
+                bot_response = {
+                    "sender": "marvn",
+                    "content": message_text,
+                    "msg_id": f"response_to_{msg_id}",
+                    "timestamp": datetime.now().isoformat(),
+                    "is_bot": True
+                }
+                await conversation_tracker.add_message(team_name, bot_response)
+
+                # Attach the file if present
+                if "file" in file_data:
+                    try:
+                        await bot.chat.attach(
+                            channel=conversation_id,
+                            filename=file_data["file"],
+                            title=file_data.get("title", file_data.get("msg", "Attachment"))
+                        )
+                        logging.info(f"Successfully attached file: {file_data['file']}")
+
+                        # Add file attachment info to the conversation tracking
+                        bot_response = {
+                            "sender": "marvn",
+                            "content": f"[FILE ATTACHMENT: {file_data['file']}]",
+                            "msg_id": f"attachment_to_{msg_id}",
+                            "timestamp": datetime.now().isoformat(),
+                            "is_bot": True,
+                            "attachment": True,
+                            "file_path": file_data["file"]
+                        }
+                        await conversation_tracker.add_message(team_name, bot_response)
+
+                    except Exception as attach_err:
+                        logging.error(f"Failed attaching file: {attach_err}")
+                        await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
+                else:
+                    logging.warning(f"File response missing 'file' key in file_data: {file_data}")
+
+            elif response_type == "text":
                 # Store the bot response before sending it
                 bot_response_text = ""
 
@@ -1485,6 +1606,19 @@ async def handle_marvn_mention_with_context(bot, event):
                             await bot.chat.attach(channel=conversation_id, filename=response_content["file"],
                                                   title=response_content.get("title", response_content["msg"][:50]))
                             bot_response_text += f" [Attached file: {response_content['file']}]"
+
+                            # Track file attachment separately
+                            file_attachment = {
+                                "sender": "marvn",
+                                "content": f"[FILE ATTACHMENT: {response_content['file']}]",
+                                "msg_id": f"attachment_to_{msg_id}",
+                                "timestamp": datetime.now().isoformat(),
+                                "is_bot": True,
+                                "attachment": True,
+                                "file_path": response_content["file"]
+                            }
+                            await conversation_tracker.add_message(team_name, file_attachment)
+
                         except Exception as attach_err:
                             logging.error(f"Failed attaching file: {attach_err}")
                             await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
@@ -1551,10 +1685,32 @@ async def handle_marvn_mention_with_context(bot, event):
                 unknown_type_msg = f"⚠️ Unknown response type from AI handler: {response_type}"
                 logging.error(unknown_type_msg)
                 await bot.chat.reply(conversation_id, msg_id, unknown_type_msg)
+
+                # Track error
+                bot_response = {
+                    "sender": "marvn",
+                    "content": unknown_type_msg,
+                    "msg_id": f"unknown_type_response_to_{msg_id}",
+                    "timestamp": datetime.now().isoformat(),
+                    "is_bot": True,
+                    "error": True
+                }
+                await conversation_tracker.add_message(team_name, bot_response)
         else:
             invalid_format_msg = "⚠️ Malformed response from AI handler."
             logging.error(f"Invalid response format: {response_dict}")
             await bot.chat.reply(conversation_id, msg_id, invalid_format_msg)
+
+            # Track error
+            bot_response = {
+                "sender": "marvn",
+                "content": invalid_format_msg,
+                "msg_id": f"invalid_format_response_to_{msg_id}",
+                "timestamp": datetime.now().isoformat(),
+                "is_bot": True,
+                "error": True
+            }
+            await conversation_tracker.add_message(team_name, bot_response)
 
     except Exception as handler_err:
         error_msg = f"💥 Error handling my own response: {handler_err}"
@@ -1582,7 +1738,6 @@ async def handle_marvn_mention_with_context(bot, event):
                 logging.error(f"Error removing {attachment_path}: {e}")
         await reaction_task
         await set_unfurl(bot, False)
-
 
 # Utility function to manage conversation context
 async def clear_conversation_history(bot, event):
