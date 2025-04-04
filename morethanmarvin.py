@@ -613,10 +613,18 @@ async def handler(bot, event):
 
     try:
         logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
-        if event.msg.content.text.reply_to == 'marvn':
-            await sync(event=event, bot=bot)
 
-            await handle_marvn_mention_with_context(bot, event)
+
+        if (hasattr(event.msg.content, 'text') and
+                event.msg.content.text is not None and
+                event.msg.content.text.reply_to):
+            original_msg_info = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+            original_msg = original_msg_info.message[0]['msg']
+            original_sender = original_msg.get('sender', {}).get('username', 'unknown')
+            if original_sender == 'marvn':
+                await sync(event=event, bot=bot)
+                await handle_marvn_mention_with_context(bot, event)
+
         elif str(event.msg.content.text.body).lower().startswith("@marvn"):
             await sync(event=event, bot=bot)
             await handle_marvn_mention_with_context(bot, event)
