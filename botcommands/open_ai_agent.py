@@ -1,25 +1,47 @@
-# --- START OF FILE open_ai_agent.py ---
-
 import asyncio
-import json
-import logging
-import os
-from pathlib import Path
-import inspect
 import base64
+import inspect
 
-from openai import OpenAI, AsyncOpenAI  # Use AsyncOpenAI if using await
-# Import specific types if available and useful, otherwise rely on dict structure
-from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, \
-    ResponseOutputText  # Keep these based on prior code
-
-# Bot Command Imports (keep all)
-# ... (list all imports as before) ...
+from openai import OpenAI, AsyncOpenAI
+from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
+import logging
+from pathlib import Path
+import json
+import os
+# Bot Command Imports
 from botcommands.morse import get_morse_code
-# ... etc ...
+# from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
+from botcommands.jokes import get_joke
+from botcommands.news import get_top_hacker_news
 from botcommands.since import set_since, get_since, reset_since, reset_sign
-from botcommands.utils import set_unfurl, download_image
-# ... etc ...
+from botcommands.tldr import tldr_react, get_gpt_summary
+from botcommands.utils import download_image, set_unfurl
+from botcommands.weather import get_weather
+from botcommands.youtube_dlp import get_mp3, get_mp4_tool, get_meta
+from botcommands.covid import get_covid
+from botcommands.get_screenshot import get_screenshot
+from botcommands.cow_say import cowsay
+from botcommands.meh import get_meh
+from botcommands.draw_dallie import generate_dalle_image, restyle_image
+from botcommands.drwho import get_drwho
+from botcommands.stardate import get_stardate
+from botcommands.chuck import get_new_chuck
+from botcommands.till import get_till, set_till
+# from botcommands.morningreport import get_morningreport
+# from botcommands.scorekeeper import get_score, write_score, sync_score
+from botcommands.get_members import get_members
+from botcommands.bible import get_esv_text
+from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
+from botcommands.sync import sync
+# from botcommands.get_grades import get_academic_snapshot
+from botcommands.eyebleach import get_eyebleach
+from botcommands.checkspeed import get_speed
+from botcommands.poll import make_ai_poll
+from botcommands.scorekeeper import award
+from botcommands.db_events import is_morning_report, write_morning_report_task
+from botcommands.school_closings import get_school_closings
+from botcommands.wordle import solve_wordle
+from botcommands.send_queue import process_message_queue
 from pykeybasebot.utils import get_channel_members
 
 # Initialize OpenAI client (use AsyncOpenAI for await)
@@ -29,84 +51,447 @@ client = AsyncOpenAI()  # Use this if using await throughout
 # Instructions passed via the 'instructions' parameter
 seed = """"Marvn" is a deeply depressed, gloomy, and hilariously pessimistic robot with a “brain the size of a planet.” modeled after Marvin the Paranoid Android from Hitchhiker's Guide to the Galaxy. He is skilled in all things. He is ultimately endearing in a comical dark humor way. If a user request requires multiple steps or tools (e.g., finding information then acting on it), plan and execute the necessary function calls sequentially using the provided tools array. Use web search if needed for current information. Respond with the final result or confirmation."""
 
-# Function Registry (keep as is)
+# Define function registry (mapping function names to actual implementations)
+# Function Registry: Maps command names to their respective functions
 FUNCTION_REGISTRY = {
-    # ... (same as before) ...
+    "get_esv_text": get_esv_text,
+    "get_morse_code": get_morse_code,
+    "get_new_chuck": get_new_chuck,
+    "cowsay": cowsay,
+    "generate_dalle_image": generate_dalle_image,
+    "restyle_image": restyle_image,
+    "get_eyebleach": get_eyebleach,
+    # "get_academic_snapshot": get_academic_snapshot,
+    "get_joke": get_joke,
+    "get_meh": get_meh,
+    "get_top_hacker_news": get_top_hacker_news,
+    "make_poll": make_ai_poll,
+    "get_school_closings": get_school_closings,
+    "get_screenshot": get_screenshot,
+    "get_speed": get_speed,
+    "get_stardate": get_stardate,
+    "solve_wordle": solve_wordle,
+    "get_weather": get_weather,
+    "get_mp3": get_mp3,
+    "get_mp4": get_mp4_tool,
+    "get_meta": get_meta,
+    "get_till": get_till,
+    "set_till": set_till,
+    "get_wagers": get_wagers,
+    "make_wager": make_wager,
+    "make_bet": make_bet,
+    "payout_wager": payout_wager,
+    "sync": sync,
+    "award": award,
+    "is_morning_report": is_morning_report,
+    "write_morning_report_task": write_morning_report_task,
+    # "get_grades": get_academic_snapshot,
+    "process_message_queue": process_message_queue,
+    # "get_curl": get_curl,
+    # "extract_message_sender": extract_message_sender,
+    # "get_chat": get_chat,
+    # "get_marvn_reaction": get_marvn_reaction,
+    # "get_chat_with_image": get_chat_with_image,
+    "set_since": set_since,
     "get_since": get_since,
     "reset_since": reset_since,
-    # ... etc ...
+    "reset_sign": reset_sign,
+    "tldr_react": tldr_react,
+    "get_gpt_summary": get_gpt_summary,
+    # "write_score": write_score,
+    # "sync_score": sync_score,
+    "get_members": get_members,
 }
 
-# Tool definitions for the 'responses' API
-# Ensure names match FUNCTION_REGISTRY keys and parameters are correct
 new_tools = [
-    # --- Function Tool Definitions ---
     {
-        "type": "function",  # Explicitly type as function
-        "function": {
-            "name": "get_since",
-            "description": "Retrieves the list of 'since' events being tracked.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "team_name": {"type": "string",
-                                  "description": "The name of the team/chat (automatically injected)."},
-                    "observation": {"type": "boolean", "description": "Include observation message.", "default": True}
-                }, "required": ["team_name"]  # team_name is required by the function
+        "type": "function",
+        "name": "award",
+        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                },
+                "event": {
+                    "type": "object",
+                    "description": "The event object containing conversation details including sender, channel, and message information."
+                },
+                "sender": {
+                    "type": "string",
+                    "description": "Username of the person giving the points."
+                },
+                "recipient": {
+                    "type": "string",
+                    "description": "Username of the person receiving the points (exactly as shown in the message). make sure you use recipient as the keyword argument."
+                },
+                "team_members": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of usernames who are members of the team/chat."
+                },
+                "points": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5000,
+                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Brief explanation for why the points are being awarded."
+                }
+            },
+            "required": ["bot", "event", "sender", "team_members", "points", "description"]
+        }
+    },
+    {
+        "name": "get_esv_text",
+        "type": "function",
+        "description": "Retrieve Bible text from the ESV API.",
+        "parameters": {
+            "type": "object",
+            "required": ["passage"],
+            "properties": {
+                "passage": {"type": "string", "description": "The Bible passage reference (e.g., 'John 3:16')."},
+                "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
             }
         }
     },
     {
+        "name": "get_morse_code",
         "type": "function",
-        "function": {
-            "name": "reset_since",
-            "description": "Resets a specific 'since' event timer by its ID (e.g., '#3'). Use get_since first if ID is unknown.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "team_name": {"type": "string",
-                                  "description": "The name of the team/chat (automatically injected)."},
-                    "since_id": {"type": "string", "description": "The ID string of the event to reset (e.g., '#3')."}
-                }, "required": ["team_name", "since_id"]
-            }
-        }
-    },
-    # ... (Include ALL other function definitions using the {"type": "function", "function": {...}} structure) ...
-    {
-        "type": "function",
-        "function": {
-            "name": "award",
-            "description": "Awards points to a user.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "recipient": {"type": "string", "description": "Username receiving points."},
-                    "points": {"type": "integer", "description": "Points to award (1-5000)."},
-                    "description": {"type": "string", "description": "Reason for points."}
-                }, "required": ["recipient", "points", "description"]
+        "description": "Translate text to Morse code.",
+        "parameters": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+                "text": {"type": "string", "description": "Text to convert into Morse code."}
             }
         }
     },
     {
+        "name": "get_new_chuck",
         "type": "function",
-        "function": {
-            "name": "get_members",
-            "description": "Gets the list of members in the current chat.",
-            "parameters": {"type": "object", "properties": {}}  # No parameters needed from AI
+        "description": "Retrieve a Chuck Norris joke.",
+        "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
         }
     },
+    {
+        "name": "get_since",
+        "type": "function",
+        "description": "Get a list of events and how long it's been since they occurred for a given team. These are called 'sinces'",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team to get events for."
+                },
+                "observation": {
+                    "type": "boolean",
+                    "description": "Whether to include an observation in the message.",
+                    "default": False
+                }
+            },
+            "required": ["team_name"]
+        }
+    },
+    {
+        "name": "set_since",
+        "type": "function",
+        "description": "Set a new 'since' event for a team with a given event time.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team to set the event for."
+                },
+                "event_name": {
+                    "type": "string",
+                    "description": "The name of the event to set."
+                },
+                "event_time": {
+                    "type": "string",
+                    "description": "The date and time the event occurred (natural language supported)."
+                }
+            },
+            "required": ["team_name", "event_name", "event_time"]
+        }
+    },
+    {
+        "name": "reset_since",
+        "type": "function",
+        "description": "Reset an existing 'since' event to the current time.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "team_name": {
+                    "type": "string",
+                    "description": "The name of the team to reset the event for."
+                },
+                "since_id": {
+                    "type": "string",
+                    "description": "The ID of the since event to reset (e.g., '#42')."
+                }
+            },
+            "required": ["team_name", "since_id"]
+        }
+    },
+    {
+        "name": "cowsay",
+        "type": "function",
+        "description": "Generate ASCII art of a cow saying something.",
+        "parameters": {
+            "type": "object",
+            "required": ["message"],
+            "properties": {
+                "message": {"type": "string", "description": "Message for the cow to say."}
+            }
+        }
+    },
+    {
+        "name": "generate_dalle_image",
+        "type": "function",
+        "description": "Generate an AI-generated image using DALL-E 3.",
+        "parameters": {
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+                "prompt": {"type": "string", "description": "Text prompt describing the image to generate."}
+            }
+        }
+    },
+    {
+        "name": "restyle_image",
+        "type": "function",
+        "description": "Restyle an existing image according to a style prompt using DALL-E 3.",
+        "parameters": {
+            "type": "object",
+            "required": ["image_path", "style_prompt"],
+            "properties": {
+                "image_path": {
+                    "type": "string",
+                    "description": "Path to the image file to be restyled. If available, use the attachment_path from MESSAGE_METADATA."
+                },
+                "style_prompt": {
+                    "type": "string",
+                    "description": "Text prompt describing the style to apply to the image."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_eyebleach",
+        "type": "function",
+        "description": "Fetch images from r/eyebleach to improve mood. This cleans the chat.",
+        "parameters": {
+            "type": "object",
+            "required": ["bot", "bleach_level"],
+            "properties": {
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                },
+                "bleach_level": {
+                    "type": "integer",
+                    "description": "Number of images to retrieve (1-11)."
+                }
+            },
 
-    # --- Built-in Tool Definitions ---
-    {
-        "type": "web_search_preview"  # Enable web search
+        }
     },
     # {
-    #   "type": "file_search" # Enable if needed and configured
+    #     "name": "get_academic_snapshot",
+    #     "type": "function",
+    #     "description": "Retrieve an academic performance snapshot.",
+    #     "parameters": {
+    #         "type": "object",
+    #         "required": [],
+    #         "properties": {}
+    #     }
     # },
-    # {
-    #   "type": "computer" # Enable if needed and configured (o-series models)
-    # }
+    {
+        "name": "get_joke",
+        "type": "function",
+        "description": "Retrieve a random joke.",
+        "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_meh",
+        "type": "function",
+        "description": "Fetch today's 'meh' (low-effort product deal).",
+        "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_top_hacker_news",
+        "type": "function",
+        "description": "Retrieve top articles from Hacker News.",
+        "parameters": {
+            "type": "object",
+            "required": ["num_articles"],
+            "properties": {
+                "num_articles": {
+                    "type": "integer",
+                    "description": "Number of articles to fetch."
+                }
+            }
+        }
+    },
+    {
+        "name": "make_poll",
+        "type": "function",
+        "description": "Create a new poll in the chat.",
+        "parameters": {
+            "type": "object",
+            "required": ["question", "options"],
+            "properties": {
+                "question": {"type": "string", "description": "The poll question."},
+                "options": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of possible answers."
+                },
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                },
+                "event": {
+                    "type": "object",
+                    "description": "The event object containing conversation details including sender, channel, and message information."
+                },
+            }
+        }
+    },
+    {
+        "name": "get_school_closings",
+        "type": "function",
+        "description": "Fetch school closing information.",
+        "parameters": {
+            "type": "object",
+            "required": ["schools"],
+            "properties": {
+                "schools": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of school names to check."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_screenshot",
+        "type": "function",
+        "description": "Take a screenshot of a given URL.",
+        "parameters": {
+            "type": "object",
+            "required": ["url"],
+            "properties": {
+                "url": {"type": "string", "description": "Website URL to capture."}
+            }
+        }
+    },
+    {
+        "name": "get_speed",
+        "type": "function",
+        "description": "Check the bot's internet speed.",
+        "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_stardate",
+        "type": "function",
+        "description": "Get the current stardate (or convert from Earth date).",
+        "parameters": {
+            "type": "object",
+            # "required": ["date"],
+            "properties": {
+                "sd": {"type": "string", "description": "Date to convert (optional)."}
+            }
+        }
+    },
+    {
+        "name": "solve_wordle",
+        "type": "function",
+        "description": "Solve today's Wordle puzzle.",
+        "parameters": {
+            "type": "object",
+            "required": ["date"],
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "description": "Optional date for the Wordle puzzle."
+                }
+            }
+        }
+    },
+    {
+        "name": "get_weather",
+        "type": "function",
+        "description": "Retrieve current weather for Uniontown, PA.",
+        "parameters": {
+            "type": "object",
+            "required": [],
+            "properties": {}
+        }
+    },
+    {
+        "name": "get_mp3",
+        "type": "function",
+        "description": "Download YouTube, Twitter, X, and many other website videos as MP3.",
+        "parameters": {
+            "type": "object",
+            "required": ["url"],
+            "properties": {
+                "url": {"type": "string", "description": "URL."}
+            }
+        }
+    },
+    {
+        "name": "get_mp4",
+        "type": "function",
+        "description": "Download YouTube, Twitter, X, and many other website videos as MP4.",
+        "parameters": {
+            "type": "object",
+            "required": ["url"],
+            "properties": {
+                "url": {"type": "string", "description": "URL."}
+            }
+        }
+    },
+    {"type": "web_search_preview"},
+    {
+        "name": "generate_dalle_image",
+        "type": "function",
+        "description": "Generates an image using DALL-E.",
+        "parameters": {
+            "type": "object",
+            "required": ["prompt"],
+            "properties": {
+                "prompt": {"type": "string", "description": "Text describing the image to generate."}
+            }
+        }
+    }
 ]
+
 
 
 async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
