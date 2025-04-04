@@ -260,10 +260,16 @@ async def handler(bot, event):
 
     try:
         if event.msg.content.type_name == 'attachment':
-            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
+            if event.msg.content.text.reply_to == 'marvn':
+                await sync(event=event, bot=bot)
+                pprint(event.msg.content)
+
+                await handle_marvn_mention_with_context(bot, event)
+            elif str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 pprint(event.msg.content)
                 logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
                 await handle_marvn_mention_with_context(bot, event)
+
 
 
     except Exception as e:
@@ -604,9 +610,19 @@ async def handler(bot, event):
     #     else:
     #         msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
     #         await bot.chat.reply(conversation_id, msg_id, msg)
-    if str(event.msg.content.text.body).lower().startswith("@marvn"):
-        await sync(event=event, bot=bot)
-        await handle_marvn_mention_with_context(bot, event)
+
+    try:
+        if event.msg.content.text.reply_to == 'marvn':
+            await sync(event=event, bot=bot)
+
+            await handle_marvn_mention_with_context(bot, event)
+        elif str(event.msg.content.text.body).lower().startswith("@marvn"):
+            await sync(event=event, bot=bot)
+            await handle_marvn_mention_with_context(bot, event)
+    except Exception as e:
+        logging.info(e)
+
+
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
