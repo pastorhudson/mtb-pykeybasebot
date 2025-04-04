@@ -52,14 +52,11 @@ from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
 from datetime import timedelta
-from botcommands.open_ai_agent import handle_marvn_mention, get_ai_response, handle_marvn_mention_with_context
-from botcommands.ai_context import ChatContextManager
-
-
+from botcommands.open_ai_agent import handle_marvn_mention_with_context
 
 
 logging.basicConfig(level=logging.DEBUG)
-# context = ChatContextManager()
+
 
 if "win32" in sys.platform:
     # Windows specific event-loop policy
@@ -265,7 +262,7 @@ async def handler(bot, event):
         if event.msg.content.type_name == 'attachment':
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 pprint(event.msg.content)
-                await handle_marvn_mention(bot, event)
+                await handle_marvn_mention_with_context(bot, event)
 
 
     except Exception as e:
@@ -609,7 +606,6 @@ async def handler(bot, event):
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
         await sync(event=event, bot=bot)
         await handle_marvn_mention_with_context(bot, event)
-        # asyncio.create_task(handle_marvn_mention(bot, event))
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
