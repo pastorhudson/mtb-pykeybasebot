@@ -539,7 +539,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
             user_message_content_items.append({
                 "type": "input_image",
                 # Use the data URI scheme which is standard for embedding images
-                "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+                "image_url": f"data:image/jpeg;base64,{base64_image}"
             })
             logging.debug("Added image content to initial message.")
         except Exception as e:
