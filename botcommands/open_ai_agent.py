@@ -35,10 +35,7 @@ from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_ai_poll
 from botcommands.scorekeeper import award, get_score
-# from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
-# from botcommands.wordle import solve_wordle
-# from botcommands.send_queue import process_message_queue
 from pykeybasebot.utils import get_channel_members
 
 # Initialize OpenAI client (use AsyncOpenAI for await)
