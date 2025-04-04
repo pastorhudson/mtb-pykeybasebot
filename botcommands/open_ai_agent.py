@@ -515,17 +515,290 @@ conversation_tracker = ConversationTracker(
     max_messages=50  # Adjust based on your memory requirements
 )
 
+# async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
+#     """
+#     Handles OpenAI responses.create API calls for multistep tasks including function calls and web search.
+#
+#     Parameters:
+#     user_input (str): Initial text prompt, including metadata context.
+#     team_name (str): Team/channel name.
+#     image_path (str): Optional path to an image file.
+#     bot (object): Bot instance.
+#     event (object): Event information.
+#     context (object): Additional context (unused currently).
+#     """
+#     logging.info(f"Starting get_ai_response (responses API v2) for team '{team_name}'.")
+#
+#     # --- Prepare Initial Input List ---
+#     # This list accumulates the interaction history for the API call sequence.
+#     current_api_input = []
+#
+#     # 1. Construct the initial user message object
+#     user_message_content_items = []
+#     user_message_content_items.append({"type": "input_text", "text": user_input})
+#
+#     if image_path and os.path.exists(image_path):
+#         logging.info(f"Encoding image for responses API: {image_path}")
+#         try:
+#             with open(image_path, "rb") as image_file:
+#                 base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+#             # Format based on documentation structure inference: nested within content array
+#             user_message_content_items.append({
+#                 "type": "input_image",
+#                 # Use the data URI scheme which is standard for embedding images
+#                 "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}
+#             })
+#             logging.debug("Added image content to initial message.")
+#         except Exception as e:
+#             logging.error(f"Error reading/encoding image {image_path}: {e}")
+#             user_message_content_items[0]["text"] += "\n\n[System note: Failed to process attached image.]"
+#
+#     initial_user_message = {
+#         "type": "message",
+#         "role": "user",
+#         "content": user_message_content_items
+#         # "id": "msg_initial_user" # Optional: Could add an ID if needed
+#     }
+#     current_api_input.append(initial_user_message)
+#
+#     max_tool_iterations = 5
+#     current_iteration = 0
+#     last_response_id = None  # To potentially use for state later if needed between user turns
+#
+#     while current_iteration < max_tool_iterations:
+#         current_iteration += 1
+#         logging.info(f"--- AI Interaction Iteration {current_iteration} (responses API) ---")
+#
+#         try:
+#             logging.debug(
+#                 f"Calling responses.create with input: {json.dumps(current_api_input, indent=2, default=str)}")  # Use default=str for non-serializable
+#             # --- Call responses.create API ---
+#             response = await client.responses.create(
+#                 model="gpt-4o",  # Or appropriate model supporting responses API features
+#                 input=current_api_input,
+#                 tools=new_tools,
+#                 tool_choice="auto",
+#                 instructions=seed,
+#                 store=True  # Store response to potentially use previous_response_id later
+#                 # previous_response_id=last_response_id # Not using within the loop
+#             )
+#             logging.debug(f"Received responses.create API response object: ID={response.id}, Status={response.status}")
+#             last_response_id = response.id  # Store the ID of this response
+#
+#             # --- Process Response Output ---
+#             if response.status == "failed":
+#                 error_details = response.error if response.error else "Unknown error"
+#                 logging.error(f"API call failed. Status: {response.status}, Error: {error_details}")
+#                 return {"type": "error", "content": f"⚠️ AI request failed: {error_details}"}
+#
+#             if not response.output:
+#                 logging.warning(f"API response status '{response.status}' but contained no output.")
+#                 # Might be 'in_progress' if streaming, but we are not streaming here.
+#                 # If completed with no output, it's strange.
+#                 if response.status == "completed":
+#                     return {"type": "error", "content": "⚠️ AI completed but provided no output."}
+#                 else:  # Should not happen if not streaming and not failed/completed
+#                     return {"type": "error", "content": f"⚠️ AI response status is '{response.status}' with no output."}
+#
+#             assistant_message_text = None
+#             tool_calls_requested = []
+#             web_search_occurred = False  # Flag if web search was used
+#
+#             # Add the raw output items from this response to our input history
+#             # This makes them part of the context for the *next* API call in the loop
+#             current_api_input.extend(response.output)
+#
+#             # Now, analyze the output items we just received and added
+#             for item in response.output:
+#                 item_type = getattr(item, 'type', None)
+#                 logging.debug(f"Processing output item type: {item_type}")
+#
+#                 if item_type == "message" and getattr(item, 'role', None) == 'assistant':
+#                     logging.info("Found assistant message in output.")
+#                     if hasattr(item, 'content'):
+#                         for content_part in item.content:
+#                             # Look for the actual text output
+#                             if hasattr(content_part, 'type') and content_part.type == "output_text":
+#                                 assistant_message_text = getattr(content_part, 'text', None)
+#                                 logging.debug(f"Extracted assistant text: '{assistant_message_text[:100]}...'")
+#                                 # Don't break, process all output items, but store latest text
+#                     # If assistant message exists, it might be the final answer *unless* tool calls also exist
+#
+#
+#
+#                 elif item_type == "function_call" and isinstance(item, ResponseFunctionToolCall):
+#                     function_call_id = item.id  # Use the exact ID provided by the API
+#                     logging.info(f"Found function call request: {item.name} with ID: {function_call_id}")
+#                     tool_calls_requested.append(item)
+#
+#                 elif item_type == "web_search_call":  # Actual type from experimentation might differ
+#                     logging.info("Detected web_search_call item.")
+#                     web_search_occurred = True
+#                     # We likely don't need to *do* anything, the results might be in a separate item
+#                     # or incorporated into the next assistant message.
+#                 elif item_type == "web_search_results":  # Hypothetical type for results
+#                     logging.info("Detected web_search_results item.")
+#                     # If needed, process results here (e.g., add to context explicitly?)
+#                     # For now, assume the model uses them internally.
+#
+#                 # Ignore other types like reasoning, etc. for now
+#                 elif item_type not in ["message", "function_call", "web_search_call", "web_search_results"]:
+#                     logging.debug(f"Ignoring output item type: {item_type}")
+#
+#             # --- Decide Next Step ---
+#
+#             # Priority 1: Handle function calls if requested
+#             if tool_calls_requested:
+#                 logging.info(f"Executing {len(tool_calls_requested)} function call(s)...")
+#
+#                 # Function call requests were already added to current_api_input.
+#                 # Now execute and prepare output items.
+#                 function_outputs = []
+#                 for tool_call in tool_calls_requested:
+#                     function_name = tool_call.name
+#                     function_call_id = tool_call.call_id  # ID is at the top level of the call item
+#
+#                     if not function_call_id:
+#                         # Should not happen based on spec, but handle defensively
+#                         logging.error(f"Function call item for {function_name} missing 'id'!")
+#                         continue  # Skip this call if ID is missing
+#
+#                     logging.info(f"Executing: {function_name} (Call ID: {function_call_id})...)")
+#                     arguments = {}
+#                     try:
+#                         # Arguments string needs parsing
+#                         raw_args = tool_call.arguments  # Changed from tool_call.function.arguments
+#                         arguments = json.loads(raw_args)
+#                         logging.debug(f"Parsed Arguments: {arguments}")
+#
+#                         # --- Execute Function (same logic as before) ---
+#                         if function_name in FUNCTION_REGISTRY:
+#                             function_to_call = FUNCTION_REGISTRY[function_name]
+#                             sig = inspect.signature(function_to_call)
+#                             params = sig.parameters
+#                             if 'bot' in params and bot: arguments['bot'] = bot
+#                             if 'event' in params and event: arguments['event'] = event
+#                             if 'team_name' in params: arguments['team_name'] = team_name
+#                             if 'user' in params and event: arguments['user'] = event.msg.sender.username
+#                             if 'sender' in params and event: arguments['sender'] = event.msg.sender.username
+#                             if 'team_members' in params and bot and event:
+#                                 arguments['team_members'] = await get_channel_members(event.msg.conv_id, bot)
+#
+#                             if asyncio.iscoroutinefunction(function_to_call):
+#                                 result = await function_to_call(**arguments)
+#                             else:
+#                                 result = function_to_call(**arguments)
+#                             logging.info(f"Tool {function_name} executed.")
+#
+#                             # NEW CODE: Preserve file dictionaries exactly as returned by the function
+#                             if isinstance(result, dict) and "file" in result:
+#                                 # This is a file-based response, preserve its exact structure
+#                                 # We'll convert to a JSON string to ensure the model doesn't try to format it
+#                                 tool_output_str = json.dumps(result)
+#
+#                                 logging.info(f"Preserved file response structure for {function_name} {tool_output_str}")
+#
+#                             elif isinstance(result, dict) and "msg" in result:
+#                                 tool_output_str = f"Success: {result['msg']}" + (
+#                                     f" (File: {result['file']})" if "file" in result else "")
+#                             elif result is None:
+#                                 tool_output_str = "Success: Action completed."
+#                             else:
+#                                 tool_output_str = str(result)
+#                         else:
+#                             logging.error(f"Function '{function_name}' not found.")
+#                             tool_output_str = f"Error: Function '{function_name}' is not implemented."
+#                     except json.JSONDecodeError as json_err:
+#                         logging.error(f"Failed to parse arguments for {function_name}: {json_err}")
+#                         tool_output_str = f"Error: Invalid arguments format provided by model."
+#                     except Exception as e:
+#                         logging.exception(f"Error executing tool {function_name}")
+#                         tool_output_str = f"Error: {str(e)}"
+#
+#                     logging.debug(f"Tool output (string): {tool_output_str[:300]}...")
+#                     # Create the output item structure for function results
+#                     output_item = {
+#                         "type": "function_call_output",
+#                         "call_id": function_call_id,  # This is the missing required parameter
+#                         "output": tool_output_str
+#                     }
+#                     function_outputs.append(output_item)
+#
+#                 # Add all the function results to the input list for the next API call
+#                 current_api_input.extend(function_outputs)
+#                 logging.info("Proceeding to next iteration with function results added to input.")
+#                 continue  # Go back to the start of the while loop
+#
+#             # Priority 2: If no tool calls were requested, and we got an assistant message
+#             elif assistant_message_text is not None:
+#                 logging.info("AI provided final text response (no further tool calls requested).")
+#                 # NEW CODE: Check if the response contains our special file response marker
+#                 file_response_match = re.search(r'{"file_response":true,"data":(.*?})}', assistant_message_text)
+#                 if file_response_match:
+#                     try:
+#                         # Extract and parse the file data
+#                         file_data_str = file_response_match.group(1)
+#                         file_data = json.loads(file_data_str)
+#
+#                         # Replace the JSON in the text with a simple placeholder
+#                         clean_text = re.sub(r'{"file_response":true,"data":.*?}}',
+#                                             f"File: {file_data.get('msg', 'Attachment')}",
+#                                             assistant_message_text)
+#
+#                         # Return both the cleaned message and the file data
+#                         return {
+#                             "type": "file",
+#                             "content": clean_text,
+#                             "file_data": file_data
+#                         }
+#                     except json.JSONDecodeError:
+#                         logging.error("Failed to parse file response JSON")
+#
+#                 # Normal text processing (unchanged)
+#                 try:
+#                     content_dict = json.loads(assistant_message_text)
+#                     if isinstance(content_dict, dict) and "msg" in content_dict:
+#                         logging.info("Detected structured dict in final text. Returning as dict.")
+#                         return {"type": "text", "content": content_dict}
+#                 except (json.JSONDecodeError, TypeError):
+#                     pass  # It's just plain text
+#                 return {"type": "text", "content": assistant_message_text}
+#
+#             # Priority 3: No function calls, no assistant message, but maybe web search happened?
+#             # If the loop finishes without a clear answer or error, return a generic failure.
+#             # This might happen if the model just uses web search and stops, which is unlikely.
+#             else:
+#                 logging.warning("Loop iteration ended without function calls or assistant message output.")
+#                 # If web search occurred, maybe we should loop one more time?
+#                 # For simplicity now, assume this state means no useful output.
+#                 return {"type": "error",
+#                         "content": "⚠️ AI finished processing but didn't provide a final text response."}
+#
+#
+#         except Exception as e:
+#             logging.exception("Error during OpenAI responses.create API call or processing loop")
+#             error_message = f"⚠️ Error communicating with AI (responses API): {str(e)}"
+#             # Attempt to parse specific OpenAI error details
+#             if hasattr(e, 'response') and hasattr(e.response, 'text'):
+#                 try:
+#                     error_details = json.loads(e.response.text)
+#                     error_message += f"\nDetails: {json.dumps(error_details)}"
+#                 except:
+#                     error_message += f"\nRaw Response: {e.response.text[:500]}"  # Limit raw response length
+#             elif hasattr(e, 'body'):  # Newer openai versions might have error details in e.body
+#                 error_message += f"\nDetails: {e.body}"
+#
+#             return {"type": "error", "content": error_message}
+#
+#     # If loop finishes (max iterations reached)
+#     logging.error(f"Exceeded maximum tool iterations ({max_tool_iterations}) using responses API.")
+#     return {"type": "error",
+#             "content": f"⚠️ Failed to complete request within {max_tool_iterations} steps. The process might be too complex or stuck."}
+
+# Modified version of get_ai_response function with fixed file handling
 async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
     """
     Handles OpenAI responses.create API calls for multistep tasks including function calls and web search.
-
-    Parameters:
-    user_input (str): Initial text prompt, including metadata context.
-    team_name (str): Team/channel name.
-    image_path (str): Optional path to an image file.
-    bot (object): Bot instance.
-    event (object): Event information.
-    context (object): Additional context (unused currently).
     """
     logging.info(f"Starting get_ai_response (responses API v2) for team '{team_name}'.")
 
@@ -557,7 +830,6 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
         "type": "message",
         "role": "user",
         "content": user_message_content_items
-        # "id": "msg_initial_user" # Optional: Could add an ID if needed
     }
     current_api_input.append(initial_user_message)
 
@@ -571,7 +843,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
 
         try:
             logging.debug(
-                f"Calling responses.create with input: {json.dumps(current_api_input, indent=2, default=str)}")  # Use default=str for non-serializable
+                f"Calling responses.create with input: {json.dumps(current_api_input, indent=2, default=str)}")
             # --- Call responses.create API ---
             response = await client.responses.create(
                 model="gpt-4o",  # Or appropriate model supporting responses API features
@@ -580,7 +852,6 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 tool_choice="auto",
                 instructions=seed,
                 store=True  # Store response to potentially use previous_response_id later
-                # previous_response_id=last_response_id # Not using within the loop
             )
             logging.debug(f"Received responses.create API response object: ID={response.id}, Status={response.status}")
             last_response_id = response.id  # Store the ID of this response
@@ -623,8 +894,6 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                                 logging.debug(f"Extracted assistant text: '{assistant_message_text[:100]}...'")
                                 # Don't break, process all output items, but store latest text
                     # If assistant message exists, it might be the final answer *unless* tool calls also exist
-
-
 
                 elif item_type == "function_call" and isinstance(item, ResponseFunctionToolCall):
                     function_call_id = item.id  # Use the exact ID provided by the API
@@ -690,14 +959,22 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                                 result = function_to_call(**arguments)
                             logging.info(f"Tool {function_name} executed.")
 
-                            # NEW CODE: Preserve file dictionaries exactly as returned by the function
+                            # --- FIXED: Improved file detection and handling ---
+                            # Check if the result is a file-based response from specific functions
+                            if function_name in ["get_screenshot", "get_mp3", "get_mp4", "get_meta"] and isinstance(
+                                    result, dict) and "file" in result:
+                                # Immediately return a file response for these file-generating functions
+                                logging.info(f"Detected file response from {function_name}, returning directly")
+                                return {
+                                    "type": "file",
+                                    "content": result.get("msg", "Processed your request."),
+                                    "file_data": result
+                                }
+
+                            # Regular response handling
                             if isinstance(result, dict) and "file" in result:
-                                # This is a file-based response, preserve its exact structure
-                                # We'll convert to a JSON string to ensure the model doesn't try to format it
+                                # For other file-containing responses, preserve structure
                                 tool_output_str = json.dumps(result)
-
-                                logging.info(f"Preserved file response structure for {function_name} {tool_output_str}")
-
                             elif isinstance(result, dict) and "msg" in result:
                                 tool_output_str = f"Success: {result['msg']}" + (
                                     f" (File: {result['file']})" if "file" in result else "")
@@ -754,11 +1031,43 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                     except json.JSONDecodeError:
                         logging.error("Failed to parse file response JSON")
 
+                # Look for JSON file responses in the text (different format)
+                json_response_match = re.search(r'(\{.*?"file":.*?})', assistant_message_text)
+                if json_response_match:
+                    try:
+                        # Try to parse potential JSON response
+                        json_str = json_response_match.group(1)
+                        potential_file_data = json.loads(json_str)
+
+                        # Check if it has file key
+                        if isinstance(potential_file_data, dict) and "file" in potential_file_data:
+                            # Clean up the text by removing the JSON
+                            clean_text = re.sub(r'\{.*?"file":.*?}',
+                                                f"File: {potential_file_data.get('msg', 'Attachment')}",
+                                                assistant_message_text)
+
+                            return {
+                                "type": "file",
+                                "content": clean_text,
+                                "file_data": potential_file_data
+                            }
+                    except (json.JSONDecodeError, IndexError):
+                        # Not valid JSON, continue normal processing
+                        pass
+
                 # Normal text processing (unchanged)
                 try:
                     content_dict = json.loads(assistant_message_text)
                     if isinstance(content_dict, dict) and "msg" in content_dict:
                         logging.info("Detected structured dict in final text. Returning as dict.")
+
+                        # NEW CHECK: If this dict has a "file" key, treat it as a file response
+                        if "file" in content_dict:
+                            return {
+                                "type": "file",
+                                "content": content_dict.get("msg", "Here's your file."),
+                                "file_data": content_dict
+                            }
                         return {"type": "text", "content": content_dict}
                 except (json.JSONDecodeError, TypeError):
                     pass  # It's just plain text
@@ -794,7 +1103,6 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
     logging.error(f"Exceeded maximum tool iterations ({max_tool_iterations}) using responses API.")
     return {"type": "error",
             "content": f"⚠️ Failed to complete request within {max_tool_iterations} steps. The process might be too complex or stuck."}
-
 
 # --- handle_marvn_mention function ---
 # Should remain largely the same. It prepares the initial user_input string
