@@ -844,6 +844,7 @@ async def handle_marvn_mention_with_context(bot, event):
     reaction_task = asyncio.create_task(bot.chat.react(conversation_id, msg_id, ":marvin:"))
 
     # Track the incoming message
+    logging.info(f"Received @Marvn mention for conversation ID {conversation_id} from {sender} ({mentions})")
     await track_message(conversation_tracker, bot, event)
 
     # Get recent conversation context
@@ -877,7 +878,7 @@ async def handle_marvn_mention_with_context(bot, event):
             try:
                 await bot.chat.download(conversation_id, msg_id, str(filename))
                 attachment_path = str(filename)
-                message_metadata["attachment_filename"] = event.msg.content.attachment.object.filename
+                message_metadata["attachment_filename"] = attachment_path
             except Exception as e:
                 logging.exception(f"Error downloading attachment {filename}")
                 await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't download attachment: {e}")
