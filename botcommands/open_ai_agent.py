@@ -736,6 +736,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 logging.info("AI provided final text response (no further tool calls requested).")
                 # NEW CODE: Check if the response contains our special file response marker
                 file_response_match = re.search(r'{"file_response":true,"data":(.*?})}', assistant_message_text)
+                file_response_match = re.search(r'{"file_response":true,"data":(.*?})}', assistant_message_text)
                 if file_response_match:
                     try:
                         # Extract and parse the file data
@@ -755,7 +756,6 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                         }
                     except json.JSONDecodeError:
                         logging.error("Failed to parse file response JSON")
-                        # Continue with normal processing
 
                 # Normal text processing (unchanged)
                 try:
@@ -934,7 +934,7 @@ async def handle_marvn_mention(bot, event):
                 await bot.chat.reply(conversation_id, msg_id, message_text)
 
                 # Attach the file if present
-                if "file" in file_data and file_data["file"]:
+                if "file" in file_data:
                     try:
                         await bot.chat.attach(
                             channel=conversation_id,
