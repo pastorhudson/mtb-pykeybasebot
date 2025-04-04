@@ -52,7 +52,7 @@ from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
 from datetime import timedelta
-from botcommands.open_ai_agent import handle_marvn_mention, get_ai_response
+from botcommands.open_ai_agent import handle_marvn_mention, get_ai_response, handle_marvn_mention_with_context
 from botcommands.ai_context import ChatContextManager
 
 
@@ -608,8 +608,8 @@ async def handler(bot, event):
     #         await bot.chat.reply(conversation_id, msg_id, msg)
     if str(event.msg.content.text.body).lower().startswith("@marvn"):
         await sync(event=event, bot=bot)
-        # await handle_marvn_mention_enhanced(bot, event)
-        asyncio.create_task(handle_marvn_mention(bot, event))
+        await handle_marvn_mention_with_context(bot, event)
+        # asyncio.create_task(handle_marvn_mention(bot, event))
 
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
