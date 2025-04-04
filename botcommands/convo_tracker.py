@@ -313,7 +313,7 @@ async def track_message(conversation_tracker, bot, event, is_bot_message=False):
     return message
 
 # Function to get conversation context for AI
-def get_conversation_context(conversation_tracker, team_name, limit=10):
+def get_conversation_context(conversation_tracker, team_name, limit=15):
     """
     Get recent conversation history formatted for AI context.
 
