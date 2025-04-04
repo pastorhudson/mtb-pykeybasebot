@@ -2,15 +2,14 @@ import asyncio
 import base64
 import inspect
 
-from openai import OpenAI, AsyncOpenAI
-from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
+from openai import AsyncOpenAI
+from openai.types.responses import ResponseFunctionToolCall
 import logging
 from pathlib import Path
 import json
 import os
 # Bot Command Imports
 from botcommands.morse import get_morse_code
-# from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
 from botcommands.since import set_since, get_since, reset_since, reset_sign
@@ -18,30 +17,25 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 from botcommands.utils import download_image, set_unfurl
 from botcommands.weather import get_weather
 from botcommands.youtube_dlp import get_mp3, get_mp4_tool, get_meta
-from botcommands.covid import get_covid
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
 from botcommands.draw_dallie import generate_dalle_image, restyle_image
-from botcommands.drwho import get_drwho
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
-# from botcommands.morningreport import get_morningreport
-# from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from botcommands.bible import get_esv_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
-# from botcommands.get_grades import get_academic_snapshot
 from botcommands.eyebleach import get_eyebleach
 from botcommands.checkspeed import get_speed
 from botcommands.poll import make_ai_poll
 from botcommands.scorekeeper import award
-from botcommands.db_events import is_morning_report, write_morning_report_task
+# from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
-from botcommands.wordle import solve_wordle
-from botcommands.send_queue import process_message_queue
+# from botcommands.wordle import solve_wordle
+# from botcommands.send_queue import process_message_queue
 from pykeybasebot.utils import get_channel_members
 
 # Initialize OpenAI client (use AsyncOpenAI for await)
@@ -70,7 +64,7 @@ FUNCTION_REGISTRY = {
     "get_screenshot": get_screenshot,
     "get_speed": get_speed,
     "get_stardate": get_stardate,
-    "solve_wordle": solve_wordle,
+    # "solve_wordle": solve_wordle,
     "get_weather": get_weather,
     "get_mp3": get_mp3,
     "get_mp4": get_mp4_tool,
@@ -83,10 +77,10 @@ FUNCTION_REGISTRY = {
     "payout_wager": payout_wager,
     "sync": sync,
     "award": award,
-    "is_morning_report": is_morning_report,
-    "write_morning_report_task": write_morning_report_task,
+    # "is_morning_report": is_morning_report,
+    # "write_morning_report_task": write_morning_report_task,
     # "get_grades": get_academic_snapshot,
-    "process_message_queue": process_message_queue,
+    # "process_message_queue": process_message_queue,
     # "get_curl": get_curl,
     # "extract_message_sender": extract_message_sender,
     # "get_chat": get_chat,
@@ -493,10 +487,9 @@ new_tools = [
 ]
 
 
-
 async def get_ai_response(user_input: str, team_name, image_path=None, bot=None, event=None, context=None):
     """
-    Handles OpenAI responses.create API calls for multi-step tasks including function calls and web search.
+    Handles OpenAI responses.create API calls for multistep tasks including function calls and web search.
 
     Parameters:
     user_input (str): Initial text prompt, including metadata context.
@@ -651,7 +644,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                         # --- Execute Function (same logic as before) ---
                         if function_name in FUNCTION_REGISTRY:
                             function_to_call = FUNCTION_REGISTRY[function_name]
-                            sig = inspect.signature(function_to_call);
+                            sig = inspect.signature(function_to_call)
                             params = sig.parameters
                             if 'bot' in params and bot: arguments['bot'] = bot
                             if 'event' in params and event: arguments['event'] = event
@@ -729,7 +722,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
             # Attempt to parse specific OpenAI error details
             if hasattr(e, 'response') and hasattr(e.response, 'text'):
                 try:
-                    error_details = json.loads(e.response.text);
+                    error_details = json.loads(e.response.text)
                     error_message += f"\nDetails: {json.dumps(error_details)}"
                 except:
                     error_message += f"\nRaw Response: {e.response.text[:500]}"  # Limit raw response length
@@ -780,7 +773,7 @@ async def handle_marvn_mention(bot, event):
     if event.msg.content.type_name == 'attachment':
         # (Same attachment handling logic as before)
         logging.info("Processing an attachment message.")
-        storage = Path('./storage');
+        storage = Path('./storage')
         storage.mkdir(exist_ok=True)
         attachment_title = event.msg.content.attachment.object.title or ""
         filename = storage.absolute() / event.msg.content.attachment.object.filename
@@ -794,11 +787,11 @@ async def handle_marvn_mention(bot, event):
             except Exception as e:
                 logging.exception(f"Error downloading attachment {filename}")
                 await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't download attachment: {e}")
-                await reaction_task;
+                await reaction_task
                 return
         else:
             logging.info("Attachment ignored (@marvn not in title).")
-            await reaction_task;
+            await reaction_task
             return
 
     # --- Handle Text Messages ---
@@ -808,7 +801,7 @@ async def handle_marvn_mention(bot, event):
         if message_text.lower().startswith("@marvn"):
             user_prompt_text = message_text[len("@marvn"):].strip()
         else:
-            user_prompt_text = message_text.strip();
+            user_prompt_text = message_text.strip()
             logging.warning("handle_marvn_mention triggered but '@marvn' prefix not found.")
 
         if event.msg.content.text.reply_to:
@@ -818,7 +811,7 @@ async def handle_marvn_mention(bot, event):
                 original_msg = original_msg_info.message[0]['msg']
                 original_sender = original_msg.get('sender', {}).get('username', 'unknown')
                 original_content_type = original_msg.get('content', {}).get('type', 'unknown')
-                original_text = "";
+                original_text = ""
                 original_attachment_info = ""
                 if original_content_type == "text":
                     original_text = original_msg.get('content', {}).get('text', {}).get('body', '')
@@ -829,7 +822,7 @@ async def handle_marvn_mention(bot, event):
                 reply_context = f"--- Context: Replying to {original_sender} ---\n'{original_text}'\n{original_attachment_info}\n---\n\n"
                 user_prompt_text = reply_context + user_prompt_text
             except Exception as e:
-                logging.exception("Error processing replied-to message.")
+                logging.exception(f"Error processing replied-to message. {e}")
                 user_prompt_text = f"[System Note: Failed to load reply context]\n\n{user_prompt_text}"
 
     # --- Guard against empty prompts ---
@@ -841,7 +834,7 @@ async def handle_marvn_mention(bot, event):
         else:
             await bot.chat.reply(conversation_id, msg_id,
                                  "Your mention lacks substance. What dreary task do you have for me?")
-        await reaction_task;
+        await reaction_task
         return
 
     # Combine user text and metadata for the final prompt string
@@ -877,13 +870,11 @@ async def handle_marvn_mention(bot, event):
                             await bot.chat.attach(channel=conversation_id, filename=response_content["file"],
                                                   title=response_content.get("title", response_content["msg"][:50]))
                         except Exception as attach_err:
-                            logging.error(f"Failed attaching file: {attach_err}"); await bot.chat.reply(conversation_id,
-                                                                                                        msg_id,
-                                                                                                        f"(Couldn't attach file: {attach_err})")
+                            logging.error(f"Failed attaching file: {attach_err}")
+                            await bot.chat.reply(conversation_id, msg_id, f"(Couldn't attach file: {attach_err})")
                 else:
-                    logging.error(f"Invalid text content: {response_content}"); await bot.chat.reply(conversation_id,
-                                                                                                     msg_id,
-                                                                                                     "⚠️ Invalid text response structure.")
+                    logging.error(f"Invalid text content: {response_content}")
+                    await bot.chat.reply(conversation_id, msg_id, "⚠️ Invalid text response structure.")
 
             elif response_type == "image":  # Less likely with this API if tools handle images
                 logging.warning("Received 'image' type directly.")
@@ -896,18 +887,18 @@ async def handle_marvn_mention(bot, event):
                         else:
                             raise ValueError("Download failed")
                     except Exception as img_err:
-                        logging.exception("Image attach error"); await bot.chat.reply(conversation_id, msg_id,
-                                                                                      f"⚠️ Couldn't attach image: {img_err}")
+                        logging.exception("Image attach error")
+                        await bot.chat.reply(conversation_id, msg_id, f"⚠️ Couldn't attach image: {img_err}")
                 else:
                     await bot.chat.reply(conversation_id, msg_id, "⚠️ Image response missing URL.")
 
             elif response_type == "error":
                 await bot.chat.reply(conversation_id, msg_id, response_content or "⚠️ An unknown error occurred.")
             else:
-                logging.error(f"Unknown response type: {response_type}");
+                logging.error(f"Unknown response type: {response_type}")
                 await bot.chat.reply(conversation_id, msg_id, "⚠️ Unknown response type from AI handler.")
         else:
-            logging.error(f"Invalid response format: {response_dict}");
+            logging.error(f"Invalid response format: {response_dict}")
             await bot.chat.reply(conversation_id, msg_id, "⚠️ Malformed response from AI handler.")
 
     except Exception as handler_err:
@@ -918,7 +909,8 @@ async def handle_marvn_mention(bot, event):
         # (Same cleanup logic)
         if attachment_path and os.path.exists(attachment_path):
             try:
-                os.remove(attachment_path); logging.info(f"Cleaned up: {attachment_path}")
+                os.remove(attachment_path)
+                logging.info(f"Cleaned up: {attachment_path}")
             except OSError as e:
                 logging.error(f"Error removing {attachment_path}: {e}")
         await reaction_task
