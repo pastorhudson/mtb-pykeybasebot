@@ -150,14 +150,19 @@ new_tools = [
     {
         "name": "clear_conversation_history",
         "type": "function",
-        "description": "Clears the conversation history for a specific team or channel.",
+        "description": "Clears the conversation history for a team/channel.",
         "parameters": {
             "type": "object",
-            "required": ["team_name"],
+            "required": ["bot", "event"],
             "properties": {
-                "team_name": {"type": "string", "description": "The name of the team or channel to clear history for."},
-                "conversation_id": {"type": "string", "description": "The unique identifier for the conversation."},
-                "msg_id": {"type": "string", "description": "The identifier of the message that triggered this action."}
+                "bot": {
+                    "type": "object",
+                    "description": "The bot object that provides access to chat APIs for sending messages and reactions."
+                },
+                "event": {
+                    "type": "object",
+                    "description": "The event object containing conversation details including sender, channel, and message information."
+                }
             }
         }
     },
