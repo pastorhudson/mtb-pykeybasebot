@@ -732,10 +732,47 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 continue  # Go back to the start of the while loop
 
             # Priority 2: If no tool calls were requested, and we got an assistant message
+            # In the get_ai_response function, when processing outputs
+
             elif assistant_message_text is not None:
                 logging.info("AI provided final text response (no further tool calls requested).")
-                # NEW CODE: Check if the response contains our special file response marker
-                file_response_match = re.search(r'{"file_response":true,"data":(.*?})}', assistant_message_text)
+
+                # First, check if any of the recent function calls returned a file
+                file_response_found = False
+                file_data = None
+
+                # Look through the recent tool calls to see if any returned a file response
+                for item in current_api_input:
+                    if isinstance(item, dict) and item.get('type') == 'function_call_output':
+                        output = item.get('output', '')
+                        if 'file_response' in output and 'data' in output:
+                            try:
+                                # Try to extract the file data
+                                match = re.search(r'{"file_response":true,"data":(.*?})}', output)
+                                if match:
+                                    file_data_str = match.group(1)
+                                    file_data = json.loads(file_data_str)
+                                    file_response_found = True
+                                    break
+                            except (json.JSONDecodeError, IndexError) as e:
+                                logging.error(f"Error parsing file data: {e}")
+
+                # If a file response was found, return it properly
+                if file_response_found and file_data:
+                    # Clean the assistant's message to remove any file JSON that might be there
+                    clean_text = re.sub(r'{"file_response":true,"data":.*?}}', '', assistant_message_text)
+                    # If the cleaning made the message empty or just whitespace, use a default message
+                    if not clean_text.strip():
+                        clean_text = f"Here's the {file_data.get('msg', 'file')} you requested."
+
+                    return {
+                        "type": "file",
+                        "content": clean_text,
+                        "file_data": file_data
+                    }
+
+                # Also still check the assistant's message for a file response as a backup
+                # This is your existing code for checking assistant_message_text
                 file_response_match = re.search(r'{"file_response":true,"data":(.*?})}', assistant_message_text)
                 if file_response_match:
                     try:
@@ -756,16 +793,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                         }
                     except json.JSONDecodeError:
                         logging.error("Failed to parse file response JSON")
-
-                # Normal text processing (unchanged)
-                try:
-                    content_dict = json.loads(assistant_message_text)
-                    if isinstance(content_dict, dict) and "msg" in content_dict:
-                        logging.info("Detected structured dict in final text. Returning as dict.")
-                        return {"type": "text", "content": content_dict}
-                except (json.JSONDecodeError, TypeError):
-                    pass  # It's just plain text
-                return {"type": "text", "content": assistant_message_text}
+                        # Continue with normal processing
 
             # Priority 3: No function calls, no assistant message, but maybe web search happened?
             # If the loop finishes without a clear answer or error, return a generic failure.
