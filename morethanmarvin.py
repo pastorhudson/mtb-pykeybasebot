@@ -618,7 +618,7 @@ async def handler(bot, event):
         if (hasattr(event.msg.content, 'text') and
                 event.msg.content.text is not None and
                 event.msg.content.text.reply_to):
-            original_msg_info = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
+            original_msg_info = await bot.chat.get(event.msg.conv_id, event.msg.content.text.reply_to)
             original_msg = original_msg_info.message[0]['msg']
             original_sender = original_msg.get('sender', {}).get('username', 'unknown')
             if original_sender == 'marvn':
