@@ -627,9 +627,8 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 # Now execute and prepare output items.
                 function_outputs = []
                 for tool_call in tool_calls_requested:
-                    # Structure is {"type": "function", "function": {"name": ..., "arguments": ...}, "id": ...}
                     function_name = tool_call.name
-                    function_call_id = tool_call.id  # ID is at the top level of the call item
+                    function_call_id = tool_call.call_id  # ID is at the top level of the call item
 
                     if not function_call_id:
                         # Should not happen based on spec, but handle defensively
