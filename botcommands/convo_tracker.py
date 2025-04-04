@@ -401,7 +401,7 @@ async def enhance_marvn_with_conversation_context(bot, event, conversation_track
 
 
 # Utility function to manage conversation context
-async def clear_conversation_history(bot, event):
+async def clear_conversation_history(bot, event, conversation_tracker):
     """Command handler to clear conversation history for a team/channel."""
     team_name = event.msg.channel.name or f"DM_{event.msg.conv_id[:8]}"
     conversation_id = event.msg.conv_id

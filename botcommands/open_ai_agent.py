@@ -153,7 +153,7 @@ new_tools = [
         "description": "Clears the conversation history for a team/channel.",
         "parameters": {
             "type": "object",
-            "required": ["bot", "event"],
+            "required": ["bot", "event", "conversation_tracker"],
             "properties": {
                 "bot": {
                     "type": "object",
@@ -162,6 +162,10 @@ new_tools = [
                 "event": {
                     "type": "object",
                     "description": "The event object containing conversation details including sender, channel, and message information."
+                },
+                "conversation_tracker": {
+                    "type": "object",
+                    "description": "The conversation tracker object."
                 }
             }
         }
@@ -692,6 +696,8 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                             if 'sender' in params and event: arguments['sender'] = event.msg.sender.username
                             if 'team_members' in params and bot and event:
                                 arguments['team_members'] = await get_channel_members(event.msg.conv_id, bot)
+                            if 'conversation_tracker' in params and bot and event:
+                                arguments['conversation_tracker'] = conversation_tracker
 
                             if asyncio.iscoroutinefunction(function_to_call):
                                 result = await function_to_call(**arguments)
