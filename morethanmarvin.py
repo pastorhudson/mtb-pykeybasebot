@@ -612,6 +612,7 @@ async def handler(bot, event):
     #         await bot.chat.reply(conversation_id, msg_id, msg)
 
     try:
+        logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
         if event.msg.content.text.reply_to == 'marvn':
             await sync(event=event, bot=bot)
 
