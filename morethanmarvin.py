@@ -264,9 +264,11 @@ async def handler(bot, event):
                 await handle_marvn_mention_with_context(bot, event)
 
 
-        elif str(event.msg.content.text.body).lower().startswith("@marvn"):
-            await sync(event=event, bot=bot)
-            await handle_marvn_mention_with_context(bot, event)
+            elif (str(event.msg.content.text.body).lower().startswith("@marvn") or
+                  hasattr(event.msg.content, 'at_mention_usernames') and
+                  event.msg.content.at_mention_usernames):
+                await sync(event=event, bot=bot)
+                await handle_marvn_mention_with_context(bot, event)
     except Exception as e:
         logging.info(e)
 
