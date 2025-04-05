@@ -265,10 +265,10 @@ async def handler(bot, event):
                 pprint(event.msg.content)
 
                 await handle_marvn_mention_with_context(bot, event)
-            elif str(event.msg.content.attachment.object.title).startswith("@marvn"):
-                pprint(event.msg.content)
-                logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
-                await handle_marvn_mention_with_context(bot, event)
+        elif str(event.msg.content.attachment.object.title).startswith("@marvn"):
+            pprint(event.msg.content)
+            logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
+            await handle_marvn_mention_with_context(bot, event)
 
 
 
@@ -613,6 +613,7 @@ async def handler(bot, event):
 
     try:
         logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
+        logging.info(event.msg.content)
 
 
         if (hasattr(event.msg.content, 'text') and
