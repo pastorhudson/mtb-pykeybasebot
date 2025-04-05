@@ -230,34 +230,7 @@ async def handler(bot, event):
          "usage": ""}
     ]
 
-    #award points based on activity
-    # await award_activity_points(event=event)
-
-    # try:
-    #     if event.msg.content.type_name == 'attachment':
-    #         if str(event.msg.content.attachment.object.title).startswith("@marvn"):
-    #             storage = Path('./storage')
-    #             conversation_id = event.msg.conv_id
-    #             await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #
-    #             message_id = event.msg.id
-    #             logging.info(f"Event msg id: {message_id}")
-    #             prompt = event.msg.content.attachment.object.title
-    #             filename = f"{storage.absolute()}/{event.msg.content.attachment.object.filename}"
-    #
-    #             # Download the file
-    #             logging.info("Trying to download")
-    #
-    #             await bot.chat.download(conversation_id, message_id, filename)
-    #             logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-    #             msg = await get_chat_with_image(filename, prompt)
-    #             await bot.chat.reply(conversation_id, event.msg.id, msg)
-    #
-    # except Exception as e:
-    #     print(e)
-    #     print(type(e))
-    #     print("Not an attachment")
-
+    # If there's an attachment check if we send this to @marvn
     try:
         if event.msg.content.type_name == 'attachment':
             if str(event.msg.content.attachment.object.title).startswith("@marvn"):
@@ -270,12 +243,32 @@ async def handler(bot, event):
             logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
             await handle_marvn_mention_with_context(bot, event)
 
-
-
     except Exception as e:
         logging.error(f"Error handling attachment: {str(e)}")
         logging.error(f"Type: {type(e)}")
         print("Not an attachment or error processing attachment")
+
+    try:
+        logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
+        logging.info(event)
+
+        if (hasattr(event.msg.content, 'text') and
+                event.msg.content.text is not None and
+                event.msg.content.text.reply_to):
+            logging.info(f"I've identified a replyto")
+            original_msg_info = await bot.chat.get(event.msg.conv_id, event.msg.content.text.reply_to)
+            original_msg = original_msg_info.message[0]['msg']
+            original_sender = original_msg.get('sender', {}).get('username', 'unknown')
+            if original_sender == 'marvn':
+                await sync(event=event, bot=bot)
+                await handle_marvn_mention_with_context(bot, event)
+
+
+        elif str(event.msg.content.text.body).lower().startswith("@marvn"):
+            await sync(event=event, bot=bot)
+            await handle_marvn_mention_with_context(bot, event)
+    except Exception as e:
+        logging.info(e)
 
     # logging.info(event.msg.content)
 
@@ -566,71 +559,6 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id,
                                 f"You did it wrong.\n `-42` points deducted from  @{event.msg.sender.username} "
                                 f"for trying to be cute.\n{instructions}")
-
-    # if str(event.msg.content.text.body).lower().startswith("@marvn"):
-    #     msg_id = event.msg.id
-    #     team_name = event.msg.channel.name
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     if event.msg.content.text.reply_to:
-    #         logging.info("I have a reply")
-    #         original_msg = await bot.chat.get(conversation_id, event.msg.content.text.reply_to)
-    #         logging.info(type(original_msg.message[0]['msg']['content']))
-    #         logging.info(original_msg.message[0]['msg']['sender']['username'])
-    #
-    #         if original_msg.message[0]['msg']['content']['type'] == "text":
-    #             prompt = f"{original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['text']['body']}\n\n" \
-    #                      f"{event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-    #             msg = await get_chat(prompt, team_name)
-    #             await bot.chat.reply(conversation_id, msg_id, msg)
-    #         elif original_msg.message[0]['msg']['content']['type'] == "attachment":
-    #
-    #             # Download the file
-    #             storage = Path('./storage')
-    #
-    #             prompt = f"Original Message from {original_msg.message[0]['msg']['sender']['username']}: {original_msg.message[0]['msg']['content']['attachment']['object']['title']}\n\n" \
-    #                      f"Question from {event.msg.sender.username}: {str(event.msg.content.text.body)[7:]}"
-    #             org_filename = original_msg.message[0]['msg']['content']['attachment']['object']['filename']
-    #
-    #             filename = f"{storage.absolute()}/{org_filename}"
-    #
-    #             # Download the file
-    #             logging.info("Trying to download")
-    #             attachment_title = original_msg.message[0]['msg']['content']['attachment']['object']['title']
-    #             logging.info(conversation_id)
-    #             logging.info(attachment_title)
-    #             logging.info(filename)
-    #             org_conversation_id = original_msg.message[0]['msg']['conversation_id']
-    #             file = await bot.chat.download(org_conversation_id, original_msg.message[0]['msg']['id'], filename)
-    #             msg = await get_chat_with_image(filename, prompt)
-    #             logging.info(msg)
-    #             await bot.chat.reply(conversation_id,msg_id, msg)
-    #
-    #             logging.info(f"File downloaded: {filename}\nPrompt: {prompt}")
-    #     else:
-    #         msg = await get_chat(str(event.msg.content.text.body)[7:], team_name)
-    #         await bot.chat.reply(conversation_id, msg_id, msg)
-
-    try:
-        logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
-        logging.info(event.msg.content)
-
-
-        if (hasattr(event.msg.content, 'text') and
-                event.msg.content.text is not None and
-                event.msg.content.text.reply_to):
-            original_msg_info = await bot.chat.get(event.msg.conv_id, event.msg.content.text.reply_to)
-            original_msg = original_msg_info.message[0]['msg']
-            original_sender = original_msg.get('sender', {}).get('username', 'unknown')
-            if original_sender == 'marvn':
-                await sync(event=event, bot=bot)
-                await handle_marvn_mention_with_context(bot, event)
-
-        elif str(event.msg.content.text.body).lower().startswith("@marvn"):
-            await sync(event=event, bot=bot)
-            await handle_marvn_mention_with_context(bot, event)
-    except Exception as e:
-        logging.info(e)
 
 
 
