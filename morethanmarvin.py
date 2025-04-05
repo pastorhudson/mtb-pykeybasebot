@@ -260,7 +260,7 @@ async def handler(bot, event):
 
     try:
         if event.msg.content.type_name == 'attachment':
-            if event.msg.content.text.reply_to == 'marvn':
+            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
                 await sync(event=event, bot=bot)
                 pprint(event.msg.content)
 
