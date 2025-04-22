@@ -245,10 +245,13 @@ async def handler(bot, event):
             logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
             await handle_marvn_mention_with_context(bot, event)
 
+    except AttributeError:
+        pass
     except Exception as e:
         logging.error(f"Error handling attachment: {str(e)}")
         logging.error(f"Type: {type(e)}")
-        print("Not an attachment or error processing attachment")
+
+
 
     try:
         logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
@@ -1351,19 +1354,6 @@ async def periodic_task():
             await bot.chat.attach(channel=mtb_conversation_id,
                                   filename=meh_img,
                                   title=msg[1])
-            # joke = msg[3]
-            # print(joke)
-            #
-            # prompt = joke[16:].strip('`')
-            # print(prompt)
-            # draw_payload = await generate_dalle_image(prompt)
-            # if draw_payload['file']:
-            #     # await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-            #
-            #     await bot.chat.attach(channel=mtb_conversation_id,
-            #                           filename=draw_payload['file'],
-            #                           title=joke)
-            # else:
 
             await bot.chat.send(mtb_conversation_id, msg[3])
             await bot.chat.send(mtb_conversation_id, msg[2])
