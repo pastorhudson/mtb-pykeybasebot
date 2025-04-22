@@ -119,6 +119,9 @@ async def handler(bot, event):
         # {"name": "covid",
         #  "description": "Force me to morbidly retrieve covid numbers for a State County or State.",
         #  "usage": "<State> <County> <- Optional Fields"},
+        {"name": "coinbase",
+         "description": f"Get price of crypto from coinbase",
+         "usage": "BTC-USD or XLM-USD defaults to XLM-USD"},
         {"name": "cow",
          "description": f"Now I can't even explain this. You are a monster. Optional Characters: {get_characters()}",
          "usage": "<character> <msg>"},
@@ -616,6 +619,26 @@ async def handler(bot, event):
             county = None
         msg = get_covid(state, county)
         await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!coinbase"):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        pair = str(event.msg.content.text.body)[10:]
+        if pair != "":
+            try:
+                spot = get_spot_price()
+            except Exception as e:
+                print(e)
+        else:
+            try:
+                spot = get_spot_price()
+            except Exception as e:
+                print(e)
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        msg = cowsay(str(event.msg.content.text.body)[5:])
+        my_msg = await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
