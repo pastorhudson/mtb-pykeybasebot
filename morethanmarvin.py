@@ -627,7 +627,7 @@ async def handler(bot, event):
         pair = str(event.msg.content.text.body)[10:]
         if pair != "":
             try:
-                spot = get_spot_price()
+                spot = get_spot_price(pair)
             except Exception as e:
                 spot = "I couldn't do that. I need a pair XLM-USD or BTC-URO"
                 print(e)
