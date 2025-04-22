@@ -629,16 +629,18 @@ async def handler(bot, event):
             try:
                 spot = get_spot_price()
             except Exception as e:
+                spot = "I couldn't do that. I need a pair XLM-USD or BTC-URO"
                 print(e)
         else:
             try:
                 spot = get_spot_price()
             except Exception as e:
+                spot = "I couldn't do that. I need a pair XLM-USD or BTC-URO"
                 print(e)
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-        msg = cowsay(str(event.msg.content.text.body)[5:])
-        my_msg = await bot.chat.send(conversation_id, msg)
+
+        my_msg = await bot.chat.send(conversation_id, spot)
 
     if str(event.msg.content.text.body).startswith("!cow"):
         channel = event.msg.channel
