@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+from botcommands.coinbase import get_spot_price
 from botcommands.convo_tracker import ConversationTracker, track_message, get_conversation_context, clear_conversation_history
 import asyncio
 import base64
@@ -70,6 +71,7 @@ FUNCTION_REGISTRY = {
     "get_mp3": get_mp3,
     "get_mp4": get_mp4_tool,
     "get_meta": get_meta,
+    'get_spot_price': get_spot_price,
     "get_till": get_till,
     "set_till": set_till,
     "get_wagers": get_wagers,
@@ -220,6 +222,21 @@ new_tools = [
                 }
             },
             "required": ["team_name"]
+        }
+    },
+    {
+        "name": "get_spot_price",
+        "type": "function",
+        "description": "Return the spot price for a requested cryptocurrency trading pair from Coinbase.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "pair": {
+                    "type": "string",
+                    "description": "Trading pair in the form BASE-CURRENCY, e.g. 'BTC-USD'. If the dash is omitted, '-USD' is assumed."
+                }
+            },
+            "required": []
         }
     },
     {
