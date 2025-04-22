@@ -227,7 +227,7 @@ new_tools = [
     {
         "name": "get_spot_price",
         "type": "function",
-        "description": "Return the spot price for a requested cryptocurrency trading pair from Coinbase.",
+        "description": "Return the spot price for a requested cryptocurrency trading pair from Coinbase. Use this to get Lumen's price or any other crypto price.",
         "parameters": {
             "type": "object",
             "properties": {
