@@ -57,6 +57,24 @@ CURRENCY_CODES = {
 }
 
 
+# Helper functions
+def get_currency_by_code(code):
+    """Get currency details by ISO code"""
+    return CURRENCY_CODES.get(code.upper())
+
+
+def get_currency_by_numeric(numeric_code):
+    """Get currency details by numeric code"""
+    for code, details in CURRENCY_CODES.items():
+        if details["numeric"] == numeric_code:
+            return {code: details}
+    return None
+
+
+def get_symbol(code):
+    """Get currency symbol by ISO code"""
+    currency = CURRENCY_CODES.get(code.upper())
+    return currency["symbol"] if currency else None
 
 def get_spot_price(pair: str = 'XLM-USD') -> float:
     """
@@ -76,8 +94,11 @@ def get_spot_price(pair: str = 'XLM-USD') -> float:
     resp.raise_for_status()
     data = resp.json()['data']
     pprint(data)
-    curency_symbol = CURRENCY_CODES[data['currency']]['symbol']
-    return f"{data['base'].upper()} {curency_symbol}{float(data["amount"])}"
+
+    curency_symbol = get_symbol(data['currency'])
+    crypto_currency = get_currency_by_code(data['base'])
+    name_currency = get_currency_by_code(data['currency'])
+    return f"{crypto_currency['name']} {data['base'].upper()} {curency_symbol}{float(data["amount"])} {name_currency['name']}"
 
 if __name__ == "__main__":
     # main(sys.argv[1:])
