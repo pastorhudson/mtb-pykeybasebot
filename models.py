@@ -136,7 +136,7 @@ class Team(Base):
         return s.query(Wager).filter(Team.wagers.any(Wager.is_closed == False)).all()
 
     def wager_exists(self, description):
-        return s.query(Wager).filter(and_(Team.wagers.any(Wager.is_closed == 'false'),
+        return s.query(Wager).filter(and_(Team.wagers.any(Wager.is_closed == False),
                                           Team.wagers.any(Wager.description == description))).all()
 
     def get_wager(self, wager_id):
