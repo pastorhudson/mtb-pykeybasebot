@@ -130,14 +130,16 @@ async def award(bot, event, sender, recipient, team_members, points, description
         if points < 0 and sender != 'pastorhudson':
             logging.info("Points are Negative!")
             user = event.msg.sender.username
-            return f"`-500` points awarded to @{user}. I'm the only negative one around here."
+            return f"`-500` points awarded to @{user} for trying to be negative. You're not allowed to give negative points."
 
         if user in team_members:
             logging.info("User is in members")
-        if user != event.msg.sender.username:
-            logging.info(f"{event.msg.sender.username} is not {user}")
-        if points <= pts_max:
-            logging.info(f"{points} is less than or equal to {pts_max}")
+        if recipient == event.msg.sender.username:
+            logging.info(f"{event.msg.sender.username} is {user}")
+            return f"@{user} you can't give points to yourself. How incredibly sad."
+        if points > pts_max:
+            logging.info(f"{points} is greater than {pts_max}")
+            return f"@{user} you can't give more than {pts_max} points at a time. I know you know that. You know that I know that you know that."
         if recipient in team_members and recipient != event.msg.sender.username and points <= pts_max:
             score = write_score(recipient, event.msg.sender.username, team_name, points, description=description)
             await bot.chat.react(conversation_id, message_id, ":marvin:")
