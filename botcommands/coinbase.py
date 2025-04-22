@@ -93,7 +93,6 @@ def get_spot_price(pair: str = 'XLM-USD') -> float:
     resp = requests.get(url, timeout=10)
     resp.raise_for_status()
     data = resp.json()['data']
-    pprint(data)
 
     curency_symbol = get_symbol(data['currency'])
     crypto_currency = get_currency_by_code(data['base'])
