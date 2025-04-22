@@ -6,6 +6,8 @@ import sys
 from pprint import pprint
 from string import punctuation
 import json
+
+from botcommands.coinbase import get_spot_price
 from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
@@ -1362,11 +1364,16 @@ async def periodic_task():
             #                           filename=draw_payload['file'],
             #                           title=joke)
             # else:
+
             await bot.chat.send(mtb_conversation_id, msg[3])
             await bot.chat.send(mtb_conversation_id, msg[2])
             await bot.chat.send(mtb_conversation_id, msg[4])
             await bot.chat.send(mtb_conversation_id, msg[5])
-
+            try:
+                xlm = get_spot_price()
+                await bot.chat.send(mtb_conversation_id, xlm)
+            except Exception as e:
+                logging.info(e)
             await write_morning_report_task()
         await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
