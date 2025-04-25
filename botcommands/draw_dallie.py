@@ -117,7 +117,7 @@ async def draw_gpt_image(prompt):
         image_base64 = result.data[0].b64_json
         image_bytes = base64.b64decode(image_base64)
 
-        result_path, filename = save_base64_image(image_bytes)
+        result_path = save_base64_image(image_bytes)
 
         logging.info(f"Successfully created image variation. Saved to: {result_path}")
 

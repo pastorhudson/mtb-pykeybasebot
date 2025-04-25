@@ -76,10 +76,11 @@ def save_base64_image(image_base64, output_dir="storage", file_prefix="image"):
     # Generate a unique filename with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{file_prefix}_{timestamp}.png"
-    filepath = os.path.join(output_dir, filename)
+    # filepath = os.path.join(output_dir, filename)
+    file_path = f"{storage.absolute()}/{filename}"
 
     # Write the binary image data to file
-    with open(filepath, 'wb') as f:
+    with open(file_path, 'wb') as f:
         f.write(image_base64)
 
-    return filepath, filename
+    return file_path
