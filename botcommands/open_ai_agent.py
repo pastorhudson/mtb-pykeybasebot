@@ -24,7 +24,7 @@ from botcommands.youtube_dlp import get_mp3, get_mp4_tool, get_meta
 from botcommands.get_screenshot import get_screenshot
 from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
-from botcommands.draw_dallie import generate_dalle_image, restyle_image
+from botcommands.draw_dallie import draw_gpt_image, restyle_image
 from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
@@ -54,7 +54,7 @@ FUNCTION_REGISTRY = {
     "get_new_chuck": get_new_chuck,
     "cowsay": cowsay,
     "clear_conversation_history": clear_conversation_history,
-    "generate_dalle_image": generate_dalle_image,
+    "generate_dalle_image": draw_gpt_image,
     "restyle_image": restyle_image,
     "get_eyebleach": get_eyebleach,
     # "get_academic_snapshot": get_academic_snapshot,
@@ -294,9 +294,9 @@ new_tools = [
         }
     },
     {
-        "name": "generate_dalle_image",
+        "name": "generate_gpt_image",
         "type": "function",
-        "description": "Generate an AI-generated image using DALL-E 3.",
+        "description": "Generate an AI-generated image using gpt-image-1.",
         "parameters": {
             "type": "object",
             "required": ["prompt"],
@@ -308,7 +308,7 @@ new_tools = [
     {
         "name": "restyle_image",
         "type": "function",
-        "description": "Restyle an existing image according to a style prompt using DALL-E 3.",
+        "description": "Restyle an existing image according to a style prompt using gpt-image-1.",
         "parameters": {
             "type": "object",
             "required": ["image_path", "style_prompt"],

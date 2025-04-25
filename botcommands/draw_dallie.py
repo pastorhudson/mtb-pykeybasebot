@@ -1,9 +1,14 @@
 import asyncio
+import logging
 from pathlib import Path
 from pprint import pprint
 import aiohttp
-from openai import AsyncOpenAI
+from openai import OpenAI
+import base64
+import logging
 import os
+from openai import AsyncOpenAI
+from botcommands.utils import save_base64_image
 
 
 async def download_image(pic_url, file_name='meh.png'):
@@ -61,13 +66,6 @@ async def restyle_image(image_path, style_prompt):
     Returns:
         dict: Contains message and file path of the varied image
     """
-    import os
-    import io
-    from PIL import Image
-    from openai import AsyncOpenAI
-    from botcommands.utils import download_image
-    import logging
-
     client = AsyncOpenAI(
         api_key=os.getenv("OPENAI_API_KEY"),
     )
@@ -76,32 +74,23 @@ async def restyle_image(image_path, style_prompt):
     logging.info(f"Style description (for reference only): {style_prompt}")
 
     try:
-        # Open and prepare the image
-        img = Image.open(image_path)
+        # Open the image file in binary mode
+        with open(image_path, "rb") as image_file:
+            result = await client.images.edit(
+                model="gpt-image-1",
+                image=image_file,
+                prompt=style_prompt
+            )
 
-        # Convert to RGBA if needed
-        if img.mode != "RGBA":
-            img = img.convert("RGBA")
+        image_base64 = result.data[0].b64_json
+        image_bytes = base64.b64decode(image_base64)
 
-        # Save to buffer
-        img_buffer = io.BytesIO()
-        img.save(img_buffer, format="PNG")
-        img_buffer.seek(0)
-
-        # Call the variations API - note: no prompt parameter
-        response = await client.images.create_variation(
-            image=img_buffer,
-            n=1,
-            size="1024x1024"
-        )
-
-        image_url = response.data[0].url
-        result_path = await download_image(image_url, 'Image_Variation.png')
+        result_path = save_base64_image(image_bytes)
 
         logging.info(f"Successfully created image variation. Saved to: {result_path}")
 
         return {
-            "msg": f"Created a variation of your image.\nNote: The style \"{style_prompt}\" was not applied as the variations API doesn't support style prompts.",
+            "msg": f"Created a variation of your image using style: \"{style_prompt}\"",
             "file": result_path
         }
 
@@ -111,8 +100,62 @@ async def restyle_image(image_path, style_prompt):
             "msg": f"Sorry, I couldn't create a variation of your image. Error: {str(e)}"
         }
 
-if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    result = loop.run_until_complete(generate_dalle_image('A cool spaceship'))
 
+async def draw_gpt_image(prompt):
+    client = AsyncOpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"),
+    )
+
+
+    result = await client.images.generate(
+        model="gpt-image-1",
+        prompt=prompt
+    )
+
+    image_base64 = result.data[0].b64_json
+    image_bytes = base64.b64decode(image_base64)
+
+    result_path = save_base64_image(image_bytes)
+
+    logging.info(f"Successfully created image variation. Saved to: {result_path}")
+
+    return {
+        "msg": prompt,
+        "file": result_path
+    }
+
+def edit_gpt_image():
+
+    client = OpenAI()
+
+    prompt = """
+    Generate a photorealistic image of a gift basket on a white background 
+    labeled 'Relax & Unwind' with a ribbon and handwriting-like font, 
+    containing all the items in the reference pictures.
+    """
+
+    result = client.images.edit(
+        model="gpt-image-1",
+        image=[
+            open("body-lotion.png", "rb"),
+            open("bath-bomb.png", "rb"),
+            open("incense-kit.png", "rb"),
+            open("soap.png", "rb"),
+        ],
+        prompt=prompt
+    )
+
+    image_base64 = result.data[0].b64_json
+    image_bytes = base64.b64decode(image_base64)
+
+    # Save the image to a file
+    with open("gift-basket.png", "wb") as f:
+        f.write(image_bytes)
+
+if __name__ == '__main__':
+
+    loop = asyncio.get_event_loop()
+    # result = loop.run_until_complete(draw_gpt_image('a taco fighting a hotdog'))
+    result = loop.run_until_complete(restyle_image('.\storage\image_20250425_005154.png', 'Make this ultra realistic'))
+    # asyncio.run(draw_gpt_image('a taco fighting a hotdog'))
     pprint(result)
