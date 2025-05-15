@@ -281,6 +281,7 @@ def update_since():
 
 
 @app.route('/delete_since', methods=['POST'])
+@csrf.exempt
 def delete_since():
     # Get the referrer URL for redirect after deletion
     referer_url = request.headers.get('Referer')
@@ -291,7 +292,8 @@ def delete_since():
 
     if not token:
         return jsonify({"error": "Missing token"}), 400
-
+    if since_id in  ['6', '8']:
+        return jsonify({"error": "We don't delete this one!"}), 400
     try:
         # Verify user authentication
         client_ip = escape(request.remote_addr)
