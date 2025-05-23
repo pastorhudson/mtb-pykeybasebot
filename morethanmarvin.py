@@ -257,8 +257,8 @@ async def handler(bot, event):
 
 
     try:
-        logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
-        logging.info(event)
+        # logging.info(f"event.msg.content.text.reply_to {event.msg.content.text.reply_to}")
+        # logging.info(event)
 
         if (hasattr(event.msg.content, 'text') and
                 event.msg.content.text is not None and
