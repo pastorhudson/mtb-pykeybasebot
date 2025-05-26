@@ -188,6 +188,7 @@ async def get_mp4(url):
         """
         Sanitize filename to remove or replace problematic characters.
         Converts spaces to underscores and handles special characters.
+        Also limits filename length to prevent issues with very long filenames.
         """
         # Replace vertical bars and other special characters with hyphen
         filename = re.sub(r'[|｜]', '-', filename)
@@ -201,6 +202,9 @@ async def get_mp4(url):
         filename = re.sub(r'_+', '_', filename)
         # Remove any trailing/leading hyphens or underscores
         filename = filename.strip('-_')
+        # Limit filename length to 200 characters to prevent issues with very long filenames
+        if len(filename) > 200:
+            filename = filename[:197] + '...'
         return filename
 
     try:
@@ -275,6 +279,7 @@ async def get_mp4_tool(url):
         """
         Sanitize filename to remove or replace problematic characters.
         Converts spaces to underscores and handles special characters.
+        Also limits filename length to prevent issues with very long filenames.
         """
         # Replace vertical bars and other special characters with hyphen
         filename = re.sub(r'[|｜]', '-', filename)
@@ -288,6 +293,9 @@ async def get_mp4_tool(url):
         filename = re.sub(r'_+', '_', filename)
         # Remove any trailing/leading hyphens or underscores
         filename = filename.strip('-_')
+        # Limit filename length to 200 characters to prevent issues with very long filenames
+        if len(filename) > 200:
+            filename = filename[:197] + '...'
         return filename
 
     try:
