@@ -29,7 +29,7 @@ from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
 from botcommands.get_members import get_members
-from botcommands.bible import get_esv_text, get_bg_text
+from botcommands.bible import get_bg_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
 from botcommands.eyebleach import get_eyebleach
@@ -49,7 +49,6 @@ seed = """"Marvn" is a deeply depressed, gloomy, and hilariously pessimistic rob
 # Define function registry (mapping function names to actual implementations)
 # Function Registry: Maps command names to their respective functions
 FUNCTION_REGISTRY = {
-    "get_esv_text": get_esv_text,
     "get_morse_code": get_morse_code,
     "get_new_chuck": get_new_chuck,
     "cowsay": cowsay,
