@@ -37,7 +37,7 @@ from botcommands.morningreport import get_morningreport
 from botcommands.scorekeeper import get_score, write_score, sync_score
 from botcommands.get_members import get_members
 from pathlib import Path
-from botcommands.bible import get_esv_text
+from botcommands.bible import get_esv_text, get_bg_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
 from models import Team, User, Point, Location, Wager, Message
@@ -577,11 +577,32 @@ async def handler(bot, event):
 
 
 
+    # if str(event.msg.content.text.body).startswith("!bible"):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #     passage = str(event.msg.content.text.body)[7:]
+    #     msg = get_esv_text(passage)
+    #     await bot.chat.send(conversation_id, msg)
+
+
     if str(event.msg.content.text.body).startswith("!bible"):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-        passage = str(event.msg.content.text.body)[7:]
-        msg = get_esv_text(passage)
+
+        # Get everything after "!bible "
+        args = str(event.msg.content.text.body)[7:].strip()
+
+        # If user wrote something like: "!bible John 3:16 NIV"
+        # Last "word" is version if it's all letters and <= 10 chars
+        parts = args.rsplit(" ", 1)
+        if len(parts) == 2 and parts[1].isalpha() and len(parts[1]) <= 10:
+            passage = parts[0]
+            version = parts[1].upper()
+        else:
+            passage = args
+            version = "ESV"  # default
+
+        msg = get_bg_text(passage, version=version)
         await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!biblemorse"):

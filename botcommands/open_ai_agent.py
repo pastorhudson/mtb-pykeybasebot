@@ -29,7 +29,7 @@ from botcommands.stardate import get_stardate
 from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
 from botcommands.get_members import get_members
-from botcommands.bible import get_esv_text
+from botcommands.bible import get_esv_text, get_bg_text
 from botcommands.wager import get_wagers, make_wager, make_bet, payout_wager
 from botcommands.sync import sync
 from botcommands.eyebleach import get_eyebleach
@@ -62,6 +62,7 @@ FUNCTION_REGISTRY = {
     "get_meh": get_meh,
     "get_top_hacker_news": get_top_hacker_news,
     "make_poll": make_ai_poll,
+    "get_bg_text": get_bg_text,
     "get_school_closings": get_school_closings,
     "get_screenshot": get_screenshot,
     "get_speed": get_speed,
@@ -170,18 +171,35 @@ new_tools = [
         }
     },
     {
-        "name": "get_esv_text",
+        "name": "get_bg_text",
         "type": "function",
-        "description": "Retrieve Bible text from the ESV API.",
+        "description": "Retrieve Bible text from Bible Gateway with optional version selection.",
         "parameters": {
             "type": "object",
             "required": ["passage"],
             "properties": {
-                "passage": {"type": "string", "description": "The Bible passage reference (e.g., 'John 3:16')."},
-                "plain_txt": {"type": "boolean", "description": "If true, returns text without formatting."}
+                "passage": {
+                    "type": "string",
+                    "description": "The Bible passage reference (e.g., 'John 3:16' or 'Romans 8:1-11')."
+                },
+                "version": {
+                    "type": "string",
+                    "description": "Bible Gateway version code (e.g., 'ESV', 'NIV', 'KJV', 'CSB', 'NLT', 'VOICE'). Defaults to 'ESV'."
+                },
+                "plain_txt": {
+                    "type": "boolean",
+                    "description": "If true, returns plain text without code fences or version suffix.",
+                    "default": false
+                },
+                "keep_verse_numbers": {
+                    "type": "boolean",
+                    "description": "If true, keeps verse numbers in the output.",
+                    "default": true
+                }
             }
         }
-    },
+    }
+    ,
     {
         "name": "get_morse_code",
         "type": "function",
