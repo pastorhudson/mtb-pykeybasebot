@@ -188,12 +188,12 @@ new_tools = [
                 "plain_txt": {
                     "type": "boolean",
                     "description": "If true, returns plain text without code fences or version suffix.",
-                    "default": false
+                    "default": False
                 },
                 "keep_verse_numbers": {
                     "type": "boolean",
                     "description": "If true, keeps verse numbers in the output.",
-                    "default": true
+                    "default": True
                 }
             }
         }
