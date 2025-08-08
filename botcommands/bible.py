@@ -13,23 +13,31 @@ def _clean_text(html_fragment, keep_verse_numbers=True):
         '.footnotes', '.footnote', '.crossrefs', '.publisher-info-bottom',
         '.passage-other-trans', '.passage-display-bcv',
         '.footnote-refs', '.inline-crossrefs', '.bcv',
-        '.versenum + sup'  # stray footnote markers next to versenum
+        '.versenum + sup'
     ]:
         for el in html_fragment.select(sel):
             el.decompose()
 
-    # Verse numbers on BG are in <sup class="versenum">#
+    # Remove any "Read full chapter" elements
+    for el in html_fragment.find_all(['a', 'button', 'span', 'div']):
+        if el.get_text(strip=True).lower() == "read full chapter":
+            el.decompose()
+
+    # Verse numbers
     if not keep_verse_numbers:
         for el in html_fragment.select('sup.versenum'):
             el.decompose()
     else:
-        # add a thin space after verse numbers so "16For" doesn't jam
         for el in html_fragment.select('sup.versenum'):
             el.string = (el.get_text(strip=True) + ' ')
 
+    # Get text and normalize spaces
     text = html_fragment.get_text(separator=' ', strip=True)
-    # Collapse excessive spaces
     text = re.sub(r'\s+', ' ', text)
+
+    # Remove stray footnote markers like ( C ), ( AB ), etc.
+    text = re.sub(r'\(\s*[A-Z]{1,3}\s*\)', '', text)
+
     return text.strip()
 
 
@@ -94,6 +102,10 @@ def get_bg_text(passage, version='ESV', plain_txt=False, keep_verse_numbers=True
             parts.append(text)
 
     body = "\n\n".join(parts).strip()
+    # Remove any trailing "Read full chapter" that slipped through
+
+    body = re.sub(r'[\s\(\[\{]*read full chapter[\)\]\}]*\.*\s*$', '', body, flags=re.IGNORECASE).strip()
+
     if not body:
         return f"\"{passage}\" returned empty content in version '{version}'."
 
