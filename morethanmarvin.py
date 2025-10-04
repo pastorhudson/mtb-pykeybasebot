@@ -238,12 +238,12 @@ async def handler(bot, event):
     # If there's an attachment check if we send this to @marvn
     try:
         if event.msg.content.type_name == 'attachment':
-            if str(event.msg.content.attachment.object.title).startswith("@marvn"):
+            if str(event.msg.content.attachment.object.title).startswith("@marvn") and event.msg.sender.username != 'marvn':
                 await sync(event=event, bot=bot)
                 pprint(event.msg.content)
 
                 await handle_marvn_mention_with_context(bot, event)
-        elif str(event.msg.content.attachment.object.title).startswith("@marvn"):
+        elif str(event.msg.content.attachment.object.title).startswith("@marvn") and event.msg.sender.username != 'marvn':
             pprint(event.msg.content)
             logging.info(f"Sending attachment event to handle_marvn_mention_with_context")
             await handle_marvn_mention_with_context(bot, event)
@@ -273,13 +273,13 @@ async def handler(bot, event):
 
             elif (str(event.msg.content.text.body).lower().startswith("@marvn") or
                   hasattr(event.msg.content, 'at_mention_usernames') and "marvn" in
-                  event.msg.content.at_mention_usernames):
+                  event.msg.content.at_mention_usernames) and event.msg.sender.username != 'marvn':
                 await sync(event=event, bot=bot)
                 await handle_marvn_mention_with_context(bot, event)
 
         elif (str(event.msg.content.text.body).lower().startswith("@marvn") or
               hasattr(event.msg.content, 'at_mention_usernames') and "marvn" in
-              event.msg.content.at_mention_usernames):
+              event.msg.content.at_mention_usernames) and event.msg.sender.username != 'marvn':
             await sync(event=event, bot=bot)
             await handle_marvn_mention_with_context(bot, event)
     except Exception as e:
