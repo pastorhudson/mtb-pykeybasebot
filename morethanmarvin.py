@@ -919,7 +919,8 @@ async def handler(bot, event):
 
         await bot.chat.send(conversation_id, msg)
 
-    if str(event.msg.content.text.body).startswith("!score"):
+    if str(event.msg.content.text.body).startswith("!score") and not str(event.msg.content.text.body).startswith(
+        "!scorekeeper"):
         await sync(event=event, bot=bot)
 
         channel = event.msg.channel
