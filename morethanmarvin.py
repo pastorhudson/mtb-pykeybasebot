@@ -34,7 +34,7 @@ from botcommands.chuck import get_new_chuck
 from botcommands.till import get_till, set_till
 from botcommands.cow_characters import get_characters
 from botcommands.morningreport import get_morningreport
-from botcommands.scorekeeper import get_score, write_score, sync_score
+from botcommands.scorekeeper import get_score, write_score, sync_score, get_todays_points
 from botcommands.get_members import get_members
 from pathlib import Path
 from botcommands.bible import get_bg_text
@@ -190,6 +190,9 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "score",
          "description": "Get the score for who abuses me the most.",
+         "usage": ""},
+        {"name": "scorekeeper",
+         "description": "Get the score entries for today.",
          "usage": ""},
         {"name": "since",
          "description": "Gives the days SINCE events.",
@@ -902,6 +905,18 @@ async def handler(bot, event):
                 msg = "Team not Sync'd I'll Sync it now. Try again in a little bit."
                 await bot.chat.send(event.msg.conv_id, msg)
                 await sync(event=event, bot=bot)
+
+
+    if str(event.msg.content.text.body).startswith("!scorekeeper"):
+        await sync(event=event, bot=bot)
+
+        channel_name = str(event.msg.channel.name).replace(",", "")
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        msg = get_todays_points(channel_name)
+
+        await bot.chat.send(conversation_id, msg)
 
     if str(event.msg.content.text.body).startswith("!score"):
         await sync(event=event, bot=bot)
