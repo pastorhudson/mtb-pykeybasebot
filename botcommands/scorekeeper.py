@@ -55,17 +55,6 @@ def get_score(channel_name, year=datetime.datetime.utcnow().year):
 
 
 def write_score(user, sender, team_name, points, description):
-    # file_exists = os.path.isfile(f'./storage/{channel}.csv')
-    # if not file_exists:
-    #     with open(f'./storage/{channel}.csv', mode='w') as morningreport_file:
-    #         header = ["User", "Date-time", "Points", "Sender", "Conv_id"]
-    #         score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    #         if not file_exists:
-    #             score_writer.writerow(header)
-    #
-    # with open(f'./storage/{channel}.csv', mode='a') as morningreport_file:
-    #     score_writer = csv.writer(morningreport_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    #     score_writer.writerow([user, datetime.datetime.now(), points, sender, channel])
     team = s.query(Team).filter(Team.name.match(team_name)).first()
     giver = s.query(User).filter(User.username.match(sender)).first()
     receiver = s.query(User).filter(User.username.match(user)).first()
@@ -151,6 +140,50 @@ async def award(bot, event, sender, recipient, team_members, points, description
         return (f"You did it wrong.\n `-42` points deducted from  "
                 f"@{event.msg.sender.username} for trying to be cute.\n{instructions}")
 
+
+def get_todays_points(channel_name):
+    """Display all point entries from today in a formatted table"""
+    x = PrettyTable()
+    x.field_names = ["From", "To", "Points", "Description", "Time"]
+
+    team = s.query(Team).filter_by(name=channel_name).first()
+
+    # Get today's date range (start and end of day)
+    today_start = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = datetime.datetime.utcnow().replace(hour=23, minute=59, second=59, microsecond=999999)
+
+    # Query today's points for this team
+    todays_points = team.points.filter(
+        Point.created_at >= today_start,
+        Point.created_at <= today_end
+    ).order_by(Point.created_at.desc()).all()
+
+    if not todays_points:
+        return f"```{team.name}\n-- No points awarded today --```"
+
+    msg = f"```{team.name}\n-- Today's Points ({datetime.datetime.utcnow().strftime('%Y-%m-%d')}) --\n"
+
+    for p in todays_points:
+        time_str = p.created_at.strftime('%H:%M')
+        desc = p.description[:30] + "..." if p.description and len(p.description) > 30 else (p.description or "")
+        x.add_row([
+            p.point_giver.username,
+            p.point_receiver.username,
+            p.points,
+            desc,
+            time_str
+        ])
+
+    x.align["From"] = "l"
+    x.align["To"] = "l"
+    x.align["Points"] = "r"
+    x.align["Description"] = "l"
+    x.align["Time"] = "r"
+    x.padding_width = 1
+
+    msg += f"{x}```"
+
+    return msg
 
 
 if __name__ == "__main__":
