@@ -909,12 +909,13 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!scorekeeper"):
         await sync(event=event, bot=bot)
+        channel = event.msg.channel
 
         channel_name = str(event.msg.channel.name).replace(",", "")
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-        msg = get_todays_points(channel_name)
+        msg = get_todays_points(channel.name)
 
         await bot.chat.send(conversation_id, msg)
 
