@@ -151,7 +151,7 @@ wheel==0.45.1
 wsproto==1.2.0
 WTForms==3.2.1
 yarl==1.18.3
-yt-dlp==2025.9.5
+yt-dlp==2025.10.22
 python-Levenshtein
 newspaper4k
 onepassword-sdk
