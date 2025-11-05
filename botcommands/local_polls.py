@@ -5,16 +5,29 @@ import io
 from prettytable import PrettyTable
 
 
-def get_local_poll():
-    # Download the zip file
-    print("Downloading zip file...")
-    url = "https://results.enr.clarityelections.com//PA/Fayette/125144/363955/reports/summary.zip"
 
-    # Add headers to make the request look like it's coming from a browser
+def get_local_poll():
+    # Get the current version number
+    print("Fetching current version...")
+    version_url = "https://results.enr.clarityelections.com/PA/Fayette/125144/current_ver.txt"
+
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
     }
 
+    version_response = requests.get(version_url, headers=headers)
+    version_response.raise_for_status()
+    current_version = version_response.text.strip()
+
+    print(f"Current version: {current_version}")
+
+    # Construct the download URL with the current version
+    url = f"https://results.enr.clarityelections.com//PA/Fayette/125144/{current_version}/reports/summary.zip"
+
+    # Download the zip file
+    print("Downloading zip file...")
     response = requests.get(url, headers=headers)
     response.raise_for_status()
 
