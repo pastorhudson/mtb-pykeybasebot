@@ -852,7 +852,7 @@ async def handler(bot, event):
         polls = get_local_poll()
         await bot.chat.send(conversation_id, polls)
 
-    if str(event.msg.content.text.body).startswith("!poll"):
+    if str(event.msg.content.text.body).startswith("!poll "):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
         channel = event.msg.channel.name
         msg_id = event.msg.id
