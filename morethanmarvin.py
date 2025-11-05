@@ -14,6 +14,7 @@ from botcommands.jokes import get_joke
 from botcommands.news import get_top_hacker_news
 from botcommands.since import set_since, get_since, reset_since, reset_sign
 # from botcommands.poll_results import get_poll_result
+from botcommands.local_polls import get_local_poll
 from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
@@ -173,9 +174,9 @@ async def handler(bot, event):
         {"name": "payout",
          "description": "Pays out a wager.",
          "usage": "<#wager> <True/False>"},
-        # {"name": "pollresult",
-        #  "description": "RealClear Politics National and Pennsylvania Poll Results.",
-        #  "usage": ""},
+        {"name": "pollresult",
+         "description": "Local Election Poll Result for @lanksalot 2025.",
+         "usage": ""},
         {"name": "closings",
          "description": "Forces me go to get the SW PA school closings.",
          "usage": "Optional: <school name>, <school name>"},
@@ -843,13 +844,13 @@ async def handler(bot, event):
                                                  "Usage: !payout <#wager> <True/False>\n"
                                                  "Example: `!payout #3 True`")
 
-    # if str(event.msg.content.text.body).startswith("!pollresult"):
-    #     channel = event.msg.channel.name
-    #     msg_id = event.msg.id
-    #     conversation_id = event.msg.conv_id
-    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-    #     polls = get_poll_result(channel)
-    #     await bot.chat.send(conversation_id, polls)
+    if str(event.msg.content.text.body).startswith("!pollresult"):
+        channel = event.msg.channel.name
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        polls = get_local_poll()
+        await bot.chat.send(conversation_id, polls)
 
     if str(event.msg.content.text.body).startswith("!poll"):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
