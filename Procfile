@@ -1,3 +1,3 @@
 web: gunicorn webhook_bot:app
 bot: python morethanmarvin.py
-release: curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{"message": "New Marvn Released", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjI0Mzc1MjEsInVzZXIiOiJwYXN0b3JodWRzb24iLCJjb252ZXJzYXRpb25faWQiOiIwMDAwYzNlMWRhZjI5NmU2Yzg5M2EwMmY2YWUyZTM5YmJlOTllY2ZiZGM3YmVjNmRhY2NiM2ZkOWVmYjAzODJkIn0.oZ68qC9_Jh5dadL1dvwTCVAYTO3Nlf12oVn933tX6oA"}'
+release: curl -X POST --location "https://marvn.app/add_message" -H "Content-Type: application/json" -d '{"message": "New Marvn Released", "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzAwODc1MTYsInVzZXIiOiJwYXN0b3JodWRzb24iLCJjb252ZXJzYXRpb25faWQiOiIwMDAwYzNlMWRhZjI5NmU2Yzg5M2EwMmY2YWUyZTM5YmJlOTllY2ZiZGM3YmVjNmRhY2NiM2ZkOWVmYjAzODJkIn0.GPyYPJB9s30uOW2GaHyI4pSIr8FLINpE649gBj5T8bM"}'
