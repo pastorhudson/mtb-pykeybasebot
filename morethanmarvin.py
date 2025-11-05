@@ -846,24 +846,24 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!pollresult"):
         channel = event.msg.channel.name
-    msg_id = event.msg.id
-    conversation_id = event.msg.conv_id
-    await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-    try:
-        # Parse the command to extract search term
-        message_text = str(event.msg.content.text.body).strip()
-        parts = message_text.split(maxsplit=1)
+        try:
+            # Parse the command to extract search term
+            message_text = str(event.msg.content.text.body).strip()
+            parts = message_text.split(maxsplit=1)
 
-        if len(parts) > 1:
-            search_term = parts[1].strip()
-            polls = get_local_poll(search_term)
-        else:
-            polls = get_local_poll()
+            if len(parts) > 1:
+                search_term = parts[1].strip()
+                polls = get_local_poll(search_term)
+            else:
+                polls = get_local_poll()
 
-        await bot.chat.send(conversation_id, polls)
-    except Exception as e:
-        pass
+            await bot.chat.send(conversation_id, polls)
+        except Exception as e:
+            pass
 
 
     if str(event.msg.content.text.body).startswith("!poll "):
