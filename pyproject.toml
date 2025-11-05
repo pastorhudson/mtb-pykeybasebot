@@ -38,7 +38,7 @@ dependencies = [
     "executing==0.9.1",
     "fake-useragent==2.0.3",
     "fasteners==0.19",
-    "feedparser==6.0.10",
+    "feedparser==6.0.12",
     "ffmpeg==1.4",
     "ffprobe==0.5",
     "filelock==3.16.1",
