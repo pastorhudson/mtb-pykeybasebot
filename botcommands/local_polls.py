@@ -54,10 +54,10 @@ def get_local_poll(search_term=None):
     search_lower = search_term.lower()
 
     # First try to match contest names
-    contest_matches = df[df['contest name'].str.lower().str.contains(search_lower, na=False)]
+    contest_matches = df[df['contest name'].str.lower().str.contains(search_lower, na=False, regex=False)]
 
     # Also try to match candidate names
-    candidate_matches = df[df['choice name'].str.lower().str.contains(search_lower, na=False)]
+    candidate_matches = df[df['choice name'].str.lower().str.contains(search_lower, na=False, regex=False)]
 
     # Combine and get unique contests
     all_matches = pd.concat([contest_matches, candidate_matches]).drop_duplicates()
@@ -174,6 +174,7 @@ if __name__ == "__main__":
     # print(get_local_poll())
 
     # Search for specific races
-    # print(get_local_poll("Treasurer"))
-    print(get_local_poll("Lancaster"))
-    # print(get_local_poll("President"))
+    # print(get_local_poll("treasurer"))
+    # print(get_local_poll("Lancaster"))
+    print(get_local_poll("hice"))
+    # print(get_local_poll("Mayor"))

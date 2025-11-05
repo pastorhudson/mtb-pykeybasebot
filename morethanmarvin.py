@@ -863,8 +863,8 @@ async def handler(bot, event):
 
         await bot.chat.send(conversation_id, polls)
     except Exception as e:
-        error_msg = f"```\nError fetching poll results: {str(e)}\n```"
-        await bot.chat.send(conversation_id, error_msg)
+        pass
+
 
     if str(event.msg.content.text.body).startswith("!poll "):
         await bot.chat.react(event.msg.conv_id, event.msg.id, ":marvin:")
