@@ -3,14 +3,17 @@ FROM python:3.13-slim
 # Install system dependencies including ffmpeg
 RUN apt-get update && apt-get install -y \
     wget \
+    curl \
     gnupg \
     ca-certificates \
-    ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
+    ffmpeg
 
+# Install Keybase
 RUN curl --remote-name https://prerelease.keybase.io/keybase_amd64.deb \
-    && apt install ./keybase_amd64.deb && rm keybase_amd64.deb \
+    && apt-get install -y ./keybase_amd64.deb \
+    && rm keybase_amd64.deb \
     && keybase -version
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
