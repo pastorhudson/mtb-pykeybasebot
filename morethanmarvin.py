@@ -714,7 +714,7 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, msg)
 
         except ValueError:
-            msg = get_eyebleach()
+            msg = await get_eyebleach()
 
         await bot.chat.send(conversation_id, msg)
 
