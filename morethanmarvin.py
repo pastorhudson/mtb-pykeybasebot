@@ -25,7 +25,7 @@ from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
 from urllib.parse import urlparse
 from botcommands.covid import get_covid
-from botcommands.get_screenshot import get_screenshot
+from botcommands.screenshot import get_screenshot
 from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
 from botcommands.draw_dallie import generate_dalle_image
