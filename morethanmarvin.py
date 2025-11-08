@@ -50,7 +50,7 @@ from botcommands.poll import make_poll
 # from botcommands.award_activity_points import award_activity_points
 from botcommands.db_events import is_morning_report, write_morning_report_task
 from botcommands.school_closings import get_school_closings
-from botcommands.wordle import solve_wordle
+# from botcommands.wordle import solve_wordle
 from botcommands.send_queue import process_message_queue
 from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
@@ -228,9 +228,9 @@ async def handler(bot, event):
         {"name": "ytv",
          "description": "Forces me to get metadata and download the stupid thing.",
          "usage": "<url>"},
-        {"name": "wordle",
-         "description": "Retrieve today's wordle to ensure you always win.",
-         "usage": "optional <date>"},
+        # {"name": "wordle",
+        #  "description": "Retrieve today's wordle to ensure you always win.",
+        #  "usage": "optional <date>"},
         {"name": "transmit",
          "description": "Get curl command to send a message to the current chat conversation.",
          "usage": "<message> <optional> -sender <sender>"},
@@ -1380,22 +1380,22 @@ async def handler(bot, event):
         await bot.chat.send(conversation_id, msg)
 
 
-    if str(event.msg.content.text.body).startswith('!wordle'):
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
-
-        try:
-            result, attempts = solve_wordle(debug=True, headless=True)
-            if attempts:
-                msg = f'\nSuccess! Word: "{result}" found in {attempts} attempts'
-            else:
-                msg = f"\nError: {result}"
-
-        except Exception as e:
-            msg = "I couldn't solve the wordle. Try again later."
-
-
-        my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
+    # if str(event.msg.content.text.body).startswith('!wordle'):
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #     try:
+    #         result, attempts = solve_wordle(debug=True, headless=True)
+    #         if attempts:
+    #             msg = f'\nSuccess! Word: "{result}" found in {attempts} attempts'
+    #         else:
+    #             msg = f"\nError: {result}"
+    #
+    #     except Exception as e:
+    #         msg = "I couldn't solve the wordle. Try again later."
+    #
+    #
+    #     my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
 
 listen_options = {
     "local": False,
