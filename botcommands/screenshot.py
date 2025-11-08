@@ -54,7 +54,7 @@ async def get_screenshot(url):
 
         try:
             # Navigate to URL and wait for network to be idle (page fully loaded)
-            await page.goto(url, wait_until='networkload', timeout=30000)
+            await page.goto(url, wait_until='load', timeout=30000)
 
             # Optional: Add a small additional wait for any animations/lazy loading
             await page.wait_for_timeout(1000)
@@ -74,4 +74,4 @@ async def get_screenshot(url):
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(get_screenshot('https://slickdeals.net'))
+    asyncio.run(get_screenshot('https://dokku.com/docs/advanced-usage/deployment-tasks/'))
