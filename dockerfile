@@ -44,10 +44,3 @@ COPY . .
 
 # Default command (override in app.json for different process types)
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
-```
-
-Now when you build, you'll see clear output like:
-```
------> Keybase installed successfully
------> Keybase version:
-keybase version 6.x.x
