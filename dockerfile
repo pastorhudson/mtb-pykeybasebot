@@ -1,27 +1,23 @@
 FROM python:3.13-slim
 
 # Install system dependencies including ffmpeg
-# Install system dependencies including ffmpeg
-RUN echo "=== Installing system dependencies ===" && \
-    apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     wget \
     curl \
     gnupg \
     ca-certificates \
     ffmpeg \
-    && rm -rf /var/lib/apt/lists/* && \
-    echo "=== System dependencies installed ==="
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Keybase
-RUN echo "=== Downloading Keybase ===" && \
-    curl --remote-name https://prerelease.keybase.io/keybase_amd64.deb && \
-    echo "=== Installing Keybase ===" && \
-    apt-get update && \
-    apt-get install -y ./keybase_amd64.deb && \
-    rm keybase_amd64.deb && \
-    echo "=== Verifying Keybase ===" && \
-    keybase -version && \
-    echo "=== Keybase installed successfully ==="
+RUN mkdir -p /usr/local/bin && \
+    cd /tmp && \
+    curl -sS --remote-name https://prerelease.keybase.io/keybase_amd64.deb && \
+    dpkg-deb --fsys-tarfile keybase_amd64.deb | tar -xvf - --strip-components=3 ./usr/bin/keybase && \
+    mv keybase /usr/local/bin/ && \
+    chmod +x /usr/local/bin/keybase && \
+    rm -f keybase_amd64.deb && \
+    keybase -v
 
 WORKDIR /app
 
