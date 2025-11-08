@@ -6,8 +6,10 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     ca-certificates \
     ffmpeg \
-    keybase \
     && rm -rf /var/lib/apt/lists/*
+
+RUN curl --remote-name https://prerelease.keybase.io/keybase_amd64.deb \
+    && apt install ./keybase_amd64.deb && rm keybase_amd64.deb
 
 WORKDIR /app
 
