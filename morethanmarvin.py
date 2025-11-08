@@ -460,7 +460,7 @@ async def handler(bot, event):
                     urls = re.findall(r'(https?://[^\s]+)', original_body)
                     await bot.chat.react(conversation_id, original_msg_id, ":camera:")
                     try:
-                        screenshot_payload = get_screenshot(urls[0])
+                        screenshot_payload = await get_screenshot(urls[0])
                         if screenshot_payload['file']:
                             await bot.chat.attach(channel=conversation_id,
                                                   filename=screenshot_payload['file'],
@@ -1250,7 +1250,7 @@ async def handler(bot, event):
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
         screenshot_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
         try:
-            screenshot_payload = get_screenshot(screenshot_urls[0])
+            screenshot_payload = await get_screenshot(screenshot_urls[0])
             if screenshot_payload['file']:
                 await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
 
