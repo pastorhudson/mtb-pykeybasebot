@@ -162,7 +162,8 @@ def get_mp3(url):
         'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'forcefilename': True,
-        'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
+        'ffmpeg_location': '/app/.cache/ms-playwright/ffmpeg-1011',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',

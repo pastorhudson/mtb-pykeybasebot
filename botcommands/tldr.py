@@ -10,9 +10,9 @@ from openai import OpenAI
 from botcommands.natural_chat import get_convo
 from botcommands.youtube_dlp import get_meta
 import os
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+# from selenium import webdriver
+# from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.common.by import By
 import random
 import time
 from playwright.async_api import async_playwright
