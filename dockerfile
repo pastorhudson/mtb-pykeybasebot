@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl --remote-name https://prerelease.keybase.io/keybase_amd64.deb \
-    && apt install ./keybase_amd64.deb && rm keybase_amd64.deb
+    && apt install ./keybase_amd64.deb && rm keybase_amd64.deb \
+    && keybase -version
 
 WORKDIR /app
 
