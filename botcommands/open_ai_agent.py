@@ -21,7 +21,7 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 from botcommands.utils import download_image, set_unfurl
 from botcommands.weather import get_weather
 from botcommands.youtube_dlp import get_mp3, get_mp4_tool, get_meta
-from botcommands.get_screenshot import get_screenshot
+from botcommands.screenshot import get_screenshot
 from botcommands.cow_say import cowsay
 from botcommands.meh import get_meh
 from botcommands.draw_dallie import draw_gpt_image, restyle_image
