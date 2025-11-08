@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "playwright install"
+      "predeploy": "playwright install --with-deps chromium"
     }
   },
   "formation": {
