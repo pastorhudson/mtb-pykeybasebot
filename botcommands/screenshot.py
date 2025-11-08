@@ -74,4 +74,4 @@ async def get_screenshot(url):
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(get_screenshot('https://twitter.com/joanpennnative/status/1450887248866604819?s=12'))
+    asyncio.run(get_screenshot('https://slickdeals.net'))
