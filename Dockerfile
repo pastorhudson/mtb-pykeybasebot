@@ -48,6 +48,10 @@ RUN ffmpeg -version
 # Copy application code and set ownership
 COPY --chown=appuser:appuser . .
 
+# Create storage directory with proper permissions
+RUN mkdir -p /app/storage && \
+    chown -R appuser:appuser /app/storage
+
 # Switch to non-root user
 USER appuser
 
