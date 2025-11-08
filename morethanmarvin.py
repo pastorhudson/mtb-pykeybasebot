@@ -461,11 +461,13 @@ async def handler(bot, event):
                     await bot.chat.react(conversation_id, original_msg_id, ":camera:")
                     try:
                         screenshot_payload = await get_screenshot(urls[0])
+                        pprint(screenshot_payload)
                         if screenshot_payload['file']:
                             await bot.chat.attach(channel=conversation_id,
                                                   filename=screenshot_payload['file'],
                                                   title=screenshot_payload['msg'])
                     except IndexError as e:
+                        logging.info(f"IndexError: {e} BOIOOOOO")
                         pass
 
     if event.msg.content.type_name == 'reaction':

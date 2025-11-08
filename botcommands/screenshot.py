@@ -68,7 +68,6 @@ async def get_screenshot(url):
             await browser.close()
 
     payload = {"msg": random.choice(observations), "file": f"{os.environ.get('SCREENSHOT_DIR')}/screenshot.png"}
-    print(payload)
     return payload
 
 
