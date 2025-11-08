@@ -1,6 +1,6 @@
 FROM python:3.13-slim
 
-# Install system dependencies including ffmpeg
+# Install system dependencies including ffmpeg and PostgreSQL client library
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
@@ -25,6 +25,11 @@ RUN mkdir -p /usr/local/bin && \
 # Add Keybase to PATH explicitly
 ENV PATH="/usr/local/bin:${PATH}"
 
+# Create a non-root user to run the app
+RUN useradd -m -u 1000 appuser && \
+    mkdir -p /app && \
+    chown -R appuser:appuser /app
+
 WORKDIR /app
 
 # Copy dependency files first (for layer caching)
@@ -40,8 +45,11 @@ RUN uv run playwright install --with-deps chromium
 # Verify ffmpeg is available
 RUN ffmpeg -version
 
-# Copy application code
-COPY . .
+# Copy application code and set ownership
+COPY --chown=appuser:appuser . .
 
-# Default command (override in app.json for different process types)
+# Switch to non-root user
+USER appuser
+
+# Procfile will handle the actual commands
 CMD ["bash"]
