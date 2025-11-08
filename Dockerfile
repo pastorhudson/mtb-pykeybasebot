@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     ca-certificates \
     ffmpeg \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Keybase
