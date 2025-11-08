@@ -43,4 +43,4 @@ RUN ffmpeg -version
 COPY . .
 
 # Default command (override in app.json for different process types)
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
+CMD ["bash"]
