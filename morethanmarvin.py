@@ -707,10 +707,10 @@ async def handler(bot, event):
 
         try:
             bleach_level = str(event.msg.content.text.body).split(" ")[1]
-            msg = get_eyebleach(int(bleach_level))
+            msg = await get_eyebleach(int(bleach_level))
 
         except TypeError:
-            msg = get_eyebleach()
+            msg = await get_eyebleach()
             await bot.chat.send(conversation_id, msg)
 
         except ValueError:
