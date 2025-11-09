@@ -1,6 +1,6 @@
 FROM python:3.13-slim
 
-# Install system dependencies including ffmpeg and PostgreSQL client library
+# Install system dependencies including ffmpeg, PostgreSQL client library, and gosu
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     ffmpeg \
     libpq-dev \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Keybase
@@ -48,12 +49,16 @@ RUN ffmpeg -version
 # Copy application code and set ownership
 COPY --chown=appuser:appuser . .
 
-# Create storage directory with proper permissions
+# Copy and set up entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Create storage directory (will be overridden by Dokku mount, but good for local dev)
 RUN mkdir -p /app/storage && \
     chown -R appuser:appuser /app/storage
 
-# Switch to non-root user
-USER appuser
+# Stay as root for entrypoint to fix permissions
+# USER appuser  # Remove this line
 
-# Procfile will handle the actual commands
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["bash"]
