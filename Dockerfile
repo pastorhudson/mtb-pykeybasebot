@@ -1,5 +1,6 @@
 FROM python:3.13-slim
-
+#Install Deno for yt-dlp
+COPY --from=denoland/deno:bin-2.5.6 /deno /usr/local/bin/deno
 # Install system dependencies including ffmpeg, PostgreSQL client library, and gosu
 RUN apt-get update && apt-get install -y \
     wget \
@@ -9,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     libpq-dev \
     gosu \
+    deno \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Keybase
