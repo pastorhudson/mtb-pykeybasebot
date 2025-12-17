@@ -9,6 +9,7 @@ from models import Point, Team, User
 from prettytable import PrettyTable
 from string import punctuation
 from pykeybasebot.utils import get_channel_members
+import textwrap
 
 
 
@@ -141,18 +142,58 @@ async def award(bot, event, sender, recipient, team_members, points, description
                 f"@{event.msg.sender.username} for trying to be cute.\n{instructions}")
 
 
-def get_todays_points(channel_name):
-    """Display all point entries from today in a formatted table"""
-    x = PrettyTable()
-    x.field_names = ["From", "To", "Points", "Description", "Time"]
+# def get_todays_points(channel_name):
+#     """Display all point entries from today in a formatted table"""
+#     x = PrettyTable()
+#     x.field_names = ["From", "To", "Points", "Description", "Time"]
+#
+#     team = s.query(Team).filter_by(name=channel_name).first()
+#
+#     # Get today's date range (start and end of day)
+#     today_start = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+#     today_end = datetime.datetime.utcnow().replace(hour=23, minute=59, second=59, microsecond=999999)
+#
+#     # Query today's points for this team
+#     todays_points = team.points.filter(
+#         Point.created_at >= today_start,
+#         Point.created_at <= today_end
+#     ).order_by(Point.created_at.desc()).all()
+#
+#     if not todays_points:
+#         return f"```{team.name}\n-- No points awarded today --```"
+#
+#     msg = f"```{team.name}\n-- Today's Points ({datetime.datetime.utcnow().strftime('%Y-%m-%d')}) --\n"
+#
+#     for p in todays_points:
+#         time_str = p.created_at.strftime('%H:%M')
+#         desc = p.description[:30] + "..." if p.description and len(p.description) > 30 else (p.description or "")
+#         x.add_row([
+#             p.point_giver.username,
+#             p.point_receiver.username,
+#             p.points,
+#             desc,
+#             time_str
+#         ])
+#
+#     x.align["From"] = "l"
+#     x.align["To"] = "l"
+#     x.align["Points"] = "r"
+#     x.align["Description"] = "l"
+#     x.align["Time"] = "r"
+#     x.padding_width = 1
+#
+#     msg += f"{x}```"
+#
+#     return msg
 
+def get_todays_points(channel_name):
+    """Display all point entries from today in a card-style layout"""
     team = s.query(Team).filter_by(name=channel_name).first()
 
-    # Get today's date range (start and end of day)
-    today_start = datetime.datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    today_end = datetime.datetime.utcnow().replace(hour=23, minute=59, second=59, microsecond=999999)
+    today = datetime.datetime.utcnow()
+    today_start = today.replace(hour=0, minute=0, second=0, microsecond=0)
+    today_end = today.replace(hour=23, minute=59, second=59, microsecond=999999)
 
-    # Query today's points for this team
     todays_points = team.points.filter(
         Point.created_at >= today_start,
         Point.created_at <= today_end
@@ -161,29 +202,28 @@ def get_todays_points(channel_name):
     if not todays_points:
         return f"```{team.name}\n-- No points awarded today --```"
 
-    msg = f"```{team.name}\n-- Today's Points ({datetime.datetime.utcnow().strftime('%Y-%m-%d')}) --\n"
+    lines = [
+        team.name,
+        f"-- Today's Points ({today.strftime('%Y-%m-%d')}) --",
+        ""
+    ]
 
     for p in todays_points:
         time_str = p.created_at.strftime('%H:%M')
-        desc = p.description[:30] + "..." if p.description and len(p.description) > 30 else (p.description or "")
-        x.add_row([
-            p.point_giver.username,
-            p.point_receiver.username,
-            p.points,
+        giver = p.point_giver.username
+        receiver = p.point_receiver.username
+        pts = p.points
+
+        desc = (p.description or "").strip()
+        desc = textwrap.fill(desc, width=48) if desc else "(no description)"
+
+        lines.extend([
+            f"{time_str}  {giver} → {receiver}  (+{pts})",
             desc,
-            time_str
+            ""  # blank line between cards
         ])
 
-    x.align["From"] = "l"
-    x.align["To"] = "l"
-    x.align["Points"] = "r"
-    x.align["Description"] = "l"
-    x.align["Time"] = "r"
-    x.padding_width = 1
-
-    msg += f"{x}```"
-
-    return msg
+    return f"```{chr(10).join(lines).rstrip()}```"
 
 
 if __name__ == "__main__":
