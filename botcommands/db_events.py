@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 
-from botcommands.school_closings import task_name_for_school_status, get_school_closings
 from crud import s
 from models import Team, CompletedTasks
 from datetime import datetime, timedelta, timezone
