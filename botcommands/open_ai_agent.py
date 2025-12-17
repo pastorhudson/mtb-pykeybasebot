@@ -641,7 +641,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 f"Calling responses.create with input: {json.dumps(current_api_input, indent=2, default=str)}")
             # --- Call responses.create API ---
             response = await client.responses.create(
-                model="gpt-5-mini",  # Or appropriate model supporting responses API features
+                model="gpt-5.2",  # Or appropriate model supporting responses API features
                 input=current_api_input,
                 tools=new_tools,
                 tool_choice="auto",

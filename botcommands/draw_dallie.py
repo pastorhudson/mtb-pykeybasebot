@@ -78,7 +78,7 @@ async def restyle_image(image_path, style_prompt):
         # Open the image file in binary mode
         with open(image_path, "rb") as image_file:
             result = await client.images.edit(
-                model="gpt-image-1",
+                model="gpt-image-1.5",
                 image=image_file,
                 prompt=style_prompt,
             )
@@ -109,7 +109,7 @@ async def draw_gpt_image(prompt):
         )
 
         result = await client.images.generate(
-            model="gpt-image-1",
+            model="gpt-image-1.5",
             prompt=prompt,
             moderation='low'
         )
