@@ -75,23 +75,53 @@ def get_closings():
     return closings
 
 
+# def get_closings_list():
+#     closings = get_closings()
+#     no_school = False
+#     if closings:
+#         no_school = True
+#     # Define columns for Pretty Table
+#     table = PrettyTable(['Name', 'Status'])
+#
+#     # For each closing, check if it's one of the specified organizations
+#     for closing in closings:
+#         name = closing.find('FORCED_ORGANIZATION_NAME').text
+#         status = closing.find('COMPLETE_STATUS').text
+#         table.add_row([name, status])
+#     if not no_school:
+#         table.add_row(["Your Mom", get_mom()])
+#         # set max width
+#     table.max_width = 25
+#     return table, no_school
+from prettytable import PrettyTable, ALL
+
+
 def get_closings_list():
     closings = get_closings()
-    no_school = False
-    if closings:
-        no_school = True
-    # Define columns for Pretty Table
-    table = PrettyTable(['Name', 'Status'])
+    no_school = bool(closings)
 
-    # For each closing, check if it's one of the specified organizations
+    table = PrettyTable(['Name', 'Status'])
+    table.align['Name'] = 'l'
+    table.align['Status'] = 'l'
+
+    # tighter Status column, wider Name
+    table.max_width = {
+        'Name': 28,
+        'Status': 14,
+    }
+
+    # optional but helps readability when wrapping
+    table.hrules = ALL
+    table.vrules = ALL
+
     for closing in closings:
         name = closing.find('FORCED_ORGANIZATION_NAME').text
         status = closing.find('COMPLETE_STATUS').text
         table.add_row([name, status])
+
     if not no_school:
         table.add_row(["Your Mom", get_mom()])
-        # set max width
-    table.max_width = 25
+
     return table, no_school
 
 
