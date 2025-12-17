@@ -1,8 +1,21 @@
 import logging
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
+
+from botcommands.school_closings import task_name_for_school_status, get_school_closings
 from crud import s
 from models import Team, CompletedTasks
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+NY = ZoneInfo("America/New_York")
+
+
+def ny_day_range_utc(now_ny=None):
+    now_ny = now_ny or datetime.now(NY)
+    start_ny = datetime(now_ny.year, now_ny.month, now_ny.day, tzinfo=NY)
+    end_ny = start_ny + timedelta(days=1)
+    return start_ny.astimezone(timezone.utc), end_ny.astimezone(timezone.utc), now_ny.date()
 
 
 async def is_morning_report():
@@ -10,7 +23,7 @@ async def is_morning_report():
 
     # Get current date in 'America/New_York' timezone
     now_time_ny = datetime.now(ZoneInfo('America/New_York'))
-    time_523_am = datetime(now_time_ny.year, now_time_ny.month, now_time_ny.day, 5, 23, tzinfo=ZoneInfo('America/New_York'))
+    time_6_am = datetime(now_time_ny.year, now_time_ny.month, now_time_ny.day, 6, 00, tzinfo=ZoneInfo('America/New_York'))
     logging.info(f"Local Time (America/New_York): {now_time_ny}")
 
     # Define start and end of the current day in 'America/New_York'
@@ -38,7 +51,7 @@ async def is_morning_report():
                 if morning_report_task:
                     logging.info(f"Morning Report already sent today at {morning_report_task.completed_at_in_ny()}")
                     return True
-                elif now_time_ny >= time_523_am:
+                elif now_time_ny >= time_6_am:
                     logging.info("No Morning Report sent today yet")
                     return False
         return True

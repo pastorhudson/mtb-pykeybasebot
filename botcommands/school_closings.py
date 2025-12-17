@@ -125,7 +125,7 @@ def get_closings_list():
     return table, no_school
 
 
-def search_closings(specific_words=None):
+def search_closings(specific_words=None, no_mom=False):
     closings = get_closings()
 
     # Define columns for Pretty Table
@@ -139,7 +139,7 @@ def search_closings(specific_words=None):
             status = closing.find('COMPLETE_STATUS').text
             table.add_row([name, status])
 
-    if not no_school:
+    if not no_school and not no_mom:
         table.add_row(["Your Mom", get_mom()])
     # set max width
     table.max_width = 25

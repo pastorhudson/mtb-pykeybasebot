@@ -1421,31 +1421,32 @@ async def periodic_task():
         logging.info("Triggering Morning Report Check")
 
         mr = await is_morning_report()
-        if not mr:
-            mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
-            test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
-            meh_img = str(Path('./storage/meh.png').absolute())
-            msg = await get_morningreport(channel="morethanbits")
-            try:
-                await set_unfurl(unfurl=False)
-            except Exception as e:
-                logging.info(e)
-            await bot.chat.send(mtb_conversation_id, msg[0])
-            await bot.chat.attach(channel=mtb_conversation_id,
-                                  filename=meh_img,
-                                  title=msg[1])
 
-            await bot.chat.send(mtb_conversation_id, msg[3])
-            await bot.chat.send(mtb_conversation_id, msg[2])
-            await bot.chat.send(mtb_conversation_id, msg[4])
-            await bot.chat.send(mtb_conversation_id, msg[5])
-            try:
-                xlm = get_spot_price()
-                await bot.chat.send(mtb_conversation_id, xlm)
-            except Exception as e:
-                logging.info(e)
-            await write_morning_report_task()
-        await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
+        if not mr:
+                mtb_conversation_id = '0000f057aa01b5cb1b8b675b323baf88d349dc1d14e6a5cd605c2ac5cfacff30'
+                test_conversation_id = '0000c3e1daf296e6c893a02f6ae2e39bbe99ecfbdc7bec6daccb3fd9efb0382d'
+                meh_img = str(Path('./storage/meh.png').absolute())
+                msg = await get_morningreport(channel="morethanbits")
+                try:
+                    await set_unfurl(unfurl=False)
+                except Exception as e:
+                    logging.info(e)
+                await bot.chat.send(mtb_conversation_id, msg[0])
+                await bot.chat.attach(channel=mtb_conversation_id,
+                                      filename=meh_img,
+                                      title=msg[1])
+
+                await bot.chat.send(mtb_conversation_id, msg[3])
+                await bot.chat.send(mtb_conversation_id, msg[2])
+                await bot.chat.send(mtb_conversation_id, msg[4])
+                await bot.chat.send(mtb_conversation_id, msg[5])
+                try:
+                    xlm = get_spot_price()
+                    await bot.chat.send(mtb_conversation_id, xlm)
+                except Exception as e:
+                    logging.info(e)
+                await write_morning_report_task()
+            await asyncio.sleep(90)  # sleep for 600 seconds (10 minutes)
 
 async def msg_queue(bot):
     await asyncio.sleep(90)
