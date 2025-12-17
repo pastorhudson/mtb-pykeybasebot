@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     libpq-dev \
     gosu \
-    deno \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Keybase
