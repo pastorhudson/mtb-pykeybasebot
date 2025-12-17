@@ -3,7 +3,7 @@ from pprint import pprint
 
 import requests
 from bs4 import BeautifulSoup
-from prettytable import PrettyTable
+from prettytable import PrettyTable, ALL
 
 
 def get_mom():
@@ -93,7 +93,7 @@ def get_closings():
 #         # set max width
 #     table.max_width = 25
 #     return table, no_school
-from prettytable import PrettyTable, ALL
+
 
 
 def get_closings_list():
