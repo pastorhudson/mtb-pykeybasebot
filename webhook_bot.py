@@ -100,6 +100,7 @@ def add_message():
 
 
 @app.route('/refresh', methods=['POST'])
+@csrf.exempt
 def auth_refresh():
     logging.info("refresh token")
     try:
