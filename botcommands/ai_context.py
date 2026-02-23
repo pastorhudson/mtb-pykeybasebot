@@ -4,7 +4,7 @@ from typing import List, Dict, Optional
 
 
 class ChatContextManager:
-    def __init__(self, max_recent_messages=5, max_summary_length=300, summary_interval=10):
+    def __init__(self, max_recent_messages=5, max_summary_length=600, summary_interval=10):
         self.recent_messages = []  # Store recent messages
         self.conversation_summary = "No conversation yet."  # Running summary
         self.message_count = 0  # Total messages seen
