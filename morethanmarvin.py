@@ -1438,7 +1438,11 @@ async def periodic_task():
 
             await bot.chat.send(mtb_conversation_id, msg[3])
             await bot.chat.send(mtb_conversation_id, msg[2])
-            await bot.chat.send(mtb_conversation_id, msg[4])
+            try:
+                await bot.chat.send(mtb_conversation_id, msg[4])
+            except Exception as e:
+                logging.info(e)
+
             await bot.chat.send(mtb_conversation_id, msg[5])
             try:
                 xlm = get_spot_price()
