@@ -82,7 +82,7 @@ dependencies = [
     "pluggy==1.5.0",
     "poetry-core==1.0.0",
     "prettytable==3.17.0",
-    "proglog==0.1.9",
+    "proglog==0.1.10",
     "propcache==0.2.1",
     "protobuf==4.21.12",
     "protoc-wheel==21.1",
