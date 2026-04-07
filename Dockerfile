@@ -46,8 +46,8 @@ RUN pip install --no-cache-dir uv && \
 ENV CAMOUFOX_CACHE_DIR=/app/.camoufox
 
 RUN uv run python -m camoufox fetch && \
-    chmod -R 755 /app/.camoufox && \
-    chown -R appuser:appuser /app/.camoufox && \
+    chown -R appuser:appuser /app/.cache/camoufox && \
+    chmod -R 755 /app/.cache/camoufox && \
     chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/
 
 # Verify ffmpeg is available
