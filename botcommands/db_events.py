@@ -22,7 +22,7 @@ async def is_morning_report():
 
     # Get current date in 'America/New_York' timezone
     now_time_ny = datetime.now(ZoneInfo('America/New_York'))
-    time_6_am = datetime(now_time_ny.year, now_time_ny.month, now_time_ny.day, 6, 00, tzinfo=ZoneInfo('America/New_York'))
+    time_6_am = datetime(now_time_ny.year, now_time_ny.month, now_time_ny.day, 5, 23, tzinfo=ZoneInfo('America/New_York'))
     logging.info(f"Local Time (America/New_York): {now_time_ny}")
 
     # Define start and end of the current day in 'America/New_York'
