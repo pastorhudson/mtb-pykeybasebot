@@ -127,7 +127,7 @@ async def get_gpt_summary(url):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_complettion = client.chat.completions.create(
-        model="gpt-4-1106-preview",  # Use the appropriate model for ChatGPT
+        model="gpt-5.3",  # Use the appropriate model for ChatGPT
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": get_convo()},
@@ -240,8 +240,8 @@ if __name__ == "__main__":
     # result = loop.run_until_complete(scrape_article_playwright('https://nypost.com/2024/08/01/sports/why-italys-angela-carini-abandoned-brief-olympics-fight/'))
     # result = loop.run_until_complete(scrape_article_playwright('https://www.nature.com/articles/s41467-023-40605-2'))
 
-    result = loop.run_until_complete(get_gpt_summary('https://youtu.be/mpAHFlZqIKw?si=RO_hrUT8YN6t3-up'))
-    pprint(result)
+    # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/mpAHFlZqIKw?si=RO_hrUT8YN6t3-up'))
 
-    # result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
+    result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
+    pprint(result)
 
