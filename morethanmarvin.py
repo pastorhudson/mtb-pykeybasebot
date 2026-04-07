@@ -7,6 +7,7 @@ from pprint import pprint
 from string import punctuation
 import json
 
+from botcommands.apnews import get_top_ap_news
 from botcommands.coinbase import get_spot_price
 from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
@@ -167,6 +168,9 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "news",
          "description": "Gets the top x articles from hackernews.",
+         "usage": "optional num of articles"},
+        {"name": "apnews",
+         "description": "Gets the top x articles from apnews.",
          "usage": "optional num of articles"},
         {"name": "poll",
          "description": "Start a poll",
@@ -810,6 +814,27 @@ async def handler(bot, event):
 
         await bot.chat.send(conversation_id, msg)
 
+    if str(event.msg.content.text.body).startswith("!apnews"):
+        try:
+            await set_unfurl(unfurl=False)
+        except Exception as e:
+            logging.info(e)
+        conversation_id = event.msg.conv_id
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+
+        try:
+            news_level = str(event.msg.content.text.body).split(" ")[1]
+            msg = get_top_ap_news(num_articles=int(news_level))
+
+        except TypeError:
+            msg = get_top_ap_news()
+            await bot.chat.send(conversation_id, msg)
+
+        except ValueError:
+            msg = get_top_ap_news()
+
+        await bot.chat.send(conversation_id, msg)
+
     if str(event.msg.content.text.body).startswith('!morse'):
         conversation_id = event.msg.conv_id
 
@@ -1444,6 +1469,11 @@ async def periodic_task():
                 logging.info(e)
 
             await bot.chat.send(mtb_conversation_id, msg[5])
+            try:
+                ap_news = get_top_ap_news()
+                await bot.chat.send(mtb_conversation_id, ap_news)
+            except Exception as e:
+                logging.info(e)
             try:
                 xlm = get_spot_price()
                 await bot.chat.send(mtb_conversation_id, xlm)
