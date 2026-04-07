@@ -15,4 +15,5 @@ if [ -d "/app/.venv/lib/python3.13/site-packages/camoufox" ]; then
 fi
 
 # Switch to appuser and run the command
+export HOME=/app
 exec gosu appuser "$@"

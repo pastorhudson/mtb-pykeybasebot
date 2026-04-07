@@ -32,6 +32,7 @@ RUN useradd -m -u 1000 appuser && \
     mkdir -p /app && \
     chown -R appuser:appuser /app
 
+ENV HOME=/app
 WORKDIR /app
 
 # Copy dependency files first (for layer caching)
