@@ -10,7 +10,7 @@ from openai import OpenAI
 from botcommands.natural_chat import get_convo
 from botcommands.youtube_dlp import get_meta
 import os
-from camoufox.async_api import AsyncCamoufox
+from camoufox import AsyncCamoufox
 
 
 
