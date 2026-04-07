@@ -42,7 +42,8 @@ RUN pip install --no-cache-dir uv && \
     uv sync --frozen
 
 # Install Playwright browsers with dependencies (cached in layer)
-RUN uv run playwright install --with-deps chromium
+RUN uv run python -m camoufox fetch && \
+    chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/
 
 # Verify ffmpeg is available
 RUN ffmpeg -version
