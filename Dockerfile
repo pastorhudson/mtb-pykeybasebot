@@ -50,7 +50,7 @@ RUN uv run python -m camoufox fetch && \
     chmod -R 755 /app/.cache/camoufox && \
     find /app/.venv/lib/python3.13/site-packages/camoufox/ -type d -exec chmod 755 {} \; && \
     find /app/.venv/lib/python3.13/site-packages/camoufox/ -type f -exec chmod 644 {} \; && \
-    ls -la /app/.venv/lib/python3.13/site-packages/camoufox/
+    rm -rf /app/.venv/lib/python3.13/site-packages/camoufox/__pycache__
 
 # Verify ffmpeg is available
 RUN ffmpeg -version
