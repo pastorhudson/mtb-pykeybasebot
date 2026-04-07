@@ -48,7 +48,8 @@ ENV CAMOUFOX_CACHE_DIR=/app/.camoufox
 RUN uv run python -m camoufox fetch && \
     chown -R appuser:appuser /app/.cache/camoufox && \
     chmod -R 755 /app/.cache/camoufox && \
-    chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/
+    find /app/.venv/lib/python3.13/site-packages/camoufox/ -type d -exec chmod 755 {} \; && \
+    find /app/.venv/lib/python3.13/site-packages/camoufox/ -type f -exec chmod 644 {} \;
 
 # Verify ffmpeg is available
 RUN ffmpeg -version
