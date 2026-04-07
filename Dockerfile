@@ -41,10 +41,13 @@ COPY pyproject.toml uv.lock ./
 RUN pip install --no-cache-dir uv && \
     uv sync --frozen
 
-# Install Playwright browsers with dependencies (cached in layer)
+#Install Camoufox
+ENV CAMOUFOX_CACHE_DIR=/app/.camoufox
+
 RUN uv run python -m camoufox fetch && \
-    chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/ && \
-    uv run python -c "import camoufox; print(camoufox.__file__); print(camoufox.__version__)"
+    chmod -R 755 /app/.camoufox && \
+    chown -R appuser:appuser /app/.camoufox && \
+    chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/
 
 # Verify ffmpeg is available
 RUN ffmpeg -version
