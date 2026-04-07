@@ -127,7 +127,7 @@ async def get_gpt_summary(url):
         api_key=os.getenv("OPENAI_API_KEY"),
     )
     chat_complettion = client.chat.completions.create(
-        model="gpt-5.3",  # Use the appropriate model for ChatGPT
+        model="gpt-5.2",  # Use the appropriate model for ChatGPT
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": get_convo()},
