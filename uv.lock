@@ -1360,7 +1360,7 @@ requires-dist = [
     { name = "pluggy", specifier = "==1.5.0" },
     { name = "poetry-core", specifier = "==1.0.0" },
     { name = "prettytable", specifier = "==3.17.0" },
-    { name = "proglog", specifier = "==0.1.9" },
+    { name = "proglog", specifier = "==0.1.10" },
     { name = "propcache", specifier = "==0.2.1" },
     { name = "protobuf", specifier = "==4.21.12" },
     { name = "protoc-wheel", specifier = "==21.1" },
@@ -1986,12 +1986,15 @@ wheels = [
 
 [[package]]
 name = "proglog"
-version = "0.1.9"
+version = "0.1.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/fe/ab/4cb19b578e1364c0b2d6efd6521a8b4b4e5c4ae6528041d31a2a951dd991/proglog-0.1.9.tar.gz", hash = "sha256:d8c4ccbf2138e0c5e3f3fc0d80dc51d7e69dcfe8bfde4cacb566725092a5b18d", size = 10256, upload-time = "2018-05-29T18:26:19.442Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/b9/1cfff8f6a797ea99bf7ffc8c5fd811c135837948fd90f3ea86fd5166ee4f/proglog-0.1.10.tar.gz", hash = "sha256:658c28c9c82e4caeb2f25f488fff9ceace22f8d69b15d0c1c86d64275e4ddab4", size = 11088, upload-time = "2022-05-05T15:31:48.563Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8b/f5/cab5cf6a540c31f5099043de0ae43990fd9cf66f75ecb5e9f254a4e4d4ee/proglog-0.1.10-py3-none-any.whl", hash = "sha256:19d5da037e8c813da480b741e3fa71fb1ac0a5b02bf21c41577c7f327485ec50", size = 6114, upload-time = "2022-05-05T15:31:46.674Z" },
+]
 
 [[package]]
 name = "propcache"
