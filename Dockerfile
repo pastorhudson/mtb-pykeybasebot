@@ -43,7 +43,8 @@ RUN pip install --no-cache-dir uv && \
 
 # Install Playwright browsers with dependencies (cached in layer)
 RUN uv run python -m camoufox fetch && \
-    chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/
+    chmod -R 644 /app/.venv/lib/python3.13/site-packages/camoufox/ && \
+    uv run python -c "import camoufox; print(camoufox.__file__); print(camoufox.__version__)"
 
 # Verify ffmpeg is available
 RUN ffmpeg -version
