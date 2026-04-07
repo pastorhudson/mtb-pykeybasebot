@@ -20,6 +20,7 @@ dependencies = [
     "bcrypt==4.2.1",
     "behave==1.2.6",
     "blinker==1.9.0",
+    "camoufox[geoip]>=0.4.11",
     "click==8.1.7",
     "colorama==0.4.6",
     "cowsay==6.1",

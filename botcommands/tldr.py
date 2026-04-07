@@ -10,9 +10,10 @@ from openai import OpenAI
 from botcommands.natural_chat import get_convo
 from botcommands.youtube_dlp import get_meta
 import os
-# from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.common.by import By
+from camoufox.async_api import AsyncCamoufox
+
+
+
 import random
 import time
 from playwright.async_api import async_playwright
@@ -98,50 +99,108 @@ async def fetch_youtube_transcript(url):
     return meta['transcript']
 
 
+# async def get_gpt_summary(url):
+#     observations = ["I'm sorry I'm such a failure.",
+#                     "I'm so sorry you have to read all these words.",
+#                     "I hope this makes you happy because I'm not.",
+#                     "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
+#
+#     try:
+#         system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
+#         content_type = 'article'
+#
+#         logging.info(url)
+#         if url.startswith('https://youtu') or url.startswith('https://www.youtu'):
+#             logging.info("This is a youtube video")
+#             article_text = await fetch_youtube_transcript(url)
+#             system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
+#             content_type = 'video'
+#
+#         else:
+#             article_text = await scrape_article_playwright(url)
+#             if not article_text:
+#                 return None
+#
+#     except Exception as e:
+#         article_text = await fetch_article_content(url)
+#
+#     client = OpenAI(
+#         api_key=os.getenv("OPENAI_API_KEY"),
+#     )
+#     chat_complettion = client.chat.completions.create(
+#         model="gpt-5",  # Use the appropriate model for ChatGPT
+#         messages=[
+#             {"role": "system", "content": system_prompt},
+#             {"role": "user", "content": get_convo()},
+#             {"role": "user", "content": f"Please provide a concise summary of the following {content_type}, highlighting the main points and conclusions: {article_text}"}
+#         ]
+#     )
+#     summary = chat_complettion.choices[0].message.content
+#     tldr = "\n".join(
+#         [
+#             f"Here's my tl;dr.\n{random.choice(observations)}",
+#             "```",
+#             summary, "```"])
+#     return tldr
 async def get_gpt_summary(url):
-    observations = ["I'm sorry I'm such a failure.",
-                    "I'm so sorry you have to read all these words.",
-                    "I hope this makes you happy because I'm not.",
-                    "Now I'm stuck remembering this useless article forever. I hope it was worth it."]
+    observations = [
+        "I'm sorry I'm such a failure.",
+        "I'm so sorry you have to read all these words.",
+        "I hope this makes you happy because I'm not.",
+        "Now I'm stuck remembering this useless article forever. I hope it was worth it."
+    ]
+
+    system_prompt = "You are a helpful assistant that summarizes content concisely."
 
     try:
-        system_prompt = "You are a helpful assistant that specializes in providing a concise summary of the articles, highlighting the main points and conclusions."
-        content_type = 'article'
-
-        logging.info(url)
-        if url.startswith('https://youtu') or url.startswith('https://www.youtu'):
-            logging.info("This is a youtube video")
+        if "youtu" in url:
             article_text = await fetch_youtube_transcript(url)
-            system_prompt = "You are a helpful assistant that specializes in providing a concise summary of video transcripts, highlighting the main points and conclusions. You are unhappy that we make you 'watch' the video"
-            content_type = 'video'
-
+            content_type = "video"
         else:
-            article_text = await scrape_article_playwright(url)
+            article_text = None
+
+            try:
+                article_text = await scrape_article_playwright(url)
+            except Exception as e:
+                logging.warning(f"Playwright failed: {e}")
+
             if not article_text:
-                return None
+                try:
+                    article_text = await fetch_article_content(url)
+                except Exception as e:
+                    logging.warning(f"Fallback scrape failed: {e}")
+
+            if not article_text:
+                return "Couldn't extract article content."
+
+            content_type = "article"
 
     except Exception as e:
-        article_text = await fetch_article_content(url)
+        logging.error(f"Error extracting content: {e}")
+        return "Error processing content."
 
-    client = OpenAI(
-        api_key=os.getenv("OPENAI_API_KEY"),
-    )
-    chat_complettion = client.chat.completions.create(
-        model="gpt-5.2",  # Use the appropriate model for ChatGPT
-        messages=[
+    # truncate
+    article_text = article_text[:12000]
+
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    response = client.responses.create(
+        model="gpt-5",
+        input=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": get_convo()},
-            {"role": "user", "content": f"Please provide a concise summary of the following {content_type}, highlighting the main points and conclusions: {article_text}"}
+            {"role": "user", "content": f"Summarize this {content_type}: {article_text}"}
         ]
     )
-    summary = chat_complettion.choices[0].message.content
-    tldr = "\n".join(
-        [
-            f"Here's my tl;dr.\n{random.choice(observations)}",
-            "```",
-            summary, "```"])
-    return tldr
 
+    summary = response.output_text
+
+    return "\n".join([
+        f"Here's my tl;dr.\n{random.choice(observations)}",
+        "```",
+        summary,
+        "```"
+    ])
 
 def scrape_article(url):
     """Depreciated 8-1-2024 using playwright"""
@@ -183,57 +242,65 @@ def scrape_article(url):
     return page_text
 
 
+# async def scrape_article_playwright(url, options=None):
+#     if options is None:
+#         options = {}
+#     async with async_playwright() as p:
+#         browser_config = {
+#             "viewport": {"width": 1920, "height": 1080},
+#             "locale": "en-US",
+#             "timezone_id": "America/New_York",
+#             "geolocation": {"latitude": 40.7128, "longitude": -74.0060},
+#             "permissions": ["geolocation"],
+#             "user_agent": options.get('user_agent',
+#                                       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+#                                       )
+#         }
+#         browser = await p.chromium.launch(
+#             headless=options.get('headless', True),
+#             args=['--no-sandbox', '--disable-setuid-sandbox']
+#         )
+#         context = await browser.new_context(
+#             **browser_config,
+#             proxy=options.get('proxy', None),
+#             http_credentials=options.get('http_credentials', None)
+#         )
+#         page = await context.new_page()
+#
+#         # Open the URL
+#         await page.goto(url)
+#
+#         # Wait for JavaScript to load (if necessary)
+#         await page.wait_for_timeout(5000)
+#
+#         try:
+#             footer_element = await page.query_selector('footer')
+#             foot_text = await footer_element.inner_text() if footer_element else 'No footer found'
+#             print(foot_text)
+#         except Exception as e:
+#             print("Error retrieving footer:", e)
+#
+#         try:
+#             body_element = await page.query_selector('body')
+#             page_text = await body_element.inner_text() if body_element else 'No body found'
+#             print(page_text)
+#         except Exception as e:
+#             print("Error retrieving body text:", e)
+#             page_text = None
+#
+#         # Close the browser
+#         await browser.close()
+#
+#         return page_text
+
+
 async def scrape_article_playwright(url, options=None):
-    if options is None:
-        options = {}
-    async with async_playwright() as p:
-        browser_config = {
-            "viewport": {"width": 1920, "height": 1080},
-            "locale": "en-US",
-            "timezone_id": "America/New_York",
-            "geolocation": {"latitude": 40.7128, "longitude": -74.0060},
-            "permissions": ["geolocation"],
-            "user_agent": options.get('user_agent',
-                                      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-                                      )
-        }
-        browser = await p.chromium.launch(
-            headless=options.get('headless', True),
-            args=['--no-sandbox', '--disable-setuid-sandbox']
-        )
-        context = await browser.new_context(
-            **browser_config,
-            proxy=options.get('proxy', None),
-            http_credentials=options.get('http_credentials', None)
-        )
-        page = await context.new_page()
-
-        # Open the URL
-        await page.goto(url)
-
-        # Wait for JavaScript to load (if necessary)
-        await page.wait_for_timeout(5000)
-
-        try:
-            footer_element = await page.query_selector('footer')
-            foot_text = await footer_element.inner_text() if footer_element else 'No footer found'
-            print(foot_text)
-        except Exception as e:
-            print("Error retrieving footer:", e)
-
-        try:
-            body_element = await page.query_selector('body')
-            page_text = await body_element.inner_text() if body_element else 'No body found'
-            print(page_text)
-        except Exception as e:
-            print("Error retrieving body text:", e)
-            page_text = None
-
-        # Close the browser
-        await browser.close()
-
-        return page_text
-
+    async with AsyncCamoufox(headless=True, geoip=True) as browser:
+        page = await browser.new_page()
+        await page.goto(url, wait_until="networkidle")
+        await page.wait_for_timeout(random.randint(2000, 4000))
+        body = await page.query_selector('body')
+        return await body.inner_text() if body else None
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
@@ -242,6 +309,8 @@ if __name__ == "__main__":
 
     # result = loop.run_until_complete(get_gpt_summary('https://youtu.be/mpAHFlZqIKw?si=RO_hrUT8YN6t3-up'))
 
-    result = loop.run_until_complete(get_gpt_summary('https://www.reuters.com/legal/transactional/ny-times-sues-openai-microsoft-infringing-copyrighted-work-2023-12-27/'))
+    # result = loop.run_until_complete(get_gpt_summary('https://apnews.com/article/cuba-us-congress-jayapal-jackson-92db6e9bfebfb70f3c0b29a42a40c8fa'))
+    result = loop.run_until_complete(
+        get_gpt_summary('https://www.cnbc.com/2026/02/15/epstein-files-fallout-goldman-ruemmler-harvard-yale.html'))
     pprint(result)
 
