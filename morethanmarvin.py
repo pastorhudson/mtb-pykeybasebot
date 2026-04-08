@@ -115,7 +115,7 @@ async def handler(bot, event):
          "usage": "<reference> OR <search string>"},
         {"name": "discordia",
          "description": "Force me to lookup discordia txt.",
-         "usage": "<reference> OR <search string>"},
+         "usage": "<search string>"},
         # {"name": "canary",
         #  "description": "Force me to give Virus Total your nasty URL and return scan results.",
         #  "usage": "<url>"},
@@ -621,7 +621,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!discordia"):
         conversation_id = event.msg.conv_id
-    await bot.chat.react(conversation_id, event.msg.id, ":eris:")
+    await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
     # Get everything after "!discordia "
     args = str(event.msg.content.text.body)[11:].strip()
