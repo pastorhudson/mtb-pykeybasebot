@@ -248,6 +248,6 @@ if __name__ == "__main__":
 
     # result = loop.run_until_complete(get_gpt_summary('https://apnews.com/article/cuba-us-congress-jayapal-jackson-92db6e9bfebfb70f3c0b29a42a40c8fa'))
     result = loop.run_until_complete(
-        get_gpt_summary('https://www.cnbc.com/2026/02/15/epstein-files-fallout-goldman-ruemmler-harvard-yale.html'))
+        get_gpt_summary('https://www.nbcnews.com/world/iran/live-blog/live-updates-iran-war-trump-deadline-hormuz-infrastructure-ceasefire-rcna267039'))
     pprint(result)
 
