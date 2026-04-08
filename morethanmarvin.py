@@ -9,6 +9,7 @@ import json
 
 from botcommands.apnews import get_top_ap_news
 from botcommands.coinbase import get_spot_price
+from botcommands.discordia import get_discordia_text
 from botcommands.morse import get_morse_code
 from botcommands.natural_chat import get_chat, get_marvn_reaction, get_chat_with_image
 from botcommands.jokes import get_joke
@@ -111,6 +112,9 @@ async def handler(bot, event):
          "usage": "<user> <points>"},
         {"name": "bible",
          "description": "Force me to lookup Bible txt.",
+         "usage": "<reference> OR <search string>"},
+        {"name": "discordia",
+         "description": "Force me to lookup discordia txt.",
          "usage": "<reference> OR <search string>"},
         # {"name": "canary",
         #  "description": "Force me to give Virus Total your nasty URL and return scan results.",
@@ -614,6 +618,19 @@ async def handler(bot, event):
 
         msg = get_bg_text(passage, version=version)
         await bot.chat.send(conversation_id, msg)
+
+    if str(event.msg.content.text.body).startswith("!discordia"):
+        conversation_id = event.msg.conv_id
+    await bot.chat.react(conversation_id, event.msg.id, ":eris:")
+
+    # Get everything after "!discordia "
+    args = str(event.msg.content.text.body)[11:].strip()
+
+    # Default to "all" if no args given
+    ref = args if args else "all"
+
+    msg = get_discordia_text(ref)
+    await bot.chat.send(conversation_id, msg)
 
     # if str(event.msg.content.text.body).startswith("!biblemorse"):
     #     conversation_id = event.msg.conv_id
@@ -1470,7 +1487,8 @@ async def periodic_task():
 
             await bot.chat.send(mtb_conversation_id, msg[5])
             try:
-                ap_news = get_top_ap_news()
+                ap_news = "Today's AP News Headlines:\n"
+                ap_news += get_top_ap_news()
                 await bot.chat.send(mtb_conversation_id, ap_news)
             except Exception as e:
                 logging.info(e)
