@@ -623,14 +623,14 @@ async def handler(bot, event):
         conversation_id = event.msg.conv_id
         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
-    # Get everything after "!discordia "
-    args = str(event.msg.content.text.body)[11:].strip()
+        # Get everything after "!discordia "
+        args = str(event.msg.content.text.body)[11:].strip()
 
-    # Default to "all" if no args given
-    ref = args if args else "all"
+        # Default to "all" if no args given
+        ref = args if args else "all"
 
-    msg = get_discordia_text(ref)
-    await bot.chat.send(conversation_id, msg)
+        msg = get_discordia_text(ref)
+        await bot.chat.send(conversation_id, msg)
 
     # if str(event.msg.content.text.body).startswith("!biblemorse"):
     #     conversation_id = event.msg.conv_id
