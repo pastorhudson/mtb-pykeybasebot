@@ -112,7 +112,7 @@ def get_bg_text(passage, version='ESV', plain_txt=False, keep_verse_numbers=True
     if plain_txt:
         return f"{ref_title}\n{body}"
     else:
-        return f"```{ref_title}\n{body}```\n\n({version})"
+        return f"```{ref_title}\n{body}```"
 
 
 if __name__ == "__main__":
