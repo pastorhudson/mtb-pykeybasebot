@@ -1,98 +1,189 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
+"""
+discordia.py - fetch sections from the Principia Discordia (HTML edition)
+
+Can read from a local file path or a URL.
+Requires: requests, beautifulsoup4
+"""
 import re
+from pathlib import Path
+
 import requests
+from bs4 import BeautifulSoup, NavigableString
 
-DEFAULT_URL = "https://archive.org/stream/PrincipiaDiscordia_201806/Principia%20Discordia_djvu.txt"
+DEFAULT_FILE = Path('./storage/discordia.htm')
 
-
-def _clean_text(s: str) -> str:
-    s = s.replace("\r\n", "\n").replace("\r", "\n")
-    # nuke extra spaces but keep newlines kinda
-    s = re.sub(r"[ \t]+", " ", s)
-    s = re.sub(r"\n{3,}", "\n\n", s)
-    return s.strip()
+DEFAULT_URL = "https://www.cs.cmu.edu/~tilt/principia/body.html"
 
 
-def _find_section(text: str, ref: str):
+# ---------------------------------------------------------------------------
+# HTML -> structured sections
+# ---------------------------------------------------------------------------
+
+def _node_to_text(node) -> str:
+    """Convert a single BS4 node to plain text."""
+    if isinstance(node, NavigableString):
+        return str(node)
+    if node.name == "pre":
+        for img in node.find_all("img"):
+            img.decompose()
+        return "\n" + node.get_text() + "\n"
+    if node.name in ("h1", "h2", "h3", "h4"):
+        return "\n\n" + node.get_text(strip=True).upper() + "\n"
+    if node.name == "p":
+        # Preserve <br> as newlines within paragraphs (important for dialogue)
+        parts = []
+        for child in node.children:
+            if isinstance(child, NavigableString):
+                parts.append(str(child))
+            elif child.name == "br":
+                parts.append("\n")
+            else:
+                parts.append(child.get_text())
+        text = "".join(parts).strip()
+        return ("\n" + text + "\n") if text else ""
+    if node.name in ("div",):
+        return "\n" + node.get_text(separator=" ", strip=True) + "\n"
+    if node.name == "li":
+        return "\n  - " + node.get_text(separator=" ", strip=True)
+    if node.name == "blockquote":
+        lines = node.get_text(separator="\n", strip=True).splitlines()
+        return "\n" + "\n".join("  > " + l for l in lines) + "\n"
+    if node.name == "br":
+        return "\n"
+    return node.get_text(separator=" ")
+
+
+def _first_heading(nodes) -> str | None:
+    """Return the text of the first heading node in a list, or None."""
+    for n in nodes:
+        if not isinstance(n, NavigableString) and n.name in ("h1", "h2", "h3", "h4"):
+            return n.get_text(strip=True)
+    return None
+
+
+def _extract_sections(html: str) -> list[dict]:
     """
-    ref rules (simple, caveman-safe):
-      - "all" => whole book
-      - "L200-L260" => line range (1-based, inclusive)
-      - any other text => find first line that contain ref (case-insensitive),
-                         then return ~N lines after it.
+    Parse the HTML body and split into sections at every <hr> tag.
+    Each section dict has {"title": str, "body": str}.
     """
-    if not ref or ref.lower() == "all":
-        return ("Principia Discordia (full)", text)
+    soup = BeautifulSoup(html, "html.parser")
+    body = soup.find("body") or soup
 
-    m = re.match(r"^\s*[Ll](\d+)\s*-\s*[Ll](\d+)\s*$", ref)
-    if m:
-        a = int(m.group(1))
-        b = int(m.group(2))
-        if a <= 0 or b <= 0 or b < a:
-            return ("Error", "Error: bad line range. Use like L200-L260.")
-        lines = text.splitlines()
-        # 1-based to 0-based
-        a0 = max(0, a - 1)
-        b0 = min(len(lines), b)
-        chunk = "\n".join(lines[a0:b0]).strip()
-        return (f"Principia Discordia lines {a}-{b}", chunk)
+    # Collect all top-level children
+    nodes = list(body.children)
 
-    # string search mode
-    lines = text.splitlines()
-    needle = ref.strip().lower()
-    for i, line in enumerate(lines):
-        if needle in line.lower():
-            start = max(0, i - 2)
-            end = min(len(lines), i + 140)  # ~140 lines after hit
-            chunk = "\n".join(lines[start:end]).strip()
-            return (f'Principia Discordia (match: "{ref}")', chunk)
+    sections = []
+    current_title = "Introduction"
+    current_nodes = []
 
-    return ("Error", f'Error: no find for "{ref}". Try line range like L200-L260, or "all".')
+    def flush():
+        parts = [_node_to_text(n) for n in current_nodes]
+        text = re.sub(r"\n{3,}", "\n\n", "".join(parts)).strip()
+        if text:
+            # If title is still a placeholder, grab first heading from body
+            title = current_title
+            if title == "—":
+                title = _first_heading(current_nodes) or "—"
+            sections.append({"title": title, "body": text})
+        current_nodes.clear()
 
+    for node in nodes:
+        if isinstance(node, NavigableString):
+            if node.strip():
+                current_nodes.append(node)
+            continue
+
+        if node.name == "hr":
+            flush()
+            current_title = "—"
+            continue
+
+        current_nodes.append(node)
+
+    flush()
+    return sections
+
+
+# ---------------------------------------------------------------------------
+# Source loading
+# ---------------------------------------------------------------------------
+
+def _load_html(filepath=None, url=None, timeout=20, user_agent="Mozilla/5.0") -> str:
+    if filepath:
+        with open(filepath, "r", encoding="windows-1252", errors="replace") as f:
+            return f.read()
+    headers = {"User-Agent": user_agent, "Accept-Language": "en-US,en;q=0.9"}
+    r = requests.get(url, headers=headers, timeout=timeout)
+    r.raise_for_status()
+    return r.text
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
 
 def get_discordia_text(
         ref="all",
         *,
+        filepath=DEFAULT_FILE,
         url=DEFAULT_URL,
-        plain_txt=False,
         timeout=20,
         max_chars=6000,
         user_agent="Mozilla/5.0",
-):
+) -> str:
     """
-    Like get_bg_text(), but for Principia Discordia raw txt on archive.org.
+    Return text from the Principia Discordia.
+
+    Reads from `filepath` if set (default: local HTM file).
+    Falls back to fetching `url` if filepath is None.
 
     ref:
-      - "all"
-      - "L200-L260"
-      - or search string like "Hail Eris" (grab block near first hit)
-
-    max_chars: keep bot from spew too much.
+      - "all"          => full text of every section
+      - search string  => section(s) whose text contains ref (case-insensitive)
     """
-    headers = {"User-Agent": user_agent, "Accept-Language": "en-US,en;q=0.9"}
-
     try:
-        r = requests.get(url, headers=headers, timeout=timeout)
-        r.raise_for_status()
-    except requests.RequestException as e:
-        return f"Error fetching Discordia text: {e}"
+        html = _load_html(
+            filepath=filepath,
+            url=url if not filepath else None,
+            timeout=timeout,
+            user_agent=user_agent,
+        )
+    except (OSError, requests.RequestException) as e:
+        return f"Error loading Discordia text: {e}"
 
-    text = _clean_text(r.text)
-    title, body = _find_section(text, ref)
+    sections = _extract_sections(html)
 
-    if title == "Error":
-        return body
-
-    if not body:
-        return "Error: empty chunk."
+    if not ref or ref.lower() == "all":
+        full = "\n\n---\n\n".join(f"{s['title']}\n\n{s['body']}" for s in sections)
+        body = re.sub(r"\n{3,}", "\n\n", full).strip()
+        title = "Principia Discordia (full)"
+    else:
+        needle = ref.strip().lower()
+        matches = [
+            s for s in sections
+            if needle in s["title"].lower() or needle in s["body"].lower()
+        ]
+        if not matches:
+            return (
+                f'Error: no section found for "{ref}". '
+                'Try a phrase from the text, or "all".'
+            )
+        body = re.sub(
+            r"\n{3,}", "\n\n",
+            "\n\n---\n\n".join(f"{s['title']}\n\n{s['body']}" for s in matches),
+        ).strip()
+        title = (
+            f'Principia Discordia (match: "{ref}")'
+            if len(matches) == 1
+            else f'Principia Discordia ({len(matches)} sections matching "{ref}")'
+        )
 
     if max_chars and len(body) > max_chars:
         body = body[:max_chars].rstrip() + "\n\n...[cut]..."
 
-    out = f"{title}\n```{body}```"
-    if plain_txt:
-        return out
-    return f"{out}"
+    return f"{title}\n```\n{body}\n```"
+
 
 if __name__ == "__main__":
-    print(get_discordia_text("myth of the apple"))
+    print(get_discordia_text("Is Eris True?"))
