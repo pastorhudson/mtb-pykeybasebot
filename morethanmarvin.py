@@ -1039,19 +1039,39 @@ async def handler(bot, event):
         username = event.msg.sender.username
         reset_sign(team_name, "#8", username)
 
+    # if str(event.msg.content.text.body).startswith('!tldr'):
+    #     urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+    #     channel = event.msg.channel
+    #     msg_id = event.msg.id
+    #     conversation_id = event.msg.conv_id
+    #     await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #     tldr = await get_gpt_summary(urls[0])
+    #     if tldr:
+    #         await bot.chat.reply(conversation_id, event.msg.id, tldr)
+    #     else:
+    #         await bot.chat.react(conversation_id, event.msg.id, ":no_entry:")
+    #     await sync(event=event, bot=bot)
+
+    # Separate coroutine:
+    async def _do_tldr(bot, conversation_id, msg_id, url, event):
+        tldr = await get_gpt_summary(url)
+        if tldr:
+            try:
+                await bot.chat.reply(conversation_id, msg_id, tldr)
+            except TimeoutError:
+                await bot.chat.send(conversation_id, tldr)
+        else:
+            await bot.chat.react(conversation_id, msg_id, ":no_entry:")
+        await sync(event=event, bot=bot)
+
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-        channel = event.msg.channel
-        msg_id = event.msg.id
-        conversation_id = event.msg.conv_id
-        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    conversation_id = event.msg.conv_id
+    msg_id = event.msg.id
 
-        tldr = await get_gpt_summary(urls[0])
-        if tldr:
-            await bot.chat.reply(conversation_id, event.msg.id, tldr)
-        else:
-            await bot.chat.react(conversation_id, event.msg.id, ":no_entry:")
-        await sync(event=event, bot=bot)
+    await bot.chat.react(conversation_id, msg_id, ":marvin:")
+    asyncio.create_task(_do_tldr(bot, conversation_id, msg_id, urls[0], event))
 
 
 
