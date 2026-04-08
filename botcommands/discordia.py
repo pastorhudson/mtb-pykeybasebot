@@ -1,4 +1,4 @@
-# !/usr/bin/env python3
+#!/usr/bin/env python3
 import re
 import requests
 
@@ -95,4 +95,4 @@ def get_discordia_text(
     return f"{out}"
 
 if __name__ == "__main__":
-    print(get_discordia_text("Hail Eris"))
+    print(get_discordia_text("myth of the apple"))
