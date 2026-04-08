@@ -621,7 +621,7 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith("!discordia"):
         conversation_id = event.msg.conv_id
-    await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+        await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
 
     # Get everything after "!discordia "
     args = str(event.msg.content.text.body)[11:].strip()
