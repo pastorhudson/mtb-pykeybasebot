@@ -1067,11 +1067,11 @@ async def handler(bot, event):
 
     if str(event.msg.content.text.body).startswith('!tldr'):
         urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
-    conversation_id = event.msg.conv_id
-    msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        msg_id = event.msg.id
 
-    await bot.chat.react(conversation_id, msg_id, ":marvin:")
-    asyncio.create_task(_do_tldr(bot, conversation_id, msg_id, urls[0], event))
+        await bot.chat.react(conversation_id, msg_id, ":marvin:")
+        asyncio.create_task(_do_tldr(bot, conversation_id, msg_id, urls[0], event))
 
 
 
