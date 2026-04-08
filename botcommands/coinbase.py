@@ -1,4 +1,5 @@
 from pprint import pprint
+from datetime import datetime, timedelta
 
 import requests
 
@@ -76,9 +77,17 @@ def get_symbol(code):
     currency = CURRENCY_CODES.get(code.upper())
     return currency["symbol"] if currency else None
 
+def get_trend_emoji(current, past):
+    """Returns an up arrow if price increased, down if decreased."""
+    if current > past:
+        return "▲"
+    elif current < past:
+        return "▼"
+    return "▬"
+
 def get_spot_price(pair: str = 'XLM-USD') -> float:
     """
-    Return the spot price for the requested trading pair from Coinbase.
+    Return the spot price for the requested trading pair from Coinbase including change over 24h.
 
     Parameters
     ----------
@@ -89,19 +98,30 @@ def get_spot_price(pair: str = 'XLM-USD') -> float:
     if "-" not in pair:
         pair = f"{pair}-USD"
 
+    # Current Price
     url = f"https://api.coinbase.com/v2/prices/{pair.upper()}/spot"
     resp = requests.get(url, timeout=10)
     resp.raise_for_status()
     data = resp.json()['data']
+    current_amount = float(data["amount"])
 
+    # Price 24h ago
+    yesterday = (datetime.now() - timedelta(days=1)).isoformat()
+    historic_url = f"{url}?date={yesterday}"
+    h_resp = requests.get(historic_url, timeout=10)
+    h_resp.raise_for_status()
+    past_amount = float(h_resp.json()['data']['amount'])
+
+    trend = get_trend_emoji(current_amount, past_amount)
     curency_symbol = get_symbol(data['currency'])
     crypto_currency = get_currency_by_code(data['base'])
     name_currency = get_currency_by_code(data['currency'])
-    return f"{crypto_currency['name']} {data['base'].upper()} {curency_symbol}{float(data["amount"])} {name_currency['name']}"
+
+    return f"{crypto_currency['name']} {data['base'].upper()} {trend} {curency_symbol}{current_amount} {name_currency['name']}"
 
 if __name__ == "__main__":
     # main(sys.argv[1:])
-    price = get_spot_price()
-    print(price)
+    spot_price = get_spot_price()
+    print(spot_price)
 
 
