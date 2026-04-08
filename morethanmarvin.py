@@ -103,6 +103,7 @@ class Points(object):
 
 
 async def handler(bot, event):
+
     command_list = [
         # {"name": "aoc",
         #  "description": "Make me solve the advent of code puzzle.",
@@ -246,6 +247,11 @@ async def handler(bot, event):
          "description": "Get Uniontown Weather.",
          "usage": ""}
     ]
+
+    # At the top of handler(), before any startswith checks:
+
+
+
 
     # If there's an attachment check if we send this to @marvn
     try:
@@ -532,6 +538,10 @@ async def handler(bot, event):
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
 
+    if event.msg.content.type_name == 'text':
+        body = event.msg.content.text.body if event.msg.content.text else None
+    if not body:
+        return
     # context.add_message(event.msg.content.text.body)
 
     if str(event.msg.content.text.body).startswith("!award"):
