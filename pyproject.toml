@@ -157,5 +157,5 @@ dependencies = [
     "wsproto==1.2.0",
     "wtforms==3.2.1",
     "yarl==1.18.3",
-    "yt-dlp[default]==2025.12.8",
+    "yt-dlp[default]==2026.3.17",
 ]
