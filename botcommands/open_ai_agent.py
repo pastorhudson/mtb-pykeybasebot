@@ -649,7 +649,7 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                 instructions=seed,
                 store=True,  # Store response to potentially use previous_response_id later
                 text = {
-                    "verbosity": "low"
+                    "verbosity": "medium"
                 }
             )
             logging.debug(f"Received responses.create API response object: ID={response.id}, Status={response.status}")
