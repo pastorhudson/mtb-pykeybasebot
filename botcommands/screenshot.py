@@ -1,4 +1,4 @@
-from playwright.async_api import async_playwright
+from camoufox.async_api import AsyncCamoufox
 import random
 import os
 from PIL import Image
@@ -48,12 +48,11 @@ async def crop_screenshot(page, filename):
 
 
 async def get_screenshot(url):
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+    async with AsyncCamoufox(headless=True, geoip=True) as browser:
         page = await browser.new_page()
 
         try:
-            # Navigate to URL and wait for network to be idle (page fully loaded)
+            # Navigate to URL and wait for page load
             await page.goto(url, wait_until='load', timeout=30000)
 
             # Optional: Add a small additional wait for any animations/lazy loading
