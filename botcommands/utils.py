@@ -1,3 +1,4 @@
+import logging
 import subprocess
 from pathlib import Path
 
@@ -86,14 +87,60 @@ def save_base64_image(image_base64, output_dir="storage", file_prefix="image"):
 
     return file_path
 
-def _to_voice_mp4(mp3_path: str) -> str:
-    """Rewrap mp3 as AAC-in-mp4 so Keybase treats it as a voice memo."""
+import struct
+
+def _sample_amplitudes(mp3_path: str, num_buckets: int = 53) -> list:
+    """Sample RMS amplitudes from audio for waveform display."""
+    pcm_path = mp3_path + '.pcm'
+    try:
+        subprocess.run([
+            '/usr/bin/ffmpeg', '-y', '-i', mp3_path,
+            '-ac', '1',        # mono
+            '-ar', '8000',     # 8kHz is plenty for amplitude sampling
+            '-f', 's16le',     # raw 16-bit signed PCM
+            pcm_path
+        ], check=True, capture_output=True)
+
+        with open(pcm_path, 'rb') as f:
+            raw = f.read()
+
+        num_samples = len(raw) // 2
+        samples = struct.unpack(f'<{num_samples}h', raw)
+
+        bucket_size = max(1, num_samples // num_buckets)
+        amps = []
+        for i in range(num_buckets):
+            bucket = samples[i * bucket_size:(i + 1) * bucket_size]
+            if bucket:
+                rms = (sum(s * s for s in bucket) / len(bucket)) ** 0.5
+                # Normalize to ~0.0-0.4 range matching real voice memos
+                amps.append(round(min(rms / 32768.0 * 2.5, 0.4), 6))
+            else:
+                amps.append(0.0)
+        return amps
+
+    except Exception as e:
+        logging.error(f"Amplitude sampling failed: {e}")
+        return []
+    finally:
+        if os.path.exists(pcm_path):
+            os.unlink(pcm_path)
+
+
+def _to_voice_mp4(mp3_path: str) -> dict:
+    """Rewrap mp3 as AAC-in-mp4 with mobile-compatible metadata."""
     mp4_path = mp3_path.replace('.mp3', '.mp4')
+
     subprocess.run([
         '/usr/bin/ffmpeg', '-y', '-i', mp3_path,
-        '-vn',            # no video track
-        '-acodec', 'aac', # AAC codec
+        '-vn',  # no video stream at all
+        '-acodec', 'aac',
         '-b:a', '128k',
+        '-movflags', '+faststart',  # moov atom at front
+        '-map_metadata', '-1',  # strip all metadata
+        '-fflags', '+bitexact',  # deterministic output
         mp4_path
     ], check=True, capture_output=True)
-    return mp4_path
+
+    amps = _sample_amplitudes(mp3_path)
+    return {'file': mp4_path, 'audio_amps': amps}
