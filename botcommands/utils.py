@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 import aiohttp
@@ -84,3 +85,15 @@ def save_base64_image(image_base64, output_dir="storage", file_prefix="image"):
         f.write(image_base64)
 
     return file_path
+
+def _to_voice_mp4(mp3_path: str) -> str:
+    """Rewrap mp3 as AAC-in-mp4 so Keybase treats it as a voice memo."""
+    mp4_path = mp3_path.replace('.mp3', '.mp4')
+    subprocess.run([
+        '/usr/bin/ffmpeg', '-y', '-i', mp3_path,
+        '-vn',            # no video track
+        '-acodec', 'aac', # AAC codec
+        '-b:a', '128k',
+        mp4_path
+    ], check=True, capture_output=True)
+    return mp4_path

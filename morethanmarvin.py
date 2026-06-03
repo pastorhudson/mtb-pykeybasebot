@@ -21,7 +21,7 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
-from botcommands.utils import download_image
+from botcommands.utils import download_image, _to_voice_mp4
 from botcommands.weather import get_weather
 from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
@@ -1252,9 +1252,10 @@ async def handler(bot, event):
                 #         },
                 #     }
                 # )
+                audio_container = _to_voice_mp4(ytm_payload['file'])
 
                 await bot.chat.attach(channel=conversation_id,
-                                      filename=ytm_payload['file'],
+                                      filename=audio_container,
                                       title=ytm_msg)
             except TimeoutError:
                 pass
