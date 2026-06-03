@@ -532,6 +532,33 @@ async def handler(bot, event):
                 if "That video url didn't work." not in yt_msg:
                     await bot.chat.react(conversation_id, event.msg.id, ":no_entry_sign:")
 
+    if event.msg.content.type_name == 'reaction':
+        if event.msg.content.reaction.body == ":bug:":
+            if event.msg.sender.username == 'pastorhudson':  # restrict to admin only
+                conversation_id = event.msg.conv_id
+                dm_channel = f'marvn,{event.msg.sender.username}'
+                channel = chat1.ChatChannel(name=dm_channel)
+
+                msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
+                original_msg = msg.message[0]['msg']
+
+                debug_info = {
+                    "msg_id": original_msg.get('id'),
+                    "conv_id": event.msg.conv_id,
+                    "sender": original_msg.get('sender', {}),
+                    "channel": original_msg.get('channel', {}),
+                    "content_type": original_msg.get('content', {}).get('type'),
+                    "content": original_msg.get('content', {}),
+                    "reactions": original_msg.get('reactions', {}),
+                    "sent_at": original_msg.get('sent_at'),
+                    "sent_at_ms": original_msg.get('sent_at_ms'),
+                }
+
+                debug_str = f"```{json.dumps(debug_info, indent=2)}```"
+
+                # Send as DM so it doesn't clutter the channel
+                await bot.chat.send(channel, debug_str)
+
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
         return
