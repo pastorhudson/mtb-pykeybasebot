@@ -158,8 +158,11 @@ def get_mp3(url):
         'format': 'bestaudio/best',
 
         'restrictfilenames': True,
-        'writeautomaticsub': True,  # Download auto-generated subtitles
-        'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+        # 'writeautomaticsub': True,  # Download auto-generated subtitles
+        # 'subtitleslangs': ['en'],  # Language code for the subtitles (e.g., 'en' for English)
+        # 'ignoreerrors': 'only_download',     # sub 429 won't kill the audio job
+        # 'sleep_interval_subtitles': 30,      # the --sleep-subtitles workaround
+
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'forcefilename': True,
         # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
@@ -488,5 +491,5 @@ if __name__ == '__main__':
     # vtt_file = 'C://Users//geekt//PycharmProjects//2021//mtb-pykeybasebot//botcommands//storage//A_long-winded_1-year_ownership_report_on_my_Hyunda.en.vtt'  # Replace with the path to your VTT file
     # transcript = extract_transcript_from_vtt(vtt_file)
     # print(transcript)
-    print(get_meta('https://www.youtube.com/watch?v=gqupdjbzs0M'))
+    print(get_mp3('https://www.youtube.com/watch?v=gqupdjbzs0M'))
     pass
