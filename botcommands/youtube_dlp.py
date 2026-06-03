@@ -166,7 +166,8 @@ def get_mp3(url):
         'outtmpl': f'{storage.absolute()}/%(title).50s.%(ext)s',
         'forcefilename': True,
         # 'ffmpeg_location': '/app/vendor/ffmpeg/ffmpeg',
-        'ffmpeg_location': '/app/.cache/ms-playwright/ffmpeg-1011',
+        # 'ffmpeg_location': '/app/.cache/ms-playwright/ffmpeg-1011',
+        'ffmpeg_location': '/usr/bin/ffmpeg',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
