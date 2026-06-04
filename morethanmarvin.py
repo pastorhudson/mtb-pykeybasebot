@@ -1240,18 +1240,24 @@ async def handler(bot, event):
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
             try:
                 voice = to_voice_mp4(ytm_payload['file'])
-
-                await bot.chat.execute({
-                    "method": "attach",
-                    "params": {
-                        "options": {
-                            "conversation_id": conversation_id,
-                            "filename": voice['file'],
-                            "title": ytm_msg,
-                            "preview": voice['preview'],  # <-- pre-built waveform PNG
-                        }
-                    }
-                })
+                await bot.chat.attach(
+                    channel=conversation_id,
+                    filename=voice['file'],
+                    title=ytm_msg
+                )
+                # voice = to_voice_mp4(ytm_payload['file'])
+                #
+                # await bot.chat.execute({
+                #     "method": "attach",
+                #     "params": {
+                #         "options": {
+                #             "conversation_id": conversation_id,
+                #             "filename": voice['file'],
+                #             "title": ytm_msg,
+                #             "preview": voice['preview'],  # <-- pre-built waveform PNG
+                #         }
+                #     }
+                # })
             except TimeoutError:
                 pass
 

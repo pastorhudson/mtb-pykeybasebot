@@ -181,6 +181,15 @@ def to_voice_mp4(audio_path: str) -> dict:
     amps = _sample_amplitudes(audio_path)
     _generate_waveform_png(amps, png_path)
 
+    # Add this temporarily to to_voice_mp4() for debugging
+    probe = subprocess.run([
+        '/usr/bin/ffprobe', '-v', 'quiet',
+        '-print_format', 'json',
+        '-show_format',
+        '-show_streams',
+        mp4_path  # probe the OUTPUT file, not input
+    ], capture_output=True, text=True)
+    logging.info(f"CONVERTED FILE PROBE: {probe.stdout}")
     return {
         'file': mp4_path,
         'preview': png_path,
