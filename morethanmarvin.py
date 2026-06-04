@@ -1242,7 +1242,7 @@ async def handler(bot, event):
                 voice = to_voice_mp4(ytm_payload['file'])
                 await bot.chat.attach(
                     channel=conversation_id,
-                    filename=voice['file'],
+                    filename=voice,
                     title=ytm_msg
                 )
                 # voice = to_voice_mp4(ytm_payload['file'])
