@@ -147,52 +147,15 @@ def _generate_waveform_png(amps: list, output_path: str,
     return output_path
 
 
-def to_voice_mp4(audio_path: str) -> dict:
-    """
-    Convert any audio file to Keybase voice memo format.
-    Returns dict with 'file' (mp4 path), 'preview' (png path), 'audio_amps', 'duration_ms'.
-    """
-    mp4_path = os.path.splitext(audio_path)[0] + '_voice.mp4'
-    png_path = os.path.splitext(audio_path)[0] + '_preview.png'
-
+def to_voice_mp4(audio_path: str) -> str:
+    # Use .m4a — Keybase CLI detects audio by extension, .mp4 is not in the list
+    m4a_path = os.path.splitext(audio_path)[0] + '_voice.m4a'
     subprocess.run([
         '/usr/bin/ffmpeg', '-y', '-i', audio_path,
         '-vn', '-acodec', 'aac', '-b:a', '128k',
         '-ac', '1', '-ar', '44100',
         '-map_metadata', '-1',
         '-movflags', '+faststart',
-        mp4_path
+        m4a_path
     ], check=True, capture_output=True)
-
-    # Get duration
-    probe = subprocess.run([
-        '/usr/bin/ffprobe', '-v', 'quiet',
-        '-print_format', 'json', '-show_streams', audio_path
-    ], capture_output=True, text=True)
-    duration_ms = 0
-    try:
-        import json
-        streams = json.loads(probe.stdout).get('streams', [])
-        if streams:
-            duration_ms = int(float(streams[0].get('duration', 0)) * 1000)
-    except Exception:
-        pass
-
-    amps = _sample_amplitudes(audio_path)
-    _generate_waveform_png(amps, png_path)
-
-    # Add this temporarily to to_voice_mp4() for debugging
-    probe = subprocess.run([
-        '/usr/bin/ffprobe', '-v', 'quiet',
-        '-print_format', 'json',
-        '-show_format',
-        '-show_streams',
-        mp4_path  # probe the OUTPUT file, not input
-    ], capture_output=True, text=True)
-    logging.info(f"CONVERTED FILE PROBE: {probe.stdout}")
-    return {
-        'file': mp4_path,
-        'preview': png_path,
-        'audio_amps': amps,
-        'duration_ms': duration_ms,
-    }
+    return m4a_path
