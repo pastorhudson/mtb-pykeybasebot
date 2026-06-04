@@ -119,22 +119,71 @@ def _sample_amplitudes(audio_path: str, num_buckets: int = 53) -> list:
             os.unlink(pcm_path)
 
 
-def to_voice_mp4(audio_path: str) -> str:
+from PIL import Image, ImageDraw
+
+
+def _generate_waveform_png(amps: list, output_path: str,
+                           width: int = 106, height: int = 64):
+    """Generate a waveform preview PNG matching Keybase voice memo dimensions."""
+    img = Image.new('RGBA', (width, height), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    bar_count = len(amps)
+    bar_width = max(1, width // (bar_count * 2))
+    spacing = width / bar_count
+
+    for i, amp in enumerate(amps):
+        bar_height = max(2, int(amp * height * 2.5))
+        x = int(i * spacing + spacing / 2)
+        y_center = height // 2
+        # Green color like Keybase voice memos
+        draw.rectangle(
+            [x - bar_width, y_center - bar_height // 2,
+             x + bar_width, y_center + bar_height // 2],
+            fill=(77, 210, 100, 255)
+        )
+
+    img.save(output_path, 'PNG')
+    return output_path
+
+
+def to_voice_mp4(audio_path: str) -> dict:
     """
-    Convert any audio file to a Keybase-compatible voice memo mp4.
-    Returns the path to the converted file as a string.
-    Caller is responsible for cleanup of the original if desired.
+    Convert any audio file to Keybase voice memo format.
+    Returns dict with 'file' (mp4 path), 'preview' (png path), 'audio_amps', 'duration_ms'.
     """
     mp4_path = os.path.splitext(audio_path)[0] + '_voice.mp4'
+    png_path = os.path.splitext(audio_path)[0] + '_preview.png'
+
     subprocess.run([
         '/usr/bin/ffmpeg', '-y', '-i', audio_path,
-        '-vn',
-        '-acodec', 'aac',
-        '-b:a', '128k',
-        '-ac', '1',
-        '-ar', '44100',
+        '-vn', '-acodec', 'aac', '-b:a', '128k',
+        '-ac', '1', '-ar', '44100',
         '-map_metadata', '-1',
         '-movflags', '+faststart',
         mp4_path
     ], check=True, capture_output=True)
-    return mp4_path  # just a string, always
+
+    # Get duration
+    probe = subprocess.run([
+        '/usr/bin/ffprobe', '-v', 'quiet',
+        '-print_format', 'json', '-show_streams', audio_path
+    ], capture_output=True, text=True)
+    duration_ms = 0
+    try:
+        import json
+        streams = json.loads(probe.stdout).get('streams', [])
+        if streams:
+            duration_ms = int(float(streams[0].get('duration', 0)) * 1000)
+    except Exception:
+        pass
+
+    amps = _sample_amplitudes(audio_path)
+    _generate_waveform_png(amps, png_path)
+
+    return {
+        'file': mp4_path,
+        'preview': png_path,
+        'audio_amps': amps,
+        'duration_ms': duration_ms,
+    }
