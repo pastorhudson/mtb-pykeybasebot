@@ -149,7 +149,7 @@ def _generate_waveform_png(amps: list, output_path: str,
 
 def to_voice_mp4(audio_path: str) -> str:
     # Use .m4a — Keybase CLI detects audio by extension, .mp4 is not in the list
-    m4a_path = os.path.splitext(audio_path)[0] + '_voice.mp4'
+    m4a_path = os.path.splitext(audio_path)[0] + '_voice.m4a'
     subprocess.run([
         '/usr/bin/ffmpeg', '-y', '-i', audio_path,
         '-vn', '-acodec', 'aac', '-b:a', '128k',
