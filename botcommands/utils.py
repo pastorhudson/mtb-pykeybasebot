@@ -1,9 +1,8 @@
 import logging
 import subprocess
 from pathlib import Path
-
+import struct
 import aiohttp
-
 from models import Team, User
 import base64
 import os
@@ -87,18 +86,14 @@ def save_base64_image(image_base64, output_dir="storage", file_prefix="image"):
 
     return file_path
 
-import struct
 
-def _sample_amplitudes(mp3_path: str, num_buckets: int = 53) -> list:
-    """Sample RMS amplitudes from audio for waveform display."""
-    pcm_path = mp3_path + '.pcm'
+def _sample_amplitudes(audio_path: str, num_buckets: int = 53) -> list:
+    """Sample RMS amplitudes from any audio file for waveform display."""
+    pcm_path = audio_path + '.pcm'
     try:
         subprocess.run([
-            '/usr/bin/ffmpeg', '-y', '-i', mp3_path,
-            '-ac', '1',        # mono
-            '-ar', '8000',     # 8kHz is plenty for amplitude sampling
-            '-f', 's16le',     # raw 16-bit signed PCM
-            pcm_path
+            '/usr/bin/ffmpeg', '-y', '-i', audio_path,
+            '-ac', '1', '-ar', '8000', '-f', 's16le', pcm_path
         ], check=True, capture_output=True)
 
         with open(pcm_path, 'rb') as f:
@@ -106,19 +101,16 @@ def _sample_amplitudes(mp3_path: str, num_buckets: int = 53) -> list:
 
         num_samples = len(raw) // 2
         samples = struct.unpack(f'<{num_samples}h', raw)
-
         bucket_size = max(1, num_samples // num_buckets)
         amps = []
         for i in range(num_buckets):
             bucket = samples[i * bucket_size:(i + 1) * bucket_size]
             if bucket:
                 rms = (sum(s * s for s in bucket) / len(bucket)) ** 0.5
-                # Normalize to ~0.0-0.4 range matching real voice memos
                 amps.append(round(min(rms / 32768.0 * 2.5, 0.4), 6))
             else:
                 amps.append(0.0)
         return amps
-
     except Exception as e:
         logging.error(f"Amplitude sampling failed: {e}")
         return []
@@ -127,20 +119,22 @@ def _sample_amplitudes(mp3_path: str, num_buckets: int = 53) -> list:
             os.unlink(pcm_path)
 
 
-def _to_voice_mp4(mp3_path: str) -> dict:
-    """Rewrap mp3 as AAC-in-mp4 with mobile-compatible metadata."""
-    mp4_path = mp3_path.replace('.mp3', '.mp4')
-
+def to_voice_mp4(audio_path: str) -> str:
+    """
+    Convert any audio file to a Keybase-compatible voice memo mp4.
+    Returns the path to the converted file as a string.
+    Caller is responsible for cleanup of the original if desired.
+    """
+    mp4_path = os.path.splitext(audio_path)[0] + '_voice.mp4'
     subprocess.run([
-        '/usr/bin/ffmpeg', '-y', '-i', mp3_path,
-        '-vn',  # no video stream at all
+        '/usr/bin/ffmpeg', '-y', '-i', audio_path,
+        '-vn',
         '-acodec', 'aac',
         '-b:a', '128k',
-        '-movflags', '+faststart',  # moov atom at front
-        '-map_metadata', '-1',  # strip all metadata
-        '-fflags', '+bitexact',  # deterministic output
+        '-ac', '1',
+        '-ar', '44100',
+        '-map_metadata', '-1',
+        '-movflags', '+faststart',
         mp4_path
     ], check=True, capture_output=True)
-
-    amps = _sample_amplitudes(mp3_path)
-    return {'file': mp4_path, 'audio_amps': amps}
+    return mp4_path  # just a string, always

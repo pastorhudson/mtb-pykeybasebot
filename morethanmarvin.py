@@ -21,7 +21,7 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
-from botcommands.utils import download_image, _to_voice_mp4
+from botcommands.utils import download_image, to_voice_mp4
 from botcommands.weather import get_weather
 from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
@@ -1238,32 +1238,13 @@ async def handler(bot, event):
         ytm_payload = get_mp3(ytm_urls[0])
         if ytm_payload['file']:
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
-
             try:
-
-                # await bot.chat.execute(
-                #     {
-                #         "method": "attach",
-                #         "params": {
-                #             "options": {"channel": conversation_id,
-                #                         "filename": ytm_payload['file'],
-                #                         "title": ytm_msg,
-                #                         }
-                #         },
-                #     }
-                # )
-                audio_container = _to_voice_mp4(ytm_payload['file'])
-
+                audio_container = to_voice_mp4(ytm_payload['file'])  # always a string path
                 await bot.chat.attach(channel=conversation_id,
                                       filename=audio_container,
                                       title=ytm_msg)
             except TimeoutError:
                 pass
-            # finally:
-            #     await bot.chat.execute(
-            #         {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
-            #                                                     "message_id": sent_msg.message_id}}}
-            #     )
 
     # if str(event.msg.content.text.body).startswith('https://'):
     #     url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
