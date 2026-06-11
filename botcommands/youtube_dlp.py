@@ -381,6 +381,7 @@ def get_meta(url, storage_path=storage):
     ydl_opts = {
         'writeautomaticsub': True,
         'subtitleslangs': ['en'],
+        'subtitlesformat': 'vtt',
         'writethumbnail': False,  # We don't need thumbnails
         'restrictfilenames': True,
         'outtmpl': f'{storage_path.absolute()}/%(title).50s.%(ext)s',
@@ -405,14 +406,24 @@ def get_meta(url, storage_path=storage):
                 # Download info first to get potential subtitle info
                 info = ydl.extract_info(url, download=False)
                 if info.get('subtitles') or info.get('automatic_captions'):
+                    existing_subtitle_files = set(Path(storage_path).glob("*.vtt"))
                     # Now download with subtitles
                     info = ydl.extract_info(url, download=True)
-                    # Find the subtitle file
-                    subtitle_files = [f for f in Path(storage_path).glob("*.vtt")]
-                    if subtitle_files:
-                        transcript = extract_transcript_from_vtt(subtitle_files[0])
-                        # Clean up subtitle file after reading
-                        subtitle_files[0].unlink()
+                    subtitle_files = []
+                    for subtitle in info.get('requested_subtitles', {}).values():
+                        filepath = subtitle.get('filepath')
+                        if filepath:
+                            subtitle_files.append(Path(filepath))
+
+                    new_subtitle_files = set(Path(storage_path).glob("*.vtt")) - existing_subtitle_files
+                    subtitle_files.extend(sorted(new_subtitle_files))
+
+                    for subtitle_file in subtitle_files:
+                        if subtitle_file.exists():
+                            transcript = extract_transcript_from_vtt(subtitle_file)
+                            subtitle_file.unlink()
+                            if transcript:
+                                break
             except Exception as e:
                 logging.error(f"Failed to extract transcript: {e}")
 

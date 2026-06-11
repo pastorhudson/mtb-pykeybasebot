@@ -570,6 +570,18 @@ new_tools = [
             }
         }
     },
+    {
+        "name": "get_meta",
+        "type": "function",
+        "description": "Retrieve YouTube video metadata and the English transcript/captions when available. Use this when asked to get, read, summarize, or answer questions about a YouTube transcript.",
+        "parameters": {
+            "type": "object",
+            "required": ["url"],
+            "properties": {
+                "url": {"type": "string", "description": "YouTube video URL."}
+            }
+        }
+    },
     {"type": "web_search_preview"},
     {
         "name": "generate_dalle_image",
@@ -775,6 +787,8 @@ async def get_ai_response(user_input: str, team_name, image_path=None, bot=None,
                             # Regular response handling
                             if isinstance(result, dict) and "file" in result:
                                 # For other file-containing responses, preserve structure
+                                tool_output_str = json.dumps(result)
+                            elif function_name == "get_meta" and isinstance(result, dict):
                                 tool_output_str = json.dumps(result)
                             elif isinstance(result, dict) and "msg" in result:
                                 tool_output_str = f"Success: {result['msg']}" + (
