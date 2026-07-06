@@ -21,7 +21,7 @@ from botcommands.tldr import tldr_react, get_gpt_summary
 import re
 import random
 import pykeybasebot.types.chat1 as chat1
-from botcommands.utils import download_image, to_voice_mp4
+from botcommands.utils import download_image
 from botcommands.weather import get_weather
 from pykeybasebot import Bot
 from botcommands.youtube_dlp import get_mp3, get_mp4, get_meta
@@ -531,33 +531,6 @@ async def handler(bot, event):
                 # if is_supported(yt_urls[0]):
                 if "That video url didn't work." not in yt_msg:
                     await bot.chat.react(conversation_id, event.msg.id, ":no_entry_sign:")
-
-    if event.msg.content.type_name == 'reaction':
-        if event.msg.content.reaction.body == ":bug:":
-            if event.msg.sender.username == 'pastorhudson':  # restrict to admin only
-                conversation_id = event.msg.conv_id
-                dm_channel = f'marvn,{event.msg.sender.username}'
-                channel = chat1.ChatChannel(name=dm_channel)
-
-                msg = await bot.chat.get(event.msg.conv_id, event.msg.content.reaction.message_id)
-                original_msg = msg.message[0]['msg']
-
-                debug_info = {
-                    "msg_id": original_msg.get('id'),
-                    "conv_id": event.msg.conv_id,
-                    "sender": original_msg.get('sender', {}),
-                    "channel": original_msg.get('channel', {}),
-                    "content_type": original_msg.get('content', {}).get('type'),
-                    "content": original_msg.get('content', {}),
-                    "reactions": original_msg.get('reactions', {}),
-                    "sent_at": original_msg.get('sent_at'),
-                    "sent_at_ms": original_msg.get('sent_at_ms'),
-                }
-
-                debug_str = f"```{json.dumps(debug_info, indent=2)}```"
-
-                # Send as DM so it doesn't clutter the channel
-                await bot.chat.send(channel, debug_str)
 
 
     if event.msg.content.type_name != chat1.MessageTypeStrings.TEXT.value:
@@ -1238,28 +1211,59 @@ async def handler(bot, event):
         ytm_payload = get_mp3(ytm_urls[0])
         if ytm_payload['file']:
             await bot.chat.react(conversation_id, event.msg.id, ":floppy_disk:")
+
             try:
-                voice = to_voice_mp4(ytm_payload['file'])
-                await bot.chat.attach(
-                    channel=conversation_id,
-                    filename=voice,
-                    title=ytm_msg
-                )
-                # voice = to_voice_mp4(ytm_payload['file'])
-                #
-                # await bot.chat.execute({
-                #     "method": "attach",
-                #     "params": {
-                #         "options": {
-                #             "conversation_id": conversation_id,
-                #             "filename": voice['file'],
-                #             "title": ytm_msg,
-                #             "preview": voice['preview'],  # <-- pre-built waveform PNG
-                #         }
+
+                # await bot.chat.execute(
+                #     {
+                #         "method": "attach",
+                #         "params": {
+                #             "options": {"channel": conversation_id,
+                #                         "filename": ytm_payload['file'],
+                #                         "title": ytm_msg,
+                #                         }
+                #         },
                 #     }
-                # })
+                # )
+
+                await bot.chat.attach(channel=conversation_id,
+                                      filename=ytm_payload['file'],
+                                      title=ytm_msg)
             except TimeoutError:
                 pass
+            # finally:
+            #     await bot.chat.execute(
+            #         {"method": "delete", "params": {"options": {"conversation_id": conversation_id,
+            #                                                     "message_id": sent_msg.message_id}}}
+            #     )
+
+    # if str(event.msg.content.text.body).startswith('https://'):
+    #     url = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+    #     # domain = urlparse(url[0]).netloc
+    #     yt_urls = re.findall(r'(https?://[^\s]+)', event.msg.content.text.body)
+    #     conversation_id = event.msg.conv_id
+    #
+    #     if 'youtube' in yt_urls[0] or 'youtu.be' in yt_urls[0]:
+    #         try:
+    #             await set_unfurl(unfurl=False)
+    #         except Exception as e:
+    #             logging.info(e)
+    #
+    #         await bot.chat.react(conversation_id, event.msg.id, ":marvin:")
+    #
+    #         yt_payload = get_meta(yt_urls[0])
+    #         yt_msg = yt_payload['msg']
+    #         logging.info(yt_msg)
+    #         await bot.chat.reply(conversation_id, event.msg.id, yt_msg)
+    #         await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
+    #
+    #     else:
+    #         yt_payload = get_meta(yt_urls[0])
+    #         yt_msg = yt_payload['msg']
+    #         # if is_supported(yt_urls[0]):
+    #         if "That video url didn't work." not in yt_msg:
+    #             await bot.chat.react(conversation_id, event.msg.id, ":vhs:")
+
 
 
     if str(event.msg.content.text.body).startswith('!ytv'):
