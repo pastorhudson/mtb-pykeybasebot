@@ -58,7 +58,7 @@ from botcommands.curl_commands import get_curl, extract_message_sender
 from pykeybasebot.types import chat1
 from datetime import timedelta
 from botcommands.open_ai_agent import handle_marvn_mention_with_context
-
+from botcommands.vin import get_vin_lookup
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -159,12 +159,8 @@ async def handler(bot, event):
         {"name": "meh",
          "description": "Get's today's meh.",
          "usage": ""},
-        # {"name": "meet",
-        #  "description": "Get video conference link.",
-        #  "usage": "<Conference Name>"},
-        # {"name": "morbidity",
-        #  "description": "Return data about current mass shootings in the US.",
-        #  "usage": ""},
+
+
         {"name": "morse",
          "description": "Translate morsecode to english.",
          "usage": ""},
@@ -173,9 +169,6 @@ async def handler(bot, event):
          "usage": ""},
         {"name": "news",
          "description": "Gets the top x articles from hackernews.",
-         "usage": "optional num of articles"},
-        {"name": "apnews",
-         "description": "Gets the top x articles from apnews.",
          "usage": "optional num of articles"},
         {"name": "poll",
          "description": "Start a poll",
@@ -219,27 +212,21 @@ async def handler(bot, event):
         {"name": "tldr",
          "description": "Forces me to read an entire article and then summarize it because you're lazy.",
          "usage": "<url>"},
-        # {"name": "vac",
-        #  "description": "Get Vaccine Distributation data from health.pa.gov",
-        #  "usage": ""},
-        # {"name": "waffle",
-        #  "description": "Get the currently closed Waffle Houses",
-        #  "usage": "Optional <state>"},
+        {"name": "vin",
+         "description": "Looks up a vehicle by its 17-character VIN via the Visor API.",
+         "usage": "<vin> <- Required"},
+
         {"name": "wager",
          "description": "Forces me to setup a silly bet with points that don't matter.",
          "usage": "<points wagered> <The Event or Thing your betting upon>"},
-        # {"name": "yt",
-        #  "description": "Forces me to go get meta data about a youtube video.",
-        #  "usage": "<url>"},
+
         {"name": "ytm",
          "description": "Forces me to get metadata and download the stupid thing as an mp3.",
          "usage": "<url>"},
         {"name": "ytv",
          "description": "Forces me to get metadata and download the stupid thing.",
          "usage": "<url>"},
-        # {"name": "wordle",
-        #  "description": "Retrieve today's wordle to ensure you always win.",
-        #  "usage": "optional <date>"},
+
         {"name": "transmit",
          "description": "Get curl command to send a message to the current chat conversation.",
          "usage": "<message> <optional> -sender <sender>"},
@@ -1417,6 +1404,18 @@ async def handler(bot, event):
             await bot.chat.send(conversation_id, msg)
             await bot.chat.send(channel, f"https://marvn.app/since?token={token}")
 
+    if str(event.msg.content.text.body).startswith("!vin"):
+        channel = event.msg.channel
+        msg_id = event.msg.id
+        conversation_id = event.msg.conv_id
+        try:
+            vin = str(event.msg.content.text.body).split(' ')[1]
+            payload, found = get_vin_lookup(vin)
+            msg = payload['msg']
+        except IndexError:
+            msg = "Give me a VIN. Seventeen characters. I can't decode the void."
+        my_msg = await bot.chat.reply(conversation_id, event.msg.id, msg)
+
     if str(event.msg.content.text.body).startswith('!weather'):
         conversation_id = event.msg.conv_id
         # msg = f"`-5` points deducted from @{event.msg.sender.username} for asking me to fetch the weather.\n" \
@@ -1475,12 +1474,7 @@ async def periodic_task():
                 logging.info(e)
 
             await bot.chat.send(mtb_conversation_id, msg[5])
-            try:
-                ap_news = "Today's AP News Headlines:\n"
-                ap_news += get_top_ap_news()
-                await bot.chat.send(mtb_conversation_id, ap_news)
-            except Exception as e:
-                logging.info(e)
+
             try:
                 xlm = get_spot_price()
                 await bot.chat.send(mtb_conversation_id, xlm)
