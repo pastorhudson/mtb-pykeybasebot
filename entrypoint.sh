@@ -16,4 +16,4 @@ fi
 
 # Switch to appuser and run the command
 export HOME=/app
-# exec gosu appuser "$@"
+exec gosu appuser "$@"
