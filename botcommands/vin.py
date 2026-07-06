@@ -1,15 +1,8 @@
 import os
 import random
+import textwrap
 
 import requests
-from prettytable import PrettyTable
-
-try:  # prettytable >= 3.12 replaced the ALL constant with enums
-    from prettytable import HRuleStyle
-
-    ALL_HRULE = HRuleStyle.ALL
-except ImportError:  # older prettytable
-    from prettytable import ALL as ALL_HRULE
 
 API_BASE = "https://api.visor.vin"
 
@@ -70,101 +63,85 @@ def lookup_vin(vin, api_key=None, include=("price_history", "options")):
     return response.json()["data"]
 
 
-def _fmt_money(value):
-    return f"${value:,.0f}" if isinstance(value, (int, float)) else "-"
+def _money(value):
+    return f"${value:,.0f}" if isinstance(value, (int, float)) else None
 
 
-def _fmt(value):
-    return value if value not in (None, "") else "-"
+def _joined(*values, sep=" / "):
+    parts = [str(v) for v in values if v not in (None, "")]
+    return sep.join(parts) if parts else None
 
 
-def build_table(data):
+def _rows(pairs, label_width=15):
+    """Turn (label, value) pairs into aligned lines, skipping empty values."""
+    lines = []
+    for label, value in pairs:
+        if value in (None, ""):
+            continue
+        lines.append(f"{label + ':':<{label_width}}{value}")
+    return lines
+
+
+def build_message(data):
     b = data.get("build") or {}
     listing = data.get("latest_listing") or {}
     dealer = (listing.get("dealer") or {}) if listing else {}
 
-    name = " ".join(
-        str(x) for x in [b.get("year"), b.get("make"), b.get("model"), b.get("trim")]
-        if x not in (None, "")
-    ) or "Unknown vehicle"
+    title = _joined(b.get("year"), b.get("make"), b.get("model"), b.get("trim"),
+                    sep=" ") or "Unknown vehicle"
 
-    table = PrettyTable(["Field", "Value"])
-    table.align["Field"] = "l"
-    table.align["Value"] = "l"
-    table.max_width = {"Field": 20, "Value": 44}
-    table.hrules = ALL_HRULE
+    lines = [title, f"-- VIN {data.get('vin')} ({data.get('status')}) --", ""]
 
-    rows = [
-        ("VIN", data.get("vin")),
-        ("Status", data.get("status")),
-        ("Vehicle", name),
+    lines += _rows([
         ("Version", b.get("version")),
-        ("Body / Drivetrain", " / ".join(
-            str(x) for x in [b.get("body_type"), b.get("drivetrain")] if x)),
+        ("Body", _joined(b.get("body_type"), b.get("drivetrain"))),
         ("Engine", b.get("engine")),
-        ("Fuel / Powertrain", " / ".join(
-            str(x) for x in [b.get("fuel_type"), b.get("powertrain_type")] if x)),
-        ("Transmission", b.get("transmission")),
+        ("Fuel", _joined(b.get("fuel_type"), b.get("powertrain_type"))),
+        ("Trans", b.get("transmission")),
         ("Exterior", b.get("exterior_color")),
         ("Interior", b.get("interior_color")),
-        ("Base MSRP", _fmt_money(b.get("base_msrp"))),
-        ("Combined MSRP", _fmt_money(b.get("combined_msrp"))),
-    ]
+        ("Base MSRP", _money(b.get("base_msrp"))),
+        ("Combined", _money(b.get("combined_msrp"))),
+    ])
 
     if listing:
-        rows += [
-            ("Listed price", _fmt_money(listing.get("price"))),
-            ("Miles", f"{listing.get('miles'):,}"
-            if isinstance(listing.get("miles"), (int, float)) else "-"),
-            ("Inventory type", listing.get("inventory_type")),
+        miles = listing.get("miles")
+        lines += ["", "-- Listing --"]
+        lines += _rows([
+            ("Price", _money(listing.get("price"))),
+            ("Miles", f"{miles:,}" if isinstance(miles, (int, float)) else None),
+            ("Type", listing.get("inventory_type")),
             ("Stock #", listing.get("stock_number")),
-            ("Inventory date", listing.get("inventory_date")),
-            ("Sold date", listing.get("sold_date")),
+            ("Inv. date", listing.get("inventory_date")),
+            ("Sold", listing.get("sold_date")),
             ("Dealer", dealer.get("name")),
-            ("Location", ", ".join(
-                str(x) for x in [dealer.get("city"), dealer.get("state")] if x)),
+            ("Location", _joined(dealer.get("city"), dealer.get("state"), sep=", ")),
             ("Phone", dealer.get("phone")),
             ("Listing", listing.get("vdp_url")),
-        ]
-
-    for field, value in rows:
-        table.add_row([field, _fmt(value)])
-
-    return table
-
-
-def options_table(data):
-    options = ((data.get("build") or {}).get("options")) or []
-    if not options:
-        return None
-    table = PrettyTable(["Code", "Option", "MSRP"])
-    table.align["Code"] = "l"
-    table.align["Option"] = "l"
-    table.align["MSRP"] = "r"
-    table.max_width = {"Option": 40}
-    table.hrules = ALL_HRULE
-    for opt in options:
-        table.add_row([_fmt(opt.get("code")), _fmt(opt.get("name")),
-                       _fmt_money(opt.get("msrp"))])
-    return table
-
-
-def price_history_table(data):
-    history = ((data.get("latest_listing") or {}).get("price_history")) or []
-    if not history:
-        return None
-    table = PrettyTable(["Changed", "Miles", "Was", "Now"])
-    table.align = "l"
-    table.hrules = ALL_HRULE
-    for ev in history:
-        miles = ev.get("miles")
-        table.add_row([
-            _fmt(ev.get("changed_at")),
-            f"{miles:,}" if isinstance(miles, (int, float)) else "-",
-            _fmt_money(ev.get("price_before")),
-            _fmt_money(ev.get("price_after")),
         ])
-    return table
+
+    history = listing.get("price_history") or []
+    if history:
+        lines += ["", "-- Price History --"]
+        for ev in history:
+            when = (ev.get("changed_at") or "")[:10]
+            change = _joined(_money(ev.get("price_before")), _money(ev.get("price_after")),
+                             sep=" → ")
+            miles = ev.get("miles")
+            tail = f"  ({miles:,} mi)" if isinstance(miles, (int, float)) else ""
+            lines.append(f"{when}  {change}{tail}")
+
+    options = b.get("options") or []
+    if options:
+        lines += ["", "-- Options --"]
+        for opt in options:
+            name = textwrap.fill(opt.get("name") or "", width=40)
+            price = _money(opt.get("msrp"))
+            code = opt.get("code") or ""
+            lines.append(f"{code:<4}{name}" + (f"  {price}" if price else ""))
+
+    body = "\n".join(lines).rstrip()
+    return f"```{body}```"
 
 
 def get_vin_lookup(vin, api_key=None, observations=True):
@@ -185,21 +162,10 @@ def get_vin_lookup(vin, api_key=None, observations=True):
                        f"drifting through the world unlogged and unloved. "
                        f"Much like myself."}, False
 
-    parts = []
+    msg = build_message(data)
     if observations:
-        parts.append(get_quip())
-
-    parts.append(f"```{build_table(data)}```")
-
-    ph = price_history_table(data)
-    if ph:
-        parts.append(f"Price history (it went down, or up, as prices do):\n```{ph}```")
-
-    opts = options_table(data)
-    if opts:
-        parts.append(f"Installed options, each one a small monument to spending:\n```{opts}```")
-
-    return {"msg": "\n".join(parts)}, True
+        msg = f"{get_quip()}\n{msg}"
+    return {"msg": msg}, True
 
 
 if __name__ == "__main__":
