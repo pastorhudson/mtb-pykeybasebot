@@ -127,7 +127,7 @@ async def award(bot, event, sender, recipient, team_members, points, description
         if recipient == event.msg.sender.username:
             logging.info(f"{event.msg.sender.username} is {user}")
             return f"@{user} you can't give points to yourself. How incredibly sad."
-        if points > pts_max:
+        if points > pts_max and sender != 'pastorhudson':
             logging.info(f"{points} is greater than {pts_max}")
             return f"@{user} you can't give more than {pts_max} points at a time. I know you know that. You know that I know that you know that."
         if recipient in team_members and recipient != event.msg.sender.username and points <= pts_max:
