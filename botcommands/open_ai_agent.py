@@ -137,7 +137,7 @@ new_tools = [
                 "points": {
                     "type": "integer",
                     "minimum": -5000,
-                    "maximum": 5000,
+                    "maximum": 10000,
                     "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Normally we never give an even amount of points or a negative amount, but this restriction does not apply when the sender is pastorhudson."
                 },
                 "description": {
