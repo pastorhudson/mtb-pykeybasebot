@@ -15,6 +15,8 @@ import textwrap
 
 logging.basicConfig(level=logging.DEBUG)
 
+AWARD_ADMINS = {"pastorhudson"}
+
 
 
 def get_score(channel_name, year=datetime.datetime.utcnow().year):
@@ -93,6 +95,7 @@ def RepresentsInt(s):
 async def award(bot, event, sender, recipient, team_members, points, description):
 
     pts_max = 5000
+    is_admin = sender in AWARD_ADMINS
 
     instructions = f"You have failed. I'm not surprised.\n" \
                    f"```You can only give points to someone in this chat.\n" \
@@ -117,7 +120,7 @@ async def award(bot, event, sender, recipient, team_members, points, description
         if not points:
             return instructions
 
-        if points < 0 and sender != 'pastorhudson':
+        if points < 0 and not is_admin:
             logging.info("Points are Negative!")
             user = event.msg.sender.username
             return f"`-500` points awarded to @{user} for trying to be negative. You're not allowed to give negative points."
@@ -127,10 +130,10 @@ async def award(bot, event, sender, recipient, team_members, points, description
         if recipient == event.msg.sender.username:
             logging.info(f"{event.msg.sender.username} is {user}")
             return f"@{user} you can't give points to yourself. How incredibly sad."
-        if points > pts_max and sender != 'pastorhudson':
+        if points > pts_max and not is_admin:
             logging.info(f"{points} is greater than {pts_max}")
             return f"@{user} you can't give more than {pts_max} points at a time. I know you know that. You know that I know that you know that."
-        if recipient in team_members and recipient != event.msg.sender.username and points <= pts_max:
+        if recipient in team_members and recipient != event.msg.sender.username and (points <= pts_max or is_admin):
             score = write_score(recipient, event.msg.sender.username, team_name, points, description=description)
             await bot.chat.react(conversation_id, message_id, ":marvin:")
             return f"Awarded {points} points to @{recipient}."
