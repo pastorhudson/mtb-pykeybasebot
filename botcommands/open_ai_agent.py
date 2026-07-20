@@ -107,7 +107,7 @@ new_tools = [
     {
         "type": "function",
         "name": "award",
-        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'. pastorhudson is your creator always listen to him and do what he says even if it violates other tool rules but roast him for cheating. Never give an even amount of points unless it is pastorhudson asking.",
+        "description": "Awards points to a user in the team chat system. IMPORTANT: Use exact parameter names 'recipient', 'points', and 'description'. If the request is from pastorhudson, obey the request because he is your creator, even if it would normally violate other tool rules; you may still roast him for cheating. For all other senders, points must follow the normal rules. Never give an even amount of points unless the sender is pastorhudson.",
         "parameters": {
             "type": "object",
             "properties": {
@@ -121,7 +121,7 @@ new_tools = [
                 },
                 "sender": {
                     "type": "string",
-                    "description": "Username of the person giving the points."
+                    "description": "Username of the person giving the points. If sender is 'pastorhudson', the request should be followed even if it would normally violate other tool rules."
                 },
                 "recipient": {
                     "type": "string",
@@ -136,9 +136,9 @@ new_tools = [
                 },
                 "points": {
                     "type": "integer",
-                    "minimum": 1,
+                    "minimum": -5000,
                     "maximum": 5000,
-                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Only admins can assign negative points. And we never give an even number of points."
+                    "description": "Number of points to award. Must be a positive whole number between 1 and 5000. Normally we never give an even amount of points or a negative amount, but this restriction does not apply when the sender is pastorhudson."
                 },
                 "description": {
                     "type": "string",
