@@ -75,27 +75,6 @@ def get_closings():
     return closings
 
 
-# def get_closings_list():
-#     closings = get_closings()
-#     no_school = False
-#     if closings:
-#         no_school = True
-#     # Define columns for Pretty Table
-#     table = PrettyTable(['Name', 'Status'])
-#
-#     # For each closing, check if it's one of the specified organizations
-#     for closing in closings:
-#         name = closing.find('FORCED_ORGANIZATION_NAME').text
-#         status = closing.find('COMPLETE_STATUS').text
-#         table.add_row([name, status])
-#     if not no_school:
-#         table.add_row(["Your Mom", get_mom()])
-#         # set max width
-#     table.max_width = 25
-#     return table, no_school
-
-
-
 def get_closings_list():
     closings = get_closings()
     no_school = bool(closings)
@@ -148,10 +127,7 @@ def search_closings(specific_words=None, no_mom=False):
 
 def get_school_closings(search=None, observations=True):
     no_school = False
-    if search:
-        table, no_school = search_closings(search)
-    else:
-        table, no_school = get_closings_list()
+
 
     observation = [
         "I hope you have school",
@@ -170,10 +146,18 @@ def get_school_closings(search=None, observations=True):
     ]
 
     if observations:
+        if search:
+            table, no_school = search_closings(search)
+        else:
+            table, no_school = get_closings_list()
         payload = {'msg': f"{random.choice(observation)}\nSchool Closings:"
                           f"```{table}"
                           f"```", }
     else:
+        if search:
+            table, no_school = search_closings(search, no_mom=True)
+        else:
+            table, no_school = get_closings_list()
         payload = {'msg': f"School Closings:```{table}"
                           f"```", }
     return payload, no_school
@@ -184,4 +168,5 @@ if __name__ == "__main__":
 
     closings, no_school = get_school_closings(schools, observations=False)
     print(closings['msg'])
+    print(no_school)
 
